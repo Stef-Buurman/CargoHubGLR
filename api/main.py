@@ -7,6 +7,7 @@ from providers import data_provider
 
 from processors import notification_processor
 
+
 class ApiRequestHandler(http.server.BaseHTTPRequestHandler):
 
     def handle_get_version_1(self, path, user):
@@ -103,7 +104,7 @@ class ApiRequestHandler(http.server.BaseHTTPRequestHandler):
                     self.end_headers()
                     self.wfile.write(json.dumps(items).encode("utf-8"))
                 case 2:
-                    item_id = int(path[1])
+                    item_id = path[1]
                     item = data_provider.fetch_item_pool().get_item(item_id)
                     self.send_response(200)
                     self.send_header("Content-type", "application/json")
@@ -136,6 +137,8 @@ class ApiRequestHandler(http.server.BaseHTTPRequestHandler):
                     self.end_headers()
         elif path[0] == "item_lines":
             paths = len(path)
+            print(paths, path)
+
             match paths:
                 case 1:
                     item_lines = data_provider.fetch_item_line_pool().get_item_lines()
@@ -272,7 +275,7 @@ class ApiRequestHandler(http.server.BaseHTTPRequestHandler):
                         self.end_headers()
                 case _:
                     self.send_response(404)
-                    self.end_headers() 
+                    self.end_headers()
         elif path[0] == "orders":
             paths = len(path)
             match paths:
@@ -318,7 +321,7 @@ class ApiRequestHandler(http.server.BaseHTTPRequestHandler):
                     self.send_response(200)
                     self.send_header("Content-type", "application/json")
                     self.end_headers()
-                    self.wfile.write(json.dumps(client).encode("utf-8"))     
+                    self.wfile.write(json.dumps(client).encode("utf-8"))
                 case 3:
                     if path[2] == "orders":
                         client_id = int(path[1])
@@ -332,7 +335,7 @@ class ApiRequestHandler(http.server.BaseHTTPRequestHandler):
                         self.end_headers()
                 case _:
                     self.send_response(404)
-                    self.end_headers() 
+                    self.end_headers()
         elif path[0] == "shipments":
             paths = len(path)
             match paths:
@@ -795,6 +798,7 @@ class ApiRequestHandler(http.server.BaseHTTPRequestHandler):
             except Exception:
                 self.send_response(500)
                 self.end_headers()
+
 
 if __name__ == "__main__":
     PORT = 3000
