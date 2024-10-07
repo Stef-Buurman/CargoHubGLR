@@ -61,39 +61,39 @@ def test_remove_item(items_instance):
 
 def test_get_items_for_item_line(items_instance):
     items_instance.data = [
-        {"id": 1, "item_line": 1, "name": "Item Line 1"},
-        {"id": 2, "item_line": 2, "name": "Item Line 2"}
+        {"id": 1, "item_line": 2, "name": "Item Line 1"},
+        {"id": 2, "item_line": 1, "name": "Item Line 2"}
     ]
     items = items_instance.get_items_for_item_line(1)
     assert len(items) == 1
-    assert items[0]['id'] == 1
+    assert items[0]['id'] == 2
 
 
 def test_get_items_for_item_group(items_instance):
     items_instance.data = [
-        {"id": 1, "item_group": 1, "name": "Group Item 1"},
-        {"id": 2, "item_group": 2, "name": "Group Item 2"}
+        {"id": 1, "item_group": 2, "name": "Group Item 1"},
+        {"id": 2, "item_group": 1, "name": "Group Item 2"}
     ]
     items = items_instance.get_items_for_item_group(1)
     assert len(items) == 1
-    assert items[0]['id'] == 1
+    assert items[0]['id'] == 2
 
 
 def test_get_items_for_item_type(items_instance):
     items_instance.data = [
-        {"id": 1, "item_type": 1, "name": "Type Item 1"},
-        {"id": 2, "item_type": 2, "name": "Type Item 2"}
+        {"id": 1, "item_type": 2, "name": "Type Item 1"},
+        {"id": 2, "item_type": 1, "name": "Type Item 2"}
     ]
     items = items_instance.get_items_for_item_type(1)
     assert len(items) == 1
-    assert items[0]['id'] == 1
+    assert items[0]['id'] == 2
 
 
 def test_get_items_for_supplier(items_instance):
     items_instance.data = [
-        {"id": 1, "supplier_id": 1, "name": "Supplier Item 1"},
-        {"id": 2, "supplier_id": 2, "name": "Supplier Item 2"}
+        {"id": 1, "supplier_id": 2, "name": "Supplier Item 1"},
+        {"id": 2, "supplier_id": 1, "name": "Supplier Item 2"}
     ]
     items = items_instance.get_items_for_supplier(1)
     assert len(items) == 1
-    assert items[0]['id'] == 1
+    assert items[0]['id'] == 2
