@@ -51,10 +51,79 @@ def test_get_warehouse(warehouses_instance):
     assert warehouse["name"] == "Heemskerk cargo hub"
 
 
-def test_add_warehouse(warehouses_instance): ...
+def test_add_warehouse(warehouses_instance):
+    warehouse = {
+        "id": "2",
+        "name": "Heemskerk cargo hub 2",
+        "address": "Karlijndreef 281b",
+        "zip": "4002 AS",
+        "city": "Heemskerk",
+        "province": "Friesland",
+        "country": "NL",
+        "contact": {
+            "name": "Fem Keijzer",
+            "phone": "(078) 0013363",
+            "email": "blamore@example.net",
+        },
+        "created_at": "",
+        "updated_at": "",
+    }
+
+    warehouses_instance.add_warehouse(warehouse)
+    assert len(warehouses_instance.data) == 1
+    assert warehouses_instance.data[0]["name"] == "Heemskerk cargo hub 2"
+    assert warehouses_instance.data[0]["id"] == "2"
+    assert warehouses_instance.data[0]["created_at"] != ""
+    assert warehouses_instance.data[0]["updated_at"] != ""
 
 
-def test_update_warehouse(warehouses_instance): ...
+def test_update_warehouse(warehouses_instance):
+    warehouse = {
+        "id": "2",
+        "name": "Heemskerk cargo hub 2",
+        "address": "Karlijndreef 281b",
+        "zip": "4002 AS",
+        "city": "Heemskerk",
+        "province": "Friesland",
+        "country": "NL",
+        "contact": {
+            "name": "Fem Keijzer",
+            "phone": "(078) 0013363",
+            "email": "blamore@example.net",
+        },
+        "created_at": "",
+        "updated_at": "",
+    }
+
+    warehouses_instance.data = [warehouse]
+    warehouse["name"] = "Heemskerk cargo hub 3"
+    warehouses_instance.update_warehouse("2", warehouse)
+    assert len(warehouses_instance.data) == 1
+    assert warehouses_instance.data[0]["name"] == "Heemskerk cargo hub 3"
+    assert warehouses_instance.data[0]["id"] == "2"
+    assert warehouses_instance.data[0]["created_at"] == ""
+    assert warehouses_instance.data[0]["updated_at"] != ""
 
 
-def test_remove_warehouse(warehouses_instance): ...
+def test_remove_warehouse(warehouses_instance):
+    warehouse = {
+        "id": "2",
+        "name": "Heemskerk cargo hub 2",
+        "address": "Karlijndreef 281b",
+        "zip": "4002 AS",
+        "city": "Heemskerk",
+        "province": "Friesland",
+        "country": "NL",
+        "contact": {
+            "name": "Fem Keijzer",
+            "phone": "(078) 0013363",
+            "email": "blamore@example.net",
+        },
+        "created_at": "",
+        "updated_at": "",
+    }
+
+    warehouses_instance.data = [warehouse]
+    warehouses_instance.remove_warehouse("2")
+    assert len(warehouses_instance.data) == 0
+    assert warehouses_instance.data == []
