@@ -7,7 +7,9 @@ ORDERS = []
 
 
 class Orders(Base):
-    def __init__(self, root_path, is_debug=False):
+    def __init__(self, root_path, is_debug=False, items=[]):
+        if is_debug:
+            ITEMS = items
         self.data_path = root_path + "orders.json"
         self.load(is_debug)
 
