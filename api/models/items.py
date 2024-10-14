@@ -16,7 +16,7 @@ class Items(Base):
 
     def get_item(self, item_id):
         for x in self.data:
-            if x["id"] == item_id:
+            if x["uid"] == item_id:
                 return x
         return None
 
@@ -56,13 +56,13 @@ class Items(Base):
     def update_item(self, item_id, item):
         item["updated_at"] = self.get_timestamp()
         for i in range(len(self.data)):
-            if self.data[i]["id"] == item_id:
+            if self.data[i]["uid"] == item_id:
                 self.data[i] = item
                 break
 
     def remove_item(self, item_id):
         for x in self.data:
-            if x["id"] == item_id:
+            if x["uid"] == item_id:
                 self.data.remove(x)
 
     def load(self, is_debug):
