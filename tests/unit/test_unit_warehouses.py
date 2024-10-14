@@ -89,7 +89,7 @@ test_data = [
     },
 ]
 
-new_warehouse = {
+new_data = {
     "id": 6,
     "code": "KLU87413M",
     "name": "Den Haag cargo hub",
@@ -132,11 +132,11 @@ def test_get_nonexistent_warehouse(warehouses_instance):
 
 def test_add_warehouse(warehouses_instance):
     current_length = len(warehouses_instance.get_warehouses())
-    warehouses_instance.add_warehouse(new_warehouse)
+    warehouses_instance.add_warehouse(new_data)
     assert len(warehouses_instance.get_warehouses()) == current_length + 1
-    added_warehouse = warehouses_instance.get_warehouse(new_warehouse["id"])
-    assert added_warehouse["id"] == new_warehouse["id"]
-    assert added_warehouse["code"] == new_warehouse["code"]
+    added_warehouse = warehouses_instance.get_warehouse(new_data["id"])
+    assert added_warehouse["id"] == new_data["id"]
+    assert added_warehouse["code"] == new_data["code"]
     assert "created_at" in added_warehouse
     assert "updated_at" in added_warehouse
 
@@ -154,11 +154,11 @@ def test_update_warehouse(warehouses_instance):
 
 
 def test_remove_warehouse(warehouses_instance):
-    warehouses_instance.add_warehouse(new_warehouse)
+    warehouses_instance.add_warehouse(new_data)
     current_length = len(warehouses_instance.get_warehouses())
-    warehouses_instance.remove_warehouse(new_warehouse["id"])
+    warehouses_instance.remove_warehouse(new_data["id"])
     assert len(warehouses_instance.get_warehouses()) == current_length - 1
-    removed_warehouse = warehouses_instance.get_warehouse(new_warehouse["id"])
+    removed_warehouse = warehouses_instance.get_warehouse(new_data["id"])
     assert removed_warehouse is None
 
 
