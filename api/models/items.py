@@ -6,8 +6,8 @@ ITEMS = []
 
 
 class Items(Base):
-    def __init__(self, some_param, is_debug=False, items=None):
-        self.some_param = some_param
+    def __init__(self, root_path, is_debug=False, items=None):
+        self.data_path = root_path + "items.json"
         self.is_debug = is_debug
         self.data = items if items is not None else []
 
