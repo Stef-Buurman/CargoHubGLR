@@ -57,18 +57,19 @@ def test_add_warehouse(client):
 
 def test_get_warehouse_by_id(client):
     response = client.get(
-        "/warehouses/" + test_data["id"], headers={"API_KEY": "test_api_key"}
+        "/warehouses/" + str(test_data["id"]), headers={"API_KEY": "test_api_key"}
     )
     assert response.status_code == 200
-    assert response.json() is not None
-    assert isinstance(response.json(), dict)
+    response_json = response.json()
+    assert response_json is not None
+    assert isinstance(response_json, dict)
 
 
 def test_get_nonexistent_warehouse(client):
     response = client.get(
         "/warehouses/nonexistent_id", headers={"API_KEY": "test_api_key"}
     )
-    assert response.status_code == 200
+    assert response.status_code == 404
     assert response.json() is None
 
 
@@ -76,26 +77,28 @@ def test_update_warehouse(client):
     updated_warehouse = test_data
     updated_warehouse["name"] = "Updated Warehouse"
     response = client.put(
-        "/warehouses/" + test_data["id"],
+        "/warehouses/" + str(test_data["id"]),
         json=updated_warehouse,
         headers={"API_KEY": "test_api_key"},
     )
     assert response.status_code == 200
     response_get = client.get(
-        "/warehouses/" + test_data["id"], headers={"API_KEY": "test_api_key"}
+        "/warehouses/" + str(test_data["id"]), headers={"API_KEY": "test_api_key"}
     )
     assert response_get.status_code == 200
-    assert response_get.json()["name"] == updated_warehouse["name"]
+    response_json = response_get.json()
+    assert response_json is not None
+    assert response_json["name"] == updated_warehouse["name"]
 
 
 def test_delete_warehouse(client):
     response = client.delete(
-        "/warehouses/" + test_data["id"], headers={"API_KEY": "test_api_key"}
+        "/warehouses/" + str(test_data["id"]), headers={"API_KEY": "test_api_key"}
     )
     assert response.status_code == 200
     time.sleep(1)
     response_get = client.get(
-        "/warehouses/" + test_data["id"], headers={"API_KEY": "test_api_key"}
+        "/warehouses/" + str(test_data["id"]), headers={"API_KEY": "test_api_key"}
     )
-    assert response_get.status_code == 200
+    assert response_get.status_code == 404
     assert response_get.json() is None

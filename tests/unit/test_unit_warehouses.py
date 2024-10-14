@@ -110,7 +110,11 @@ new_data = {
 
 @pytest.fixture
 def warehouses_instance():
-    return Warehouses(root_path="", is_debug=True)
+    warehouses = Warehouses(root_path="", is_debug=True)
+
+    for data in test_data:
+        warehouses.add_warehouse(data)
+    return warehouses
 
 
 def test_get_warehouses(warehouses_instance):
@@ -121,6 +125,7 @@ def test_get_warehouses(warehouses_instance):
 
 def test_get_warehouse(warehouses_instance):
     warehouse = warehouses_instance.get_warehouse(test_data[0]["id"])
+    assert warehouse is not None
     assert warehouse["code"] == "YQZZNL56"
     assert warehouse["name"] == "Heemskerk cargo hub"
 
@@ -135,6 +140,7 @@ def test_add_warehouse(warehouses_instance):
     warehouses_instance.add_warehouse(new_data)
     assert len(warehouses_instance.get_warehouses()) == current_length + 1
     added_warehouse = warehouses_instance.get_warehouse(new_data["id"])
+    assert added_warehouse is not None
     assert added_warehouse["id"] == new_data["id"]
     assert added_warehouse["code"] == new_data["code"]
     assert "created_at" in added_warehouse
@@ -148,6 +154,7 @@ def test_update_warehouse(warehouses_instance):
     warehouses_instance.update_warehouse(updated_warehouse["id"], updated_warehouse)
 
     warehouse = warehouses_instance.get_warehouse(updated_warehouse["id"])
+    assert warehouse is not None
     assert warehouse["code"] == "UPDATED123"
     assert warehouse["name"] == "Updated Heemskerk cargo hub"
     assert "updated_at" in warehouse
