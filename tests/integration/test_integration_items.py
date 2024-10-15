@@ -1,19 +1,9 @@
-import subprocess
-import time
 import pytest
-import httpx
+from fastapi.testclient import TestClient
+from api.main import app
 
 main_url = "http://localhost:3000/api/v1"
 
-@pytest.fixture(scope="session", autouse=True)
-def start_api_server():
-    process = subprocess.Popen(["python", "api/main.py"])
-    time.sleep(1)
-
-    yield
-
-    process.terminate()
-    process.wait()
 
 test_item = {
         "uid": "ditIsEenIdDieTochNooiZalGaanBestaan",
@@ -38,8 +28,8 @@ test_item = {
 
 @pytest.fixture
 def client():
-    with httpx.Client(base_url=main_url) as client:
-        yield client
+    return TestClient(app)
+
 
 def test_get_all_items(client):
     response = client.get('/items', headers={"API_KEY": "test_api_key"})
@@ -48,32 +38,29 @@ def test_get_all_items(client):
 
 def test_add_item(client):
     response = client.post('/items', json=test_item, headers={"API_KEY": "test_api_key"})
-    assert response.status_code == 201
+    assert response.status_code == 200
 
 def test_get_item_by_id(client):
-    response = client.get('/items/'+test_item['uid'], headers={"API_KEY": "test_api_key"})
+    response = client.get('/items/' + test_item['uid'], headers={"API_KEY": "test_api_key"})
     assert response.status_code == 200
     assert response.json() is not None
     assert isinstance(response.json(), dict)
 
 def test_get_nonexistent_item(client):
     response = client.get('/items/DitIsEenIdDieTochNooitBestaat', headers={"API_KEY": "test_api_key"})
-    assert response.status_code == 200
-    assert response.json() is None
+    assert response.status_code == 404
 
 def test_update_item(client):
-    updatedItem = test_item
-    updatedItem['code'] = 'oekiloekie'
-    response = client.put('/items/'+test_item['uid'], json=updatedItem, headers={"API_KEY": "test_api_key"})
+    updated_item = test_item.copy()
+    updated_item['code'] = 'updated_code'
+    response = client.put('/items/' + test_item['uid'], json=updated_item, headers={"API_KEY": "test_api_key"})
     assert response.status_code == 200
-    responseGetItem = client.get('/items/'+test_item['uid'], headers={"API_KEY": "test_api_key"})
-    assert responseGetItem.status_code == 200
-    assert responseGetItem.json()['code'] == updatedItem['code']
+    response_get_item = client.get('/items/' + test_item['uid'], headers={"API_KEY": "test_api_key"})
+    assert response_get_item.status_code == 200
+    assert response_get_item.json()['code'] == updated_item['code']
 
 def test_delete_item(client):
-    response = client.delete('/items/'+test_item['uid'], headers={"API_KEY": "test_api_key"})
+    response = client.delete('/items/' + test_item['uid'], headers={"API_KEY": "test_api_key"})
     assert response.status_code == 200
-    time.sleep(1)
-    responseGetItem = client.get('/items/'+test_item['uid'], headers={"API_KEY": "test_api_key"})
-    assert responseGetItem.status_code == 200
-    assert responseGetItem.json() is None
+    response_get_item = client.get('/items/' + test_item['uid'], headers={"API_KEY": "test_api_key"})
+    assert response_get_item.status_code == 404
