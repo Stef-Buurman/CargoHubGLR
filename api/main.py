@@ -13,7 +13,7 @@ import uvicorn
 
 app = FastAPI()
 
-app.include_router(item_router)
+app.include_router(item_router, prefix="/items")
 
 def main():
     uvicorn.run(app, host="0.0.0.0", port=8000)

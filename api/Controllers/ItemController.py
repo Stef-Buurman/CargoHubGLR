@@ -5,33 +5,33 @@ from api.providers import data_provider
 
 item_router = APIRouter()
 
-@item_router.get("/items/{item_id}")
+@item_router.get("/{item_id}")
 def read_item(item_id: str, api_key: str = Depends(auth_provider.get_api_key)):
     data_provider.init()
     items = data_provider.fetch_item_pool().get_item(item_id)
     return items
 
-@item_router.get("/items")
+@item_router.get("/")
 def read_items(api_key: str = Depends(auth_provider.get_api_key)):
     data_provider.init()
     items = data_provider.fetch_item_pool().get_items()
     return items
 
-@item_router.post("/items")
+@item_router.post("/")
 def create_item(item: dict, api_key: str = Depends(auth_provider.get_api_key)):
     data_provider.init()
     data_provider.fetch_item_pool().add_item(item)
     data_provider.fetch_item_pool().save()
     return item
 
-@item_router.put("/items/{item_id}")
+@item_router.put("/{item_id}")
 def update_item(item_id: str, item: dict, api_key: str = Depends(auth_provider.get_api_key)):
     data_provider.init()
     data_provider.fetch_item_pool().update_item(item_id, item)
     data_provider.fetch_item_pool().save()
     return item
 
-@item_router.delete("/items/{item_id}")
+@item_router.delete("/{item_id}")
 def delete_item(item_id: str, api_key: str = Depends(auth_provider.get_api_key)):
     data_provider.init()
     data_provider.fetch_item_pool().remove_item(item_id)
