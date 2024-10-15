@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from api.providers import data_provider, auth_provider
 from api.providers import auth_provider
 from api.providers import data_provider
@@ -9,6 +9,8 @@ item_router = APIRouter()
 def read_item(item_id: str, api_key: str = Depends(auth_provider.get_api_key)):
     data_provider.init()
     items = data_provider.fetch_item_pool().get_item(item_id)
+    if items is None:
+        raise HTTPException(status_code=404, detail="Item with id " + item_id + " not found")
     return items
 
 @item_router.get("/")
@@ -34,6 +36,13 @@ def update_item(item_id: str, item: dict, api_key: str = Depends(auth_provider.g
 @item_router.delete("/{item_id}")
 def delete_item(item_id: str, api_key: str = Depends(auth_provider.get_api_key)):
     data_provider.init()
-    data_provider.fetch_item_pool().remove_item(item_id)
-    data_provider.fetch_item_pool().save()
+    item_pool = data_provider.fetch_item_pool()
+    
+    # Check if the item exists before attempting to delete
+    item = item_pool.get_item(item_id)
+    if item is None:
+        raise HTTPException(status_code=404, detail="Item not found")
+
+    item_pool.remove_item(item_id)
+    item_pool.save()
     return {"message": "Item deleted successfully"}
