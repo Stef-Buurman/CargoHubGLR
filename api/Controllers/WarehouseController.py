@@ -10,6 +10,8 @@ warehouse_router = APIRouter()
 def read_warehouse(warehouse_id: int, api_key: str = Depends(auth_provider.get_api_key)):
     data_provider.init()
     warehouse = data_provider.fetch_warehouse_pool().get_warehouse(warehouse_id)
+    if warehouse is None:
+        raise HTTPException(status_code=404, detail="Warehouse not found")
     return warehouse
 
 
@@ -37,6 +39,9 @@ def update_warehouse(warehouse_id: int, warehouse: dict, api_key: str = Depends(
 @warehouse_router.delete("/{warehouse_id}")
 def delete_warehouse(warehouse_id: int, api_key: str = Depends(auth_provider.get_api_key)):
     data_provider.init()
+    warehouse = data_provider.fetch_warehouse_pool().get_warehouse(warehouse_id)
+    if warehouse is None:
+        raise HTTPException(status_code=404, detail="Warehouse not found")
     data_provider.fetch_warehouse_pool().remove_warehouse(warehouse_id)
     data_provider.fetch_warehouse_pool().save()
     return {"message": "Warehouse deleted successfully"}
