@@ -1,21 +1,21 @@
 import json
 
-from models.base import Base
+from .base import Base
 
 ITEMS = []
 
 
 class Items(Base):
-    def __init__(self, root_path, is_debug=False):
+    def __init__(self, root_path, is_debug=False, items=None):
         self.data_path = root_path + "items.json"
-        self.load(is_debug)
+        self.load(is_debug, items)
 
     def get_items(self):
         return self.data
 
     def get_item(self, item_id):
         for x in self.data:
-            if x["id"] == item_id:
+            if x["uid"] == item_id:
                 return x
         return None
 
@@ -55,18 +55,18 @@ class Items(Base):
     def update_item(self, item_id, item):
         item["updated_at"] = self.get_timestamp()
         for i in range(len(self.data)):
-            if self.data[i]["id"] == item_id:
+            if self.data[i]["uid"] == item_id:
                 self.data[i] = item
                 break
 
     def remove_item(self, item_id):
         for x in self.data:
-            if x["id"] == item_id:
+            if x["uid"] == item_id:
                 self.data.remove(x)
 
-    def load(self, is_debug):
+    def load(self, is_debug, items):
         if is_debug:
-            self.data = ITEMS
+            self.data = items
         else:
             f = open(self.data_path, "r")
             self.data = json.load(f)

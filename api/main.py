@@ -555,7 +555,7 @@ class ApiRequestHandler(http.server.BaseHTTPRequestHandler):
                     self.send_response(404)
                     self.end_headers()
         elif path[0] == "items":
-            item_id = int(path[1])
+            item_id = path[1]
             content_length = int(self.headers["Content-Length"])
             post_data = self.rfile.read(content_length)
             updated_item = json.loads(post_data.decode())
@@ -727,7 +727,7 @@ class ApiRequestHandler(http.server.BaseHTTPRequestHandler):
             self.send_response(200)
             self.end_headers()
         elif path[0] == "items":
-            item_id = int(path[1])
+            item_id = path[1]
             data_provider.fetch_item_pool().remove_item(item_id)
             data_provider.fetch_item_pool().save()
             self.send_response(200)
