@@ -6,10 +6,9 @@ ITEMS = []
 
 
 class Items(Base):
-    def __init__(self, some_param, is_debug=False, items=None):
-        self.some_param = some_param
-        self.is_debug = is_debug
-        self.data = items if items is not None else []
+    def __init__(self, root_path, is_debug=False, items=None):
+        self.data_path = root_path + "items.json"
+        self.load(is_debug, items)
 
     def get_items(self):
         return self.data
@@ -65,9 +64,9 @@ class Items(Base):
             if x["uid"] == item_id:
                 self.data.remove(x)
 
-    def load(self, is_debug):
+    def load(self, is_debug, items):
         if is_debug:
-            self.data = ITEMS
+            self.data = items
         else:
             f = open(self.data_path, "r")
             self.data = json.load(f)
