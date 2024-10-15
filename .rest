@@ -1,19 +1,16 @@
-GET http://127.0.0.1:8000
+### Warehouse endpoints
+
+GET http://127.0.0.1:8000/warehouses
+
+### 
+
+GET http://127.0.0.1:8000/warehouse/1
 
 ###
 
-POST http://127.0.0.1:8000/items
+POST http://127.0.0.1:8000/warehouse
 Content-Type: application/json
 
 {
-    "text": "Skills",
-    "is_done": "True"
+    
 }
-
-###
-
-GET http://127.0.0.1:8000/items?limit=2
-
-###
-
-GET http://127.0.0.1:8000/items/0
