@@ -7,36 +7,23 @@ from pydantic import BaseModel
 
 warehouse_router = APIRouter()
 
-API_KEY_NAME = "api_key"
-api_key_header = APIKeyHeader(name=API_KEY_NAME, auto_error=False)
 
-
-def get_api_key(api_key_header: str = Security(api_key_header)):
-    auth_provider.init()
-    if auth_provider.has_access(api_key_header):
-        return api_key_header
-    else:
-        raise HTTPException(
-            status_code=403, detail="You dont have access to do this operation"
-        )
-
-
-@warehouse_router.get("/warehouse/{warehouse_id}")
-def read_warehouse(warehouse_id: int):
+@warehouse_router.get("/{warehouse_id}")
+def read_warehouse(warehouse_id: int, api_key: str = Depends(auth_provider.get_api_key)):
     data_provider.init()
     warehouse = data_provider.fetch_warehouse_pool().get_warehouse(warehouse_id)
     return warehouse
 
 
-@warehouse_router.get("/warehouses")
-def read_warehouses():
+@warehouse_router.get("/")
+def read_warehouses(api_key: str = Depends(auth_provider.get_api_key)):
     data_provider.init()
     warehouses = data_provider.fetch_warehouse_pool().get_warehouses()
     return warehouses
 
 
-@warehouse_router.post("/warehouse")
-def create_warehouse():
-    data_provider.init()
-    warehouse = data_provider.fetch_warehouse_pool().add_warehouse()
-    return warehouse
+# @warehouse_router.post("/")
+# def create_warehouse(api_key: str = Depends(auth_provider.get_api_key)):
+#     data_provider.init()
+#     warehouse = data_provider.fetch_warehouse_pool().add_warehouse()
+#     return warehouse

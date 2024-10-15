@@ -15,7 +15,7 @@ import uvicorn
 app = FastAPI()
 
 app.include_router(item_router)
-app.include_router(warehouse_router)
+app.include_router(warehouse_router, prefix="/warehouses")
 
 
 def main():
