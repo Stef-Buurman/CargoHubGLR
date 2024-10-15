@@ -8,9 +8,9 @@
 # from processors import notification_processor
 
 from fastapi import FastAPI
-from api.Controllers.ItemController import item_router
-from api.Controllers.WarehouseController import warehouse_router
-from api.Controllers.InventoryController import inventory_router
+from Controllers.ItemController import item_router
+from Controllers.WarehouseController import warehouse_router
+from Controllers.InventoryController import inventory_router
 import uvicorn
 
 app = FastAPI()

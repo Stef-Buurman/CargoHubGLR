@@ -1,7 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
-from api.providers import data_provider, auth_provider
-from api.providers import auth_provider
-from api.providers import data_provider
+from providers import data_provider, auth_provider
 
 item_router = APIRouter()
 
