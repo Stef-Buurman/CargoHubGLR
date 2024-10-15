@@ -17,3 +17,23 @@ def read_items(api_key: str = Depends(auth_provider.get_api_key)):
     items = data_provider.fetch_item_pool().get_items()
     return items
 
+@item_router.post("/items")
+def create_item(item: dict, api_key: str = Depends(auth_provider.get_api_key)):
+    data_provider.init()
+    data_provider.fetch_item_pool().add_item(item)
+    data_provider.fetch_item_pool().save()
+    return item
+
+@item_router.put("/items/{item_id}")
+def update_item(item_id: str, item: dict, api_key: str = Depends(auth_provider.get_api_key)):
+    data_provider.init()
+    data_provider.fetch_item_pool().update_item(item_id, item)
+    data_provider.fetch_item_pool().save()
+    return item
+
+@item_router.delete("/items/{item_id}")
+def delete_item(item_id: str, api_key: str = Depends(auth_provider.get_api_key)):
+    data_provider.init()
+    data_provider.fetch_item_pool().remove_item(item_id)
+    data_provider.fetch_item_pool().save()
+    return {"message": "Item deleted successfully"}
