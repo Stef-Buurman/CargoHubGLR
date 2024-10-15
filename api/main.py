@@ -10,12 +10,14 @@
 from fastapi import FastAPI
 from api.Controllers.ItemController import item_router
 from api.Controllers.WarehouseController import warehouse_router
+from api.Controllers.InventoryController import inventory_router
 import uvicorn
 
 app = FastAPI()
 
 app.include_router(item_router, prefix="/items")
 app.include_router(warehouse_router, prefix="/warehouses")
+app.include_router(inventory_router, prefix="/inventories")
 
 
 def main():
