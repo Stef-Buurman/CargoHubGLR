@@ -38,7 +38,6 @@ def delete_item(item_id: str, api_key: str = Depends(auth_provider.get_api_key))
     data_provider.init()
     item_pool = data_provider.fetch_item_pool()
     
-    # Check if the item exists before attempting to delete
     item = item_pool.get_item(item_id)
     if item is None:
         raise HTTPException(status_code=404, detail="Item not found")
