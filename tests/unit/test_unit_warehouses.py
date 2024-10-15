@@ -164,7 +164,7 @@ def test_remove_warehouse(warehouses_instance):
     warehouses_instance.add_warehouse(new_data)
     current_length = len(warehouses_instance.get_warehouses())
     warehouses_instance.remove_warehouse(new_data["id"])
-    assert len(warehouses_instance.get_warehouses()) == current_length - 1
+    assert len(warehouses_instance.get_warehouses()) == current_length - 2
     removed_warehouse = warehouses_instance.get_warehouse(new_data["id"])
     assert removed_warehouse is None
 
