@@ -12,13 +12,13 @@ def read_item(item_id: str, api_key: str = Depends(auth_provider.get_api_key)):
         raise HTTPException(status_code=404, detail="Item with id " + item_id + " not found")
     return items
 
-@item_router.get("")
+@item_router.get("/")
 def read_items(api_key: str = Depends(auth_provider.get_api_key)):
     data_provider.init()
     items = data_provider.fetch_item_pool().get_items()
     return items
 
-@item_router.post("")
+@item_router.post("/")
 def create_item(item: dict, api_key: str = Depends(auth_provider.get_api_key)):
     data_provider.init()
     data_provider.fetch_item_pool().add_item(item)

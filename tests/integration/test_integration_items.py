@@ -30,12 +30,12 @@ def client():
         yield client
 
 def test_get_all_items(client):
-    response = client.get('/items', headers={"API_KEY": "test_api_key"})
+    response = client.get('/items/', headers={"API_KEY": "test_api_key"})
     assert response.status_code == 200
     assert isinstance(response.json(), list)
 
 def test_add_item(client):
-    response = client.post('/items', json=test_item, headers={"API_KEY": "test_api_key"})
+    response = client.post('/items/', json=test_item, headers={"API_KEY": "test_api_key"})
     assert response.status_code == 201
 
 def test_get_item_by_id(client):
