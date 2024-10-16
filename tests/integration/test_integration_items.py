@@ -1,6 +1,6 @@
 import pytest
 import httpx
-from tests.test_globals import MAIN_URL
+from tests.integration.test_globals import MAIN_URL
 
 
 test_item = {
