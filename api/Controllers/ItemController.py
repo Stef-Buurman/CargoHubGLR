@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.responses import JSONResponse
 from providers import data_provider, auth_provider
 
 item_router = APIRouter()
@@ -11,18 +12,18 @@ def read_item(item_id: str, api_key: str = Depends(auth_provider.get_api_key)):
         raise HTTPException(status_code=404, detail="Item with id " + item_id + " not found")
     return items
 
-@item_router.get("/")
+@item_router.get("")
 def read_items(api_key: str = Depends(auth_provider.get_api_key)):
     data_provider.init()
     items = data_provider.fetch_item_pool().get_items()
     return items
 
-@item_router.post("/")
+@item_router.post("")
 def create_item(item: dict, api_key: str = Depends(auth_provider.get_api_key)):
     data_provider.init()
     data_provider.fetch_item_pool().add_item(item)
     data_provider.fetch_item_pool().save()
-    return item
+    return JSONResponse(status_code=status.HTTP_201_CREATED, content=item)
 
 @item_router.put("/{item_id}")
 def update_item(item_id: str, item: dict, api_key: str = Depends(auth_provider.get_api_key)):

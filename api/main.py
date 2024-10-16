@@ -15,13 +15,15 @@ import uvicorn
 
 app = FastAPI()
 
-app.include_router(item_router, prefix="/items")
-app.include_router(warehouse_router, prefix="/warehouses")
-app.include_router(inventory_router, prefix="/inventories")
+v1_url = "/api/v1"
+
+app.include_router(item_router, prefix=v1_url+"/items")
+app.include_router(warehouse_router, prefix=v1_url+"/warehouses")
+app.include_router(inventory_router, prefix=v1_url+"/inventories")
 
 
 def main():
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, port=8000)
 
 
 if __name__ == "__main__":

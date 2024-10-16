@@ -1,8 +1,6 @@
 import pytest
-from fastapi.testclient import TestClient
-from api.main import app
-
-main_url = "http://localhost:3000/api/v1"
+import httpx
+from tests.Globals import MAIN_URL
 
 
 test_item = {
@@ -28,8 +26,8 @@ test_item = {
 
 @pytest.fixture
 def client():
-    return TestClient(app)
-
+    with httpx.Client(base_url=MAIN_URL) as client:
+        yield client
 
 def test_get_all_items(client):
     response = client.get('/items', headers={"API_KEY": "test_api_key"})
@@ -38,7 +36,7 @@ def test_get_all_items(client):
 
 def test_add_item(client):
     response = client.post('/items', json=test_item, headers={"API_KEY": "test_api_key"})
-    assert response.status_code == 200
+    assert response.status_code == 201
 
 def test_get_item_by_id(client):
     response = client.get('/items/' + test_item['uid'], headers={"API_KEY": "test_api_key"})
