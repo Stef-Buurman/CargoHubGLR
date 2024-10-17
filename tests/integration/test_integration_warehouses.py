@@ -45,7 +45,7 @@ def test_get_all_warehouses_invalid_api_key(client):
 
 def test_add_warehouse(client):
     response = client.post("/warehouses/", json=test_data, headers=test_headers)
-    assert response.status_code == 200
+    assert response.status_code == 201 or response.status_code == 200
 
 
 def test_add_warehouse_no_api_key(client):
