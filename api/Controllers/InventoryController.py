@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.responses import JSONResponse
 from providers import data_provider, auth_provider
 
 inventory_router = APIRouter()
@@ -8,7 +9,7 @@ def read_inventory(inventory_id: int, api_key: str = Depends(auth_provider.get_a
     data_provider.init()
     inventory = data_provider.fetch_inventory_pool().get_inventory(inventory_id)
     if inventory is None:
-        raise HTTPException(status_code=404, detail="inventory with id " + inventory_id + " not found")
+        raise HTTPException(status_code=404, detail="inventory with id " + str(inventory_id) + " not found")
     return inventory
 
 @inventory_router.get("/")
@@ -27,7 +28,7 @@ def create_inventory(inventorie: dict, api_key: str = Depends(auth_provider.get_
         raise HTTPException(status_code=409, detail="inventory already exists")
     data_provider.fetch_inventory_pool().add_inventory(inventorie)
     data_provider.fetch_inventory_pool().save()
-    return inventorie
+    return JSONResponse(status_code=status.HTTP_201_CREATED, content=inventorie)
 
 @inventory_router.put("/{inventory_id}")
 def update_inventory(inventory_id: int, inventorie: dict, api_key: str = Depends(auth_provider.get_api_key)):
