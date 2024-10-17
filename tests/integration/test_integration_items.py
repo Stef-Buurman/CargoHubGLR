@@ -1,6 +1,6 @@
 import pytest
 import httpx
-from test_globals import MAIN_URL
+from test_globals import * 
 
 
 test_item = {
@@ -30,35 +30,130 @@ def client():
         yield client
 
 def test_get_all_items(client):
-    response = client.get('/items/', headers={"API_KEY": "test_api_key"})
+    response = client.get('/items/', headers=test_headers)
     assert response.status_code == 200
     assert isinstance(response.json(), list)
 
+
+def test_get_all_items_no_api_key(client):
+    response = client.get('/items/')
+    assert response.status_code == 403
+
+
+def test_get_all_items_invalid_api_key(client):
+    response = client.get('/items/', headers=invalid_headers)
+    assert response.status_code == 403
+
+
+def test_add_item_no_api_key(client):
+    response = client.post('/items/', json=test_item)
+    assert response.status_code == 403
+    response_get_item = client.get('/items/' + test_item['uid'], headers=test_headers)
+    assert response_get_item.status_code == 404
+
+
+def test_add_item_invalid_api_key(client):
+    response = client.post('/items/', json=test_item, headers=invalid_headers)
+    assert response.status_code == 403
+    response_get_item = client.get('/items/' + test_item['uid'], headers=test_headers)
+    assert response_get_item.status_code == 404
+
+
 def test_add_item(client):
-    response = client.post('/items/', json=test_item, headers={"API_KEY": "test_api_key"})
+    response = client.post('/items/', json=test_item, headers=test_headers)
     assert response.status_code == 201
+    response_get_item = client.get('/items/' + test_item['uid'], headers=test_headers)
+    assert response_get_item.status_code == 200
+    assert response_get_item.json()['uid'] == test_item['uid']
+
+
+def test_add_existing_item(client):
+    response = client.post('/items/', json=test_item, headers=test_headers)
+    assert response.status_code == 409
+
+
+def test_get_item_no_api_key(client):
+    response = client.get('/items/' + test_item['uid'])
+    assert response.status_code == 403
+
+
+def test_get_item_invalid_api_key(client):
+    response = client.get('/items/' + test_item['uid'], headers=invalid_headers)
+    assert response.status_code == 403
+
 
 def test_get_item_by_id(client):
-    response = client.get('/items/' + test_item['uid'], headers={"API_KEY": "test_api_key"})
+    response = client.get('/items/' + test_item['uid'], headers=test_headers)
     assert response.status_code == 200
     assert response.json() is not None
     assert isinstance(response.json(), dict)
 
+
 def test_get_nonexistent_item(client):
-    response = client.get('/items/DitIsEenIdDieTochNooitBestaat', headers={"API_KEY": "test_api_key"})
+    response = client.get('/items/'+never_existing_id, headers=test_headers)
     assert response.status_code == 404
+
+
+def test_update_item_no_api_key(client):
+    updated_item = test_item.copy()
+    updated_item['code'] = 'updated_code'
+    response = client.put('/items/' + test_item['uid'], json=updated_item)
+    assert response.status_code == 403
+    response_get_item = client.get('/items/' + test_item['uid'], headers=test_headers)
+    assert response_get_item.status_code == 200
+    assert response_get_item.json()['code'] == test_item['code']
+
+
+def test_update_item_invalid_api_key(client):
+    updated_item = test_item.copy()
+    updated_item['code'] = 'updated_code'
+    response = client.put('/items/' + test_item['uid'], json=updated_item, headers=invalid_headers)
+    assert response.status_code == 403
+    response_get_item = client.get('/items/' + test_item['uid'], headers=test_headers)
+    assert response_get_item.status_code == 200
+    assert response_get_item.json()['code'] == test_item['code']
+
+
+def test_update_item_no_item(client):
+    updated_item = test_item.copy()
+    updated_item['code'] = 'updated_code'
+    response = client.put('/items/' + never_existing_id, json=updated_item, headers=test_headers)
+    assert response.status_code == 404
+
 
 def test_update_item(client):
     updated_item = test_item.copy()
     updated_item['code'] = 'updated_code'
-    response = client.put('/items/' + test_item['uid'], json=updated_item, headers={"API_KEY": "test_api_key"})
+    response = client.put('/items/' + test_item['uid'], json=updated_item, headers=test_headers)
     assert response.status_code == 200
-    response_get_item = client.get('/items/' + test_item['uid'], headers={"API_KEY": "test_api_key"})
+    response_get_item = client.get('/items/' + test_item['uid'], headers=test_headers)
     assert response_get_item.status_code == 200
     assert response_get_item.json()['code'] == updated_item['code']
 
+
+def test_delete_item_no_api_key(client):
+    response = client.delete('/items/' + test_item['uid'])
+    assert response.status_code == 403
+    response_get_item = client.get('/items/' + test_item['uid'], headers=test_headers)
+    assert response_get_item.status_code == 200
+
+
+def test_delete_item_invalid_api_key(client):
+    response = client.delete('/items/' + test_item['uid'], headers=invalid_headers)
+    assert response.status_code == 403
+    response_get_item = client.get('/items/' + test_item['uid'], headers=test_headers)
+    assert response_get_item.status_code == 200
+
+
+def test_delete_item_no_item(client):
+    response = client.delete('/items/' + never_existing_id, headers=test_headers)
+    assert response.status_code == 404
+    response_get_item = client.get('/items/' + test_item['uid'], headers=test_headers)
+    assert response_get_item.status_code == 200
+
+
 def test_delete_item(client):
-    response = client.delete('/items/' + test_item['uid'], headers={"API_KEY": "test_api_key"})
+    response = client.delete('/items/' + test_item['uid'], headers=test_headers)
     assert response.status_code == 200
-    response_get_item = client.get('/items/' + test_item['uid'], headers={"API_KEY": "test_api_key"})
+    response_get_item = client.get('/items/' + test_item['uid'], headers=test_headers)
     assert response_get_item.status_code == 404
