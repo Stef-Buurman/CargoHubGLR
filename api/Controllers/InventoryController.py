@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
-from api.providers import data_provider, auth_provider
+from providers import data_provider, auth_provider
 
 inventory_router = APIRouter()
 

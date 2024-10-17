@@ -8,20 +8,22 @@
 # from processors import notification_processor
 
 from fastapi import FastAPI
-from api.Controllers.ItemController import item_router
-from api.Controllers.WarehouseController import warehouse_router
-from api.Controllers.InventoryController import inventory_router
+from Controllers.ItemController import item_router
+from Controllers.WarehouseController import warehouse_router
+from Controllers.InventoryController import inventory_router
 import uvicorn
 
 app = FastAPI()
 
-app.include_router(item_router, prefix="/items")
-app.include_router(warehouse_router, prefix="/warehouses")
-app.include_router(inventory_router, prefix="/inventories")
+v1_url = "/api/v1"
+
+app.include_router(item_router, prefix=v1_url+"/items")
+app.include_router(warehouse_router, prefix=v1_url+"/warehouses")
+app.include_router(inventory_router, prefix=v1_url+"/inventories")
 
 
 def main():
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, port=8000)
 
 
 if __name__ == "__main__":
