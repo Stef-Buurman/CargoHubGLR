@@ -1,7 +1,7 @@
 import json
 
 from .base import Base
-from ..providers import data_provider
+from providers import data_provider
 
 SHIPMENTS = []
 

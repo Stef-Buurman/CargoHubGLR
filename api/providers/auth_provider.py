@@ -1,3 +1,6 @@
+from fastapi import HTTPException, Request, Security
+from fastapi.security import APIKeyHeader
+
 USERS = [
     {
         "api_key": "test_api_key",
@@ -117,3 +120,19 @@ def has_access(user, path, method):
         return True
     else:
         return access[path][method]
+
+API_KEY_NAME = "api_key"
+api_key_header = APIKeyHeader(name=API_KEY_NAME, auto_error=False)
+
+def get_api_key(request: Request, api_key_header: str = Security(api_key_header)):
+    init()
+    
+    user = get_user(api_key_header)
+    
+    if user is None:
+        raise HTTPException(status_code=403, detail="Invalid API Key")
+    
+    if has_access(user, request.url.path, request.method):
+        return api_key_header
+    else:
+        raise HTTPException(status_code=403, detail="You don't have access to this operation")
