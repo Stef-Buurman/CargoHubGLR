@@ -106,7 +106,7 @@ def test_get_invalid_shipment_id(client):
 
 
 def test_get_nonexistent_shipment(client):
-    response = client.get('/shipments/'+never_existing_id, headers=test_headers)
+    response = client.get('/shipments/'+non_existent_id, headers=test_headers)
     assert response.status_code == 404
 
 
@@ -140,7 +140,7 @@ def test_update_invalid_shipment_id(client):
 def test_update_nonexistent_shipment(client):
     updated_shipment = test_shipment.copy()
     updated_shipment['shipment_status'] = 'Shipped'
-    response = client.put('/shipments/'+never_existing_id, json=updated_shipment, headers=test_headers)
+    response = client.put('/shipments/'+non_existent_id, json=updated_shipment, headers=test_headers)
     assert response.status_code == 404
 
 

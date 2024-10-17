@@ -90,7 +90,7 @@ def test_get_item_by_id(client):
 
 
 def test_get_nonexistent_item(client):
-    response = client.get('/items/'+never_existing_id, headers=test_headers)
+    response = client.get('/items/'+non_existent_id, headers=test_headers)
     assert response.status_code == 404
 
 
@@ -117,7 +117,7 @@ def test_update_item_invalid_api_key(client):
 def test_update_item_no_item(client):
     updated_item = test_item.copy()
     updated_item['code'] = 'updated_code'
-    response = client.put('/items/' + never_existing_id, json=updated_item, headers=test_headers)
+    response = client.put('/items/' + non_existent_id, json=updated_item, headers=test_headers)
     assert response.status_code == 404
 
 
@@ -146,7 +146,7 @@ def test_delete_item_invalid_api_key(client):
 
 
 def test_delete_item_no_item(client):
-    response = client.delete('/items/' + never_existing_id, headers=test_headers)
+    response = client.delete('/items/' + non_existent_id, headers=test_headers)
     assert response.status_code == 404
     response_get_item = client.get('/items/' + test_item['uid'], headers=test_headers)
     assert response_get_item.status_code == 200
