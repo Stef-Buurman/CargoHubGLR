@@ -31,6 +31,9 @@ def create_shipment(shipment: dict, api_key: str = Depends(auth_provider.get_api
 @shipment_router.put("/{shipment_id}")
 def update_shipment(shipment_id: int, shipment: dict, api_key: str = Depends(auth_provider.get_api_key)):
     data_provider.init()
+    existingShipment = data_provider.fetch_shipment_pool().get_shipment(shipment["id"])
+    if existingShipment is not None:
+        raise HTTPException(status_code=409, detail="shipment already exists")
     data_provider.fetch_shipment_pool().update_shipment(shipment_id, shipment)
     data_provider.fetch_shipment_pool().save()
     return shipment
