@@ -1,10 +1,6 @@
 import httpx
 import pytest
-from test_globals import MAIN_URL
-
-test_headers = {"API_KEY": "test_api_key"}
-invalid_headers={"API_KEY": "invalid_key"}
-never_existing_id = "99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999";
+from test_globals import *
 
 test_inventory = {
         "id": 99999999999999999,
