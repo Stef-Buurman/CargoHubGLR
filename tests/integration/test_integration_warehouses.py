@@ -1,6 +1,6 @@
 import pytest
-from fastapi.testclient import TestClient
-from api.main import app
+import httpx
+from test_globals import MAIN_URL
 
 test_data = {
     "id": 116969,
@@ -23,18 +23,19 @@ test_data = {
 
 @pytest.fixture
 def client():
-    return TestClient(app)
+    with httpx.Client(base_url=MAIN_URL) as client:
+        yield client
 
 
 def test_get_all_warehouses(client):
-    response = client.get("/warehouses", headers={"API_KEY": "test_api_key"})
+    response = client.get("/warehouses/", headers={"API_KEY": "test_api_key"})
     assert response.status_code == 200
     assert isinstance(response.json(), list)
 
 
 def test_add_warehouse(client):
     response = client.post(
-        "/warehouses", json=test_data, headers={"API_KEY": "test_api_key"}
+        "/warehouses/", json=test_data, headers={"API_KEY": "test_api_key"}
     )
     assert response.status_code == 200
 
@@ -50,9 +51,7 @@ def test_get_warehouse_by_id(client):
 
 
 def test_get_nonexistent_warehouse(client):
-    response = client.get(
-        "/warehouses/9999", headers={"API_KEY": "test_api_key"}
-    )
+    response = client.get("/warehouses/9999", headers={"API_KEY": "test_api_key"})
     assert response.status_code == 404
 
 
