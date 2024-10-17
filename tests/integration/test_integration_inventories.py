@@ -2,6 +2,7 @@ import httpx
 import pytest
 from test_globals import MAIN_URL, test_headers, invalid_headers, non_existent_id
 
+
 test_inventory = {
         "id": 99999999999999999,
         "item_id": "P000008",
