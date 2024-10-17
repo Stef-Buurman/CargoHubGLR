@@ -9,6 +9,7 @@
 
 from fastapi import FastAPI
 from Controllers.ItemController import item_router
+from Controllers.ShipmentController import shipment_router
 from Controllers.WarehouseController import warehouse_router
 from Controllers.InventoryController import inventory_router
 import uvicorn
@@ -18,6 +19,7 @@ app = FastAPI()
 v1_url = "/api/v1"
 
 app.include_router(item_router, prefix=v1_url+"/items")
+app.include_router(shipment_router, prefix=v1_url+"/shipments")
 app.include_router(warehouse_router, prefix=v1_url+"/warehouses")
 app.include_router(inventory_router, prefix=v1_url+"/inventories")
 
