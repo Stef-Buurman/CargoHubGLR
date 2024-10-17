@@ -54,7 +54,7 @@ def add_items_to_order(order_id: int, items: list[dict], api_key: str = Depends(
     existingOrder = data_provider.fetch_order_pool().get_order(order_id)
     if existingOrder is None:
         raise HTTPException(status_code=404, detail="Order not found")
-    data_provider.fetch_order_pool().add_items_to_order(order_id, items)
+    data_provider.fetch_order_pool().update_items_in_order(order_id, items)
     data_provider.fetch_order_pool().save()
     return items
 
