@@ -16,11 +16,16 @@ def read_item(item_id: str, api_key: str = Depends(auth_provider.get_api_key)):
 def read_items(api_key: str = Depends(auth_provider.get_api_key)):
     data_provider.init()
     items = data_provider.fetch_item_pool().get_items()
+    if items is None:
+        raise HTTPException(status_code=404, detail="Items not found")
     return items
 
 @item_router.post("/")
 def create_item(item: dict, api_key: str = Depends(auth_provider.get_api_key)):
     data_provider.init()
+    existingItem = data_provider.fetch_item_pool().get_item(item["uid"])
+    if existingItem is not None:
+        raise HTTPException(status_code=409, detail="Item already exists")
     data_provider.fetch_item_pool().add_item(item)
     data_provider.fetch_item_pool().save()
     return JSONResponse(status_code=status.HTTP_201_CREATED, content=item)
@@ -28,6 +33,9 @@ def create_item(item: dict, api_key: str = Depends(auth_provider.get_api_key)):
 @item_router.put("/{item_id}")
 def update_item(item_id: str, item: dict, api_key: str = Depends(auth_provider.get_api_key)):
     data_provider.init()
+    existingItem = data_provider.fetch_item_pool().get_item(item_id)
+    if existingItem is None:
+        raise HTTPException(status_code=404, detail="Item not found")
     data_provider.fetch_item_pool().update_item(item_id, item)
     data_provider.fetch_item_pool().save()
     return item
