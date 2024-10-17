@@ -33,7 +33,7 @@ def update_shipment(shipment_id: int, shipment: dict, api_key: str = Depends(aut
     data_provider.init()    
     existingShipment = data_provider.fetch_shipment_pool().get_shipment(shipment_id)
     if existingShipment is None:
-        raise HTTPException(status_code=404, detail="Item not found")
+        raise HTTPException(status_code=404, detail="Shipment not found")
     data_provider.fetch_shipment_pool().update_shipment(shipment_id, shipment)
     data_provider.fetch_shipment_pool().save()
     return shipment
