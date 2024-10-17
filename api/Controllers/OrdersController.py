@@ -69,4 +69,4 @@ def delete_order(order_id: int, api_key: str = Depends(auth_provider.get_api_key
     
     order_pool.remove_order(order_id)
     order_pool.save()
-    return {"massage": "Order deleted successfully"}
+    return {"message": "Order deleted successfully"}
