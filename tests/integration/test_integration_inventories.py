@@ -1,6 +1,6 @@
 import httpx
 import pytest
-from test_globals import *
+from test_globals import MAIN_URL, test_headers, invalid_headers, non_existent_id
 
 test_inventory = {
         "id": 99999999999999999,
@@ -96,7 +96,7 @@ def test_get_invalid_inventory_id(client):
 
 
 def test_get_nonexistent_inventory(client):
-    response = client.get('/inventories/'+never_existing_id, headers=test_headers)
+    response = client.get(f'/inventories/{non_existent_id}', headers=test_headers)
     assert response.status_code == 404
 
 
@@ -130,7 +130,7 @@ def test_update_invalid_inventory_id(client):
 def test_update_nonexistent_inventory(client):
     updated_inventory = test_inventory.copy()
     updated_inventory['total_available'] = test_inventory['total_available'] + 100
-    response = client.put('/inventories/'+never_existing_id, json=updated_inventory, headers=test_headers)
+    response = client.put(f'/inventories/{non_existent_id}', json=updated_inventory, headers=test_headers)
     assert response.status_code == 404
 
 
