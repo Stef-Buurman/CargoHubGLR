@@ -26,6 +26,8 @@ def init():
     get_inventories()
     get_suppliers()
     get_clients()
+    get_orders()
+    get_shipments()
 
 # Load data for each model
 def get_items():
@@ -117,12 +119,10 @@ def fetch_supplier_pool():
     return _suppliers
 
 def fetch_order_pool():
-    get_orders()
     return _orders
 
 def fetch_client_pool():
     return _clients
 
 def fetch_shipment_pool():
-    get_shipments()
     return _shipments
