@@ -16,6 +16,8 @@ def read_shipment(shipment_id: int, api_key: str = Depends(auth_provider.get_api
 def read_shipments(api_key: str = Depends(auth_provider.get_api_key)):
     data_provider.init()
     shipments = data_provider.fetch_shipment_pool().get_shipments()
+    if shipments in None:
+        raise HTTPException(status_code=404, detail="No shipments found")
     return shipments
 
 @shipment_router.post("/")
@@ -23,7 +25,7 @@ def create_shipment(shipment: dict, api_key: str = Depends(auth_provider.get_api
     data_provider.init()
     existingShipment = data_provider.fetch_shipment_pool().get_shipment(shipment["id"])
     if existingShipment is not None:
-        raise HTTPException(status_code=409, detail="shipment already exists")
+        raise HTTPException(status_code=409, detail="Shipment already exists")
     data_provider.fetch_shipment_pool().add_shipment(shipment)
     data_provider.fetch_shipment_pool().save()
     return JSONResponse(status_code=status.HTTP_201_CREATED, content=shipment)
@@ -32,8 +34,8 @@ def create_shipment(shipment: dict, api_key: str = Depends(auth_provider.get_api
 def update_shipment(shipment_id: int, shipment: dict, api_key: str = Depends(auth_provider.get_api_key)):
     data_provider.init()
     existingShipment = data_provider.fetch_shipment_pool().get_shipment(shipment["id"])
-    if existingShipment is not None:
-        raise HTTPException(status_code=409, detail="shipment already exists")
+    if existingShipment is None:
+        raise HTTPException(status_code=404, detail="Shipment not fount")
     data_provider.fetch_shipment_pool().update_shipment(shipment_id, shipment)
     data_provider.fetch_shipment_pool().save()
     return shipment
@@ -49,4 +51,4 @@ def delete_shipment(shipment_id: int, api_key: str = Depends(auth_provider.get_a
     
     shipment_pool.remove_shipment(shipment_id)
     shipment_pool.save()
-    return {"massage": "Item deleted successfully"}
+    return {"massage": "Shipment deleted successfully"}
