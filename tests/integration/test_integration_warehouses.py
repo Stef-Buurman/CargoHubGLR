@@ -2,7 +2,7 @@ import pytest
 import httpx
 from test_globals import MAIN_URL, non_existent_id, test_headers, invalid_headers
 
-test_data = {
+test_warehouse = {
     "id": 99999999999999999,
     "code": "YQZZNL56",
     "name": "Heemskerk cargo hub",
@@ -44,22 +44,30 @@ def test_get_all_warehouses_invalid_api_key(client):
 
 
 def test_add_warehouse(client):
-    response = client.post("/warehouses/", json=test_data, headers=test_headers)
+    response = client.post("/warehouses/", json=test_warehouse, headers=test_headers)
     assert response.status_code == 201 or response.status_code == 200
+    assert response.json()["id"] == test_warehouse["id"]
 
 
 def test_add_warehouse_no_api_key(client):
-    response = client.post("/warehouses/", json=test_data)
+    response = client.post("/warehouses/", json=test_warehouse)
     assert response.status_code == 403
 
 
 def test_add_warehouse_invalid_api_key(client):
-    response = client.post("/warehouses/", json=test_data, headers=invalid_headers)
+    response = client.post("/warehouses/", json=test_warehouse, headers=invalid_headers)
     assert response.status_code == 403
 
 
+def test_add_existing_warehouse(client):
+    response = client.post("/warehouses/", json=test_warehouse, headers=test_headers)
+    assert response.status_code == 409
+
+
 def test_get_warehouse_by_id(client):
-    response = client.get("/warehouses/" + str(test_data["id"]), headers=test_headers)
+    response = client.get(
+        "/warehouses/" + str(test_warehouse["id"]), headers=test_headers
+    )
     assert response.status_code == 200
     response_json = response.json()
     assert response_json is not None
@@ -67,13 +75,13 @@ def test_get_warehouse_by_id(client):
 
 
 def test_get_warehouse_no_api_key(client):
-    response = client.get("/warehouses/" + str(test_data["id"]))
+    response = client.get("/warehouses/" + str(test_warehouse["id"]))
     assert response.status_code == 403
 
 
 def test_get_warehouse_invalid_api_key(client):
     response = client.get(
-        "/warehouses/" + str(test_data["id"]), headers=invalid_headers
+        "/warehouses/" + str(test_warehouse["id"]), headers=invalid_headers
     )
     assert response.status_code == 403
 
@@ -83,27 +91,22 @@ def test_get_nonexistent_warehouse(client):
     assert response.status_code == 404
 
 
-def test_get_nonexistent_warehouse_no_api_key(client):
-    response = client.get(f"/warehouses/{non_existent_id}")
-    assert response.status_code == 403
-
-
-def test_get_nonexistent_warehouse_invalid_api_key(client):
-    response = client.get(f"/warehouses/{non_existent_id}", headers=invalid_headers)
-    assert response.status_code == 403
+def test_get_invalid_warehouse_id(client):
+    response = client.get("/warehouses/invalid_id", headers=test_headers)
+    assert response.status_code == 422
 
 
 def test_update_warehouse(client):
-    updated_warehouse = test_data
+    updated_warehouse = test_warehouse
     updated_warehouse["name"] = "Updated Warehouse"
     response = client.put(
-        "/warehouses/" + str(test_data["id"]),
+        "/warehouses/" + str(test_warehouse["id"]),
         json=updated_warehouse,
         headers=test_headers,
     )
     assert response.status_code == 200
     response_get = client.get(
-        "/warehouses/" + str(test_data["id"]), headers=test_headers
+        "/warehouses/" + str(test_warehouse["id"]), headers=test_headers
     )
     assert response_get.status_code == 200
     response_json = response_get.json()
@@ -112,41 +115,63 @@ def test_update_warehouse(client):
 
 
 def test_update_warehouse_no_api_key(client):
-    updated_warehouse = test_data
+    updated_warehouse = test_warehouse
     updated_warehouse["name"] = "Updated Warehouse"
-    response = client.put("/warehouses/" + str(test_data["id"]), json=updated_warehouse)
+    response = client.put(
+        "/warehouses/" + str(test_warehouse["id"]), json=updated_warehouse
+    )
     assert response.status_code == 403
 
 
 def test_update_warehouse_invalid_api_key(client):
-    updated_warehouse = test_data
+    updated_warehouse = test_warehouse
     updated_warehouse["name"] = "Updated Warehouse"
     response = client.put(
-        "/warehouses/" + str(test_data["id"]),
+        "/warehouses/" + str(test_warehouse["id"]),
         json=updated_warehouse,
         headers=invalid_headers,
     )
     assert response.status_code == 403
 
 
+def test_update_nonexistent_warehouse(client):
+    updated_warehouse = test_warehouse
+    updated_warehouse["name"] = "Updated Warehouse"
+    response = client.put(
+        "/warehouses/" + str(non_existent_id),
+        json=updated_warehouse,
+        headers=test_headers,
+    )
+    assert response.status_code == 404
+
+
+def test_update_invalid_warehouse_id(client):
+    updated_warehouse = test_warehouse
+    updated_warehouse["name"] = "Updated Warehouse"
+    response = client.put(
+        "/warehouses/invalid_id", json=updated_warehouse, headers=test_headers
+    )
+    assert response.status_code == 422
+
+
 def test_delete_warehouse(client):
     response = client.delete(
-        "/warehouses/" + str(test_data["id"]), headers=test_headers
+        "/warehouses/" + str(test_warehouse["id"]), headers=test_headers
     )
     assert response.status_code == 200
     response_get = client.get(
-        "/warehouses/" + str(test_data["id"]), headers=test_headers
+        "/warehouses/" + str(test_warehouse["id"]), headers=test_headers
     )
     assert response_get.status_code == 404
 
 
 def test_delete_warehouse_no_api_key(client):
-    response = client.delete("/warehouses/" + str(test_data["id"]))
+    response = client.delete("/warehouses/" + str(test_warehouse["id"]))
     assert response.status_code == 403
 
 
 def test_delete_warehouse_invalid_api_key(client):
     response = client.delete(
-        "/warehouses/" + str(test_data["id"]), headers=invalid_headers
+        "/warehouses/" + str(test_warehouse["id"]), headers=invalid_headers
     )
     assert response.status_code == 403
