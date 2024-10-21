@@ -9,6 +9,7 @@
 
 from fastapi import FastAPI
 from Controllers.ItemController import item_router
+from Controllers.Item_linesController import item_line_router
 from Controllers.Item_groupController import item_group_router
 from Controllers.item_typesController import item_type_router
 from Controllers.ShipmentController import shipment_router
@@ -24,6 +25,7 @@ app = FastAPI()
 v1_url = "/api/v1"
 
 app.include_router(item_router, prefix=v1_url+"/items")
+app.include_router(item_line_router, prefix=v1_url+"/item_lines")
 app.include_router(item_group_router, prefix=v1_url+"/item_groups")
 app.include_router(item_type_router, prefix=v1_url+"/item_types")
 app.include_router(shipment_router, prefix=v1_url+"/shipments")
