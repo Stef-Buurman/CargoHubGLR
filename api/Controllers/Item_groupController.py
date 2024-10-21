@@ -57,7 +57,7 @@ def delete_item_group(item_group_id: int, api_key: str = Depends(auth_provider.g
     item_group_pool = data_provider.fetch_item_group_pool()
     item_group = item_group_pool.get_item_group(item_group_id)
     if item_group is None:
-        raise HTTPException(status_code=404, detail="Item_group not fount")
+        raise HTTPException(status_code=404, detail="Item_group not found")
     item_group_pool.remove_item_group(item_group_id)
     item_group_pool.save()
     return {"massage": "Item_group deleted successfully"}

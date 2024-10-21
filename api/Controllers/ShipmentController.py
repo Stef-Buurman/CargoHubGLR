@@ -46,7 +46,7 @@ def delete_shipment(shipment_id: int, api_key: str = Depends(auth_provider.get_a
     shipment_pool = data_provider.fetch_shipment_pool()
     shipment = shipment_pool.get_shipment(shipment_id)
     if shipment is None:
-        raise HTTPException(status_code=404, detail="Shipment not fount")
+        raise HTTPException(status_code=404, detail="Shipment not found")
     shipment_pool.remove_shipment(shipment_id)
     shipment_pool.save()
     return {"massage": "Shipment deleted successfully"}
