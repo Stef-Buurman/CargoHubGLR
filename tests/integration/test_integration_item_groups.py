@@ -72,23 +72,23 @@ def test_get_nonexistent_item_group(client):
     response = client.get('/item_groups/' + str(non_existent_id), headers=test_headers)
     assert response.status_code == 404
 
-# def test_update_item_group_no_api_key(client):
-#     updated_item_group = test_item_group.copy()
-#     updated_item_group['name'] = 'Updated Inc'
-#     response = client.put(f"/item_groups/{test_item_group['id']}", json=updated_item_group)
-#     assert response.status_code == 403
-#     response_get_item_group = client.get(f"/item_groups/{test_item_group['id']}", headers=test_headers)
-#     assert response_get_item_group.status_code == 200
-#     assert response_get_item_group.json()['name'] == test_item_group['name']
+def test_update_item_group_no_api_key(client):
+    updated_item_group = test_item_group.copy()
+    updated_item_group['name'] = 'Updated Inc'
+    response = client.put(f"/item_groups/{test_item_group['id']}", json=updated_item_group)
+    assert response.status_code == 403
+    response_get_item_group = client.get(f"/item_groups/{test_item_group['id']}", headers=test_headers)
+    assert response_get_item_group.status_code == 200
+    assert response_get_item_group.json()['name'] == test_item_group['name']
 
-# def test_update_item_group_invalid_api_key(client):
-#     updated_item_group = test_item_group.copy()
-#     updated_item_group['name'] = 'Updated Inc'
-#     response = client.put(f"/item_groups/{test_item_group['id']}", json=updated_item_group, headers=invalid_headers)
-#     assert response.status_code == 403
-#     response_get_item_group = client.get(f"/item_groups/{test_item_group['id']}", headers=test_headers)
-#     assert response_get_item_group.status_code == 200
-#     assert response_get_item_group.json()['name'] == test_item_group['name']
+def test_update_item_group_invalid_api_key(client):
+    updated_item_group = test_item_group.copy()
+    updated_item_group['name'] = 'Updated Inc'
+    response = client.put(f"/item_groups/{test_item_group['id']}", json=updated_item_group, headers=invalid_headers)
+    assert response.status_code == 403
+    response_get_item_group = client.get(f"/item_groups/{test_item_group['id']}", headers=test_headers)
+    assert response_get_item_group.status_code == 200
+    assert response_get_item_group.json()['name'] == test_item_group['name']
 
 def test_update_invalid_item_group_id(client):
     updated_item_group = test_item_group.copy()
