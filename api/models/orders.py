@@ -64,16 +64,17 @@ class Orders(Base):
             if not found:
                 inventories = data_provider.fetch_inventory_pool().get_inventories_for_item(current_item["item_id"])
                 min_ordered = float("inf")
-                min_inventory
+                min_inventory = None;
 
                 for inv in inventories:
                     if inv["total_allocated"] > min_ordered:
                         min_ordered = inv["total_allocated"]
                         min_inventory = inv
 
-                min_inventory["total_allocated"] -= current_item["amount"]
-                min_inventory["total_expected"] = updated_item["total_on_hand"] + updated_item["total_ordered"]
-                data_provider.fetch_inventory_pool().update_inventory(min_inventory["id"], min_inventory)
+                if min_inventory:
+                    min_inventory["total_allocated"] -= current_item["amount"]
+                    min_inventory["total_expected"] = min_inventory["total_on_hand"] + min_inventory["total_ordered"]
+                    data_provider.fetch_inventory_pool().update_inventory(min_inventory["id"], min_inventory)
 
         for updated_item in items:
             found = False
@@ -98,7 +99,7 @@ class Orders(Base):
                 if min_inventory:
                     delta_amount = updated_item["amount"] - matching_current_item["amount"]
                     min_inventory["total_allocated"] += delta_amount
-                    min_inventory["total_expected"] = updated_item["total_on_hand"] + updated_item["total_ordered"]
+                    min_inventory["total_expected"] = min_inventory["total_on_hand"] + min_inventory["total_ordered"]
                     data_provider.fetch_inventory_pool().update_inventory(min_inventory["id"], min_inventory)
 
         order["items"] = items
