@@ -28,7 +28,6 @@ def read_items_for_item_group(item_group_id: int, api_key: str = Depends(auth_pr
         raise HTTPException(status_code=404, detail=f"No items found for item_group with id {item_group_id}")
     return JSONResponse(status_code=status.HTTP_200_OK, content=items)
 
-
 @item_group_router.post("/")
 def create_item_group(item_group: dict, api_key: str = Depends(auth_provider.get_api_key)):
     data_provider.init()
