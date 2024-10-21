@@ -7,7 +7,7 @@ ITEM_GROUPS = []
 
 class ItemGroups(Base):
     def __init__(self, root_path, is_debug=False):
-        self.data_path = root_path + "item_lines.json"
+        self.data_path = root_path + "item_groups.json"
         self.load(is_debug)
 
     def get_item_groups(self):
