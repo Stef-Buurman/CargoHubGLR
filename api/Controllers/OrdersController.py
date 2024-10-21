@@ -65,7 +65,7 @@ def delete_order(order_id: int, api_key: str = Depends(auth_provider.get_api_key
 
     order = order_pool.get_order(order_id)
     if order is None:
-        raise HTTPException(status_code=404, detail="Order not fount")
+        raise HTTPException(status_code=404, detail="Order not found")
     
     order_pool.remove_order(order_id)
     order_pool.save()
