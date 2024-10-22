@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Response, status
 from fastapi.responses import JSONResponse
 from providers import data_provider, auth_provider
 
@@ -19,6 +19,17 @@ def read_shipments(api_key: str = Depends(auth_provider.get_api_key)):
     if shipments is None:
         raise HTTPException(status_code=404, detail="No shipments found")
     return shipments
+
+@shipment_router.get("/{shipment_id}/orders")
+def read_orders_for_shipment(shipment_id: int, api_key: str = Depends(auth_provider.get_api_key)):
+    data_provider.init()
+    shipment = data_provider.fetch_shipment_pool().get_shipment(shipment_id)
+    if shipment is None:
+        raise HTTPException(status_code=404, detail=f"Shipment with id {shipment_id} not found")
+    orders = data_provider.fetch_order_pool().get_orders_in_shipment(shipment_id)
+    if not orders:
+        return Response(status_code=status.HTTP_204_NO_CONTENT)
+    return orders
 
 @shipment_router.post("/")
 def create_shipment(shipment: dict, api_key: str = Depends(auth_provider.get_api_key)):
