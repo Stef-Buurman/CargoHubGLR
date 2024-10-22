@@ -3,7 +3,7 @@ name: Python application
 on:
   push:
     branches: [ "88-create-workflow-to-run-the-project" ]
- 
+
 jobs:
   build:
     runs-on: self-hosted
@@ -12,7 +12,7 @@ jobs:
     - name: Set up Python 3.13.0 manually
       run: |
         echo "Adding Python 3.13 to PATH"
-        export PATH="/usr/local/bin/python3.13:$PATH"
+        export PATH="/usr/local/bin:$PATH"
         python3.13 --version
     - name: Set up Python 3.13.0
       uses: actions/setup-python@v5
