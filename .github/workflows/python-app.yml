@@ -9,12 +9,11 @@ jobs:
     runs-on: self-hosted
     steps:
     - uses: actions/checkout@v4
-    - name: Download and install Python 3.13.0
+    - name: Set up Python 3.13.0 manually
       run: |
-        wget https://github.com/actions/python-versions/releases/download/3.13.0-11228081754/python-3.13.0-linux-22.04-x64.tar.gz
-        tar -xzf python-3.13.0-linux-22.04-x64.tar.gz
-        sudo cp -r python-3.13.0 /usr/local/
+        echo "Adding Python 3.13 to PATH"
         export PATH="/usr/local/bin/python3.13:$PATH"
+        python3.13 --version
     - name: Set up Python 3.13.0
       uses: actions/setup-python@v5
       with:
