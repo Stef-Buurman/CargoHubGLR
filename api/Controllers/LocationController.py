@@ -66,4 +66,5 @@ def delete_location(
         )
     data_provider.fetch_location_pool().remove_location(location_id)
     data_provider.fetch_location_pool().save()
-    return Response(status_code=status.HTTP_204_NO_CONTENT)
+    return {"message": "Location deleted successfully"}
+
