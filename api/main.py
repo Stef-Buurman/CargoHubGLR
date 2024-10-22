@@ -17,6 +17,7 @@ from Controllers.ClientController import client_router
 from Controllers.WarehouseController import warehouse_router
 from Controllers.InventoryController import inventory_router
 from Controllers.OrdersController import order_router
+from Controllers.SupplierController import supplier_router
 from Controllers.TransferController import transfer_router
 import uvicorn
 
@@ -33,6 +34,7 @@ app.include_router(client_router, prefix=v1_url+"/clients")
 app.include_router(warehouse_router, prefix=v1_url+"/warehouses")
 app.include_router(inventory_router, prefix=v1_url+"/inventories")
 app.include_router(order_router, prefix=v1_url+"/orders")
+app.include_router(supplier_router, prefix=v1_url+"/suppliers")
 app.include_router(transfer_router, prefix=v1_url+"/transfers")
 
 
