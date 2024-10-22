@@ -19,10 +19,10 @@ jobs:
         python -m pip install --upgrade pip
         pip install flake8
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-    - name: Run the application
-      run: |
-        # Command to run your Python application (e.g., python app.py or similar)
-        python api/main.py
+    # - name: Run the application
+    #   run: |
+    #     # Command to run your Python application (e.g., python app.py or similar)
+    #     python api/main.py
     # - name: Lint with flake8
     #   run: |
     #     # stop the build if there are Python syntax errors or undefined names
@@ -48,6 +48,7 @@ jobs:
       run: |
           # Run the Python application inside the api folder in the background
           python api/main.py &
+          echo $! > app_pid.txt  # Save the process ID (PID) to a file
           sleep 5  # Adjust sleep time if needed to allow the app to start
     - name: Test with pytest
       run: |
@@ -63,6 +64,10 @@ jobs:
 
         # Report again and fail if under 100%.
         coverage report --fail-under=90
+    - name: Stop the application
+      run: |
+          # Kill the application using the saved PID
+          kill $(cat app_pid.txt)
     - name: Store coverage report
       uses: actions/upload-artifact@v4
       with:
