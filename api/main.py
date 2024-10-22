@@ -18,6 +18,7 @@ from Controllers.WarehouseController import warehouse_router
 from Controllers.InventoryController import inventory_router
 from Controllers.OrdersController import order_router
 from Controllers.TransferController import transfer_router
+from Controllers.LocationController import location_router
 import uvicorn
 
 app = FastAPI()
@@ -34,6 +35,7 @@ app.include_router(warehouse_router, prefix=v1_url+"/warehouses")
 app.include_router(inventory_router, prefix=v1_url+"/inventories")
 app.include_router(order_router, prefix=v1_url+"/orders")
 app.include_router(transfer_router, prefix=v1_url+"/transfers")
+app.include_router(location_router, prefix=v1_url+"/locations")
 
 
 def main():
