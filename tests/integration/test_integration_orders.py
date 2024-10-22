@@ -107,7 +107,7 @@ def test_get_order_invalid_api_key(client):
 
 
 def test_get_order_items(client):
-    response = client.get(f'/orders/{str(test_order['id'])}/items', headers=test_headers)
+    response = client.get(f'/orders/{str(test_order["id"])}/items', headers=test_headers)
     assert response.status_code == 200
     assert isinstance(response.json(), list)
     assert len(response.json()) == len(test_order['items'])
@@ -117,12 +117,12 @@ def test_get_order_items(client):
 
 
 def test_get_order_items_no_api_key(client):
-    response = client.get(f'/orders/{str(test_order['id'])}/items')
+    response = client.get(f'/orders/{str(test_order["id"])}/items')
     assert response.status_code == 403
 
 
 def test_get_order_items_invalid_api_key(client):
-    response = client.get(f'/orders/{str(test_order['id'])}/items', headers=invalid_headers)
+    response = client.get(f'/orders/{str(test_order["id"])}/items', headers=invalid_headers)
     assert response.status_code == 403
 
 
