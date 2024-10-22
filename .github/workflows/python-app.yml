@@ -2,7 +2,7 @@ name: Python application
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "88-create-workflow-to-run-the-project" ]
 
 jobs:
   build:
