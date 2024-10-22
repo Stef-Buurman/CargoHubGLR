@@ -42,10 +42,6 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Test with pytest
       run: |
-        pytest
-        pytest --cov --cov-report term --cov-report xml:coverage.xml
-    - name: Test with pytest
-      run: |
         coverage run -m pytest .\tests\integration\
     - name: Run code coverage
       run: |
