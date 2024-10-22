@@ -43,6 +43,12 @@ def test_get_all_warehouses_invalid_api_key(client):
     assert response.status_code == 403
 
 
+def test_get_locations_by_warehouse_id(client):
+    response = client.get(f"/warehouses/{test_warehouse['id']}/locations", headers=test_headers)
+    assert response.status_code == 200
+    assert isinstance(response.json(), list)
+
+
 def test_add_warehouse(client):
     response = client.post("/warehouses/", json=test_warehouse, headers=test_headers)
     assert response.status_code == 201 or response.status_code == 200
