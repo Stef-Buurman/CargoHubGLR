@@ -62,6 +62,33 @@ def update_transfer(
     return transfer
 
 
+@transfer_router.put("/{transfer_id}/commit")
+def commit_transfer(transfer_id: int, api_key: str = Depends(auth_provider.get_api_key)):
+    data_provider.init()
+    transfer = data_provider.fetch_transfer_pool().get_transfer(transfer_id)
+    if transfer is None:
+        raise HTTPException(status_code=404, detail="Transfer not found")
+    for x in transfer["items"]:
+        inventories = data_provider.fetch_inventory_pool().get_inventories_for_item(x["item_id"])
+        
+        for y in inventories:
+            if y["location_id"] == transfer["transfer_from"]:
+                y["total_on_hand"] -= x["amount"]
+                y["total_expected"] = y["total_on_hand"] + y["total_ordered"]
+                y["total_available"] = y["total_on_hand"] - y["total_allocated"]
+                data_provider.fetch_inventory_pool().update_inventory(y["id"], y)
+            elif y["location_id"] == transfer["transfer_to"]:
+                y["total_on_hand"] += x["amount"]
+                y["total_expected"] = y["total_on_hand"] + y["total_ordered"]
+                y["total_available"] = y["total_on_hand"] - y["total_allocated"]
+                data_provider.fetch_inventory_pool().update_inventory(y["id"], y)
+    transfer["transfer_status"] = "Processed"
+    data_provider.fetch_transfer_pool().update_transfer(transfer_id, transfer)
+    data_provider.fetch_transfer_pool().save()
+    data_provider.fetch_inventory_pool().save()
+    return {"message": "Transfer committed successfully"}
+
+
 @transfer_router.delete("/{transfer_id}")
 def delete_transfer(
     transfer_id: int, api_key: str = Depends(auth_provider.get_api_key)
