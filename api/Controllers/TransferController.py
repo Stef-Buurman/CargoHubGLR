@@ -25,7 +25,9 @@ def read_transfers(api_key: str = Depends(auth_provider.get_api_key)):
 
 
 @transfer_router.get("/items/{transfer_id}")
-def read_transfer_items(transfer_id: int, api_key: str = Depends(auth_provider.get_api_key)):
+def read_transfer_items(
+    transfer_id: int, api_key: str = Depends(auth_provider.get_api_key)
+):
     data_provider.init()
     transfer = data_provider.fetch_transfer_pool().get_transfer(transfer_id)
     if transfer is None:
@@ -48,7 +50,9 @@ def create_transfer(transfer: dict, api_key: str = Depends(auth_provider.get_api
 
 
 @transfer_router.put("/{transfer_id}")
-def update_transfer(transfer_id: int, transfer: dict, api_key: str = Depends(auth_provider.get_api_key)):
+def update_transfer(
+    transfer_id: int, transfer: dict, api_key: str = Depends(auth_provider.get_api_key)
+):
     data_provider.init()
     existing_transfer = data_provider.fetch_transfer_pool().get_transfer(transfer_id)
     if existing_transfer is None:
@@ -59,7 +63,9 @@ def update_transfer(transfer_id: int, transfer: dict, api_key: str = Depends(aut
 
 
 @transfer_router.delete("/{transfer_id}")
-def delete_transfer(transfer_id: int, api_key: str = Depends(auth_provider.get_api_key)):
+def delete_transfer(
+    transfer_id: int, api_key: str = Depends(auth_provider.get_api_key)
+):
     data_provider.init()
     transfer = data_provider.fetch_transfer_pool().get_transfer(transfer_id)
     if transfer is None:

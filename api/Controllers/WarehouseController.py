@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Response
 from providers import data_provider, auth_provider
 from fastapi.responses import JSONResponse
 
@@ -22,6 +22,18 @@ def read_warehouses(api_key: str = Depends(auth_provider.get_api_key)):
     if warehouses is None:
         raise HTTPException(status_code=404, detail="No warehouses found")
     return warehouses
+
+
+@warehouse_router.get("/{warehouse_id}/locations")
+def read_locations_in_warehouse(warehouse_id: int, api_key: str = Depends(auth_provider.get_api_key)):
+    data_provider.init()
+    warehouse = data_provider.fetch_warehouse_pool().get_warehouse(warehouse_id)
+    if warehouse is None:
+        raise HTTPException(status_code=404, detail=f"Warehouse with id {warehouse_id} not found")
+    locations = data_provider.fetch_location_pool().get_locations_in_warehouse(warehouse_id)
+    if locations is None:
+        return Response(status_code=status.HTTP_204_NO_CONTENT)
+    return locations
 
 
 @warehouse_router.post("/")
