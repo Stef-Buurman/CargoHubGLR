@@ -26,28 +26,6 @@ def read_locations(api_key: str = Depends(auth_provider.get_api_key)):
     return locations
 
 
-@location_router.get("/warehouse/{warehouse_id}")
-def read_locations_in_warehouse(
-    warehouse_id: int, api_key: str = Depends(auth_provider.get_api_key)
-):
-    data_provider.init()
-    warehouse = data_provider.fetch_warehouse_pool().get_warehouse(warehouse_id)
-    if warehouse is None:
-        raise HTTPException(
-            status_code=404, detail=f"Warehouse with id {warehouse_id} not found"
-        )
-
-    locations = data_provider.fetch_location_pool().get_locations_in_warehouse(
-        warehouse_id
-    )
-    if locations is None:
-        raise HTTPException(
-            status_code=404,
-            detail=f"No locations found in warehouse with id {warehouse_id}",
-        )
-    return locations
-
-
 @location_router.post("/")
 def create_location(location: dict, api_key: str = Depends(auth_provider.get_api_key)):
     data_provider.init()
