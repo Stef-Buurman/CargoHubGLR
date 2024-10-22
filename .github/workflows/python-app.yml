@@ -42,7 +42,7 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Test with pytest
       run: |
-        coverage run -m pytest .\tests\integration\
+        coverage run -m pytest
     - name: Run code coverage
       run: |
         # Run coverage report
