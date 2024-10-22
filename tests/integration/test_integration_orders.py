@@ -178,9 +178,9 @@ def test_update_order(client):
 def test_update_order_items_no_api_key(client):
     test_order_items = test_order['items'].copy()
     test_order_items.append({'item_id': 'P010672', 'amount': 19})
-    response = client.put(f'/orders/{str(test_order['id'])}/items', json=test_order_items)
+    response = client.put(f'/orders/{str(test_order["id"])}/items', json=test_order_items)
     assert response.status_code == 403
-    response_get_order = client.get(f'/orders/{str(test_order['id'])}/items', headers=test_headers)
+    response_get_order = client.get(f'/orders/{str(test_order["id"])}/items', headers=test_headers)
     assert response_get_order.status_code == 200
     assert len(response_get_order.json()) == len(test_order['items'])
     for i in range(len(response_get_order.json())):
@@ -191,9 +191,9 @@ def test_update_order_items_no_api_key(client):
 def test_update_order_items_invalid_api_key(client):
     test_order_items = test_order['items'].copy()
     test_order_items.append({'item_id': 'P010672', 'amount': 19})
-    response = client.put(f'/orders/{str(test_order['id'])}/items', json=test_order_items, headers=invalid_headers)
+    response = client.put(f'/orders/{str(test_order["id"])}/items', json=test_order_items, headers=invalid_headers)
     assert response.status_code == 403
-    response_get_order = client.get(f'/orders/{str(test_order['id'])}/items', headers=test_headers)
+    response_get_order = client.get(f'/orders/{str(test_order["id"])}/items', headers=test_headers)
     assert response_get_order.status_code == 200
     assert len(response_get_order.json()) == len(test_order['items'])
     for i in range(len(response_get_order.json())):
@@ -218,9 +218,9 @@ def test_update_order_items_non_existent_id(client):
 def test_update_order_items(client):
     test_order_items = test_order['items'].copy()
     test_order_items.append({'item_id': 'P010672', 'amount': 19})
-    response = client.put(f'/orders/{str(test_order['id'])}/items', json=test_order_items, headers=test_headers)
+    response = client.put(f'/orders/{str(test_order["id"])}/items', json=test_order_items, headers=test_headers)
     assert response.status_code == 200
-    response_get_order = client.get(f'/orders/{str(test_order['id'])}/items', headers=test_headers)
+    response_get_order = client.get(f'/orders/{str(test_order["id"])}/items', headers=test_headers)
     assert response_get_order.status_code == 200
     assert len(response_get_order.json()) == len(test_order_items)
     for i in range(len(response_get_order.json())):
