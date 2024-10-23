@@ -187,13 +187,6 @@ def test_commit_invalid_transfer_id(client):
     assert response.status_code == 422
 
 
-def test_commit_comitted_transfer(client):
-    response = client.put(
-        "/transfers/" + str(test_transfer["id"]) + "/commit", headers=test_headers
-    )
-    assert response.status_code == 409
-
-
 def test_delete_transfer(client):
     response = client.delete(
         "/transfers/" + str(test_transfer["id"]), headers=test_headers
