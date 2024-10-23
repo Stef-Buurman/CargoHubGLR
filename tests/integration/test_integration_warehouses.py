@@ -44,9 +44,42 @@ def test_get_all_warehouses_invalid_api_key(client):
 
 
 def test_get_locations_by_warehouse_id(client):
-    response = client.get(f"/warehouses/{test_warehouse['id']}/locations", headers=test_headers)
+    response = client.get(
+        f"/warehouses/{test_warehouse['id']}/locations", headers=test_headers
+    )
     assert response.status_code == 200
     assert isinstance(response.json(), list)
+
+
+def test_get_locations_by_warehouse_id_no_api_key(client):
+    response = client.get(f"/warehouses/{test_warehouse['id']}/locations")
+    assert response.status_code == 403
+
+
+def test_get_locations_by_warehouse_id_invalid_api_key(client):
+    response = client.get(
+        f"/warehouses/{test_warehouse['id']}/locations", headers=invalid_headers
+    )
+    assert response.status_code == 403
+
+
+def test_get_locations_by_nonexistent_warehouse_id(client):
+    response = client.get(
+        f"/warehouses/{non_existent_id}/locations", headers=test_headers
+    )
+    assert response.status_code == 404
+
+
+def test_get_locations_by_invalid_warehouse_id(client):
+    response = client.get("/warehouses/invalid_id/locations", headers=test_headers)
+    assert response.status_code == 422
+
+
+def test_get_locations_by_warehouse_id_no_locations(client):
+    response = client.get(
+        f"/warehouses/{test_warehouse['id']}/locations", headers=test_headers
+    )
+    assert response.status_code == 404
 
 
 def test_add_warehouse(client):
