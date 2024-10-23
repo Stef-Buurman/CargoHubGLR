@@ -29,8 +29,8 @@ def read_locations(api_key: str = Depends(auth_provider.get_api_key)):
 @location_router.post("/")
 def create_location(location: dict, api_key: str = Depends(auth_provider.get_api_key)):
     data_provider.init()
-    location = data_provider.fetch_location_pool().get_location(location["id"])
-    if location is not None:
+    existing_location = data_provider.fetch_location_pool().get_location(location["id"])
+    if existing_location is not None:
         raise HTTPException(
             status_code=400, detail=f"Location with id {location['id']} already exists"
         )
@@ -67,4 +67,3 @@ def delete_location(
     data_provider.fetch_location_pool().remove_location(location_id)
     data_provider.fetch_location_pool().save()
     return {"message": "Location deleted successfully"}
-
