@@ -32,7 +32,7 @@ def read_inventory_of_item(item_id: str, api_key: str = Depends(auth_provider.ge
     return inventories
 
 @item_router.get("/{item_id}/inventory/totals")
-def read_inventory_of_item(item_id: str, api_key: str = Depends(auth_provider.get_api_key)):
+def read_inventory_totals_of_item(item_id: str, api_key: str = Depends(auth_provider.get_api_key)):
     data_provider.init()
     item = data_provider.fetch_item_pool().get_item(item_id)
     if item is None:
