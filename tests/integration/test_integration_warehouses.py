@@ -20,6 +20,15 @@ test_warehouse = {
     "updated_at": "2007-02-08 20:11:00",
 }
 
+test_location = {
+    "id": 99999999999999999,
+    "warehouse_id": 99999999999999999,
+    "code": "A.1.0",
+    "name": "Row: A, Rack: 1, Shelf: 0",
+    "created_at": "1992-05-15 03:21:32",
+    "updated_at": "1992-05-15 03:21:32",
+}
+
 
 @pytest.fixture
 def client():
@@ -44,11 +53,27 @@ def test_get_all_warehouses_invalid_api_key(client):
 
 
 def test_get_locations_by_warehouse_id(client):
+    response = client.post("/warehouses/", json=test_warehouse, headers=test_headers)
+    assert response.status_code == 201 or response.status_code == 200
+    assert response.json()["id"] == test_warehouse["id"]
+
+    response = client.post("/locations/", json=test_location, headers=test_headers)
+    assert response.status_code == 201 or response.status_code == 200
+    assert response.json()["id"] == test_location["id"]
+
     response = client.get(
         f"/warehouses/{test_warehouse['id']}/locations", headers=test_headers
     )
     assert response.status_code == 200
     assert isinstance(response.json(), list)
+
+    response = client.delete(
+        f"/warehouses/{test_warehouse['id']}", headers=test_headers
+    )
+    assert response.status_code == 200
+
+    response = client.delete(f"/locations/{test_location['id']}", headers=test_headers)
+    assert response.status_code == 200
 
 
 def test_get_locations_by_warehouse_id_no_api_key(client):
