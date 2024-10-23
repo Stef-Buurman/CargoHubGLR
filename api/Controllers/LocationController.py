@@ -44,8 +44,8 @@ def update_location(
     location_id: int, location: dict, api_key: str = Depends(auth_provider.get_api_key)
 ):
     data_provider.init()
-    location = data_provider.fetch_location_pool().get_location(location_id)
-    if location is None:
+    existing_location = data_provider.fetch_location_pool().get_location(location_id)
+    if existing_location is None:
         raise HTTPException(
             status_code=404, detail=f"Location with id {location_id} not found"
         )
