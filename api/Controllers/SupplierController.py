@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Response, status
 from fastapi.responses import JSONResponse
 from providers import data_provider, auth_provider
 
@@ -23,10 +23,15 @@ def read_suppliers(api_key: str = Depends(auth_provider.get_api_key)):
 @supplier_router.get("/{supplier_id}/items")
 def read_items_of_supplier(supplier_id: int, api_key: str = Depends(auth_provider.get_api_key)):
     data_provider.init()
-    supplier = data_provider.fetch_item_pool().get_items_for_supplier(supplier_id)
+
+    supplier = data_provider.fetch_supplier_pool().get_supplier(supplier_id)
     if supplier is None:
         raise HTTPException(status_code=404, detail=f"Supplier with id {supplier_id} not found")
-    return supplier
+    
+    items_for_supplier = data_provider.fetch_item_pool().get_items_for_supplier(supplier_id)
+    if not items_for_supplier:
+        return Response(status_code=status.HTTP_204_NO_CONTENT)
+    return items_for_supplier
 
 @supplier_router.post("/")
 def create_supplier(supplier: dict, api_key: str = Depends(auth_provider.get_api_key)):
