@@ -24,7 +24,7 @@ def read_transfers(api_key: str = Depends(auth_provider.get_api_key)):
     return transfers
 
 
-@transfer_router.get("/items/{transfer_id}")
+@transfer_router.get("/{transfer_id}/items")
 def read_transfer_items(
     transfer_id: int, api_key: str = Depends(auth_provider.get_api_key)
 ):
@@ -63,14 +63,18 @@ def update_transfer(
 
 
 @transfer_router.put("/{transfer_id}/commit")
-def commit_transfer(transfer_id: int, api_key: str = Depends(auth_provider.get_api_key)):
+def commit_transfer(
+    transfer_id: int, api_key: str = Depends(auth_provider.get_api_key)
+):
     data_provider.init()
     transfer = data_provider.fetch_transfer_pool().get_transfer(transfer_id)
     if transfer is None:
         raise HTTPException(status_code=404, detail="Transfer not found")
     for x in transfer["items"]:
-        inventories = data_provider.fetch_inventory_pool().get_inventories_for_item(x["item_id"])
-        
+        inventories = data_provider.fetch_inventory_pool().get_inventories_for_item(
+            x["item_id"]
+        )
+
         for y in inventories:
             if y["location_id"] == transfer["transfer_from"]:
                 y["total_on_hand"] -= x["amount"]
