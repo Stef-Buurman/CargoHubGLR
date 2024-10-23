@@ -31,8 +31,8 @@ def read_locations_in_warehouse(warehouse_id: int, api_key: str = Depends(auth_p
     if warehouse is None:
         raise HTTPException(status_code=404, detail=f"Warehouse with id {warehouse_id} not found")
     locations = data_provider.fetch_location_pool().get_locations_in_warehouse(warehouse_id)
-    if locations is None:
-        return Response(status_code=status.HTTP_204_NO_CONTENT)
+    # if locations is None:
+    #     return Response(status_code=status.HTTP_204_NO_CONTENT)
     return locations
 
 
