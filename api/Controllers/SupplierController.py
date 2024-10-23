@@ -29,8 +29,8 @@ def read_items_of_supplier(supplier_id: int, api_key: str = Depends(auth_provide
         raise HTTPException(status_code=404, detail=f"Supplier with id {supplier_id} not found")
     
     items_for_supplier = data_provider.fetch_item_pool().get_items_for_supplier(supplier_id)
-    if not items_for_supplier:
-        return Response(status_code=status.HTTP_204_NO_CONTENT)
+    # if not items_for_supplier:
+    #     return Response(status_code=status.HTTP_204_NO_CONTENT)
     return items_for_supplier
 
 @supplier_router.post("/")
