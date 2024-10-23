@@ -24,6 +24,29 @@ test_item = {
         "updated_at": "2015-09-26 06:37:56"
     }
 
+test_inventory = {
+        "id": 99999999999999999,
+        "item_id": test_item["uid"],
+        "description": "Multi-layered intangible artificial intelligence",
+        "item_reference": "aro81493o",
+        "locations": [
+            27132,
+            11010,
+            10381,
+            34058,
+            31838,
+            21993,
+            9540
+        ],
+        "total_on_hand": 159,
+        "total_expected": 0,
+        "total_ordered": 91,
+        "total_allocated": 5,
+        "total_available": 63,
+        "created_at": "1986-10-17 07:19:42",
+        "updated_at": "1989-03-30 17:53:04"
+    }
+
 @pytest.fixture
 def client():
     with httpx.Client(base_url=MAIN_URL) as client:
@@ -92,6 +115,59 @@ def test_get_item_by_id(client):
 def test_get_nonexistent_item(client):
     response = client.get('/items/' + str(non_existent_id), headers=test_headers)
     assert response.status_code == 404
+
+
+def test_get_inventory_of_item_no_api_key(client):
+    response = client.get('/items/' + test_item['uid'] + '/inventory')
+    assert response.status_code == 403
+
+
+def test_get_inventory_of_item_invalid_api_key(client):
+    response = client.get('/items/' + test_item['uid'] + '/inventory', headers=invalid_headers)
+    assert response.status_code == 403
+
+
+def test_get_inventory_of_nonexistent_item(client):
+    response = client.get('/items/' + str(non_existent_id) + '/inventory', headers=test_headers)
+    assert response.status_code == 404
+
+
+def test_get_inventory_of_item(client):
+    responseAddInventory = client.post('/inventories/', json=test_inventory, headers=test_headers)
+    assert responseAddInventory.status_code == 201 or responseAddInventory.status_code == 200
+    response = client.get('/items/' + test_item['uid'] + '/inventory', headers=test_headers)
+    assert response.status_code == 200
+    assert isinstance(response.json(), list)
+    assert response.json()[0]['item_id'] == test_item['uid']
+
+
+def test_get_inventory_totals_of_item_no_api_key(client):
+    response = client.get('/items/' + test_item['uid'] + '/inventory/totals')
+    assert response.status_code == 403
+
+
+def test_get_inventory_totals_of_item_invalid_api_key(client):
+    response = client.get('/items/' + test_item['uid'] + '/inventory/totals', headers=invalid_headers)
+    assert response.status_code == 403
+
+
+def test_get_inventory_totals_of_nonexistent_item(client):
+    response = client.get('/items/' + str(non_existent_id) + '/inventory/totals', headers=test_headers)
+    assert response.status_code == 404
+
+
+def test_get_inventory_totals_of_item(client):
+    response = client.get('/items/' + test_item['uid'] + '/inventory/totals', headers=test_headers)
+    assert response.status_code == 200
+    assert isinstance(response.json(), dict)
+    assert response.json()['total_expected'] == test_inventory['total_expected']
+    assert response.json()['total_ordered'] == test_inventory['total_ordered']
+    assert response.json()['total_allocated'] == test_inventory['total_allocated']
+    assert response.json()['total_available'] == test_inventory['total_available']
+    responseDeleteInventory = client.delete('/inventories/' + str(test_inventory['id']), headers=test_headers)
+    assert responseDeleteInventory.status_code == 200
+    responseGetInventory = client.get('/inventories/' + str(test_inventory['id']), headers=test_headers)
+    assert responseGetInventory.status_code == 404 
 
 
 def test_update_item_no_api_key(client):
