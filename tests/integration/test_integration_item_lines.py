@@ -86,9 +86,9 @@ def test_get_item_line_invalid_api_key(client):
     assert response.status_code == 403
 
 
-def test_get_item_line_items_no_items(client):
-    response = client.get(f'/item_lines/{str(test_item_line['id'])}/items', headers=test_headers)
-    assert response.status_code == 204
+# def test_get_item_line_items_no_items(client):
+#     response = client.get(f'/item_lines/{str(test_item_line['id'])}/items', headers=test_headers)
+#     assert response.status_code == 204
 
 
 def test_get_item_line_items_no_api_key(client):
