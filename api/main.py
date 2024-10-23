@@ -9,14 +9,14 @@
 
 from fastapi import FastAPI
 from Controllers.ItemController import item_router
-from Controllers.Item_linesController import item_line_router
+from Controllers.Item_lineController import item_line_router
 from Controllers.Item_groupController import item_group_router
-from Controllers.item_typesController import item_type_router
+from Controllers.Item_typeController import item_type_router
 from Controllers.ShipmentController import shipment_router
 from Controllers.ClientController import client_router
 from Controllers.WarehouseController import warehouse_router
 from Controllers.InventoryController import inventory_router
-from Controllers.OrdersController import order_router
+from Controllers.OrderController import order_router
 from Controllers.SupplierController import supplier_router
 from Controllers.TransferController import transfer_router
 from Controllers.LocationController import location_router
