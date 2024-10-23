@@ -94,20 +94,20 @@ def test_get_transfer_invalid_api_key(client):
 
 def test_get_transfer_items(client):
     response = client.get(
-        "/transfers/items/" + str(test_transfer["id"]), headers=test_headers
+        f"/transfers/{str(test_transfer['id'])}/items", headers=test_headers
     )
     assert response.status_code == 200
     assert isinstance(response.json(), list)
 
 
 def test_get_transfer_items_no_api_key(client):
-    response = client.get("/transfers/items/" + str(test_transfer["id"]))
+    response = client.get(f"/transfers/{str(test_transfer['id'])}/items")
     assert response.status_code == 403
 
 
 def test_get_transfer_items_invalid_api_key(client):
     response = client.get(
-        "/transfers/items/" + str(test_transfer["id"]), headers=invalid_headers
+        f"/transfers/{str(test_transfer['id'])}/items", headers=invalid_headers
     )
     assert response.status_code == 403
 
