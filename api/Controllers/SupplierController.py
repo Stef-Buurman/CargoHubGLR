@@ -20,6 +20,14 @@ def read_suppliers(api_key: str = Depends(auth_provider.get_api_key)):
         raise HTTPException(status_code=404, detail="Suppliers not found")
     return suppliers
 
+@supplier_router.get("/{supplier_id}/items")
+def read_items_of_supplier(supplier_id: int, api_key: str = Depends(auth_provider.get_api_key)):
+    data_provider.init()
+    supplier = data_provider.fetch_item_pool().get_items_for_supplier(supplier_id)
+    if supplier is None:
+        raise HTTPException(status_code=404, detail=f"Supplier with id {supplier_id} not found")
+    return supplier
+
 @supplier_router.post("/")
 def create_supplier(supplier: dict, api_key: str = Depends(auth_provider.get_api_key)):
     data_provider.init()
