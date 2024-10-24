@@ -79,6 +79,33 @@ class Shipments(Base):
             if x["id"] == shipment_id:
                 self.data.remove(x)
 
+    def update_items_for_shipment(self, shipment_id, items):
+        shipment = self.get_shipment(shipment_id)
+        current_items = shipment["items"]
+
+        def update_inventory(item_id, amount_change):
+            inventories = data_provider.fetch_inventory_pool().get_inventories_for_item(item_id)
+            max_inventory = max(inventories, key=lambda z: z["total_ordered"], default=None)
+
+            if max_inventory:
+                max_inventory["total_ordered"] += amount_change
+                max_inventory["total_expected"] = max_inventory["total_on_hand"] + max_inventory["total_ordered"]
+                data_provider.fetch_inventory_pool().update_inventory(max_inventory["id"], max_inventory)
+
+        for current in current_items:
+            if not any(current["item_id"] == item["item_id"] for item in items):
+                update_inventory(current["item_id"], -current["amount"])
+
+        for current in current_items:
+            for new in items:
+                if current["item_id"] == new["item_id"]:
+                    amount_change = new["amount"] - current["amount"]
+                    update_inventory(current["item_id"], amount_change)
+
+        shipment["items"] = items
+        self.update_shipment(shipment_id, shipment)
+
+
     def load(self, is_debug):
         if is_debug:
             self.data = SHIPMENTS
