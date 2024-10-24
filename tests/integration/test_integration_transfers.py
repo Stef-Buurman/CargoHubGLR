@@ -94,20 +94,20 @@ def test_get_transfer_invalid_api_key(client):
 
 def test_get_transfer_items(client):
     response = client.get(
-        "/transfers/items/" + str(test_transfer["id"]), headers=test_headers
+        f"/transfers/{str(test_transfer['id'])}/items", headers=test_headers
     )
     assert response.status_code == 200
     assert isinstance(response.json(), list)
 
 
 def test_get_transfer_items_no_api_key(client):
-    response = client.get("/transfers/items/" + str(test_transfer["id"]))
+    response = client.get(f"/transfers/{str(test_transfer['id'])}/items")
     assert response.status_code == 403
 
 
 def test_get_transfer_items_invalid_api_key(client):
     response = client.get(
-        "/transfers/items/" + str(test_transfer["id"]), headers=invalid_headers
+        f"/transfers/{str(test_transfer['id'])}/items", headers=invalid_headers
     )
     assert response.status_code == 403
 
@@ -150,6 +150,40 @@ def test_update_invalid_transfer_id(client):
     response = client.put(
         "/transfers/invalid_id", json=test_transfer, headers=test_headers
     )
+    assert response.status_code == 422
+
+
+def test_commit_transfer(client):
+    response = client.put(
+        "/transfers/" + str(test_transfer["id"]) + "/commit", headers=test_headers
+    )
+    assert response.status_code == 200
+
+
+def test_commit_transfer_no_api_key(client):
+    response = client.put("/transfers/" + str(test_transfer["id"]) + "/commit")
+    assert response.status_code == 403
+
+
+def test_commit_transfer_invalid_api_key(client):
+    response = client.put(
+        "/transfers/" + str(test_transfer["id"]) + "/commit", headers=invalid_headers
+    )
+    assert response.status_code == 403
+
+
+def test_commit_non_existent_transfer(client):
+    response = client.put(
+        "/transfers/" + str(non_existent_id) + "/commit", headers=test_headers
+    )
+    assert response.status_code == 404
+    response_json = response.json()
+    assert response_json is not None
+    assert response_json["detail"] == "Transfer not found"
+
+
+def test_commit_invalid_transfer_id(client):
+    response = client.put("/transfers/invalid_id/commit", headers=test_headers)
     assert response.status_code == 422
 
 

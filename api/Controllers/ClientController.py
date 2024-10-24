@@ -21,6 +21,17 @@ def read_clients(api_key: str = Depends(auth_provider.get_api_key)):
         raise HTTPException(status_code=404, detail="No clients found")
     return clients
 
+@client_router.get("/{client_id}/orders")
+def read_client_orders(client_id: int, api_key: str = Depends(auth_provider.get_api_key)):
+    data_provider.init()
+    client = data_provider.fetch_client_pool().get_client(client_id)
+    if client is None:
+        raise HTTPException(status_code=404, detail="Client not found")
+    orders = data_provider.fetch_order_pool().get_orders_for_client(client_id)
+    if orders is None:
+        raise HTTPException(status_code=404, detail="No orders found for client")
+    return orders
+
 
 @client_router.post("/")
 def create_client(client: dict, api_key: str = Depends(auth_provider.get_api_key)):
