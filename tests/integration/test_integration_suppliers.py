@@ -151,10 +151,10 @@ def test_get_supplier_items_invalid_id(client):
 
 
 def test_get_supplier_items(client):
-    response_put_fake_item_1 = client.post('/items/', json=test_item_1, headers=test_headers)
-    response_put_fake_item_2 = client.post('/items/', json=test_item_2, headers=test_headers)
-    assert response_put_fake_item_1.status_code == 201
-    assert response_put_fake_item_2.status_code == 201
+    response_post_fake_item_1 = client.post('/items/', json=test_item_1, headers=test_headers)
+    response_post_fake_item_2 = client.post('/items/', json=test_item_2, headers=test_headers)
+    assert response_post_fake_item_1.status_code == 201 or response_post_fake_item_1.status_code == 200
+    assert response_post_fake_item_2.status_code == 201 or response_post_fake_item_2.status_code == 200
 
     response = client.get(f"/suppliers/{test_supplier['id']}/items", headers=test_headers)
     

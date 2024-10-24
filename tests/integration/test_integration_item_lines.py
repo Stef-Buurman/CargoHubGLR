@@ -10,6 +10,44 @@ test_item_line = {
     "updated_at": "2023-05-15 15:44:28"
 }
 
+test_item_1 = {
+        "uid": "fake_item_1",
+        "code": "fake1",
+        "description": "fake1",
+        "short_description": "fake1",
+        "upc_code": "6523540947122",
+        "model_number": "63-OFFTq0T",
+        "commodity_code": "oTo304",
+        "item_line": 999,
+        "item_group": 12,
+        "item_type": 12,
+        "unit_purchase_quantity": 47,
+        "unit_order_quantity": 13,
+        "pack_order_quantity": 11,
+        "supplier_id": 55,
+        "supplier_code": "SUP9999",
+        "supplier_part_number": "E-86805-uTM"
+}
+
+test_item_2 = {
+        "uid": "fake_item_2",
+        "code": "fake2",
+        "description": "fake2",
+        "short_description": "fake2",
+        "upc_code": "6523540947122",
+        "model_number": "63-OFFTq0T",
+        "commodity_code": "oTo304",
+        "item_line": 999,
+        "item_group": 12,
+        "item_type": 12,
+        "unit_purchase_quantity": 47,
+        "unit_order_quantity": 13,
+        "pack_order_quantity": 11,
+        "supplier_id": 55,
+        "supplier_code": "SUP9999",
+        "supplier_part_number": "E-86806-uTM"
+}
+
 
 @pytest.fixture
 def client():
@@ -104,6 +142,30 @@ def test_get_item_line_items_invalid_api_key(client):
 def test_get_item_line_items_invalid_id(client):
     response = client.get('/item_lines/invalid_id/items', headers=test_headers)
     assert response.status_code == 422
+    
+
+def test_get_item_line_items(client):
+    response_post_fake_item_1 = client.post('/items/', json=test_item_1, headers=test_headers)
+    response_post_fake_item_2 = client.post('/items/', json=test_item_2, headers=test_headers)
+    assert response_post_fake_item_1.status_code == 201 or response_post_fake_item_1.status_code == 200
+    assert response_post_fake_item_2.status_code == 201 or response_post_fake_item_2.status_code == 200
+
+    response = client.get(f"/item_lines/{test_item_line['id']}/items", headers=test_headers)
+    
+    assert response.status_code == 200
+
+    response_items = response.json()
+    assert len(response_items) == 2
+    assert response_items[0]['code'] == test_item_1['code']
+    assert response_items[1]['code'] == test_item_2['code']
+
+    for item in response_items:
+        assert item['item_line'] == test_item_line['id']
+    
+    response_delete_item_1 = client.delete('/items/' + test_item_1['uid'], headers=test_headers)
+    assert response_delete_item_1.status_code == 200
+    response_delete_item_2 = client.delete('/items/' + test_item_2['uid'], headers=test_headers)
+    assert response_delete_item_2.status_code == 200
 
 
 def test_update_item_line_no_api_key(client):
