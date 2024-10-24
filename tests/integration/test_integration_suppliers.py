@@ -17,6 +17,44 @@ test_supplier = {
     "reference": "LPaJ-SUP9999"
 }
 
+test_item_1 = {
+        "uid": "fake_item_1",
+        "code": "fake1",
+        "description": "fake1",
+        "short_description": "fake1",
+        "upc_code": "6523540947122",
+        "model_number": "63-OFFTq0T",
+        "commodity_code": "oTo304",
+        "item_line": 12,
+        "item_group": 12,
+        "item_type": 12,
+        "unit_purchase_quantity": 47,
+        "unit_order_quantity": 13,
+        "pack_order_quantity": 11,
+        "supplier_id": 9999,
+        "supplier_code": "SUP9999",
+        "supplier_part_number": "E-86805-uTM"
+}
+
+test_item_2 = {
+        "uid": "fake_item_2",
+        "code": "fake2",
+        "description": "fake2",
+        "short_description": "fake2",
+        "upc_code": "6523540947122",
+        "model_number": "63-OFFTq0T",
+        "commodity_code": "oTo304",
+        "item_line": 12,
+        "item_group": 12,
+        "item_type": 12,
+        "unit_purchase_quantity": 47,
+        "unit_order_quantity": 13,
+        "pack_order_quantity": 11,
+        "supplier_id": 9999,
+        "supplier_code": "SUP9999",
+        "supplier_part_number": "E-86806-uTM"
+}
+
 @pytest.fixture
 def client():
     with httpx.Client(base_url=MAIN_URL) as client:
@@ -110,6 +148,30 @@ def test_get_supplier_items_invalid_api_key(client):
 def test_get_supplier_items_invalid_id(client):
     response = client.get('/suppliers/invalid_id/items', headers=test_headers)
     assert response.status_code == 422
+
+
+def test_get_supplier_items(client):
+    response_put_fake_item_1 = client.post('/items/', json=test_item_1, headers=test_headers)
+    response_put_fake_item_2 = client.post('/items/', json=test_item_2, headers=test_headers)
+    assert response_put_fake_item_1.status_code == 201
+    assert response_put_fake_item_2.status_code == 201
+
+    response = client.get(f"/suppliers/{test_supplier['id']}/items", headers=test_headers)
+    
+    assert response.status_code == 200
+
+    response_items = response.json()
+    assert len(response_items) == 2
+    assert response_items[0]['code'] == test_item_1['code']
+    assert response_items[1]['code'] == test_item_2['code']
+
+    for item in response_items:
+        assert item['supplier_id'] == test_supplier['id']
+    
+    response_delete_item_1 = client.delete('/items/' + test_item_1['uid'], headers=test_headers)
+    assert response_delete_item_1.status_code == 200
+    response_delete_item_2 = client.delete('/items/' + test_item_2['uid'], headers=test_headers)
+    assert response_delete_item_2.status_code == 200
 
 
 def test_update_supplier_no_api_key(client):
