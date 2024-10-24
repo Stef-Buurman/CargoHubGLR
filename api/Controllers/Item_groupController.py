@@ -27,8 +27,8 @@ def read_items_for_item_group(item_group_id: int, api_key: str = Depends(auth_pr
     if item_group is None:
         raise HTTPException(status_code=404, detail=f"Item_group with id {item_group_id} not found")
     items = data_provider.fetch_item_pool().get_items_for_item_group(item_group_id)
-    if not items:
-        return JSONResponse(status_code=status.HTTP_204_NO_CONTENT, content={"message": f"No items found for item_group with id {item_group_id}"})
+    # if not items:
+    #     return JSONResponse(status_code=status.HTTP_204_NO_CONTENT, content={"message": f"No items found for item_group with id {item_group_id}"})
     return items
 
 @item_group_router.post("/")
