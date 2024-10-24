@@ -28,8 +28,8 @@ def read_orders_for_shipment(shipment_id: int, api_key: str = Depends(auth_provi
     if shipment is None:
         raise HTTPException(status_code=404, detail=f"Shipment with id {shipment_id} not found")
     orders = data_provider.fetch_order_pool().get_orders_for_shipments(shipment_id)
-    if not orders:
-        return Response(status_code=status.HTTP_204_NO_CONTENT)
+    # if not orders:
+    #     return Response(status_code=status.HTTP_204_NO_CONTENT)
     return orders
 
 @shipment_router.get("/{shipment_id}/items")
