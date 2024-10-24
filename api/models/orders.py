@@ -33,7 +33,7 @@ class Orders(Base):
                 result.append(x["id"])
         return result
 
-    def get_orders_for_shiptments(self, shipment_id):
+    def get_orders_for_shipments(self, shipment_id):
         result = []
         for x in self.data:
             if x["shipment_id"] == shipment_id:
