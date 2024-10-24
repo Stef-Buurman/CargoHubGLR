@@ -79,6 +79,27 @@ def test_get_nonexistent_CargoClient(client):
     response = client.get('/clients/' + str(non_existent_id), headers=test_headers)
     assert response.status_code == 404
 
+def test_get_orders_for_client(client):
+    response = client.get(f'/clients/{test_CargoClient["id"]}/orders', headers=test_headers)
+    assert response.status_code == 200
+    assert isinstance(response.json(), list)
+
+def test_get_orders_for_nonexistent_client(client):
+    response = client.get(f'/clients/{non_existent_id}/orders', headers=test_headers)
+    assert response.status_code == 404
+
+def test_get_orders_for_client_invalid_client_id(client):
+    response = client.get('/clients/invalid_id/orders', headers=test_headers)
+    assert response.status_code == 422
+
+def test_get_orders_for_client_no_api_key(client):
+    response = client.get(f'/clients/{test_CargoClient["id"]}/orders')
+    assert response.status_code == 403
+
+def test_get_orders_for_client_invalid_api_key(client):
+    response = client.get(f'/clients/{test_CargoClient["id"]}/orders', headers=invalid_headers)
+    assert response.status_code == 403
+
 def test_update_CargoClient_no_api_key(client):
     updated_CargoClient = test_CargoClient.copy()
     updated_CargoClient['name'] = 'Updated Inc'

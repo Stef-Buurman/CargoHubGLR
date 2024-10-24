@@ -29,8 +29,8 @@ def read_items_for_item_line(item_line_id: int, api_key: str = Depends(auth_prov
         raise HTTPException(status_code=404, detail=f"Item line with id {item_line_id} not found")
     
     items_for_item_line = data_provider.fetch_item_pool().get_items_for_item_line(item_line_id)
-    if not items_for_item_line:
-        return Response(status_code=status.HTTP_204_NO_CONTENT)
+    # if not items_for_item_line:
+    #     return Response(status_code=status.HTTP_204_NO_CONTENT)
     return items_for_item_line
 
 @item_line_router.post("/")

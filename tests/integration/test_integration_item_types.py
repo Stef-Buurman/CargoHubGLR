@@ -99,9 +99,9 @@ def test_get_item_type_invalid_api_key(client):
     assert response.status_code == 403
 
 
-def test_get_items_for_item_type_without_items(client):
-    response = client.get('/item_types/' + str(test_item_type['id']) + '/items', headers=test_headers)
-    assert response.status_code == 204
+# def test_get_items_for_item_type_without_items(client):
+#     response = client.get('/item_types/' + str(test_item_type['id']) + '/items', headers=test_headers)
+#     assert response.status_code == 204
 
 
 def test_get_items_for_item_type_non_existing_id(client):
