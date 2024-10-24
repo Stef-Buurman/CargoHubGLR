@@ -39,8 +39,8 @@ def read_items_for_shipment(shipment_id: int, api_key: str = Depends(auth_provid
     if shipment is None:
         raise HTTPException(status_code=404, detail=f"Shipment with id {shipment_id} not found")
     items = data_provider.fetch_shipment_pool().get_items_in_shipment(shipment_id)
-    if not items:
-        return Response(status_code=status.HTTP_204_NO_CONTENT)
+    # if not items:
+        # return Response(status_code=status.HTTP_204_NO_CONTENT)
     return items
 
 @shipment_router.post("/")
@@ -63,18 +63,25 @@ def update_shipment(shipment_id: int, shipment: dict, api_key: str = Depends(aut
     data_provider.fetch_shipment_pool().save()
     return shipment
 
-@shipment_router.put("/{shipment_id}/items")
-def update_items_in_shipment( shipment_id: int, updated_item: Dict[str, Union[str, int]], api_key: str = Depends(auth_provider.get_api_key)):
+@shipment_router.put("/{shipment_id}/orders")
+def update_orders_in_shipment(shipment_id: int, updated_orders: Dict, api_key: str = Depends(auth_provider.get_api_key)):
     data_provider.init()
-    
     shipment = data_provider.fetch_shipment_pool().get_shipment(shipment_id)
     if shipment is None:
         raise HTTPException(status_code=404, detail=f"Shipment with id {shipment_id} not found")
-    
+    data_provider.fetch_order_pool().update_orders_in_shipment(shipment_id, updated_orders)
+    data_provider.fetch_order_pool().save()
+    return shipment
+
+@shipment_router.put("/{shipment_id}/items")
+def update_items_in_shipment( shipment_id: int, updated_item: Dict[str, Union[str, int]], api_key: str = Depends(auth_provider.get_api_key)):
+    data_provider.init()
+    shipment = data_provider.fetch_shipment_pool().get_shipment(shipment_id)
+    if shipment is None:
+        raise HTTPException(status_code=404, detail=f"Shipment with id {shipment_id} not found")
     data_provider.fetch_shipment_pool().update_items_for_shipment(shipment_id, [updated_item])
     data_provider.fetch_shipment_pool().save()
-    
-    return JSONResponse(status_code=status.HTTP_200_OK, content={"message": "Item updated successfully"})
+    return shipment
 
 @shipment_router.put("/{shipment_id}/commit")
 def commit_shipment(shipment_id: int, api_key: str = Depends(auth_provider.get_api_key)):
@@ -82,7 +89,7 @@ def commit_shipment(shipment_id: int, api_key: str = Depends(auth_provider.get_a
     shipment = data_provider.fetch_shipment_pool().get_shipment(shipment_id)
     if shipment is None:
         raise HTTPException(status_code=404, detail=f"Shipment with id {shipment_id} not found")
-    return JSONResponse(status_code=status.HTTP_200_OK, content={"message": f"Commit for shipment {shipment_id} received, no action taken"})
+    return shipment
 
 @shipment_router.delete("/{shipment_id}")
 def delete_shipment(shipment_id: int, api_key: str = Depends(auth_provider.get_api_key)):
