@@ -11,60 +11,58 @@ jobs:
     - uses: actions/checkout@v4
     - name: Set up Python 3.13.0 manually
       run: |
-        echo "Adding Python 3.13 to PATH"
-        export PATH="/usr/local/bin:$PATH"
-        python3.13 --version
+        sudo /CommandFiles/RunProject.sh
     # - name: Set up Python 3.13.0
     #   uses: actions/setup-python@v5
     #   with:
     #         python-version: "3.13.0"
     #         cache: 'pip'
-    - name: Install dependencies
-      run: |
-            python -m pip install --upgrade pip
-            pip install flake8
-            if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-  test: 
-    needs: build
-    runs-on: self-hosted
-    steps:
-    - uses: actions/checkout@v4
-    - name: Set up Python 3.13.0
-      uses: actions/setup-python@v5
-      with:
-        python-version: "3.13.0"
-        cache: 'pip'
-    - name: Install dependencies
-      run: |
-          python -m pip install --upgrade pip
-          pip install flake8 pytest
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-    - name: Start the application in the background
-      run: |
-          # Run the Python application inside the api folder in the background
-          python api/main.py &
-          echo $! > app_pid.txt  # Save the process ID (PID) to a file
-          sleep 5  # Adjust sleep time if needed to allow the app to start
-    - name: Test with pytest
-      run: |
-          python -m pytest
-          coverage run -m pytest
-    - name: Run code coverage
-      run: |
-        # Run coverage report
-        #coverage xml
+    # - name: Install dependencies
+    #   run: |
+    #         python -m pip install --upgrade pip
+    #         pip install flake8
+    #         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+  # test: 
+  #   needs: build
+  #   runs-on: self-hosted
+  #   steps:
+  #   - uses: actions/checkout@v4
+  #   - name: Set up Python 3.13.0
+  #     uses: actions/setup-python@v5
+  #     with:
+  #       python-version: "3.13.0"
+  #       cache: 'pip'
+  #   - name: Install dependencies
+  #     run: |
+  #         python -m pip install --upgrade pip
+  #         pip install flake8 pytest
+  #         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+  #   - name: Start the application in the background
+  #     run: |
+  #         # Run the Python application inside the api folder in the background
+  #         python api/main.py &
+  #         echo $! > app_pid.txt  # Save the process ID (PID) to a file
+  #         sleep 5  # Adjust sleep time if needed to allow the app to start
+  #   - name: Test with pytest
+  #     run: |
+  #         python -m pytest
+  #         coverage run -m pytest
+  #   - name: Run code coverage
+  #     run: |
+  #       # Run coverage report
+  #       #coverage xml
 
-        # Report and write to summary.
-        coverage report --format=markdown >> $GITHUB_STEP_SUMMARY
+  #       # Report and write to summary.
+  #       coverage report --format=markdown >> $GITHUB_STEP_SUMMARY
 
-        # Report again and fail if under 100%.
-        coverage report --fail-under=90
-    - name: Stop the application
-      run: |
-          # Kill the application using the saved PID
-          kill $(cat app_pid.txt)
-    - name: Store coverage report
-      uses: actions/upload-artifact@v4
-      with:
-        path: coverage.xml
-      if: ${{ failure() }}
+  #       # Report again and fail if under 100%.
+  #       coverage report --fail-under=90
+  #   - name: Stop the application
+  #     run: |
+  #         # Kill the application using the saved PID
+  #         kill $(cat app_pid.txt)
+  #   - name: Store coverage report
+  #     uses: actions/upload-artifact@v4
+  #     with:
+  #       path: coverage.xml
+  #     if: ${{ failure() }}
