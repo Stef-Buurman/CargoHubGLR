@@ -43,7 +43,7 @@ jobs:
           echo $! > app_pid.txt  # Save the process ID (PID) to a file
           sleep 5  # Adjust sleep time if needed to allow the app to start
     - name: Test with pytest
-      run: |
+      run: | 
           # python3 -m pytest
           coverage run -m pytest
     - name: Run code coverage
