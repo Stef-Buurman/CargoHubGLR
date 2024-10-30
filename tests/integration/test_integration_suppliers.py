@@ -121,27 +121,27 @@ def test_get_supplier_non_existent_id(client):
 
 
 def test_get_supplier_no_api_key(client):
-    response = client.get('/suppliers/' + str(test_supplier['id']))
+    response = client.get('/suppliers/' + str(test_supplier["id"]))
     assert response.status_code == 403
 
 
 def test_get_supplier_invalid_api_key(client):
-    response = client.get('/suppliers/' + str(test_supplier['id']), headers=invalid_headers)
+    response = client.get('/suppliers/' + str(test_supplier["id"]), headers=invalid_headers)
     assert response.status_code == 403
 
 
 # def test_get_supplier_items_no_items(client):
-#     response = client.get(f'/suppliers/{str(test_supplier['id'])}/items', headers=test_headers)
+#     response = client.get(f'/suppliers/{str(test_supplier["id"])}/items', headers=test_headers)
 #     assert response.status_code == 204
 
 
 def test_get_supplier_items_no_api_key(client):
-    response = client.get(f'/suppliers/{str(test_supplier['id'])}/items')
+    response = client.get(f'/suppliers/{str(test_supplier["id"])}/items')
     assert response.status_code == 403
 
 
 def test_get_supplier_items_invalid_api_key(client):
-    response = client.get(f'/suppliers/{str(test_supplier['id'])}/items', headers=invalid_headers)
+    response = client.get(f'/suppliers/{str(test_supplier["id"])}/items', headers=invalid_headers)
     assert response.status_code == 403
 
 
