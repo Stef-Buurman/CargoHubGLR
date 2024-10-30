@@ -1,8 +1,8 @@
 name: Python application
 
 on:
-  push:
-    branches: [ "88-create-workflow-to-run-the-project" ]
+  pull_request:
+    branches: [ "Testing" , "Production" ]
 
 jobs:
   test:
