@@ -52,7 +52,7 @@ jobs:
         #coverage xml
 
         # Report and write to summary.
-        coverage report --format=markdown >> $GITHUB_STEP_SUMMARY
+        coverage report --omit="test*" --format=markdown >> $GITHUB_STEP_SUMMARY
 
         # Report again and fail if under 100%.
         # coverage report --fail-under=90
