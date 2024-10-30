@@ -5,17 +5,17 @@ on:
     branches: [ "88-create-workflow-to-run-the-project" ]
 
 jobs:
-  build:
-    runs-on: self-hosted
-    steps:
-    - uses: actions/checkout@v4
-    # - name: Install dependencies 
-    #   run: |
-    #         python3 -m pip install --upgrade pip
-    #         pip install flake8
-    #         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+  # build:
+  #   runs-on: self-hosted
+  #   steps:
+  #   - uses: actions/checkout@v4
+  #   - name: Install dependencies 
+  #     run: |
+  #           python3 -m pip install --upgrade pip
+  #           pip install flake8
+  #           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
   test: 
-    needs: build
+    # needs: build
     runs-on: self-hosted
     steps:
     - uses: actions/checkout@v4
