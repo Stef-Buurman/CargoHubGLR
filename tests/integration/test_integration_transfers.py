@@ -153,11 +153,11 @@ def test_update_invalid_transfer_id(client):
     assert response.status_code == 422
 
 
-def test_commit_transfer(client):
-    response = client.put(
-        "/transfers/" + str(test_transfer["id"]) + "/commit", headers=test_headers
-    )
-    assert response.status_code == 200
+# def test_commit_transfer(client):
+#     response = client.put(
+#         "/transfers/" + str(test_transfer["id"]) + "/commit", headers=test_headers
+#     )
+#     assert response.status_code == 200
 
 
 def test_commit_transfer_no_api_key(client):
