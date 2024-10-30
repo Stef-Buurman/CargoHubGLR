@@ -5,26 +5,21 @@ on:
     branches: [ "88-create-workflow-to-run-the-project" ]
 
 jobs:
-  # build:
-  #   runs-on: self-hosted
-  #   steps:
-  #   - uses: actions/checkout@v4
-  #   - name: Install dependencies 
-  #     run: |
-  #           python3 -m pip install --upgrade pip
-  #           pip install flake8
-  #           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+  build:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+      - name: Start the application in the background
+        run: |
+            # Run the Python application inside the api folder in the background
+            python3 api/main.py &
+            echo $! > app_pid.txt  # Save the process ID (PID) to a file
+            sleep 5  # Adjust sleep time if needed to allow the app to start
   test: 
-    # needs: build
+    needs: build
     runs-on: self-hosted
     steps:
     - uses: actions/checkout@v4
-    - name: Start the application in the background
-      run: |
-          # Run the Python application inside the api folder in the background
-          python3 api/main.py &
-          echo $! > app_pid.txt  # Save the process ID (PID) to a file
-          sleep 5  # Adjust sleep time if needed to allow the app to start
     - name: Test with pytest
       run: | 
           # python3 -m pytest
