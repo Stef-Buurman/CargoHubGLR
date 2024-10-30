@@ -9,33 +9,16 @@ jobs:
     runs-on: self-hosted
     steps:
     - uses: actions/checkout@v4
-    # - name: Install Python 3.11
-    #   run: sudo apt update && sudo apt install -y python3.11
-    # - name: Set up Python 3.11
-    #   uses: actions/setup-python@v5
-    #   with: 
-    #     python-version: "3.11"
-    #     cache: 'pip'
-    - name: Install dependencies 
-      run: |
-            python3 -m pip install --upgrade pip
-            pip install flake8
-            if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    # - name: Install dependencies 
+    #   run: |
+    #         python3 -m pip install --upgrade pip
+    #         pip install flake8
+    #         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
   test: 
     needs: build
     runs-on: self-hosted
     steps:
     - uses: actions/checkout@v4
-    # - name: Set up Python 3.13.0
-    #   uses: actions/setup-python@v5
-    #   with:
-    #     python-version: "3.13.0"
-    #     cache: 'pip'
-    # - name: Install dependencies
-    #   run: |
-    #       python3 -m pip install --upgrade pip
-    #       pip install flake8 pytest
-    #       if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Start the application in the background
       run: |
           # Run the Python application inside the api folder in the background
@@ -48,13 +31,7 @@ jobs:
           coverage run -m pytest
     - name: Run code coverage
       run: |
-        # Run coverage report
-        #coverage xml
-
-        # Report and write to summary.
-        # coverage report -m --rcfile=.coveragerc --format=markdown >> $GITHUB_STEP_SUMMARY
         coverage report -m --rcfile=.coveragerc --format=markdown >> $GITHUB_STEP_SUMMARY
-
 
         # Report again and fail if under 100%.
         # coverage report --fail-under=90
