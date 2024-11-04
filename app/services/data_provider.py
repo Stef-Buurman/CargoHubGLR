@@ -1,7 +1,12 @@
 import os
 
 DEBUG = False
+<<<<<<<< HEAD:app/services/data_provider.py
 ROOT_PATH = os.path.join(os.path.dirname(os.getcwd()), "data/")
+========
+ROOT_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data/")
+
+>>>>>>>> e16c242 (Created new folder structure):api/providers/data_provider.py
 
 _warehouses = None
 _locations = None

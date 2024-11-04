@@ -120,8 +120,12 @@ def has_access(user, path, method):
     else:
         return access[path][method]
 
+<<<<<<<< HEAD:app/services/auth_provider.py
 
 API_KEY_NAME = "api_key"
+========
+API_KEY_NAME = "Authorization"
+>>>>>>>> e16c242 (Created new folder structure):api/providers/auth_provider.py
 api_key_header = APIKeyHeader(name=API_KEY_NAME, auto_error=False)
 
 
