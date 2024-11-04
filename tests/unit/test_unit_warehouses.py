@@ -1,5 +1,4 @@
 import pytest
-from unit_test_base import *
 from app.models.warehouses import Warehouses
 
 test_data = [
