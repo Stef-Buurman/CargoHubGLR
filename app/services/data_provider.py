@@ -1,7 +1,9 @@
 import os
 
 DEBUG = False
-ROOT_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data/")
+ROOT_PATH = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), "..", "..", "data/"
+)
 
 _warehouses = None
 _locations = None
@@ -120,72 +122,72 @@ def get_orders():
 
 # Fetching pools
 def fetch_warehouse_pool():
-    if(_warehouses is None):
+    if _warehouses is None:
         get_warehouses()
     return _warehouses
 
 
 def fetch_location_pool():
-    if(_locations is None):
+    if _locations is None:
         get_locations()
     return _locations
 
 
 def fetch_transfer_pool():
-    if(_transfers is None):
+    if _transfers is None:
         get_transfers()
     return _transfers
 
 
 def fetch_item_pool():
-    if(_items is None):
+    if _items is None:
         get_items()
     return _items
 
 
 def fetch_item_line_pool():
-    if(_item_lines is None):
+    if _item_lines is None:
         get_item_lines()
     return _item_lines
 
 
 def fetch_item_group_pool():
-    if(_item_groups is None):
+    if _item_groups is None:
         get_item_groups()
     return _item_groups
 
 
 def fetch_item_type_pool():
-    if(_item_types is None):
+    if _item_types is None:
         get_item_types()
     return _item_types
 
 
 def fetch_inventory_pool():
-    if(_inventories is None):
+    if _inventories is None:
         get_inventories()
     return _inventories
 
 
 def fetch_supplier_pool():
-    if(_suppliers is None):
+    if _suppliers is None:
         get_suppliers()
     return _suppliers
 
 
 def fetch_order_pool():
-    if(_orders is None):
+    if _orders is None:
         get_orders()
     return _orders
 
 
 def fetch_client_pool():
-    if(_clients is None):
+    if _clients is None:
         get_clients()
     return _clients
 
 
 def fetch_shipment_pool():
-    if(_shipments is None):
+    if _shipments is None:
         get_shipments()
     return _shipments

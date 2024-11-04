@@ -121,6 +121,7 @@ def test_get_item(items_instance):
     item = items_instance.get_item(test_data[0]["uid"])
     assert item["code"] == "SGK13406K"
 
+
 def test_get_nonexistent_item(items_instance):
     item = items_instance.get_item("DitIsEenIdDieTochNooitBestaat")
     assert item is None

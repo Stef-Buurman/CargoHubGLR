@@ -26,18 +26,18 @@ app = FastAPI()
 
 v1_url = "/api/v1"
 
-app.include_router(item_router, prefix=v1_url+"/items")
-app.include_router(item_line_router, prefix=v1_url+"/item_lines")
-app.include_router(item_group_router, prefix=v1_url+"/item_groups")
-app.include_router(item_type_router, prefix=v1_url+"/item_types")
-app.include_router(shipment_router, prefix=v1_url+"/shipments")
-app.include_router(client_router, prefix=v1_url+"/clients")
-app.include_router(warehouse_router, prefix=v1_url+"/warehouses")
-app.include_router(inventory_router, prefix=v1_url+"/inventories")
-app.include_router(order_router, prefix=v1_url+"/orders")
-app.include_router(supplier_router, prefix=v1_url+"/suppliers")
-app.include_router(transfer_router, prefix=v1_url+"/transfers")
-app.include_router(location_router, prefix=v1_url+"/locations")
+app.include_router(item_router, prefix=v1_url + "/items")
+app.include_router(item_line_router, prefix=v1_url + "/item_lines")
+app.include_router(item_group_router, prefix=v1_url + "/item_groups")
+app.include_router(item_type_router, prefix=v1_url + "/item_types")
+app.include_router(shipment_router, prefix=v1_url + "/shipments")
+app.include_router(client_router, prefix=v1_url + "/clients")
+app.include_router(warehouse_router, prefix=v1_url + "/warehouses")
+app.include_router(inventory_router, prefix=v1_url + "/inventories")
+app.include_router(order_router, prefix=v1_url + "/orders")
+app.include_router(supplier_router, prefix=v1_url + "/suppliers")
+app.include_router(transfer_router, prefix=v1_url + "/transfers")
+app.include_router(location_router, prefix=v1_url + "/locations")
 
 
 def main():
