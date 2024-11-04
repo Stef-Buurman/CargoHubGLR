@@ -1,7 +1,7 @@
-import json
-import pytest
-from unittest.mock import patch, mock_open
-from app.models.shipments import Shipments
+# import json
+# import pytest
+# from unittest.mock import patch, mock_open
+# from app.models.shipments import Shipments
 
 # @pytest.fixture
 # def shipments_instance():
