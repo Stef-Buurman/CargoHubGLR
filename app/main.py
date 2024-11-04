@@ -8,18 +8,18 @@
 # from processors import notification_processor
 
 from fastapi import FastAPI
-from app.api.v1.endpoints.ItemController import item_router
-from app.api.v1.endpoints.Item_lineController import item_line_router
-from app.api.v1.endpoints.Item_groupController import item_group_router
-from app.api.v1.endpoints.Item_typeController import item_type_router
-from app.api.v1.endpoints.ShipmentController import shipment_router
-from app.api.v1.endpoints.ClientController import client_router
-from app.api.v1.endpoints.WarehouseController import warehouse_router
-from app.api.v1.endpoints.InventoryController import inventory_router
-from app.api.v1.endpoints.OrderController import order_router
-from app.api.v1.endpoints.SupplierController import supplier_router
-from app.api.v1.endpoints.TransferController import transfer_router
-from app.api.v1.endpoints.LocationController import location_router
+from api.v1.endpoints.ItemController import item_router
+from api.v1.endpoints.Item_lineController import item_line_router
+from api.v1.endpoints.Item_groupController import item_group_router
+from api.v1.endpoints.Item_typeController import item_type_router
+from api.v1.endpoints.ShipmentController import shipment_router
+from api.v1.endpoints.ClientController import client_router
+from api.v1.endpoints.WarehouseController import warehouse_router
+from api.v1.endpoints.InventoryController import inventory_router
+from api.v1.endpoints.OrderController import order_router
+from api.v1.endpoints.SupplierController import supplier_router
+from api.v1.endpoints.TransferController import transfer_router
+from api.v1.endpoints.LocationController import location_router
 import uvicorn
 
 app = FastAPI()
