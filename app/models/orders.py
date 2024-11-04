@@ -1,7 +1,11 @@
 import json
 
 from .base import Base
-from providers import data_provider
+
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+from app.services import data_provider
 
 ORDERS = []
 
@@ -71,7 +75,7 @@ class Orders(Base):
             if not found:
                 inventories = data_provider.fetch_inventory_pool().get_inventories_for_item(current_item["item_id"])
                 min_ordered = float("inf")
-                min_inventory = None;
+                min_inventory = None
 
                 for inv in inventories:
                     if inv["total_allocated"] > min_ordered:

@@ -31,7 +31,7 @@ class Inventories(Base):
             "total_expected": 0,
             "total_ordered": 0,
             "total_allocated": 0,
-            "total_available": 0
+            "total_available": 0,
         }
         for x in self.data:
             if x["item_id"] == item_id:

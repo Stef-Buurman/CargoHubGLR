@@ -1,5 +1,5 @@
 import pytest
-from api.models.warehouses import Warehouses
+from app.models.warehouses import Warehouses
 
 test_data = [
     {

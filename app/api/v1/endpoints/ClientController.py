@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from providers import data_provider, auth_provider
 from fastapi.responses import JSONResponse
+from services import data_provider, auth_provider
 
 client_router = APIRouter()
+
 
 @client_router.get("/{client_id}")
 def read_client(client_id: int, api_key: str = Depends(auth_provider.get_api_key)):
@@ -21,8 +22,11 @@ def read_clients(api_key: str = Depends(auth_provider.get_api_key)):
         raise HTTPException(status_code=404, detail="No clients found")
     return clients
 
+
 @client_router.get("/{client_id}/orders")
-def read_client_orders(client_id: int, api_key: str = Depends(auth_provider.get_api_key)):
+def read_client_orders(
+    client_id: int, api_key: str = Depends(auth_provider.get_api_key)
+):
     data_provider.init()
     client = data_provider.fetch_client_pool().get_client(client_id)
     if client is None:
@@ -45,7 +49,9 @@ def create_client(client: dict, api_key: str = Depends(auth_provider.get_api_key
 
 
 @client_router.put("/{client_id}")
-def update_client(client_id: int, client: dict, api_key: str = Depends(auth_provider.get_api_key)):
+def update_client(
+    client_id: int, client: dict, api_key: str = Depends(auth_provider.get_api_key)
+):
     data_provider.init()
     existing_client = data_provider.fetch_client_pool().get_client(client_id)
     if existing_client is None:

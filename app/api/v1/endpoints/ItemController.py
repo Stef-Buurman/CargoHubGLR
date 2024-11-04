@@ -1,16 +1,20 @@
 from fastapi import APIRouter, Depends, HTTPException, Response, status
 from fastapi.responses import JSONResponse
-from providers import data_provider, auth_provider
+from services import data_provider, auth_provider
 
 item_router = APIRouter()
+
 
 @item_router.get("/{item_id}")
 def read_item(item_id: str, api_key: str = Depends(auth_provider.get_api_key)):
     data_provider.init()
     items = data_provider.fetch_item_pool().get_item(item_id)
     if items is None:
-        raise HTTPException(status_code=404, detail="Item with id " + item_id + " not found")
+        raise HTTPException(
+            status_code=404, detail="Item with id " + item_id + " not found"
+        )
     return items
+
 
 @item_router.get("/")
 def read_items(api_key: str = Depends(auth_provider.get_api_key)):
@@ -20,8 +24,11 @@ def read_items(api_key: str = Depends(auth_provider.get_api_key)):
         raise HTTPException(status_code=404, detail="Items not found")
     return items
 
+
 @item_router.get("/{item_id}/inventory")
-def read_inventory_of_item(item_id: str, api_key: str = Depends(auth_provider.get_api_key)):
+def read_inventory_of_item(
+    item_id: str, api_key: str = Depends(auth_provider.get_api_key)
+):
     data_provider.init()
     item = data_provider.fetch_item_pool().get_item(item_id)
     if item is None:
@@ -31,14 +38,20 @@ def read_inventory_of_item(item_id: str, api_key: str = Depends(auth_provider.ge
     #     return Response(status_code=status.HTTP_204_NO_CONTENT)
     return inventories
 
+
 @item_router.get("/{item_id}/inventory/totals")
-def read_inventory_totals_of_item(item_id: str, api_key: str = Depends(auth_provider.get_api_key)):
+def read_inventory_totals_of_item(
+    item_id: str, api_key: str = Depends(auth_provider.get_api_key)
+):
     data_provider.init()
     item = data_provider.fetch_item_pool().get_item(item_id)
     if item is None:
         raise HTTPException(status_code=404, detail="Item not found")
-    inventory_totals = data_provider.fetch_inventory_pool().get_inventory_totals_for_item(item_id)
+    inventory_totals = (
+        data_provider.fetch_inventory_pool().get_inventory_totals_for_item(item_id)
+    )
     return inventory_totals
+
 
 @item_router.post("/")
 def create_item(item: dict, api_key: str = Depends(auth_provider.get_api_key)):
@@ -50,8 +63,11 @@ def create_item(item: dict, api_key: str = Depends(auth_provider.get_api_key)):
     data_provider.fetch_item_pool().save()
     return JSONResponse(status_code=status.HTTP_201_CREATED, content=item)
 
+
 @item_router.put("/{item_id}")
-def update_item(item_id: str, item: dict, api_key: str = Depends(auth_provider.get_api_key)):
+def update_item(
+    item_id: str, item: dict, api_key: str = Depends(auth_provider.get_api_key)
+):
     data_provider.init()
     existingItem = data_provider.fetch_item_pool().get_item(item_id)
     if existingItem is None:
@@ -60,11 +76,12 @@ def update_item(item_id: str, item: dict, api_key: str = Depends(auth_provider.g
     data_provider.fetch_item_pool().save()
     return item
 
+
 @item_router.delete("/{item_id}")
 def delete_item(item_id: str, api_key: str = Depends(auth_provider.get_api_key)):
     data_provider.init()
     item_pool = data_provider.fetch_item_pool()
-    
+
     item = item_pool.get_item(item_id)
     if item is None:
         raise HTTPException(status_code=404, detail="Item not found")

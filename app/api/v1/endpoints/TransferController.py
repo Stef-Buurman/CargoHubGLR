@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from providers import data_provider, auth_provider
 from fastapi.responses import JSONResponse
-
+from services import data_provider, auth_provider
 
 transfer_router = APIRouter()
 
@@ -86,12 +85,12 @@ def commit_transfer(
                 y["total_expected"] = y["total_on_hand"] + y["total_ordered"]
                 y["total_available"] = y["total_on_hand"] - y["total_allocated"]
                 data_provider.fetch_inventory_pool().update_inventory(y["id"], y)
-    
+
     transfer["transfer_status"] = "Processed"
     data_provider.fetch_transfer_pool().update_transfer(transfer_id, transfer)
     data_provider.fetch_transfer_pool().save()
     data_provider.fetch_inventory_pool().save()
-    
+
     return {"message": "Transfer committed successfully"}
 
 
