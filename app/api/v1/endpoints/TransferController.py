@@ -75,20 +75,22 @@ def commit_transfer(
         )
 
         for y in inventories:
-            if y["location_id"] == transfer["transfer_from"]:
+            if transfer["transfer_from"] in y["locations"]:
                 y["total_on_hand"] -= x["amount"]
                 y["total_expected"] = y["total_on_hand"] + y["total_ordered"]
                 y["total_available"] = y["total_on_hand"] - y["total_allocated"]
                 data_provider.fetch_inventory_pool().update_inventory(y["id"], y)
-            elif y["location_id"] == transfer["transfer_to"]:
+            elif transfer["transfer_to"] in y["locations"]:
                 y["total_on_hand"] += x["amount"]
                 y["total_expected"] = y["total_on_hand"] + y["total_ordered"]
                 y["total_available"] = y["total_on_hand"] - y["total_allocated"]
                 data_provider.fetch_inventory_pool().update_inventory(y["id"], y)
+
     transfer["transfer_status"] = "Processed"
     data_provider.fetch_transfer_pool().update_transfer(transfer_id, transfer)
     data_provider.fetch_transfer_pool().save()
     data_provider.fetch_inventory_pool().save()
+
     return {"message": "Transfer committed successfully"}
 
 
