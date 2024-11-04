@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
-from app.services import data_provider, auth_provider
+from services import data_provider, auth_provider
 
 order_router = APIRouter()
 
