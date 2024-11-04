@@ -5,16 +5,12 @@ USERS = [
     {
         "api_key": "test_api_key",
         "app": "Integration_Tests",
-        "endpoint_access": {
-            "full": True
-        }
+        "endpoint_access": {"full": True},
     },
     {
         "api_key": "a1b2c3d4e5",
         "app": "CargoHUB Dashboard 1",
-        "endpoint_access": {
-            "full": True
-        }
+        "endpoint_access": {"full": True},
     },
     {
         "api_key": "f6g7h8i9j0",
@@ -26,93 +22,96 @@ USERS = [
                 "get": True,
                 "post": False,
                 "put": False,
-                "delete": False
+                "delete": False,
             },
-            "locations":  {
+            "locations": {
                 "full": False,
                 "get": True,
                 "post": False,
                 "put": False,
-                "delete": False
+                "delete": False,
             },
-            "transfers":  {
+            "transfers": {
                 "full": False,
                 "get": True,
                 "post": False,
                 "put": False,
-                "delete": False
+                "delete": False,
             },
-            "items":  {
+            "items": {
                 "full": False,
                 "get": True,
                 "post": False,
                 "put": False,
-                "delete": False
+                "delete": False,
             },
-            "item_lines":  {
+            "item_lines": {
                 "full": False,
                 "get": True,
                 "post": False,
                 "put": False,
-                "delete": False
+                "delete": False,
             },
-            "item_groups":  {
+            "item_groups": {
                 "full": False,
                 "get": True,
                 "post": False,
                 "put": False,
-                "delete": False
+                "delete": False,
             },
-            "item_types":  {
+            "item_types": {
                 "full": False,
                 "get": True,
                 "post": False,
                 "put": False,
-                "delete": False
+                "delete": False,
             },
-            "suppliers":  {
+            "suppliers": {
                 "full": False,
                 "get": True,
                 "post": False,
                 "put": False,
-                "delete": False
+                "delete": False,
             },
-            "orders":  {
+            "orders": {
                 "full": False,
                 "get": True,
                 "post": False,
                 "put": False,
-                "delete": False
+                "delete": False,
             },
-            "clients":  {
+            "clients": {
                 "full": False,
                 "get": True,
                 "post": False,
                 "put": False,
-                "delete": False
+                "delete": False,
             },
-            "shipments":  {
+            "shipments": {
                 "full": False,
                 "get": True,
                 "post": False,
                 "put": False,
-                "delete": False
-            }
-        }
-    }
+                "delete": False,
+            },
+        },
+    },
 ]
 
 _users = USERS
 
+
 def init():
     global _users
     _users = USERS
+
 
 def get_user(api_key):
     for x in _users:
         if x["api_key"] == api_key:
             return x
     return None
+
 
 def has_access(user, path, method):
     access = user["endpoint_access"]
@@ -121,18 +120,22 @@ def has_access(user, path, method):
     else:
         return access[path][method]
 
-API_KEY_NAME = "Authorization"
+
+API_KEY_NAME = "api_key"
 api_key_header = APIKeyHeader(name=API_KEY_NAME, auto_error=False)
+
 
 def get_api_key(request: Request, api_key_header: str = Security(api_key_header)):
     init()
-    
+
     user = get_user(api_key_header)
-    
+
     if user is None:
         raise HTTPException(status_code=403, detail="Invalid API Key")
-    
+
     if has_access(user, request.url.path, request.method):
         return api_key_header
     else:
-        raise HTTPException(status_code=403, detail="You don't have access to this operation")
+        raise HTTPException(
+            status_code=403, detail="You don't have access to this operation"
+        )
