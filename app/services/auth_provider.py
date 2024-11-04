@@ -121,7 +121,7 @@ def has_access(user, path, method):
         return access[path][method]
 
 
-API_KEY_NAME = "api_key"
+API_KEY_NAME = "Environment"
 api_key_header = APIKeyHeader(name=API_KEY_NAME, auto_error=False)
 
 
