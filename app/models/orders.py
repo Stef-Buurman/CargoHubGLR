@@ -75,7 +75,7 @@ class Orders(Base):
             if not found:
                 inventories = data_provider.fetch_inventory_pool().get_inventories_for_item(current_item["item_id"])
                 min_ordered = float("inf")
-                min_inventory = None;
+                min_inventory = None
 
                 for inv in inventories:
                     if inv["total_allocated"] > min_ordered:
