@@ -1,7 +1,7 @@
 import os
 
 DEBUG = False
-ROOT_PATH = os.path.join(os.path.dirname(os.getcwd()), "data/")
+ROOT_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data/")
 
 _warehouses = None
 _locations = None
