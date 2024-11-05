@@ -57,10 +57,9 @@ def read_inventory_totals_of_item(
 @item_router_v2.post("/")
 def create_item(item: Item, api_key: str = Depends(auth_provider.get_api_key)):
     data_provider_v2.init()
-    data_provider_v2.fetch_item_pool().add_item(item)
+    addedItem = data_provider_v2.fetch_item_pool().add_item(item)
     data_provider_v2.fetch_item_pool().save()
-
-    return JSONResponse(status_code=status.HTTP_201_CREATED, content=item.dict())
+    return JSONResponse(status_code=status.HTTP_201_CREATED, content=addedItem.model_dump())
 
 
 @item_router_v2.put("/{item_id}")
