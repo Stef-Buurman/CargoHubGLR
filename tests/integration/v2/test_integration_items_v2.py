@@ -21,7 +21,7 @@ test_item = {
     "supplier_part_number": "E-86805-uTM"
 }
 
-added_uid = None;
+added_uid = None
 
 test_inventory = {
     "id": 99999999999999999,
