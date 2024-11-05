@@ -16,25 +16,25 @@ class WarehouseService(Base):
 
     def get_warehouse(self, warehouse_id) -> Warehouse | None:
         for x in self.data:
-            if x["id"] == warehouse_id:
+            if x.id == warehouse_id:
                 return x
         return None
 
     def add_warehouse(self, warehouse: Warehouse):
-        warehouse["created_at"] = self.get_timestamp()
-        warehouse["updated_at"] = self.get_timestamp()
+        warehouse.created_at = self.get_timestamp()
+        warehouse.updated_at = self.get_timestamp()
         self.data.append(warehouse)
 
     def update_warehouse(self, warehouse_id, warehouse: Warehouse):
-        warehouse["updated_at"] = self.get_timestamp()
+        warehouse.updated_at = self.get_timestamp()
         for i in range(len(self.data)):
-            if self.data[i]["id"] == warehouse_id:
+            if self.data[i].id == warehouse_id:
                 self.data[i] = warehouse
                 break
 
     def remove_warehouse(self, warehouse_id):
         for x in self.data:
-            if x["id"] == warehouse_id:
+            if x.id == warehouse_id:
                 self.data.remove(x)
 
     def load(self, is_debug: bool, warehouses: List[Warehouse] | None = None):
