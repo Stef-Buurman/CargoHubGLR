@@ -9,11 +9,13 @@ jobs:
     runs-on: self-hosted
     steps:
     - uses: actions/checkout@v4
-    - name: Install dependencies
-      run: |
-        python3 -m pip install --upgrade pip
-        pip install flake8 pytest
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    - name: Cache Python packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
     - name: Start the application in the background
       run: |
           # Run the Python application inside the api folder in the background
@@ -33,7 +35,7 @@ jobs:
     - name: Stop the application
       run: |
           # Kill the application using the saved PID
-          kill $(cat app_pid.txt)
+          kill $(cat app_pid.txt) || echo "App already stopped"
     - name: Store coverage report
       uses: actions/upload-artifact@v4
       with:
