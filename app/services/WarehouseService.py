@@ -14,7 +14,7 @@ class WarehouseService(Base):
     def get_warehouses(self) -> List[Warehouse]:
         return self.data
 
-    def get_warehouse(self, warehouse_id) -> Warehouse | None:
+    def get_warehouse(self, warehouse_id: int) -> Warehouse | None:
         for x in self.data:
             if x.id == warehouse_id:
                 return x
@@ -25,14 +25,14 @@ class WarehouseService(Base):
         warehouse.updated_at = self.get_timestamp()
         self.data.append(warehouse)
 
-    def update_warehouse(self, warehouse_id, warehouse: Warehouse):
+    def update_warehouse(self, warehouse_id: int, warehouse: Warehouse):
         warehouse.updated_at = self.get_timestamp()
         for i in range(len(self.data)):
             if self.data[i].id == warehouse_id:
                 self.data[i] = warehouse
                 break
 
-    def remove_warehouse(self, warehouse_id):
+    def remove_warehouse(self, warehouse_id: int):
         for x in self.data:
             if x.id == warehouse_id:
                 self.data.remove(x)
