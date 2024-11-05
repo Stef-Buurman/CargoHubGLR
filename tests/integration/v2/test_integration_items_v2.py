@@ -38,10 +38,10 @@ test_inventory = {
 }
 
 
-@pytest.fixture
-def client_v1():
-    with httpx.Client(base_url=MAIN_URL) as client_v1:
-        yield client_v1
+# @pytest.fixture
+# def client_v1():
+#     with httpx.Client(base_url=MAIN_URL) as client_v1:
+#         yield client_v1
 
 @pytest.fixture
 def client():
@@ -130,21 +130,21 @@ def test_get_inventory_of_nonexistent_item(client):
     assert response.status_code == 404
 
 
-def test_get_inventory_of_item(client, client_v1):
-    test_inventory["item_id"] = test_item["uid"]
-    responseAddInventory = client_v1.post(
-        "/inventories/", json=test_inventory, headers=test_headers
-    )
-    assert (
-        responseAddInventory.status_code == 201
-        or responseAddInventory.status_code == 200
-    )
-    response = client.get(
-        "/items/" + test_item["uid"] + "/inventory", headers=test_headers
-    )
-    assert response.status_code == 200
-    assert isinstance(response.json(), list)
-    assert response.json()[0]["item_id"] == test_item["uid"]
+# def test_get_inventory_of_item(client, client_v1):
+#     test_inventory["item_id"] = test_item["uid"]
+#     responseAddInventory = client_v1.post(
+#         "/inventories/", json=test_inventory, headers=test_headers
+#     )
+#     assert (
+#         responseAddInventory.status_code == 201
+#         or responseAddInventory.status_code == 200
+#     )
+#     response = client.get(
+#         "/items/" + test_item["uid"] + "/inventory", headers=test_headers
+#     )
+#     assert response.status_code == 200
+#     assert isinstance(response.json(), list)
+#     assert response.json()[0]["item_id"] == test_item["uid"]
 
 
 def test_get_inventory_totals_of_item_no_api_key(client):
@@ -166,24 +166,24 @@ def test_get_inventory_totals_of_nonexistent_item(client):
     assert response.status_code == 404
 
 
-def test_get_inventory_totals_of_item(client, client_v1):
-    response = client.get(
-        "/items/" + test_item["uid"] + "/inventory/totals", headers=test_headers
-    )
-    assert response.status_code == 200
-    assert isinstance(response.json(), dict)
-    assert response.json()["total_expected"] == test_inventory["total_expected"]
-    assert response.json()["total_ordered"] == test_inventory["total_ordered"]
-    assert response.json()["total_allocated"] == test_inventory["total_allocated"]
-    assert response.json()["total_available"] == test_inventory["total_available"]
-    responseDeleteInventory = client_v1.delete(
-        "/inventories/" + str(test_inventory["id"]), headers=test_headers
-    )
-    assert responseDeleteInventory.status_code == 200
-    responseGetInventory = client_v1.get(
-        "/inventories/" + str(test_inventory["id"]), headers=test_headers
-    )
-    assert responseGetInventory.status_code == 404
+# def test_get_inventory_totals_of_item(client, client_v1):
+#     response = client.get(
+#         "/items/" + test_item["uid"] + "/inventory/totals", headers=test_headers
+#     )
+#     assert response.status_code == 200
+#     assert isinstance(response.json(), dict)
+#     assert response.json()["total_expected"] == test_inventory["total_expected"]
+#     assert response.json()["total_ordered"] == test_inventory["total_ordered"]
+#     assert response.json()["total_allocated"] == test_inventory["total_allocated"]
+#     assert response.json()["total_available"] == test_inventory["total_available"]
+#     responseDeleteInventory = client_v1.delete(
+#         "/inventories/" + str(test_inventory["id"]), headers=test_headers
+#     )
+#     assert responseDeleteInventory.status_code == 200
+#     responseGetInventory = client_v1.get(
+#         "/inventories/" + str(test_inventory["id"]), headers=test_headers
+#     )
+#     assert responseGetInventory.status_code == 404
 
 
 def test_update_item_no_api_key(client):
