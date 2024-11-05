@@ -50,13 +50,15 @@ def create_warehouse(
 ):
     data_provider_v2.init()
     existing_warehouse = data_provider_v2.fetch_warehouse_pool().get_warehouse(
-        warehouse["id"]
+        warehouse.id
     )
     if existing_warehouse is not None:
         raise HTTPException(status_code=409, detail="Warehouse already exists")
     data_provider_v2.fetch_warehouse_pool().add_warehouse(warehouse)
     data_provider_v2.fetch_warehouse_pool().save()
-    return JSONResponse(status_code=status.HTTP_201_CREATED, content=warehouse)
+    return JSONResponse(
+        status_code=status.HTTP_201_CREATED, content=warehouse.model_dump()
+    )
 
 
 @warehouse_router_v2.put("/{warehouse_id}")
