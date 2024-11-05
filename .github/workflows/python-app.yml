@@ -19,7 +19,7 @@ jobs:
     - name: Start the application in the background
       run: |
           # Run the Python application inside the api folder in the background
-          python3 app/main.py &
+          python3 app/main.py > app.log 2>&1 &  # Redirect both stdout and stderr to app.log
           echo $! > app_pid.txt  # Save the process ID (PID) to a file
           sleep 5  # Adjust sleep time if needed to allow the app to start
     - name: Test with pytest
