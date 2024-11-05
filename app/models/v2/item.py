@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class Item(BaseModel):
@@ -20,3 +20,5 @@ class Item(BaseModel):
     supplier_part_number: str
     created_at: str | None = None
     updated_at: str | None = None
+
+    model_config = ConfigDict(protected_namespaces=())
