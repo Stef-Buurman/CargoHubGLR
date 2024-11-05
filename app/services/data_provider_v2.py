@@ -72,10 +72,10 @@ def get_warehouses():
 
 
 def get_locations():
-    from models.locations import Locations
+    from .LocationService import LocationService
 
     global _locations
-    _locations = Locations(ROOT_PATH, DEBUG)
+    _locations = LocationService(ROOT_PATH, DEBUG)
 
 
 def get_transfers():
