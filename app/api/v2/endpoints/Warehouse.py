@@ -1,11 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Response
 from fastapi.responses import JSONResponse
 from services import data_provider_v2, auth_provider
+from models.v2.warehouse import Warehouse
 
-warehouse_router = APIRouter()
+warehouse_router_v2 = APIRouter()
 
 
-@warehouse_router.get("/{warehouse_id}")
+@warehouse_router_v2.get("/{warehouse_id}")
 def read_warehouse(
     warehouse_id: int, api_key: str = Depends(auth_provider.get_api_key)
 ):
@@ -16,7 +17,7 @@ def read_warehouse(
     return warehouse
 
 
-@warehouse_router.get("/")
+@warehouse_router_v2.get("/")
 def read_warehouses(api_key: str = Depends(auth_provider.get_api_key)):
     data_provider_v2.init()
     warehouses = data_provider_v2.fetch_warehouse_pool().get_warehouses()
@@ -25,7 +26,7 @@ def read_warehouses(api_key: str = Depends(auth_provider.get_api_key)):
     return warehouses
 
 
-@warehouse_router.get("/{warehouse_id}/locations")
+@warehouse_router_v2.get("/{warehouse_id}/locations")
 def read_locations_in_warehouse(
     warehouse_id: int, api_key: str = Depends(auth_provider.get_api_key)
 ):
@@ -43,9 +44,9 @@ def read_locations_in_warehouse(
     return locations
 
 
-@warehouse_router.post("/")
+@warehouse_router_v2.post("/")
 def create_warehouse(
-    warehouse: dict, api_key: str = Depends(auth_provider.get_api_key)
+    warehouse: Warehouse, api_key: str = Depends(auth_provider.get_api_key)
 ):
     data_provider_v2.init()
     existing_warehouse = data_provider_v2.fetch_warehouse_pool().get_warehouse(
@@ -58,10 +59,10 @@ def create_warehouse(
     return JSONResponse(status_code=status.HTTP_201_CREATED, content=warehouse)
 
 
-@warehouse_router.put("/{warehouse_id}")
+@warehouse_router_v2.put("/{warehouse_id}")
 def update_warehouse(
     warehouse_id: int,
-    warehouse: dict,
+    warehouse: Warehouse,
     api_key: str = Depends(auth_provider.get_api_key),
 ):
     data_provider_v2.init()
@@ -75,7 +76,7 @@ def update_warehouse(
     return warehouse
 
 
-@warehouse_router.delete("/{warehouse_id}")
+@warehouse_router_v2.delete("/{warehouse_id}")
 def delete_warehouse(
     warehouse_id: int, api_key: str = Depends(auth_provider.get_api_key)
 ):
