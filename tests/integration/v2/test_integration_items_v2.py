@@ -45,7 +45,7 @@ test_inventory = {
 
 @pytest.fixture
 def client():
-    with httpx.Client(base_url=MAIN_URL_V2) as client:
+    with httpx.Client(base_url=MAIN_URL) as client:
         yield client
 
 
