@@ -16,26 +16,37 @@ jobs:
         key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
         restore-keys: |
           ${{ runner.os }}-pip-
+
+    - name: Install dependencies
+      run: |
+        python3 -m pip install --upgrade pip
+        pip install flake8 pytest
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
     - name: Start the application in the background
       run: |
           # Run the Python application inside the api folder in the background
           python3 app/main.py &
           echo $! > app_pid.txt  # Save the process ID (PID) to a file
           sleep 5  # Adjust sleep time if needed to allow the app to start
+
     - name: Test with pytest
       run: | 
           # python3 -m pytest
           coverage run -m pytest
+
     - name: Run code coverage
       run: |
         coverage report -m --rcfile=.coveragerc --format=markdown >> $GITHUB_STEP_SUMMARY
 
         # Report again and fail if under 100%.
         # coverage report --fail-under=90
+
     - name: Stop the application
       run: |
           # Kill the application using the saved PID
           kill $(cat app_pid.txt) || echo "App already stopped"
+          
     - name: Store coverage report
       uses: actions/upload-artifact@v4
       with:
