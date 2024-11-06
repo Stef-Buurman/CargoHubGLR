@@ -1,6 +1,6 @@
 import pytest
 import httpx
-from integration.test_globals import (
+from test_globals import (
     MAIN_URL,
     MAIN_URL_V2,
     non_existent_id,
