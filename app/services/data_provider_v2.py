@@ -79,10 +79,10 @@ def get_locations():
 
 
 def get_transfers():
-    from models.transfers import Transfers
+    from .TransferService import TransferService
 
     global _transfers
-    _transfers = Transfers(ROOT_PATH, DEBUG)
+    _transfers = TransferService(ROOT_PATH, DEBUG)
 
 
 def get_clients():
