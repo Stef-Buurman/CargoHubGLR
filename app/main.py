@@ -24,6 +24,7 @@ from api.v1.endpoints.Location import location_router
 from api.v2.endpoints.Item import item_router_v2
 from api.v2.endpoints.Warehouse import warehouse_router_v2
 from api.v2.endpoints.Location import location_router_v2
+
 import uvicorn
 
 app = FastAPI()
