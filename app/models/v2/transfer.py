@@ -1,9 +1,5 @@
 from pydantic import BaseModel
-
-
-class ItemInTransfer(BaseModel):
-    item_id: str
-    amount: int
+from models.v2.ItemInObject import ItemInObject
 
 
 class Transfer(BaseModel):
@@ -14,4 +10,4 @@ class Transfer(BaseModel):
     transfer_status: str
     created_at: str
     updated_at: str
-    items: list[ItemInTransfer] | None = None
+    items: list[ItemInObject] | None = None
