@@ -1,6 +1,6 @@
 import pytest
 import httpx
-from tests.integration.test_globals import *
+from integration.test_globals import *
 
 
 test_item = {
