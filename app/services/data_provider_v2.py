@@ -1,6 +1,5 @@
 import os
 
-
 DEBUG = False
 ROOT_PATH = os.path.join(
     os.path.dirname(os.path.abspath(__file__)), "..", "..", "data/"
@@ -38,7 +37,7 @@ def init():
 
 # Load data for each model
 def get_items():
-    from services.ItemServices import ItemService
+    from .ItemServices import ItemService
 
     global _items
     _items = ItemService(ROOT_PATH, DEBUG)
@@ -66,17 +65,17 @@ def get_item_types():
 
 
 def get_warehouses():
-    from models.warehouses import Warehouses
+    from .WarehouseService import WarehouseService
 
     global _warehouses
-    _warehouses = Warehouses(ROOT_PATH, DEBUG)
+    _warehouses = WarehouseService(ROOT_PATH, DEBUG)
 
 
 def get_locations():
-    from models.locations import Locations
+    from .LocationService import LocationService
 
     global _locations
-    _locations = Locations(ROOT_PATH, DEBUG)
+    _locations = LocationService(ROOT_PATH, DEBUG)
 
 
 def get_transfers():

@@ -1,6 +1,6 @@
 import pytest
 import httpx
-from test_globals import MAIN_URL, non_existent_id, test_headers, invalid_headers
+from test_globals import *
 
 test_warehouse = {
     "id": 99999999999999999,

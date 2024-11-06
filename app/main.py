@@ -22,6 +22,8 @@ from api.v1.endpoints.Transfer import transfer_router
 from api.v1.endpoints.Location import location_router
 
 from api.v2.endpoints.Item import item_router_v2
+from api.v2.endpoints.Warehouse import warehouse_router_v2
+from api.v2.endpoints.Location import location_router_v2
 import uvicorn
 
 app = FastAPI()
@@ -43,6 +45,9 @@ app.include_router(transfer_router, prefix=v1_url + "/transfers")
 app.include_router(location_router, prefix=v1_url + "/locations")
 
 app.include_router(item_router_v2, prefix=v2_url + "/items")
+app.include_router(warehouse_router_v2, prefix=v2_url + "/warehouses")
+app.include_router(location_router_v2, prefix=v2_url + "/locations")
+
 
 def main():
     uvicorn.run(app, port=8000)
