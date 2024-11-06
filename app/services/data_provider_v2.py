@@ -37,7 +37,7 @@ def init():
 
 # Load data for each model
 def get_items():
-    from services.ItemServices import ItemService
+    from .ItemServices import ItemService
 
     global _items
     _items = ItemService(ROOT_PATH, DEBUG)
@@ -72,10 +72,10 @@ def get_warehouses():
 
 
 def get_locations():
-    from models.locations import Locations
+    from .LocationService import LocationService
 
     global _locations
-    _locations = Locations(ROOT_PATH, DEBUG)
+    _locations = LocationService(ROOT_PATH, DEBUG)
 
 
 def get_transfers():
