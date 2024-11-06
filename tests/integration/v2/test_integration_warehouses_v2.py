@@ -37,8 +37,14 @@ test_location = {
 
 
 @pytest.fixture
+def client_v1():
+    with httpx.Client(base_url=MAIN_URL) as client_v1:
+        yield client_v1
+
+
+@pytest.fixture
 def client():
-    with httpx.Client(base_url=MAIN_URL) as client:
+    with httpx.Client(base_url=MAIN_URL_V2) as client:
         yield client
 
 
@@ -58,12 +64,12 @@ def test_get_all_warehouses_invalid_api_key(client):
     assert response.status_code == 403
 
 
-def test_get_locations_by_warehouse_id(client):
+def test_get_locations_by_warehouse_id(client_v1, client):
     response = client.post("/warehouses/", json=test_warehouse, headers=test_headers)
     assert response.status_code == 201 or response.status_code == 200
     assert response.json()["id"] == test_warehouse["id"]
 
-    response = client.post("/locations/", json=test_location, headers=test_headers)
+    response = client_v1.post("/locations/", json=test_location, headers=test_headers)
     assert response.status_code == 201 or response.status_code == 200
     assert response.json()["id"] == test_location["id"]
 
@@ -78,7 +84,9 @@ def test_get_locations_by_warehouse_id(client):
     )
     assert response.status_code == 200
 
-    response = client.delete(f"/locations/{test_location['id']}", headers=test_headers)
+    response = client_v1.delete(
+        f"/locations/{test_location['id']}", headers=test_headers
+    )
     assert response.status_code == 200
 
 
