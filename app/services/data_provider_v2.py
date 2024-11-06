@@ -37,7 +37,7 @@ def init():
 
 # Load data for each model
 def get_items():
-    from services.ItemServices import ItemService
+    from .ItemServices import ItemService
 
     global _items
     _items = ItemService(ROOT_PATH, DEBUG)
