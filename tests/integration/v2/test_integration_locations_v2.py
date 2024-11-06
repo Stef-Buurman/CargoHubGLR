@@ -13,8 +13,14 @@ test_location = {
 
 
 @pytest.fixture
+def client_v1():
+    with httpx.Client(base_url=MAIN_URL) as client_v1:
+        yield client_v1
+
+
+@pytest.fixture
 def client():
-    with httpx.Client(base_url=MAIN_URL) as client:
+    with httpx.Client(base_url=MAIN_URL_V2) as client:
         yield client
 
 
