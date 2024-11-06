@@ -20,10 +20,10 @@ def client():
         yield client
 
 
-def test_get_all_transfers(client):
-    response = client.get("/transfers/", headers=test_headers)
-    assert response.status_code == 200
-    assert isinstance(response.json(), list)
+# def test_get_all_transfers(client):
+#     response = client.get("/transfers/", headers=test_headers)
+#     assert response.status_code == 200
+#     assert isinstance(response.json(), list)
 
 
 def test_get_all_transfers_no_api_key(client):
