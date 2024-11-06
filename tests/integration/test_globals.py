@@ -1,7 +1,4 @@
 MAIN_URL = "http://localhost:8000/api/v1"
-MAIN_URL_V2 = "http://localhost:8000/api/v2"
-
-MAIN_URL_V2 = "http://localhost:8000/api/v2"
 
 MAIN_URL_V2 = "http://localhost:8000/api/v2"
 
