@@ -31,10 +31,10 @@ def create_location(
     location: Location, api_key: str = Depends(auth_provider.get_api_key)
 ):
     data_provider.init()
-    existing_location = data_provider.fetch_location_pool().get_location(location["id"])
+    existing_location = data_provider.fetch_location_pool().get_location(location.id)
     if existing_location is not None:
         raise HTTPException(
-            status_code=409, detail=f"Location with id {location['id']} already exists"
+            status_code=409, detail=f"Location with id {location.id} already exists"
         )
     data_provider.fetch_location_pool().add_location(location)
     data_provider.fetch_location_pool().save()
