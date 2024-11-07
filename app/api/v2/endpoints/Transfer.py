@@ -48,9 +48,7 @@ def create_transfer(
         raise HTTPException(status_code=409, detail="Transfer already exists")
     data_provider_v2.fetch_transfer_pool().add_transfer(transfer)
     data_provider_v2.fetch_transfer_pool().save()
-    return JSONResponse(
-        status_code=status.HTTP_201_CREATED, content=transfer.model_dump()
-    )
+    return transfer
 
 
 @transfer_router_v2.put("/{transfer_id}")

@@ -31,6 +31,7 @@ class TransferService(Base):
         transfer.created_at = self.get_timestamp()
         transfer.updated_at = self.get_timestamp()
         self.data.append(transfer)
+        return transfer
 
     def update_transfer(self, transfer_id: int, transfer: Transfer):
         transfer.updated_at = self.get_timestamp()
@@ -38,6 +39,7 @@ class TransferService(Base):
             if self.data[i].id == transfer_id:
                 self.data[i] = transfer
                 break
+        return transfer
 
     def remove_transfer(self, transfer_id: int):
         for x in self.data:
