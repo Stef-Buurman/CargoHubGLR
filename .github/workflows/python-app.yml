@@ -162,3 +162,4 @@ jobs:
             "content": "'"${MESSAGE}"'",
             "avatar_url": "'"${ICON_URL}"'"
           }' $DISCORD_WEBHOOK
+
