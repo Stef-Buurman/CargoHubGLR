@@ -137,6 +137,17 @@ jobs:
           TEST_STATUS="Tests completed successfully"
           ICON_URL="https://media.discordapp.net/attachments/1280503605517877339/1280506426543837288/image.png?ex=672e058a&is=672cb40a&hm=2522f789e2bb9f856f9b989ff7a550f1f8499b4e2695805113f672db3cbcfdc6&=&format=jpeg"  # Success icon
 
+          # Ensure pytest_exit_code and COVERAGE_RESULT are valid integers before comparison
+          if [ -z "${{ env.pytest_exit_code }}" ] || ! [[ "${{ env.pytest_exit_code }}" =~ ^[0-9]+$ ]]; then
+            echo "Error: pytest_exit_code is not set or not an integer"
+            exit 1  # Exit the job if pytest_exit_code is invalid
+          fi
+
+          if [ -z "${{ env.COVERAGE_RESULT }}" ] || ! [[ "${{ env.COVERAGE_RESULT }}" =~ ^[0-9]+$ ]]; then
+            echo "Error: COVERAGE_RESULT is not set or not an integer"
+            exit 1  # Exit the job if COVERAGE_RESULT is invalid
+          fi
+
           # Check pytest exit code and coverage result
           if [ "${{ env.pytest_exit_code }}" -ne 0 ]; then
             TEST_STATUS="Tests failed"
