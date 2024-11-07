@@ -71,9 +71,9 @@ def update_shipment(
     existingShipment = data_provider_v2.fetch_shipment_pool().get_shipment(shipment_id)
     if existingShipment is None:
         raise HTTPException(status_code=404, detail="Shipment not found")
-    data_provider_v2.fetch_shipment_pool().update_shipment(shipment_id, shipment)
+    updated_shipment = data_provider_v2.fetch_shipment_pool().update_shipment(shipment_id, shipment)
     data_provider_v2.fetch_shipment_pool().save()
-    return shipment
+    return updated_shipment
 
 @shipment_router_v2.put("/{shipment_id}/orders")
 def update_orders_in_shipment(
