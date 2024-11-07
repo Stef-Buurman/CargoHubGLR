@@ -46,9 +46,9 @@ def create_transfer(
     existing_transfer = data_provider_v2.fetch_transfer_pool().get_transfer(transfer.id)
     if existing_transfer is not None:
         raise HTTPException(status_code=409, detail="Transfer already exists")
-    data_provider_v2.fetch_transfer_pool().add_transfer(transfer)
+    created_transfer = data_provider_v2.fetch_transfer_pool().add_transfer(transfer)
     data_provider_v2.fetch_transfer_pool().save()
-    return transfer
+    return created_transfer
 
 
 @transfer_router_v2.put("/{transfer_id}")
@@ -61,9 +61,11 @@ def update_transfer(
     existing_transfer = data_provider_v2.fetch_transfer_pool().get_transfer(transfer_id)
     if existing_transfer is None:
         raise HTTPException(status_code=404, detail="Transfer not found")
-    data_provider_v2.fetch_transfer_pool().update_transfer(transfer_id, transfer)
+    updated_transfer = data_provider_v2.fetch_transfer_pool().update_transfer(
+        transfer_id, transfer
+    )
     data_provider_v2.fetch_transfer_pool().save()
-    return transfer
+    return updated_transfer
 
 
 @transfer_router_v2.put("/{transfer_id}/commit")
