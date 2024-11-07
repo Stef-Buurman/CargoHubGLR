@@ -102,7 +102,8 @@ jobs:
         id: pytest
         run: |
           coverage run -m pytest
-          echo "pytest_exit_code=$?" >> $GITHUB_ENV  # Capture pytest exit code
+          pytest_exit_code=$?
+          echo "pytest_exit_code=$pytest_exit_code" >> $GITHUB_ENV  # Capture pytest exit code
 
       - name: Run code coverage
         run: |
@@ -164,3 +165,4 @@ jobs:
             "content": "'"${MESSAGE}"'",
             "avatar_url": "'"${ICON_URL}"'"
           }' $DISCORD_WEBHOOK
+
