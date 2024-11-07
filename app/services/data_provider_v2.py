@@ -58,10 +58,10 @@ def get_item_groups():
 
 
 def get_item_types():
-    from models.item_types import ItemTypes
+    from .Item_typeService import ItemTypeService
 
     global _item_types
-    _item_types = ItemTypes(ROOT_PATH, DEBUG)
+    _item_types = ItemTypeService(ROOT_PATH, DEBUG)
 
 
 def get_warehouses():
@@ -93,10 +93,10 @@ def get_clients():
 
 
 def get_shipments():
-    from models.shipments import Shipments
+    from .ShipmentService import ShipmentService
 
     global _shipments
-    _shipments = Shipments(ROOT_PATH, DEBUG)
+    _shipments = ShipmentService(ROOT_PATH, DEBUG)
 
 
 def get_suppliers():
