@@ -5,6 +5,12 @@ on:
     branches: ["New-workflow-test"]
 
 jobs:
+  services:
+  docker:
+    image: docker:19.03.12
+    options: --privileged  # Grants Docker access within the container
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
   test:
     runs-on: self-hosted
     steps:
