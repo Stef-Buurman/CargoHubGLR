@@ -19,17 +19,21 @@ jobs:
         run: |
           python3 app/main.py > app.log 2>&1 &
           echo $! > app_pid.txt
-          sleep 5
+          sleep 1
 
       - name: Test with pytest
-        run: coverage run -m pytest
+        id: pytest
+        run: |
+          coverage run -m pytest
+          if [ $? -eq 0 ]; then
+            echo "status=success" >> $GITHUB_ENV
+          else
+            echo "status=failure" >> $GITHUB_ENV
+          fi
 
       - name: Run code coverage
         run: |
           coverage report -m --rcfile=.coveragerc --format=markdown >> $GITHUB_STEP_SUMMARY
-
-          # Report again and fail if under 100%.
-          # coverage report --fail-under=90
 
       - name: Stop the application
         run: kill $(cat app_pid.txt) || echo "App already stopped"
@@ -40,4 +44,36 @@ jobs:
           path: |
             app.log
             coverage.xml
-        if: ${{ failure() }}
+
+      # Send the Discord notification with the PR and test results (runs regardless of success/failure)
+      - name: Send Discord Notification with PR and Test Results
+        if: always()
+        env:
+          ERRORWEBHOOK: ${{ secrets.ERRORWEBHOOK }} 
+          SUCCESSWEBHOOK: ${{ secrets.SUCCESSWEBHOOK }}
+        run: |
+          PR_URL="https://github.com/${{ github.repository }}/pull/${{ github.event.pull_request.number }}"
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          PR_AUTHOR="${{ github.event.pull_request.user.login }}"
+          
+          # Determine test status
+          if [[ "$status" == "success" ]]; then
+            ICON_URL="https://media.discordapp.net/attachments/1280503605517877339/1280506426543837288/image.png?ex=672e058a&is=672cb40a&hm=2522f789e2bb9f856f9b989ff7a550f1f8499b4e2695805113f672db3cbcfdc6&=&format=jpeg"
+
+            MESSAGE="------------\n**Pull Request:** [${PR_TITLE}](${PR_URL})\n**Author:** ${PR_AUTHOR}\n**Test Status:** Tests completed successfully"
+
+            curl -X POST -H "Content-Type: application/json" -d '{
+              "content": "'"${MESSAGE}"'",
+              "avatar_url": "'"${ICON_URL}"'"
+            }' $SUCCESSWEBHOOK
+
+          else
+            ICON_URL="https://media.discordapp.net/attachments/1280503605517877339/1280506416247409667/error-icon.png"
+
+            MESSAGE="------------\n**Pull Request:** [${PR_TITLE}](${PR_URL})\n**Author:** ${PR_AUTHOR}\n**Test Status:** Tests failed\n[Check test run](${PR_URL}/checks)"
+
+            curl -X POST -H "Content-Type: application/json" -d '{
+              "content": "'"${MESSAGE}"'",
+              "avatar_url": "'"${ICON_URL}"'"
+            }' $ERRORWEBHOOK
+          fi
