@@ -76,24 +76,7 @@ def commit_transfer(
     transfer = data_provider_v2.fetch_transfer_pool().get_transfer(transfer_id)
     if transfer is None:
         raise HTTPException(status_code=404, detail="Transfer not found")
-    for x in transfer.items:
-        inventories = data_provider_v2.fetch_inventory_pool().get_inventories_for_item(
-            x.item_id
-        )
-
-        for y in inventories:
-            if transfer.transfer_from in y.locations:
-                y.total_on_hand -= x.amount
-                y.total_expected = y.total_on_hand + y.total_ordered
-                y.total_available = y.total_on_hand - y.total_allocated
-                data_provider_v2.fetch_inventory_pool().update_inventory(y.id, y)
-            elif transfer.transfer_to in y.locations:
-                y.total_on_hand += x.amount
-                y.total_expected = y.total_on_hand + y.total_ordered
-                y.total_available = y.total_on_hand - y.total_allocated
-                data_provider_v2.fetch_inventory_pool().update_inventory(y.id, y)
-
-    transfer.transfer_status = "Processed"
+    data_provider_v2.fetch_transfer_pool().commit_transfer(transfer)
     data_provider_v2.fetch_transfer_pool().update_transfer(transfer_id, transfer)
     data_provider_v2.fetch_transfer_pool().save()
     data_provider_v2.fetch_inventory_pool().save()

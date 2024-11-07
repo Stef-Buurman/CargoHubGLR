@@ -1,4 +1,5 @@
 import json
+from services.data_provider_v2 import fetch_inventory_pool
 from models.v2.transfer import Transfer
 from typing import List
 from models.base import Base
@@ -40,6 +41,24 @@ class TransferService(Base):
                 self.data[i] = transfer
                 break
         return transfer
+
+    def commit_transfer(self, transfer: Transfer):
+        for x in transfer.items:
+            inventories = fetch_inventory_pool().get_inventories_for_item(x.item_id)
+
+            for y in inventories:
+                if transfer.transfer_from in y.locations:
+                    y.total_on_hand -= x.amount
+                    y.total_expected = y.total_on_hand + y.total_ordered
+                    y.total_available = y.total_on_hand - y.total_allocated
+                    fetch_inventory_pool().update_inventory(y.id, y)
+                elif transfer.transfer_to in y.locations:
+                    y.total_on_hand += x.amount
+                    y.total_expected = y.total_on_hand + y.total_ordered
+                    y.total_available = y.total_on_hand - y.total_allocated
+                    fetch_inventory_pool().update_inventory(y.id, y)
+
+        transfer.transfer_status = "Processed"
 
     def remove_transfer(self, transfer_id: int):
         for x in self.data:
