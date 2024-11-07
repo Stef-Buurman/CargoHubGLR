@@ -2,22 +2,19 @@ name: Tests run
 
 on:
   push:
-    branches: ["New-workflow-test"]
+    branches:
+      - "New-workflow-test"  # Trigger the workflow on push to this branch
 
 jobs:
-  services:
-  docker:
-    image: docker:19.03.12
-    options: --privileged  # Grants Docker access within the container
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
   test:
-    runs-on: self-hosted
+    runs-on: self-hosted  # Use a self-hosted runner
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4  # Checkout the repository code
+
       - name: Discord notification
         env:
-          DISCORD_WEBHOOK: ${{ secrets.test_webhook }}
-        uses: Ilshidur/action-discord@master
+          DISCORD_WEBHOOK: ${{ secrets.test_webhook }}  # Access the secret for Discord webhook
+        uses: Ilshidur/action-discord@master  # Use the Discord notification action
         with:
           args: 'The project {{ EVENT_PAYLOAD.repository.full_name }} has been deployed.'
