@@ -41,3 +41,18 @@ jobs:
             app.log
             coverage.xml
         if: ${{ failure() }}
+      - name: Send Discord Notification with PR and Test Results
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.test_webhook }}  # Use the webhook secret
+        run: |
+          PR_URL="https://github.com/${{ github.repository }}/pull/${{ github.event.pull_request.number }}"
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          PR_AUTHOR="${{ github.event.pull_request.user.login }}"
+          TEST_STATUS="Tests completed successfully"
+          if [[ $(coverage report -m | tail -n 1 | awk '{print $NF}') -lt 90 ]]; then
+            TEST_STATUS="Tests failed (coverage < 90%)"
+          fi
+
+          MESSAGE="**Pull Request:** [${PR_TITLE}](${PR_URL})\n**Author:** ${PR_AUTHOR}\n**Test Status:** ${TEST_STATUS}"
+
+          curl -X POST -H "Content-Type: application/json" -d '{"content": "'"${MESSAGE}"'"}' $DISCORD_WEBHOOK
