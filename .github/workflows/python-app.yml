@@ -20,7 +20,7 @@ jobs:
         run: |
           python3 app/main.py > app.log 2>&1 & 
           echo $! > app_pid.txt
-          sleep 5
+          sleep 1
 
       - name: Test with pytest
         run: coverage run -m pytest
@@ -45,6 +45,7 @@ jobs:
 
       # Send the Discord notification with the PR and test results (runs regardless of success/failure)
       - name: Send Discord Notification with PR and Test Results
+        if: always()
         env:
           DISCORD_WEBHOOK: ${{ secrets.test_webhook }}  # Use the webhook secret
         run: |
