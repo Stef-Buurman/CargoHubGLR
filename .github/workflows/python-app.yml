@@ -1,3 +1,79 @@
+# name: Tests run
+
+# on:
+#   pull_request:
+#     branches: ["Testing", "Production"]
+
+# jobs:
+#   test:
+#     runs-on: self-hosted
+#     steps:
+#       - uses: actions/checkout@v4
+
+#       - name: Install dependencies
+#         run: |
+#           python3 -m pip install --upgrade pip
+#           pip install flake8 pytest
+#           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+#       - name: Start the application in the background
+#         run: |
+#           python3 app/main.py > app.log 2>&1 & 
+#           echo $! > app_pid.txt
+#           sleep 1
+
+#       - name: Test with pytest
+#         run: coverage run -m pytest
+#         continue-on-error: true
+
+#       - name: Run code coverage
+#         run: |
+#           coverage report -m --rcfile=.coveragerc --format=markdown >> $GITHUB_STEP_SUMMARY
+#           # Save coverage result to a variable for later use
+#           COVERAGE_RESULT=$(coverage report -m | tail -n 1 | awk '{print $NF}')
+#           echo "Coverage Result: $COVERAGE_RESULT" # Log for debugging purposes
+#           echo "COVERAGE_RESULT=$COVERAGE_RESULT" >> $GITHUB_ENV
+
+#       - name: Stop the application
+#         if: always()
+#         run: kill $(cat app_pid.txt) || echo "App already stopped"
+
+#       - name: Store coverage report
+#         uses: actions/upload-artifact@v4
+#         with:
+#           path: |
+#             app.log
+#             coverage.xml
+
+#       # Send the Discord notification with the PR and test results (runs regardless of success/failure)
+#       - name: Send Discord Notification with PR and Test Results
+#         if: always()
+#         env:
+#           DISCORD_WEBHOOK: ${{ secrets.test_webhook }}  # Use the webhook secret
+#         run: |
+#           PR_URL="https://github.com/${{ github.repository }}/pull/${{ github.event.pull_request.number }}"
+#           PR_TITLE="${{ github.event.pull_request.title }}"
+#           PR_AUTHOR="${{ github.event.pull_request.user.login }}"
+#           TEST_STATUS="Tests completed successfully"
+#           ICON_URL="https://media.discordapp.net/attachments/1280503605517877339/1280506426543837288/image.png?ex=672e058a&is=672cb40a&hm=2522f789e2bb9f856f9b989ff7a550f1f8499b4e2695805113f672db3cbcfdc6&=&format=jpeg"  # Default icon for success
+
+#           # Check if tests passed or failed based on coverage result
+#           if [[ $? -ne 0 ]]; then
+#             TEST_STATUS="Tests failed\n[Zie test run](${PR_URL}/checks)"
+#             ICON_URL="https://media.discordapp.net/attachments/1280503605517877339/1280506426543837288/fail-icon.png"  # Icon for failure
+#           elif [ "${{ env.COVERAGE_RESULT }}" -lt 90 ]; then
+#             TEST_STATUS="Tests failed (coverage < 90%)"
+#             ICON_URL="https://media.discordapp.net/attachments/1280503605517877339/1280506426543837288/fail-icon.png"  # Icon for failure
+#           fi
+
+#           MESSAGE="_____________________________________________________________\n**Pull Request:** [${PR_TITLE}](${PR_URL})\n**Author:** ${PR_AUTHOR}\n**Test Status:** ${TEST_STATUS}"
+
+#           # Send the message to Discord with the appropriate icon
+#           curl -X POST -H "Content-Type: application/json" -d '{
+#             "content": "'"${MESSAGE}"'",
+#             "avatar_url": "'"${ICON_URL}"'"
+#           }' $DISCORD_WEBHOOK
+
 name: Tests run
 
 on:
@@ -23,8 +99,9 @@ jobs:
           sleep 1
 
       - name: Test with pytest
-        run: coverage run -m pytest
-        continue-on-error: true
+        run: |
+          coverage run -m pytest
+        continue-on-error: true  # Ensures workflow continues even if pytest fails
 
       - name: Run code coverage
         run: |
@@ -57,16 +134,16 @@ jobs:
           TEST_STATUS="Tests completed successfully"
           ICON_URL="https://media.discordapp.net/attachments/1280503605517877339/1280506426543837288/image.png?ex=672e058a&is=672cb40a&hm=2522f789e2bb9f856f9b989ff7a550f1f8499b4e2695805113f672db3cbcfdc6&=&format=jpeg"  # Default icon for success
 
-          # Check if tests passed or failed based on coverage result
+          # Check if pytest passed or failed
           if [[ $? -ne 0 ]]; then
-            TEST_STATUS="Tests failed\n[Zie test run](${PR_URL}/checks)"
+            TEST_STATUS="Tests failed"
             ICON_URL="https://media.discordapp.net/attachments/1280503605517877339/1280506426543837288/fail-icon.png"  # Icon for failure
           elif [ "${{ env.COVERAGE_RESULT }}" -lt 90 ]; then
             TEST_STATUS="Tests failed (coverage < 90%)"
             ICON_URL="https://media.discordapp.net/attachments/1280503605517877339/1280506426543837288/fail-icon.png"  # Icon for failure
           fi
 
-          MESSAGE="_____________________________________________________________\n**Pull Request:** [${PR_TITLE}](${PR_URL})\n**Author:** ${PR_AUTHOR}\n**Test Status:** ${TEST_STATUS}"
+          MESSAGE="**Pull Request:** [${PR_TITLE}](${PR_URL})\n**Author:** ${PR_AUTHOR}\n**Test Status:** ${TEST_STATUS}"
 
           # Send the message to Discord with the appropriate icon
           curl -X POST -H "Content-Type: application/json" -d '{
