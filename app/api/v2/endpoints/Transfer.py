@@ -80,16 +80,16 @@ def commit_transfer(
         )
 
         for y in inventories:
-            if transfer.transfer_from in y["locations"]:
-                y["total_on_hand"] -= x.amount
-                y["total_expected"] = y["total_on_hand"] + y["total_ordered"]
-                y["total_available"] = y["total_on_hand"] - y["total_allocated"]
-                data_provider_v2.fetch_inventory_pool().update_inventory(y["id"], y)
-            elif transfer.transfer_to in y["locations"]:
-                y["total_on_hand"] += x.amount
-                y["total_expected"] = y["total_on_hand"] + y["total_ordered"]
-                y["total_available"] = y["total_on_hand"] - y["total_allocated"]
-                data_provider_v2.fetch_inventory_pool().update_inventory(y["id"], y)
+            if transfer.transfer_from in y.locations:
+                y.total_on_hand -= x.amount
+                y.total_expected = y.total_on_hand + y.total_ordered
+                y.total_available = y.total_on_hand - y.total_allocated
+                data_provider_v2.fetch_inventory_pool().update_inventory(y.id, y)
+            elif transfer.transfer_to in y.locations:
+                y.total_on_hand += x.amount
+                y.total_expected = y.total_on_hand + y.total_ordered
+                y.total_available = y.total_on_hand - y.total_allocated
+                data_provider_v2.fetch_inventory_pool().update_inventory(y.id, y)
 
     transfer.transfer_status = "Processed"
     data_provider_v2.fetch_transfer_pool().update_transfer(transfer_id, transfer)
