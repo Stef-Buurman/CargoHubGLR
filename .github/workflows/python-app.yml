@@ -106,7 +106,8 @@ jobs:
       - name: Send Discord Notification with PR and Test Results
         if: always()
         env:
-          DISCORD_WEBHOOK: ${{ secrets.test_webhook }}  # Use the webhook secret
+          ERRORWEBHOOK: ${{ secrets.ERRORWEBHOOK }} 
+          SUCCESSWEBHOOK: ${{ secrets.ERRORWEBHOOK }}
         run: |
           PR_URL="https://github.com/${{ github.repository }}/pull/${{ github.event.pull_request.number }}"
           PR_TITLE="${{ github.event.pull_request.title }}"
@@ -114,17 +115,22 @@ jobs:
           
           # Determine test status
           if [[ "${{ steps.pytest.outputs.status }}" == "success" ]]; then
-            TEST_STATUS="Tests completed successfully"
             ICON_URL="https://media.discordapp.net/attachments/1280503605517877339/1280506426543837288/image.png?ex=672e058a&is=672cb40a&hm=2522f789e2bb9f856f9b989ff7a550f1f8499b4e2695805113f672db3cbcfdc6&=&format=jpeg"
+
+            MESSAGE="------------\n**Pull Request:** [${PR_TITLE}](${PR_URL})\n**Author:** ${PR_AUTHOR}\n**Test Status:** Tests completed successfully"
+
+            curl -X POST -H "Content-Type: application/json" -d '{
+              "content": "'"${MESSAGE}"'",
+              "avatar_url": "'"${ICON_URL}"'"
+            }' $SUCCESSWEBHOOK
+
           else
-            TEST_STATUS="Tests failed"
-            ICON_URL="https://media.discordapp.net/attachments/1280503605517877339/1280506416247409667/error-icon.png"  # Add an error icon URL for failure
+            ICON_URL="https://media.discordapp.net/attachments/1280503605517877339/1280506416247409667/error-icon.png"
+
+            MESSAGE="------------\n**Pull Request:** [${PR_TITLE}](${PR_URL})\n**Author:** ${PR_AUTHOR}\n**Test Status:** Tests failed\n[Check test run](${PR_URL})"
+
+            curl -X POST -H "Content-Type: application/json" -d '{
+              "content": "'"${MESSAGE}"'",
+              "avatar_url": "'"${ICON_URL}"'"
+            }' $ERRORWEBHOOK
           fi
-
-          MESSAGE="_____________________________________________________________\n**Pull Request:** [${PR_TITLE}](${PR_URL})\n**Author:** ${PR_AUTHOR}\n**Test Status:** ${TEST_STATUS}"
-
-          # Send the message to Discord with the appropriate icon
-          curl -X POST -H "Content-Type: application/json" -d '{
-            "content": "'"${MESSAGE}"'",
-            "avatar_url": "'"${ICON_URL}"'"
-          }' $DISCORD_WEBHOOK

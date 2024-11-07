@@ -115,7 +115,6 @@ def test_get_items(items_instance):
     items = items_instance.get_items()
     assert len(items) == len(test_data)
     assert items[0]["code"] == "SGK13406K"
-    assert False == True
 
 
 def test_get_item(items_instance):
