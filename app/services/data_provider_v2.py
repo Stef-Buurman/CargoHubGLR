@@ -58,10 +58,10 @@ def get_item_groups():
 
 
 def get_item_types():
-    from models.item_types import ItemTypes
+    from .Item_typeService import ItemTypeService
 
     global _item_types
-    _item_types = ItemTypes(ROOT_PATH, DEBUG)
+    _item_types = ItemTypeService(ROOT_PATH, DEBUG)
 
 
 def get_warehouses():
