@@ -9,13 +9,6 @@ jobs:
   test:
     runs-on: self-hosted  # Use your self-hosted runner
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4  # Checkout the code from the repository
-     
-      - name: Build Docker container
-        run: |
-          docker build -t ef22f5:f84e61ee703f49b5ac6660894073c3ac -f "/actions-runner/_work/_actions/Ilshidur/action-discord/master/Dockerfile" "/actions-runner/_work/_actions/Ilshidur/action-discord/master"
-      
       - name: Discord notification
         env:
           DISCORD_WEBHOOK: ${{ secrets.test_webhook }}  # Use the webhook secret
