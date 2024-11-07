@@ -107,7 +107,7 @@ jobs:
         if: always()
         env:
           ERRORWEBHOOK: ${{ secrets.ERRORWEBHOOK }} 
-          SUCCESSWEBHOOK: ${{ secrets.ERRORWEBHOOK }}
+          SUCCESSWEBHOOK: ${{ secrets.SUCCESSWEBHOOK }}
         run: |
           PR_URL="https://github.com/${{ github.repository }}/pull/${{ github.event.pull_request.number }}"
           PR_TITLE="${{ github.event.pull_request.title }}"
