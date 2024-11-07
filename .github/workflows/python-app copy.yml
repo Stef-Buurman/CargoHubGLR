@@ -11,7 +11,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Discord notification
         env:
-          DISCORD_WEBHOOK: https://discord.com/api/webhooks/1304077240434429962/maMDBz8j4NknVAZbTievqCRhPL0lde9n__Hrz6vC3vxxopdpVDKMGCBB1MADA9zRZC8e
+          DISCORD_WEBHOOK: ${{ secrets.test_webhook }}
         uses: Ilshidur/action-discord@master
         with:
           args: 'The project {{ EVENT_PAYLOAD.repository.full_name }} has been deployed.'
