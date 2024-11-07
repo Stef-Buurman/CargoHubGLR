@@ -44,10 +44,10 @@ def get_items():
 
 
 def get_item_lines():
-    from models.item_lines import ItemLines
+    from .Item_lineService import ItemLineService
 
     global _item_lines
-    _item_lines = ItemLines(ROOT_PATH, DEBUG)
+    _item_lines = ItemLineService(ROOT_PATH, DEBUG)
 
 
 def get_item_groups():
