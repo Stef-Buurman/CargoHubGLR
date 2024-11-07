@@ -49,10 +49,17 @@ jobs:
           PR_TITLE="${{ github.event.pull_request.title }}"
           PR_AUTHOR="${{ github.event.pull_request.user.login }}"
           TEST_STATUS="Tests completed successfully"
+          ICON_URL="https://media.discordapp.net/attachments/1280503605517877339/1280506426543837288/image.png?ex=672e058a&is=672cb40a&hm=2522f789e2bb9f856f9b989ff7a550f1f8499b4e2695805113f672db3cbcfdc6&=&format=jpeg"  # Default icon for success
+
+          # If coverage is below 90%, mark as failed and use a different icon
           if [[ $(coverage report -m | tail -n 1 | awk '{print $NF}') -lt 90 ]]; then
             TEST_STATUS="Tests failed (coverage < 90%)"
           fi
 
           MESSAGE="**Pull Request:** [${PR_TITLE}](${PR_URL})\n**Author:** ${PR_AUTHOR}\n**Test Status:** ${TEST_STATUS}"
 
-          curl -X POST -H "Content-Type: application/json" -d '{"content": "'"${MESSAGE}"'"}' $DISCORD_WEBHOOK
+          # Send the message to Discord with the appropriate icon
+          curl -X POST -H "Content-Type: application/json" -d '{
+            "content": "'"${MESSAGE}"'",
+            "avatar_url": "'"${ICON_URL}"'"
+          }' $DISCORD_WEBHOOK
