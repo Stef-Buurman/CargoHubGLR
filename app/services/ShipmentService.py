@@ -42,6 +42,7 @@ class ShipmentService(Base):
             self.update_inventory_for_items(shipment.items, items)
             shipment.items = items
             self.update_shipment(shipment_id, shipment)
+            return shipment
 
     def update_inventory_for_items(self, current_items: List[Shipment], new_items: List[dict]):
         def update_inventory(item_id, amount_change):

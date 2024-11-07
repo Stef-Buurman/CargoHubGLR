@@ -129,6 +129,7 @@ class Orders(Base):
             order["shipment_id"] = shipment_id
             order["order_status"] = "Packed"
             self.update_order(x, order)
+            return order
 
     def remove_order(self, order_id):
         for x in self.data:
