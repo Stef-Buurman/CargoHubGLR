@@ -1,64 +1,3 @@
-# name: Tests run
-
-# on:
-#   pull_request:
-#     branches: ["Testing", "Production"]
-
-# jobs:
-#   test:
-#     runs-on: self-hosted
-#     steps:
-#       - uses: actions/checkout@v4
-#       - name: Install dependencies
-#         run: |
-#           python3 -m pip install --upgrade pip
-#           pip install flake8 pytest
-#           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-
-#       - name: Start the application in the background
-#         run: |
-#           python3 app/main.py > app.log 2>&1 &
-#           echo $! > app_pid.txt
-#           sleep 1
-
-#       - name: Test with pytest
-#         run: coverage run -m pytest
-
-#       - name: Run code coverage
-#         run: |
-#           coverage report -m --rcfile=.coveragerc --format=markdown >> $GITHUB_STEP_SUMMARY
-
-#       - name: Stop the application
-#         run: kill $(cat app_pid.txt) || echo "App already stopped"
-
-#       - name: Store coverage report
-#         uses: actions/upload-artifact@v4
-#         with:
-#           path: |
-#             app.log
-#             coverage.xml
-
-#       # Send the Discord notification with the PR and test results (runs regardless of success/failure)
-#       - name: Send Discord Notification with PR and Test Results
-#         if: always()
-#         env:
-#           DISCORD_WEBHOOK: ${{ secrets.test_webhook }}  # Use the webhook secret
-#         run: |
-#           PR_URL="https://github.com/${{ github.repository }}/pull/${{ github.event.pull_request.number }}"
-#           PR_TITLE="${{ github.event.pull_request.title }}"
-#           PR_AUTHOR="${{ github.event.pull_request.user.login }}"
-#           TEST_STATUS="Tests completed successfully"
-#           ICON_URL="https://media.discordapp.net/attachments/1280503605517877339/1280506426543837288/image.png?ex=672e058a&is=672cb40a&hm=2522f789e2bb9f856f9b989ff7a550f1f8499b4e2695805113f672db3cbcfdc6&=&format=jpeg"  # Default icon for success
-
-#           MESSAGE="_____________________________________________________________\n**Pull Request:** [${PR_TITLE}](${PR_URL})\n**Author:** ${PR_AUTHOR}\n**Test Status:** ${TEST_STATUS}"
-
-#           # Send the message to Discord with the appropriate icon
-#           curl -X POST -H "Content-Type: application/json" -d '{
-#             "content": "'"${MESSAGE}"'",
-#             "avatar_url": "'"${ICON_URL}"'"
-#           }' $DISCORD_WEBHOOK
-
-
 name: Tests run
 
 on:
@@ -86,7 +25,11 @@ jobs:
         id: pytest
         run: |
           coverage run -m pytest
-          echo "::set-output name=status::$(if [ $? -eq 0 ]; then echo 'success'; else echo 'failure'; fi)"
+          if [ $? -eq 0 ]; then
+            echo "status=success" >> $GITHUB_ENV
+          else
+            echo "status=failure" >> $GITHUB_ENV
+          fi
 
       - name: Run code coverage
         run: |
@@ -114,7 +57,7 @@ jobs:
           PR_AUTHOR="${{ github.event.pull_request.user.login }}"
           
           # Determine test status
-          if [[ "${{ steps.pytest.outputs.status }}" == "success" ]]; then
+          if [[ "$status" == "success" ]]; then
             ICON_URL="https://media.discordapp.net/attachments/1280503605517877339/1280506426543837288/image.png?ex=672e058a&is=672cb40a&hm=2522f789e2bb9f856f9b989ff7a550f1f8499b4e2695805113f672db3cbcfdc6&=&format=jpeg"
 
             MESSAGE="------------\n**Pull Request:** [${PR_TITLE}](${PR_URL})\n**Author:** ${PR_AUTHOR}\n**Test Status:** Tests completed successfully"
