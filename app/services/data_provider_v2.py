@@ -93,10 +93,10 @@ def get_clients():
 
 
 def get_shipments():
-    from models.shipments import Shipments
+    from .ShipmentService import ShipmentService
 
     global _shipments
-    _shipments = Shipments(ROOT_PATH, DEBUG)
+    _shipments = ShipmentService(ROOT_PATH, DEBUG)
 
 
 def get_suppliers():

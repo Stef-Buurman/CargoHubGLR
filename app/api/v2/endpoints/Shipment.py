@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Response, status
 from fastapi.responses import JSONResponse
 from services import data_provider_v2, auth_provider
+from models.v2.shipment import Shipment
 from typing import List, Dict, Union
 
 shipment_router_v2 = APIRouter()
@@ -53,18 +54,18 @@ def read_items_for_shipment(
     return items
 
 @shipment_router_v2.post("/")
-def create_shipment(shipment: dict, api_key: str = Depends(auth_provider.get_api_key)):
+def create_shipment(shipment: Shipment, api_key: str = Depends(auth_provider.get_api_key)):
     data_provider_v2.init()
-    existingShipment = data_provider_v2.fetch_shipment_pool().get_shipment(shipment["id"])
+    existingShipment = data_provider_v2.fetch_shipment_pool().get_shipment(shipment.id)
     if existingShipment is not None:
         raise HTTPException(status_code=409, detail="Shipment already exists")
     data_provider_v2.fetch_shipment_pool().add_shipment(shipment)
     data_provider_v2.fetch_shipment_pool().save()
-    return JSONResponse(status_code=status.HTTP_201_CREATED, content=shipment)
+    return JSONResponse(status_code=status.HTTP_201_CREATED, content=shipment.model_dump())
 
 @shipment_router_v2.put("/{shipment_id}")
 def update_shipment(
-    shipment_id: int, shipment: dict, api_key: str = Depends(auth_provider.get_api_key)
+    shipment_id: int, shipment: Shipment, api_key: str = Depends(auth_provider.get_api_key)
 ):
     data_provider_v2.init()
     existingShipment = data_provider_v2.fetch_shipment_pool().get_shipment(shipment_id)

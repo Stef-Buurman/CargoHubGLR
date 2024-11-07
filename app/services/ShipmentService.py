@@ -24,16 +24,10 @@ class ShipmentService(Base):
         return shipment.items if shipment else None
 
     def add_shipment(self, shipment: Shipment) -> Shipment:
-        shipment.id = self.generate_uid()
         shipment.created_at = self.get_timestamp()
         shipment.updated_at = self.get_timestamp()
         self.data.append(shipment)
         return shipment
-
-    def generate_uid(self) -> str:
-        self.current_id = max((int(shipment.id[1:]) for shipment in self.data), default=0)
-        new_uid = f"S{self.current_id + 1:06d}"
-        return new_uid
 
     def update_shipment(self, shipment_id: str, shipment: Shipment):
         shipment.updated_at = self.get_timestamp()
