@@ -87,11 +87,11 @@ def update_orders_in_shipment(
         raise HTTPException(
             status_code=404, detail=f"Shipment with id {shipment_id} not found"
         )
-    data_provider_v2.fetch_order_pool().update_orders_in_shipment(
+    updated_order_in_shipment = data_provider_v2.fetch_order_pool().update_orders_in_shipment(
         shipment_id, updated_orders
     )
     data_provider_v2.fetch_order_pool().save()
-    return shipment
+    return updated_order_in_shipment
 
 @shipment_router_v2.put("/{shipment_id}/items")
 def update_items_in_shipment(
@@ -105,11 +105,11 @@ def update_items_in_shipment(
         raise HTTPException(
             status_code=404, detail=f"Shipment with id {shipment_id} not found"
         )
-    data_provider_v2.fetch_shipment_pool().update_items_in_shipment(
+    updated_item_in_shipment = data_provider_v2.fetch_shipment_pool().update_items_in_shipment(
         shipment_id, [updated_item]
     )
     data_provider_v2.fetch_shipment_pool().save()
-    return shipment
+    return updated_item_in_shipment
 
 @shipment_router_v2.put("/{shipment_id}/commit")
 def commit_shipment(
