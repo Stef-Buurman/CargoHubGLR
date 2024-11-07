@@ -148,7 +148,7 @@ jobs:
           if [ "$pytest_exit_code" -ne 0 ]; then
             TEST_STATUS="Tests failed"
             ICON_URL="https://media.discordapp.net/attachments/1280503605517877339/1280506426543837288/fail-icon.png"  # Failure icon
-            MESSAGE="**Pull Request:** [${PR_TITLE}](${PR_URL})\n**Author:** ${PR_AUTHOR}\n**Test Status:** ${TEST_STATUS}\n**Error Message:**\n\`\`\`${pytest_output}\`\`\`"
+            MESSAGE="**Pull Request:** [${PR_TITLE}](${PR_URL})\n**Author:** ${PR_AUTHOR}\n**Test Status:** Tests failed\n**Error Message:**\n\`\`\`${pytest_output}\`\`\`"
           elif [ "$coverage_result" -lt 90 ]; then
             TEST_STATUS="Tests failed (coverage < 90%)"
             ICON_URL="https://media.discordapp.net/attachments/1280503605517877339/1280506426543837288/fail-icon.png"  # Failure icon
