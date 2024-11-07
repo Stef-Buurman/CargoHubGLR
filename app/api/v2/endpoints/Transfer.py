@@ -76,8 +76,12 @@ def commit_transfer(
     transfer = data_provider_v2.fetch_transfer_pool().get_transfer(transfer_id)
     if transfer is None:
         raise HTTPException(status_code=404, detail="Transfer not found")
-    data_provider_v2.fetch_transfer_pool().commit_transfer(transfer)
-    data_provider_v2.fetch_transfer_pool().update_transfer(transfer_id, transfer)
+    committed_transfer = data_provider_v2.fetch_transfer_pool().commit_transfer(
+        transfer
+    )
+    data_provider_v2.fetch_transfer_pool().update_transfer(
+        transfer_id, committed_transfer
+    )
     data_provider_v2.fetch_transfer_pool().save()
     data_provider_v2.fetch_inventory_pool().save()
 

@@ -59,6 +59,7 @@ class TransferService(Base):
                     fetch_inventory_pool().update_inventory(y.id, y)
 
         transfer.transfer_status = "Processed"
+        return transfer
 
     def remove_transfer(self, transfer_id: int):
         for x in self.data:
