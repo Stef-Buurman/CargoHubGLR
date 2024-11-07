@@ -65,7 +65,7 @@ jobs:
             }' $SUCCESSWEBHOOK
 
           else
-            ICON_URL="https://media.discordapp.net/attachments/1280503605517877339/1280506416247409667/error-icon.png"
+            ICON_URL="https://media.discordapp.net/attachments/1280503605517877339/1291024820254806057/image.png?ex=672e0e0f&is=672cbc8f&hm=634c8c7d403ac1ad6b586f4aeb030b68180431e0e9f04ea07888bcda3b769c05&=&format=jpeg"
 
             MESSAGE="------------\n**Pull Request:** [${PR_TITLE}](${PR_URL})\n**Author:** ${PR_AUTHOR}\n**Test Status:** Tests failed\n[Check test run](${PR_URL}/checks)"
 
