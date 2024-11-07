@@ -99,8 +99,10 @@ jobs:
           sleep 1
 
       - name: Test with pytest
+        id: pytest
         run: |
           coverage run -m pytest
+          echo "pytest_exit_code=$?" >> $GITHUB_ENV  # Capture pytest exit code
 
       - name: Run code coverage
         run: |
@@ -130,16 +132,18 @@ jobs:
           PR_URL="https://github.com/${{ github.repository }}/pull/${{ github.event.pull_request.number }}"
           PR_TITLE="${{ github.event.pull_request.title }}"
           PR_AUTHOR="${{ github.event.pull_request.user.login }}"
+          
+          # Default status and icon
           TEST_STATUS="Tests completed successfully"
-          ICON_URL="https://media.discordapp.net/attachments/1280503605517877339/1280506426543837288/image.png?ex=672e058a&is=672cb40a&hm=2522f789e2bb9f856f9b989ff7a550f1f8499b4e2695805113f672db3cbcfdc6&=&format=jpeg"  # Default icon for success
+          ICON_URL="https://media.discordapp.net/attachments/1280503605517877339/1280506426543837288/image.png?ex=672e058a&is=672cb40a&hm=2522f789e2bb9f856f9b989ff7a550f1f8499b4e2695805113f672db3cbcfdc6&=&format=jpeg"  # Success icon
 
-          # Check if pytest passed or failed
-          if [[ $? -ne 0 ]]; then
+          # Check pytest exit code and coverage result
+          if [ "${{ env.pytest_exit_code }}" -ne 0 ]; then
             TEST_STATUS="Tests failed"
-            ICON_URL="https://media.discordapp.net/attachments/1280503605517877339/1280506426543837288/fail-icon.png"  # Icon for failure
+            ICON_URL="https://media.discordapp.net/attachments/1280503605517877339/1280506426543837288/fail-icon.png"  # Failure icon
           elif [ "${{ env.COVERAGE_RESULT }}" -lt 90 ]; then
             TEST_STATUS="Tests failed (coverage < 90%)"
-            ICON_URL="https://media.discordapp.net/attachments/1280503605517877339/1280506426543837288/fail-icon.png"  # Icon for failure
+            ICON_URL="https://media.discordapp.net/attachments/1280503605517877339/1280506426543837288/fail-icon.png"  # Failure icon
           fi
 
           MESSAGE="**Pull Request:** [${PR_TITLE}](${PR_URL})\n**Author:** ${PR_AUTHOR}\n**Test Status:** ${TEST_STATUS}"
