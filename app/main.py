@@ -26,6 +26,8 @@ from api.v2.endpoints.Warehouse import warehouse_router_v2
 from api.v2.endpoints.Location import location_router_v2
 from api.v2.endpoints.Inventory import inventory_router_v2
 from api.v2.endpoints.Item_type import item_type_router_v2
+from api.v2.endpoints.Shipment import shipment_router_v2
+
 
 import uvicorn
 
@@ -52,6 +54,8 @@ app.include_router(warehouse_router_v2, prefix=v2_url + "/warehouses")
 app.include_router(location_router_v2, prefix=v2_url + "/locations")
 app.include_router(inventory_router_v2, prefix=v2_url + "/inventories")
 app.include_router(item_type_router_v2, prefix=v2_url + "/item_types")
+app.include_router(shipment_router_v2, prefix=v2_url + "/shipments")
+
 
 
 def main():
