@@ -107,10 +107,10 @@ def get_suppliers():
 
 
 def get_inventories():
-    from models.inventories import Inventories
+    from .InventoryService import InventoryService
 
     global _inventories
-    _inventories = Inventories(ROOT_PATH, DEBUG)
+    _inventories = InventoryService(ROOT_PATH, DEBUG)
 
 
 def get_orders():
