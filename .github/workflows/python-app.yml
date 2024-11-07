@@ -44,7 +44,6 @@ jobs:
             app.log
             coverage.xml
 
-      # Send the Discord notification with the PR and test results (runs regardless of success/failure)
       - name: Send Discord Notification with PR and Test Results
         if: always()
         env:
@@ -55,7 +54,6 @@ jobs:
           PR_TITLE="${{ github.event.pull_request.title }}"
           PR_AUTHOR="${{ github.event.pull_request.user.login }}"
 
-          # Determine test status
           if [[ "$status" == "success" ]]; then
             ICON_URL="https://media.discordapp.net/attachments/1280503605517877339/1280506426543837288/image.png?ex=672e058a&is=672cb40a&hm=2522f789e2bb9f856f9b989ff7a550f1f8499b4e2695805113f672db3cbcfdc6&=&format=jpeg"
 
