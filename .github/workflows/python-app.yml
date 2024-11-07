@@ -101,10 +101,15 @@ jobs:
       - name: Test with pytest
         id: pytest
         run: |
-          pytest_output=$(coverage run -m pytest)  # Capture pytest output
+          # Run the tests and capture the output and exit code
+          pytest_output=$(coverage run -m pytest)
           pytest_exit_code=$?
           echo "pytest_exit_code=$pytest_exit_code" >> $GITHUB_ENV
-          echo "pytest_output=$pytest_output" >> $GITHUB_ENV  # Save the output for later steps
+          echo "pytest_output=$pytest_output" >> $GITHUB_ENV
+          # Log the output and exit code for debugging
+          echo "Test results captured, continuing..."
+          echo "pytest_exit_code=$pytest_exit_code"
+          echo "pytest_output=$pytest_output"
 
       - name: Run code coverage
         run: |
@@ -144,11 +149,15 @@ jobs:
           pytest_output="${{ env.pytest_output }}"
           coverage_result="${{ env.COVERAGE_RESULT }}"
 
-          # If pytest failed, set the appropriate message and icon
+          # Debugging: Print the exit code and output
+          echo "pytest_exit_code=$pytest_exit_code"
+          echo "pytest_output=$pytest_output"
+
+          # Check the pytest exit code to determine the status
           if [ "$pytest_exit_code" -ne 0 ]; then
             TEST_STATUS="Tests failed"
             ICON_URL="https://media.discordapp.net/attachments/1280503605517877339/1280506426543837288/fail-icon.png"  # Failure icon
-            MESSAGE="**Pull Request:** [${PR_TITLE}](${PR_URL})\n**Author:** ${PR_AUTHOR}\n**Test Status:** Tests failed\n**Error Message:**\n\`\`\`${pytest_output}\`\`\`"
+            MESSAGE="**Pull Request:** [${PR_TITLE}](${PR_URL})\n**Author:** ${PR_AUTHOR}\n**Test Status:** ${TEST_STATUS}\n**Error Message:**\n\`\`\`${pytest_output}\`\`\`"
           elif [ "$coverage_result" -lt 90 ]; then
             TEST_STATUS="Tests failed (coverage < 90%)"
             ICON_URL="https://media.discordapp.net/attachments/1280503605517877339/1280506426543837288/fail-icon.png"  # Failure icon
@@ -162,4 +171,5 @@ jobs:
             "content": "'"${MESSAGE}"'",
             "avatar_url": "'"${ICON_URL}"'"
           }' $DISCORD_WEBHOOK
+
 
