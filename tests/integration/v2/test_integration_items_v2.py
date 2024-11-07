@@ -18,10 +18,8 @@ test_item = {
     "pack_order_quantity": 11,
     "supplier_id": 34,
     "supplier_code": "SUP423",
-    "supplier_part_number": "E-86805-uTM"
+    "supplier_part_number": "E-86805-uTM",
 }
-
-added_uid = None
 
 test_inventory = {
     "id": 99999999999999999,
@@ -37,11 +35,6 @@ test_inventory = {
     "updated_at": "1989-03-30 17:53:04",
 }
 
-
-@pytest.fixture
-def client_v1():
-    with httpx.Client(base_url=MAIN_URL) as client_v1:
-        yield client_v1
 
 @pytest.fixture
 def client():
@@ -130,9 +123,9 @@ def test_get_inventory_of_nonexistent_item(client):
     assert response.status_code == 404
 
 
-def test_get_inventory_of_item(client, client_v1):
+def test_get_inventory_of_item(client):
     test_inventory["item_id"] = test_item["uid"]
-    responseAddInventory = client_v1.post(
+    responseAddInventory = client.post(
         "/inventories/", json=test_inventory, headers=test_headers
     )
     assert (
@@ -166,7 +159,7 @@ def test_get_inventory_totals_of_nonexistent_item(client):
     assert response.status_code == 404
 
 
-def test_get_inventory_totals_of_item(client, client_v1):
+def test_get_inventory_totals_of_item(client):
     response = client.get(
         "/items/" + test_item["uid"] + "/inventory/totals", headers=test_headers
     )
@@ -176,11 +169,11 @@ def test_get_inventory_totals_of_item(client, client_v1):
     assert response.json()["total_ordered"] == test_inventory["total_ordered"]
     assert response.json()["total_allocated"] == test_inventory["total_allocated"]
     assert response.json()["total_available"] == test_inventory["total_available"]
-    responseDeleteInventory = client_v1.delete(
+    responseDeleteInventory = client.delete(
         "/inventories/" + str(test_inventory["id"]), headers=test_headers
     )
     assert responseDeleteInventory.status_code == 200
-    responseGetInventory = client_v1.get(
+    responseGetInventory = client.get(
         "/inventories/" + str(test_inventory["id"]), headers=test_headers
     )
     assert responseGetInventory.status_code == 404
