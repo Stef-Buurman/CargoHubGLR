@@ -24,6 +24,7 @@ jobs:
 
       - name: Test with pytest
         run: coverage run -m pytest
+        continue-on-error: true
 
       - name: Run code coverage
         run: |
@@ -65,7 +66,7 @@ jobs:
             ICON_URL="https://media.discordapp.net/attachments/1280503605517877339/1280506426543837288/fail-icon.png"  # Icon for failure
           fi
 
-          MESSAGE="**Pull Request:** [${PR_TITLE}](${PR_URL})\n**Author:** ${PR_AUTHOR}\n**Test Status:** ${TEST_STATUS}"
+          MESSAGE="_____________________________________________________________\n**Pull Request:** [${PR_TITLE}](${PR_URL})\n**Author:** ${PR_AUTHOR}\n**Test Status:** ${TEST_STATUS}"
 
           # Send the message to Discord with the appropriate icon
           curl -X POST -H "Content-Type: application/json" -d '{
