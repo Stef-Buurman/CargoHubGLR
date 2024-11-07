@@ -105,7 +105,7 @@ def update_items_in_shipment(
         raise HTTPException(
             status_code=404, detail=f"Shipment with id {shipment_id} not found"
         )
-    data_provider_v2.fetch_shipment_pool().update_items_for_shipment(
+    data_provider_v2.fetch_shipment_pool().update_items_in_shipment(
         shipment_id, [updated_item]
     )
     data_provider_v2.fetch_shipment_pool().save()

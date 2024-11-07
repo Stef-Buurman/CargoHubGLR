@@ -43,7 +43,7 @@ class ShipmentService(Base):
             shipment.items = items
             self.update_shipment(shipment_id, shipment)
 
-    def update_inventory_for_items(self, current_items: List[dict], new_items: List[dict]):
+    def update_inventory_for_items(self, current_items: List[Shipment], new_items: List[dict]):
         def update_inventory(item_id, amount_change):
             inventories = data_provider.fetch_inventory_pool().get_inventories_for_item(item_id)
             max_inventory = max(inventories, key=lambda z: z["total_ordered"], default=None)
@@ -51,16 +51,20 @@ class ShipmentService(Base):
                 max_inventory["total_ordered"] += amount_change
                 max_inventory["total_expected"] = max_inventory["total_on_hand"] + max_inventory["total_ordered"]
                 data_provider.fetch_inventory_pool().update_inventory(max_inventory["id"], max_inventory)
-
+        new_items_dict = {item["item_id"]: item for item in new_items}
         for current in current_items:
-            if not any(current["item_id"] == item["item_id"] for item in new_items):
-                update_inventory(current["item_id"], -current["amount"])
-
-        for current in current_items:
-            for new in new_items:
-                if current["item_id"] == new["item_id"]:
-                    amount_change = new["amount"] - current["amount"]
-                    update_inventory(current["item_id"], amount_change)
+            item_id = current.item_id
+            current_amount = current.amount
+            if item_id in new_items_dict:
+                new_amount = new_items_dict[item_id]["amount"]
+                amount_change = new_amount - current_amount
+                update_inventory(item_id, amount_change)
+            else:
+                update_inventory(item_id, -current_amount)
+        current_item_ids = {current.item_id for current in current_items}
+        for item in new_items:
+            if item["item_id"] not in current_item_ids:
+                update_inventory(item["item_id"], item["amount"])
 
     def remove_shipment(self, shipment_id: str):
         shipment = self.get_shipment(shipment_id)
