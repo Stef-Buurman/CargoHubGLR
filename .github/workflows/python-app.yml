@@ -40,7 +40,6 @@ jobs:
           path: |
             app.log
             coverage.xml
-        if: ${{ failure() }}
       - name: Send Discord Notification with PR and Test Results
         env:
           DISCORD_WEBHOOK: ${{ secrets.test_webhook }}  # Use the webhook secret
