@@ -33,7 +33,7 @@ test_order = {
 
 @pytest.fixture
 def client():
-    with httpx.Client(base_url=MAIN_URL) as client:
+    with httpx.Client(base_url=MAIN_URL, timeout=timeout) as client:
         yield client
 
 

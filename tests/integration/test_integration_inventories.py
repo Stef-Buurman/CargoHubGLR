@@ -1,6 +1,6 @@
 import httpx
 import pytest
-from test_globals import MAIN_URL, test_headers, invalid_headers, non_existent_id
+from test_globals import *
 
 test_inventory = {
     "id": 99999999999999999,
@@ -20,7 +20,7 @@ test_inventory = {
 
 @pytest.fixture
 def client():
-    with httpx.Client(base_url=MAIN_URL) as client:
+    with httpx.Client(base_url=MAIN_URL, timeout=timeout) as client:
         yield client
 
 

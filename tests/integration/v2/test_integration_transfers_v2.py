@@ -1,12 +1,6 @@
 import pytest
 import httpx
-from tests.integration.test_globals import (
-    MAIN_URL,
-    MAIN_URL_V2,
-    non_existent_id,
-    test_headers,
-    invalid_headers,
-)
+from tests.integration.test_globals import *
 
 test_transfer = {
     "id": 99999999999999999,
@@ -21,21 +15,15 @@ test_transfer = {
 
 
 @pytest.fixture
-def client_v1():
-    with httpx.Client(base_url=MAIN_URL) as client_v1:
-        yield client_v1
-
-
-@pytest.fixture
 def client():
-    with httpx.Client(base_url=MAIN_URL_V2) as client:
+    with httpx.Client(base_url=MAIN_URL_V2, timeout=timeout) as client:
         yield client
 
 
-# def test_get_all_transfers(client):
-#     response = client.get("/transfers/", headers=test_headers)
-#     assert response.status_code == 200
-#     assert isinstance(response.json(), list)
+def test_get_all_transfers(client):
+    response = client.get("/transfers/", headers=test_headers)
+    assert response.status_code == 200
+    assert isinstance(response.json(), list)
 
 
 def test_get_all_transfers_no_api_key(client):

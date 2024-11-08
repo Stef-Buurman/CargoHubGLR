@@ -28,9 +28,10 @@ test_shipment = {
     ],
 }
 
+
 @pytest.fixture
 def client():
-    with httpx.Client(base_url=MAIN_URL_V2) as client:
+    with httpx.Client(base_url=MAIN_URL_V2, timeout=timeout) as client:
         yield client
 
 
@@ -116,7 +117,11 @@ def test_update_shipment_no_api_key(client):
 def test_update_shipment_invalid_api_key(client):
     updated_shipment = test_shipment.copy()
     updated_shipment["shipment_status"] = "Shipped"
-    response = client.put(f"/shipments/{test_shipment['id']}", json=updated_shipment, headers=invalid_headers)
+    response = client.put(
+        f"/shipments/{test_shipment['id']}",
+        json=updated_shipment,
+        headers=invalid_headers,
+    )
     assert response.status_code == 403
     response_get = client.get(f"/shipments/{test_shipment['id']}", headers=test_headers)
     assert response_get.status_code == 200
@@ -126,21 +131,27 @@ def test_update_shipment_invalid_api_key(client):
 def test_update_invalid_shipment_id(client):
     updated_shipment = test_shipment.copy()
     updated_shipment["shipment_status"] = "Shipped"
-    response = client.put("/shipments/invalid_id", json=updated_shipment, headers=test_headers)
+    response = client.put(
+        "/shipments/invalid_id", json=updated_shipment, headers=test_headers
+    )
     assert response.status_code == 422
 
 
 def test_update_nonexistent_shipment(client):
     updated_shipment = test_shipment.copy()
     updated_shipment["shipment_status"] = "Shipped"
-    response = client.put(f"/shipments/{non_existent_id}", json=updated_shipment, headers=test_headers)
+    response = client.put(
+        f"/shipments/{non_existent_id}", json=updated_shipment, headers=test_headers
+    )
     assert response.status_code == 404
 
 
 def test_update_shipment(client):
     updated_shipment = test_shipment.copy()
     updated_shipment["shipment_status"] = "Shipped"
-    response = client.put(f"/shipments/{test_shipment['id']}", json=updated_shipment, headers=test_headers)
+    response = client.put(
+        f"/shipments/{test_shipment['id']}", json=updated_shipment, headers=test_headers
+    )
     assert response.status_code == 200
     response_get = client.get(f"/shipments/{test_shipment['id']}", headers=test_headers)
     assert response_get.status_code == 200
@@ -155,7 +166,9 @@ def test_delete_shipment_no_api_key(client):
 
 
 def test_delete_shipment_invalid_api_key(client):
-    response = client.delete(f"/shipments/{test_shipment['id']}", headers=invalid_headers)
+    response = client.delete(
+        f"/shipments/{test_shipment['id']}", headers=invalid_headers
+    )
     assert response.status_code == 403
     response_get = client.get(f"/shipments/{test_shipment['id']}", headers=test_headers)
     assert response_get.status_code == 200
