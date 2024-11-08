@@ -20,17 +20,19 @@ class WarehouseService(Base):
                 return x
         return None
 
-    def add_warehouse(self, warehouse: Warehouse):
+    def add_warehouse(self, warehouse: Warehouse) -> Warehouse:
         warehouse.created_at = self.get_timestamp()
         warehouse.updated_at = self.get_timestamp()
         self.data.append(warehouse)
+        return warehouse
 
-    def update_warehouse(self, warehouse_id: int, warehouse: Warehouse):
+    def update_warehouse(self, warehouse_id: int, warehouse: Warehouse) -> Warehouse:
         warehouse.updated_at = self.get_timestamp()
         for i in range(len(self.data)):
             if self.data[i].id == warehouse_id:
                 self.data[i] = warehouse
                 break
+        return warehouse
 
     def remove_warehouse(self, warehouse_id: int):
         for x in self.data:
