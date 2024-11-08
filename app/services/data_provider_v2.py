@@ -37,14 +37,14 @@ def init():
 
 # Load data for each model
 def get_items():
-    from .ItemServices import ItemService
+    from .item_services import ItemService
 
     global _items
     _items = ItemService(ROOT_PATH, DEBUG)
 
 
 def get_item_lines():
-    from .Item_lineService import ItemLineService
+    from .item_line_service import ItemLineService
 
     global _item_lines
     _item_lines = ItemLineService(ROOT_PATH, DEBUG)
@@ -58,28 +58,28 @@ def get_item_groups():
 
 
 def get_item_types():
-    from .Item_typeService import ItemTypeService
+    from .item_type_service import ItemTypeService
 
     global _item_types
     _item_types = ItemTypeService(ROOT_PATH, DEBUG)
 
 
 def get_warehouses():
-    from .WarehouseService import WarehouseService
+    from .warehouse_service import WarehouseService
 
     global _warehouses
     _warehouses = WarehouseService(ROOT_PATH, DEBUG)
 
 
 def get_locations():
-    from .LocationService import LocationService
+    from .location_service import LocationService
 
     global _locations
     _locations = LocationService(ROOT_PATH, DEBUG)
 
 
 def get_transfers():
-    from .TransferService import TransferService
+    from .transfer_service import TransferService
 
     global _transfers
     _transfers = TransferService(ROOT_PATH, DEBUG)
@@ -93,7 +93,7 @@ def get_clients():
 
 
 def get_shipments():
-    from .ShipmentService import ShipmentService
+    from .shipment_service import ShipmentService
 
     global _shipments
     _shipments = ShipmentService(ROOT_PATH, DEBUG)
@@ -107,7 +107,7 @@ def get_suppliers():
 
 
 def get_inventories():
-    from .InventoryService import InventoryService
+    from .inventory_service import InventoryService
 
     global _inventories
     _inventories = InventoryService(ROOT_PATH, DEBUG)

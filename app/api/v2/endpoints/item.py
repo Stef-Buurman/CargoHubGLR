@@ -70,9 +70,9 @@ def update_item(
     existingItem = data_provider_v2.fetch_item_pool().get_item(item_id)
     if existingItem is None:
         raise HTTPException(status_code=404, detail="Item not found")
-    data_provider_v2.fetch_item_pool().update_item(item_id, item)
+    updated_item = data_provider_v2.fetch_item_pool().update_item(item_id, item)
     data_provider_v2.fetch_item_pool().save()
-    return item
+    return updated_item
 
 
 @item_router_v2.delete("/{item_id}")
