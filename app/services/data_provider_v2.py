@@ -51,10 +51,10 @@ def get_item_lines():
 
 
 def get_item_groups():
-    from models.item_groups import ItemGroups
+    from .Item_groupsService import ItemGroupService
 
     global _item_groups
-    _item_groups = ItemGroups(ROOT_PATH, DEBUG)
+    _item_groups = ItemGroupService(ROOT_PATH, DEBUG)
 
 
 def get_item_types():
