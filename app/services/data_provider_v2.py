@@ -51,7 +51,7 @@ def get_item_lines():
 
 
 def get_item_groups():
-    from .Item_groupsService import ItemGroupService
+    from .item_group_service import ItemGroupService
 
     global _item_groups
     _item_groups = ItemGroupService(ROOT_PATH, DEBUG)
