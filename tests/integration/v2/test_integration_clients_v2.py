@@ -1,6 +1,6 @@
 import httpx
 import pytest
-from test_globals import *
+from tests.integration.test_globals import *
 
 test_CargoClient = {
     "id": 999999999,
