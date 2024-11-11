@@ -54,10 +54,10 @@ def create_warehouse(
     )
     if existing_warehouse is not None:
         raise HTTPException(status_code=409, detail="Warehouse already exists")
-    data_provider_v2.fetch_warehouse_pool().add_warehouse(warehouse)
+    created_warehouse = data_provider_v2.fetch_warehouse_pool().add_warehouse(warehouse)
     data_provider_v2.fetch_warehouse_pool().save()
     return JSONResponse(
-        status_code=status.HTTP_201_CREATED, content=warehouse.model_dump()
+        status_code=status.HTTP_201_CREATED, content=created_warehouse.model_dump()
     )
 
 
@@ -73,9 +73,36 @@ def update_warehouse(
     )
     if existing_warehouse is None:
         raise HTTPException(status_code=404, detail="Warehouse not found")
-    data_provider_v2.fetch_warehouse_pool().update_warehouse(warehouse_id, warehouse)
+    updated_warehouse = data_provider_v2.fetch_warehouse_pool().update_warehouse(
+        warehouse_id, warehouse
+    )
     data_provider_v2.fetch_warehouse_pool().save()
-    return warehouse
+    return updated_warehouse
+
+
+@warehouse_router_v2.patch("/{warehouse_id}")
+def partial_update_warehouse(
+    warehouse_id: int,
+    warehouse: dict,
+    api_key: str = Depends(auth_provider.get_api_key),
+):
+    data_provider_v2.init()
+    existing_warehouse = data_provider_v2.fetch_warehouse_pool().get_warehouse(
+        warehouse_id
+    )
+    if existing_warehouse is None:
+        raise HTTPException(status_code=404, detail="Warehouse not found")
+
+    for key, value in warehouse.items():
+        setattr(existing_warehouse, key, value)
+
+    partial_updated_warehouse = (
+        data_provider_v2.fetch_warehouse_pool().update_warehouse(
+            warehouse_id, existing_warehouse
+        )
+    )
+    data_provider_v2.fetch_warehouse_pool().save()
+    return partial_updated_warehouse
 
 
 @warehouse_router_v2.delete("/{warehouse_id}")
