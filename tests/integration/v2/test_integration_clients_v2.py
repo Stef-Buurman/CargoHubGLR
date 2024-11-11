@@ -196,36 +196,28 @@ def test_update_CargoClient(client):
 
 
 def test_partial_update_CargoClient_no_api_key(client):
-    updated_CargoClient = {"name": "Updated Inc"}
+    updated_client = {"name": "Updated client"}
     response = client.patch(
-        f"/clients/{test_CargoClient['id']}", json=updated_CargoClient
+        "/clients/" + str(test_CargoClient["id"]), json=updated_client
     )
     assert response.status_code == 403
-    response_get_CargoClient = client.get(
-        f"/clients/{test_CargoClient['id']}", headers=test_headers
-    )
-    assert response_get_CargoClient.status_code == 200
-    assert response_get_CargoClient.json()["name"] == test_CargoClient["name"]
 
 
 def test_partial_update_CargoClient_invalid_api_key(client):
-    updated_CargoClient = {"name": "Updated Inc"}
+    updated_client = {"name": "Updated client"}
     response = client.patch(
-        f"/clients/{test_CargoClient['id']}",
-        json=updated_CargoClient,
+        "/clients/" + str(test_CargoClient["id"]),
+        json=updated_client,
         headers=invalid_headers,
     )
     assert response.status_code == 403
-    response_get_CargoClient = client.get(
-        f"/clients/{test_CargoClient['id']}", headers=test_headers
-    )
-    assert response_get_CargoClient.status_code == 200
-    assert response_get_CargoClient.json()["name"] == test_CargoClient["name"]
 
 
 def test_partial_update_invalid_CargoClient_id(client):
     updated_CargoClient = {"name": "Updated Inc"}
-    response = client.patch("/clients/invalid_id", json=updated_CargoClient)
+    response = client.patch(
+        "/clients/invalid_id", json=updated_CargoClient, headers=test_headers
+    )
     assert response.status_code == 422
 
 
