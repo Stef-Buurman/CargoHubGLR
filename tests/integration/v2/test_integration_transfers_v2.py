@@ -113,32 +113,45 @@ def test_get_transfer_items_invalid_api_key(client):
 
 
 def test_update_transfer(client):
+    updated_item_group = test_transfer.copy()
+    updated_item_group["reference"] = "TR00002"
     response = client.put(
         "/transfers/" + str(test_transfer["id"]),
-        json=test_transfer,
+        json=updated_item_group,
         headers=test_headers,
     )
     assert response.status_code == 200
     assert response.json()["id"] == test_transfer["id"]
+    assert response.json()["reference"] == "TR00002"
 
 
 def test_update_transfer_no_api_key(client):
-    response = client.put("/transfers/" + str(test_transfer["id"]), json=test_transfer)
+    updated_item_group = test_transfer.copy()
+    updated_item_group["reference"] = "TR00002"
+    response = client.put(
+        "/transfers/" + str(test_transfer["id"]), json=updated_item_group
+    )
     assert response.status_code == 403
 
 
 def test_update_transfer_invalid_api_key(client):
+    updated_item_group = test_transfer.copy()
+    updated_item_group["reference"] = "TR00002"
     response = client.put(
         "/transfers/" + str(test_transfer["id"]),
-        json=test_transfer,
+        json=updated_item_group,
         headers=invalid_headers,
     )
     assert response.status_code == 403
 
 
 def test_update_non_existent_transfer(client):
+    updated_item_group = test_transfer.copy()
+    updated_item_group["reference"] = "TR00002"
     response = client.put(
-        "/transfers/" + str(non_existent_id), json=test_transfer, headers=test_headers
+        "/transfers/" + str(non_existent_id),
+        json=updated_item_group,
+        headers=test_headers,
     )
     assert response.status_code == 404
     response_json = response.json()
@@ -147,8 +160,55 @@ def test_update_non_existent_transfer(client):
 
 
 def test_update_invalid_transfer_id(client):
+    updated_item_group = test_transfer.copy()
+    updated_item_group["reference"] = "TR00002"
     response = client.put(
-        "/transfers/invalid_id", json=test_transfer, headers=test_headers
+        "/transfers/invalid_id", json=updated_item_group, headers=test_headers
+    )
+    assert response.status_code == 422
+
+
+def test_partial_update_transfer(client):
+    response = client.patch(
+        "/transfers/" + str(test_transfer["id"]),
+        json={"reference": "TR00002"},
+        headers=test_headers,
+    )
+    assert response.status_code == 200
+    assert response.json()["reference"] == "TR00002"
+
+
+def test_partial_update_transfer_no_api_key(client):
+    response = client.patch(
+        "/transfers/" + str(test_transfer["id"]), json={"reference": "TR00002"}
+    )
+    assert response.status_code == 403
+
+
+def test_partial_update_transfer_invalid_api_key(client):
+    response = client.patch(
+        "/transfers/" + str(test_transfer["id"]),
+        json={"reference": "TR00002"},
+        headers=invalid_headers,
+    )
+    assert response.status_code == 403
+
+
+def test_partial_update_non_existent_transfer(client):
+    response = client.patch(
+        "/transfers/" + str(non_existent_id),
+        json={"reference": "TR00002"},
+        headers=test_headers,
+    )
+    assert response.status_code == 404
+    response_json = response.json()
+    assert response_json is not None
+    assert response_json["detail"] == "Transfer not found"
+
+
+def test_partial_update_invalid_transfer_id(client):
+    response = client.patch(
+        "/transfers/invalid_id", json={"reference": "TR00002"}, headers=test_headers
     )
     assert response.status_code == 422
 
