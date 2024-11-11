@@ -1,8 +1,8 @@
-from pydantic import BaseModel
+from models.v2.base import Base
 from models.v2.ItemInObject import ItemInObject
 
 
-class Transfer(BaseModel):
+class Transfer(Base):
     id: int | None = None
     reference: str
     transfer_from: int | None = None

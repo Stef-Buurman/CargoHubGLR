@@ -1,7 +1,7 @@
-from pydantic import BaseModel
+from models.v2.base import Base
 
 
-class ItemLine(BaseModel):
+class ItemLine(Base):
     id: int | None = None
     name: str
     description: str

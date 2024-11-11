@@ -1,7 +1,7 @@
-from pydantic import BaseModel, ConfigDict
+from models.v2.base import Base
 
 
-class Supplier(BaseModel):
+class Supplier(Base):
     id: int | None = None
     code: str
     name: str
