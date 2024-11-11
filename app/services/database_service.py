@@ -66,7 +66,14 @@ class DatabaseService:
         with self.get_connection() as conn:
             cursor = conn.execute(select_sql)
             rows = cursor.fetchall()
-            return [model(**{col[0]: row[i] for i, col in enumerate(cursor.description)}) for row in rows]
+
+            result = []
+            for row in rows:
+                row_dict = {col[0]: row[i] for i, col in enumerate(cursor.description)}
+                result.append(model(**row_dict))
+        
+        return result
+
     
     def execute(self, query: str, params: Tuple[Any, ...] = ()) -> List[sqlite3.Row]:
         with self.get_connection() as conn:
