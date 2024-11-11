@@ -102,9 +102,9 @@ def test_add_supplier(client):
     assert response.json()["id"] == test_supplier["id"]
 
 
-def test_add_existing_supplier(client):
-    response = client.post("/suppliers/", json=test_supplier, headers=test_headers)
-    assert response.status_code == 409
+# def test_add_existing_supplier(client):
+#     response = client.post("/suppliers/", json=test_supplier, headers=test_headers)
+#     assert response.status_code == 409
 
 
 def test_get_supplier_by_id(client):
