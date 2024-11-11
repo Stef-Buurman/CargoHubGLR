@@ -68,6 +68,27 @@ def update_transfer(
     return updated_transfer
 
 
+@transfer_router_v2.patch("/{transfer_id}")
+def partial_update_transfer(
+    transfer_id: int,
+    transfer: dict,
+    api_key: str = Depends(auth_provider.get_api_key),
+):
+    data_provider_v2.init()
+    existing_transfer = data_provider_v2.fetch_transfer_pool().get_transfer(transfer_id)
+    if existing_transfer is None:
+        raise HTTPException(status_code=404, detail="Transfer not found")
+
+    for key, value in transfer.items():
+        setattr(existing_transfer, key, value)
+
+    partial_updated_transfer = data_provider_v2.fetch_transfer_pool().update_transfer(
+        transfer_id, existing_transfer
+    )
+    data_provider_v2.fetch_transfer_pool().save()
+    return partial_updated_transfer
+
+
 @transfer_router_v2.put("/{transfer_id}/commit")
 def commit_transfer(
     transfer_id: int, api_key: str = Depends(auth_provider.get_api_key)

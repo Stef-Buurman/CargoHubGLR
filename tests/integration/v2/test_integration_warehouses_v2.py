@@ -226,6 +226,59 @@ def test_update_invalid_warehouse_id(client):
     assert response.status_code == 422
 
 
+def test_partial_update_warehouse(client):
+    updated_warehouse = {"name": "Updated Warehouse"}
+    response = client.patch(
+        "/warehouses/" + str(test_warehouse["id"]),
+        json=updated_warehouse,
+        headers=test_headers,
+    )
+    assert response.status_code == 200
+    response_get = client.get(
+        "/warehouses/" + str(test_warehouse["id"]), headers=test_headers
+    )
+    assert response_get.status_code == 200
+    response_json = response_get.json()
+    assert response_json is not None
+    assert response_json["name"] == updated_warehouse["name"]
+
+
+def test_partial_update_warehouse_no_api_key(client):
+    updated_warehouse = {"name": "Updated Warehouse"}
+    response = client.patch(
+        "/warehouses/" + str(test_warehouse["id"]), json=updated_warehouse
+    )
+    assert response.status_code == 403
+
+
+def test_partial_update_warehouse_invalid_api_key(client):
+    updated_warehouse = {"name": "Updated Warehouse"}
+    response = client.patch(
+        "/warehouses/" + str(test_warehouse["id"]),
+        json=updated_warehouse,
+        headers=invalid_headers,
+    )
+    assert response.status_code == 403
+
+
+def test_partial_update_nonexistent_warehouse(client):
+    updated_warehouse = {"name": "Updated Warehouse"}
+    response = client.patch(
+        "/warehouses/" + str(non_existent_id),
+        json=updated_warehouse,
+        headers=test_headers,
+    )
+    assert response.status_code == 404
+
+
+def test_partial_update_invalid_warehouse_id(client):
+    updated_warehouse = {"name": "Updated Warehouse"}
+    response = client.patch(
+        "/warehouses/invalid_id", json=updated_warehouse, headers=test_headers
+    )
+    assert response.status_code == 422
+
+
 def test_delete_warehouse(client):
     response = client.delete(
         "/warehouses/" + str(test_warehouse["id"]), headers=test_headers

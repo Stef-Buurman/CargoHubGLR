@@ -141,6 +141,53 @@ def test_update_location(client):
     assert responseGet.json()["name"] == test_location_copy["name"]
 
 
+def test_partial_update_location_no_api_key(client):
+    response = client.patch(
+        "/locations/" + str(test_location["id"]), json=test_location
+    )
+    assert response.status_code == 403
+
+
+def test_partial_update_location_invalid_api_key(client):
+    response = client.patch(
+        "/locations/" + str(test_location["id"]),
+        json=test_location,
+        headers=invalid_headers,
+    )
+    assert response.status_code == 403
+
+
+def test_partial_update_non_existent_location(client):
+    response = client.patch(
+        "/locations/" + str(non_existent_id), json=test_location, headers=test_headers
+    )
+    assert response.status_code == 404
+
+
+def test_partial_update_invalid_location_id(client):
+    response = client.patch(
+        "/locations/invalid_id", json=test_location, headers=test_headers
+    )
+    assert response.status_code == 422
+
+
+def test_partial_update_location(client):
+    new_name = "Row: kip, Rack: 1290, Shelf: 3467"
+    response = client.patch(
+        "/locations/" + str(test_location["id"]),
+        json={"name": new_name},
+        headers=test_headers,
+    )
+    assert response.status_code == 200
+    assert response.json() is not None
+    assert isinstance(response.json(), dict)
+    responseGet = client.get(
+        "/locations/" + str(test_location["id"]), headers=test_headers
+    )
+    assert responseGet.status_code == 200
+    assert responseGet.json()["name"] == new_name
+
+
 def test_delete_location_no_api_key(client):
     response = client.delete("/locations/" + str(test_location["id"]))
     assert response.status_code == 403
