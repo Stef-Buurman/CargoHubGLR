@@ -195,6 +195,63 @@ def test_update_CargoClient(client):
     assert response_get_CargoClient.json()["name"] == updated_CargoClient["name"]
 
 
+def test_partial_update_CargoClient_no_api_key(client):
+    updated_CargoClient = {"name": "Updated Inc"}
+    response = client.patch(
+        f"/clients/{test_CargoClient['id']}", json=updated_CargoClient
+    )
+    assert response.status_code == 403
+    response_get_CargoClient = client.get(
+        f"/clients/{test_CargoClient['id']}", headers=test_headers
+    )
+    assert response_get_CargoClient.status_code == 200
+    assert response_get_CargoClient.json()["name"] == test_CargoClient["name"]
+
+
+def test_partial_update_CargoClient_invalid_api_key(client):
+    updated_CargoClient = {"name": "Updated Inc"}
+    response = client.patch(
+        f"/clients/{test_CargoClient['id']}",
+        json=updated_CargoClient,
+        headers=invalid_headers,
+    )
+    assert response.status_code == 403
+    response_get_CargoClient = client.get(
+        f"/clients/{test_CargoClient['id']}", headers=test_headers
+    )
+    assert response_get_CargoClient.status_code == 200
+    assert response_get_CargoClient.json()["name"] == test_CargoClient["name"]
+
+
+def test_partial_update_invalid_CargoClient_id(client):
+    updated_CargoClient = {"name": "Updated Inc"}
+    response = client.patch("/clients/invalid_id", json=updated_CargoClient)
+    assert response.status_code == 422
+
+
+def test_partial_update_nonexistent_CargoClient(client):
+    updated_CargoClient = {"name": "Updated Inc"}
+    response = client.patch(
+        f"/clients/{non_existent_id}", json=updated_CargoClient, headers=test_headers
+    )
+    assert response.status_code == 404
+
+
+def test_partial_update_CargoClient(client):
+    updated_CargoClient = {"name": "Updated Inc"}
+    response = client.patch(
+        f"/clients/{test_CargoClient['id']}",
+        json=updated_CargoClient,
+        headers=test_headers,
+    )
+    assert response.status_code == 200
+    response_get_CargoClient = client.get(
+        f"/clients/{test_CargoClient['id']}", headers=test_headers
+    )
+    assert response_get_CargoClient.status_code == 200
+    assert response_get_CargoClient.json()["name"] == updated_CargoClient["name"]
+
+
 def test_delete_CargoClient_no_api_key(client):
     response = client.delete("/clients/" + str(test_CargoClient["id"]))
     assert response.status_code == 403
