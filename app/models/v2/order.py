@@ -1,12 +1,8 @@
-from pydantic import BaseModel
+from typing import List
+from .ItemInObject import ItemInObject
+from models.v2.base import Base
 
-
-class OrderItem(BaseModel):
-    item_id: int
-    amount: int
-
-
-class Order(BaseModel):
+class Order(Base):
     id: int | None = None
     source_id: int
     order_date: str
@@ -27,4 +23,4 @@ class Order(BaseModel):
     total_surcharge: float
     created_at: str | None = None
     updated_at: str | None = None
-    items: list[OrderItem] | None = None
+    items: List[ItemInObject] | None = None
