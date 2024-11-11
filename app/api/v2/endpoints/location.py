@@ -36,9 +36,11 @@ def create_location(
         raise HTTPException(
             status_code=409, detail=f"Location with id {location.id} already exists"
         )
-    data_provider_v2.fetch_location_pool().add_location(location)
+    created_location = data_provider_v2.fetch_location_pool().add_location(location)
     data_provider_v2.fetch_location_pool().save()
-    return JSONResponse(status_code=status.HTTP_201_CREATED, content=location.model_dump())
+    return JSONResponse(
+        status_code=status.HTTP_201_CREATED, content=created_location.model_dump()
+    )
 
 
 @location_router_v2.put("/{location_id}")
@@ -53,9 +55,35 @@ def update_location(
         raise HTTPException(
             status_code=404, detail=f"Location with id {location_id} not found"
         )
-    data_provider_v2.fetch_location_pool().update_location(location_id, location)
+    updated_location = data_provider_v2.fetch_location_pool().update_location(
+        location_id, location
+    )
     data_provider_v2.fetch_location_pool().save()
-    return JSONResponse(status_code=status.HTTP_200_OK, content=location.model_dump())
+    return updated_location
+
+
+@location_router_v2.patch("/{location_id}")
+def partial_update_location(
+    location_id: int,
+    location: dict,
+    api_key: str = Depends(auth_provider.get_api_key),
+):
+    data_provider_v2.init()
+    existing_location = data_provider_v2.fetch_location_pool().get_location(location_id)
+    if existing_location is None:
+        raise HTTPException(status_code=404, detail="Location not found")
+
+    valid_keys = Location.model_fields.keys()
+    update_data = {key: value for key, value in location.items() if key in valid_keys}
+
+    for key, value in update_data.items():
+        setattr(existing_location, key, value)
+
+    partial_updated_location = data_provider_v2.fetch_location_pool().update_location(
+        location_id, existing_location
+    )
+    data_provider_v2.fetch_location_pool().save()
+    return partial_updated_location
 
 
 @location_router_v2.delete("/{location_id}")
