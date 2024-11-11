@@ -46,7 +46,9 @@ def create_client(client: Client, api_key: str = Depends(auth_provider.get_api_k
         raise HTTPException(status_code=409, detail="Client already exists")
     created_client = data_provider_v2.fetch_client_pool().add_client(client)
     data_provider_v2.fetch_client_pool().save()
-    return created_client
+    return JSONResponse(
+        status_code=status.HTTP_201_CREATED, content=created_client.model_dump()
+    )
 
 
 @client_router_v2.put("/{client_id}")
