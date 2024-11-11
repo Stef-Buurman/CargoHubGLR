@@ -50,14 +50,18 @@ class DatabaseService:
 
     def insert(self, model: T):
         table_name = model.table_name()
-        fields = model.dict(exclude={"id"})
-        placeholders = ", ".join(["?"] * len(fields))
+
+        fields = model.__dict__
+        fields.pop('id', None)
+
         columns = ", ".join(fields.keys())
-        
+        placeholders = ", ".join("?" for _ in fields)
+        values = tuple(fields.values())
+            
         insert_sql = f"INSERT INTO {table_name} ({columns}) VALUES ({placeholders})"
         
         with self.get_connection() as conn:
-            conn.execute(insert_sql, tuple(fields.values()))
+            conn.execute(insert_sql, values)
 
     def get_all(self, model: Type[T]) -> List[T]:
         table_name = model.table_name()
