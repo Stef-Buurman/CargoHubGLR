@@ -7,7 +7,7 @@ class Client(BaseModel):
     address: str
     city: str
     zip_code: str
-    province: str
+    province: str | None = None
     country: str
     contact_name: str
     contact_phone: str

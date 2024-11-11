@@ -86,10 +86,10 @@ def get_transfers():
 
 
 def get_clients():
-    from models.clients import Clients
+    from .client_service import ClientService
 
     global _clients
-    _clients = Clients(ROOT_PATH, DEBUG)
+    _clients = ClientService(ROOT_PATH, DEBUG)
 
 
 def get_shipments():
