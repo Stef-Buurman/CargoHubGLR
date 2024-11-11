@@ -123,6 +123,30 @@ def commit_shipment(
         )
     return shipment
 
+@shipment_router_v2.patch("/{shipment_id}")
+def patch_shipment(
+    shipment_id: int,
+    shipment: dict,
+    api_key: str = Depends(auth_provider.get_api_key),
+):
+    data_provider_v2.init()
+    existing_shipment = data_provider_v2.fetch_shipment_pool().get_shipment(
+        shipment_id
+    )
+    if existing_shipment is None:
+        raise HTTPException(status_code=404, detail="Shipment not found")
+    
+    for key, value in shipment.items():
+        setattr(existing_shipment, key, value)
+
+    partial_updated_shipment = (
+        data_provider_v2.fetch_shipment_pool().update_shipment(
+            shipment_id, existing_shipment
+        )
+    )
+    data_provider_v2.fetch_shipment_pool().save()
+    return partial_updated_shipment
+
 @shipment_router_v2.delete("/{shipment_id}")
 def delete_shipment(
     shipment_id: int, api_key: str = Depends(auth_provider.get_api_key)
