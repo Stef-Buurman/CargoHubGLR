@@ -31,6 +31,7 @@ class LocationService(Base):
         location.created_at = self.get_timestamp()
         location.updated_at = self.get_timestamp()
         self.data.append(location)
+        return location
 
     def update_location(self, location_id: int, location: Location):
         location.updated_at = self.get_timestamp()
@@ -38,6 +39,7 @@ class LocationService(Base):
             if self.data[i].id == location_id:
                 self.data[i] = location
                 break
+        return location
 
     def remove_location(self, location_id: int):
         for x in self.data:
