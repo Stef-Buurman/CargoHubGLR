@@ -100,10 +100,10 @@ def get_shipments():
 
 
 def get_suppliers():
-    from models.suppliers import Suppliers
+    from .suppliers_service import SupplierService
 
     global _suppliers
-    _suppliers = Suppliers(ROOT_PATH, DEBUG)
+    _suppliers = SupplierService(ROOT_PATH, DEBUG)
 
 
 def get_inventories():

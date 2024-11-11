@@ -42,8 +42,8 @@ def read_client_orders(
 def create_client(client: Client, api_key: str = Depends(auth_provider.get_api_key)):
     data_provider_v2.init()
     existing_client = data_provider_v2.fetch_client_pool().get_client(client.id)
-    if existing_client is not None:
-        raise HTTPException(status_code=409, detail="Client already exists")
+    # if existing_client is not None:
+    #     raise HTTPException(status_code=409, detail="Client already exists")
     created_client = data_provider_v2.fetch_client_pool().add_client(client)
     data_provider_v2.fetch_client_pool().save()
     return JSONResponse(
