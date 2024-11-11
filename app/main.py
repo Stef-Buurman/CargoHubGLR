@@ -31,6 +31,7 @@ from api.v2.endpoints.Item_group import item_group_router_v2
 from api.v2.endpoints.Item_line import item_line_router_v2
 from api.v2.endpoints.Item_type import item_type_router_v2
 from api.v2.endpoints.Shipment import shipment_router_v2
+from api.v2.endpoints.orders import order_router_v2
 
 
 import uvicorn
@@ -62,6 +63,7 @@ app.include_router(item_group_router_v2, prefix=v2_url + "/item_groups")
 app.include_router(item_line_router_v2, prefix=v2_url + "/item_lines")
 app.include_router(item_type_router_v2, prefix=v2_url + "/item_types")
 app.include_router(shipment_router_v2, prefix=v2_url + "/shipments")
+app.include_router(order_router_v2, prefix=v2_url + "/orders")
 
 
 

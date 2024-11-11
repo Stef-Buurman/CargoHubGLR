@@ -1,0 +1,85 @@
+from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.responses import JSONResponse
+from services import data_provider_v2, auth_provider
+from models.v2.order import Order
+
+order_router_v2 = APIRouter()
+
+
+@order_router_v2.get("/{order_id}")
+def read_order(order_id: int, api_key: str = Depends(auth_provider.get_api_key)):
+    data_provider_v2.init()
+    order = data_provider_v2.fetch_order_pool().get_order(order_id)
+    if order is None:
+        raise HTTPException(
+            status_code=404, detail=f"Order with id {order_id} not found"
+        )
+    return order
+
+
+@order_router_v2.get("/")
+def read_orders(api_key: str = Depends(auth_provider.get_api_key)):
+    data_provider_v2.init()
+    orders = data_provider_v2.fetch_order_pool().get_orders()
+    if orders is None:
+        raise HTTPException(status_code=404, detail="Orders not found")
+    return orders
+
+
+@order_router_v2.get("/{order_id}/items")
+def read_order_items(order_id: int, api_key: str = Depends(auth_provider.get_api_key)):
+    data_provider_v2.init()
+    items = data_provider_v2.fetch_order_pool().get_items_in_order(order_id)
+    if items is None:
+        raise HTTPException(
+            status_code=404, detail=f"Order with id {order_id} not found"
+        )
+    return items
+
+
+@order_router_v2.post("/")
+def create_order(order: Order, api_key: str = Depends(auth_provider.get_api_key)):
+    data_provider_v2.init()
+    addedOrder = data_provider_v2.fetch_order_pool().add_order(order)
+    data_provider_v2.fetch_order_pool().save()
+    return JSONResponse(status_code=status.HTTP_201_CREATED, content=addedOrder.model_dump())
+
+
+@order_router_v2.put("/{order_id}")
+def update_order(
+    order_id: int, order: Order, api_key: str = Depends(auth_provider.get_api_key)
+):
+    data_provider_v2.init()
+    existingOrder = data_provider_v2.fetch_order_pool().get_order(order_id)
+    if existingOrder is None:
+        raise HTTPException(status_code=404, detail="Order not found")
+    data_provider_v2.fetch_order_pool().update_order(order_id, order)
+    data_provider_v2.fetch_order_pool().save()
+    return order
+
+
+@order_router_v2.put("/{order_id}/items")
+def add_items_to_order(
+    order_id: int, items: list[Order], api_key: str = Depends(auth_provider.get_api_key)
+):
+    data_provider_v2.init()
+    existingOrder = data_provider_v2.fetch_order_pool().get_order(order_id)
+    if existingOrder is None:
+        raise HTTPException(status_code=404, detail="Order not found")
+    data_provider_v2.fetch_order_pool().update_items_in_order(order_id, items)
+    data_provider_v2.fetch_order_pool().save()
+    return items
+
+
+@order_router_v2.delete("/{order_id}")
+def delete_order(order_id: int, api_key: str = Depends(auth_provider.get_api_key)):
+    data_provider_v2.init()
+    order_pool = data_provider_v2.fetch_order_pool()
+
+    order = order_pool.get_order(order_id)
+    if order is None:
+        raise HTTPException(status_code=404, detail="Order not found")
+
+    order_pool.remove_order(order_id)
+    order_pool.save()
+    return {"message": "Order deleted successfully"}
