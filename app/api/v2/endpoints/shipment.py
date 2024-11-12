@@ -34,11 +34,12 @@ def read_orders_for_shipment(
     data_provider_v2.init()
     shipment = data_provider_v2.fetch_shipment_pool().get_shipment(shipment_id)
     if shipment is None:
-        raise HTTPException(status_code=404, detail=f"Shipment with id {shipment_id} not found")
-    orders = data_provider_v2.fetch_order_pool().get_orders_for_shipments(
-        shipment_id
-    )
+        raise HTTPException(
+            status_code=404, detail=f"Shipment with id {shipment_id} not found"
+        )
+    orders = data_provider_v2.fetch_order_pool().get_orders_for_shipments(shipment_id)
     return orders
+
 
 @shipment_router_v2.get("/{shipment_id}/items")
 def read_items_for_shipment(
@@ -47,33 +48,44 @@ def read_items_for_shipment(
     data_provider_v2.init()
     shipment = data_provider_v2.fetch_shipment_pool().get_shipment(shipment_id)
     if shipment is None:
-        raise HTTPException(status_code=404, detail=f"Shipment with id {shipment_id} not found")
-    items = data_provider_v2.fetch_shipment_pool().get_items_in_shipment(
-        shipment_id
-    )
+        raise HTTPException(
+            status_code=404, detail=f"Shipment with id {shipment_id} not found"
+        )
+    items = data_provider_v2.fetch_shipment_pool().get_items_in_shipment(shipment_id)
     return items
 
+
 @shipment_router_v2.post("/")
-def create_shipment(shipment: Shipment, api_key: str = Depends(auth_provider.get_api_key)):
+def create_shipment(
+    shipment: Shipment, api_key: str = Depends(auth_provider.get_api_key)
+):
     data_provider_v2.init()
     existingShipment = data_provider_v2.fetch_shipment_pool().get_shipment(shipment.id)
     if existingShipment is not None:
         raise HTTPException(status_code=409, detail="Shipment already exists")
-    data_provider_v2.fetch_shipment_pool().add_shipment(shipment)
+    created_shipment = data_provider_v2.fetch_shipment_pool().add_shipment(shipment)
     data_provider_v2.fetch_shipment_pool().save()
-    return JSONResponse(status_code=status.HTTP_201_CREATED, content=shipment.model_dump())
+    return JSONResponse(
+        status_code=status.HTTP_201_CREATED, content=created_shipment.model_dump()
+    )
+
 
 @shipment_router_v2.put("/{shipment_id}")
 def update_shipment(
-    shipment_id: int, shipment: Shipment, api_key: str = Depends(auth_provider.get_api_key)
+    shipment_id: int,
+    shipment: Shipment,
+    api_key: str = Depends(auth_provider.get_api_key),
 ):
     data_provider_v2.init()
     existingShipment = data_provider_v2.fetch_shipment_pool().get_shipment(shipment_id)
     if existingShipment is None:
         raise HTTPException(status_code=404, detail="Shipment not found")
-    updated_shipment = data_provider_v2.fetch_shipment_pool().update_shipment(shipment_id, shipment)
+    updated_shipment = data_provider_v2.fetch_shipment_pool().update_shipment(
+        shipment_id, shipment
+    )
     data_provider_v2.fetch_shipment_pool().save()
     return updated_shipment
+
 
 @shipment_router_v2.put("/{shipment_id}/orders")
 def update_orders_in_shipment(
@@ -87,11 +99,14 @@ def update_orders_in_shipment(
         raise HTTPException(
             status_code=404, detail=f"Shipment with id {shipment_id} not found"
         )
-    updated_order_in_shipment = data_provider_v2.fetch_order_pool().update_orders_in_shipment(
-        shipment_id, updated_orders
+    updated_order_in_shipment = (
+        data_provider_v2.fetch_order_pool().update_orders_in_shipment(
+            shipment_id, updated_orders
+        )
     )
     data_provider_v2.fetch_order_pool().save()
     return updated_order_in_shipment
+
 
 @shipment_router_v2.put("/{shipment_id}/items")
 def update_items_in_shipment(
@@ -105,11 +120,14 @@ def update_items_in_shipment(
         raise HTTPException(
             status_code=404, detail=f"Shipment with id {shipment_id} not found"
         )
-    updated_item_in_shipment = data_provider_v2.fetch_shipment_pool().update_items_in_shipment(
-        shipment_id, [updated_item]
+    updated_item_in_shipment = (
+        data_provider_v2.fetch_shipment_pool().update_items_in_shipment(
+            shipment_id, [updated_item]
+        )
     )
     data_provider_v2.fetch_shipment_pool().save()
     return updated_item_in_shipment
+
 
 @shipment_router_v2.put("/{shipment_id}/commit")
 def commit_shipment(
@@ -123,29 +141,30 @@ def commit_shipment(
         )
     return shipment
 
+
 @shipment_router_v2.patch("/{shipment_id}")
-def patch_shipment(
+def partial_update_shipment(
     shipment_id: int,
     shipment: dict,
     api_key: str = Depends(auth_provider.get_api_key),
 ):
     data_provider_v2.init()
-    existing_shipment = data_provider_v2.fetch_shipment_pool().get_shipment(
-        shipment_id
-    )
+    existing_shipment = data_provider_v2.fetch_shipment_pool().get_shipment(shipment_id)
     if existing_shipment is None:
         raise HTTPException(status_code=404, detail="Shipment not found")
-    
-    for key, value in shipment.items():
+
+    valid_keys = Shipment.model_fields.keys()
+    update_data = {key: value for key, value in shipment.items() if key in valid_keys}
+
+    for key, value in update_data.items():
         setattr(existing_shipment, key, value)
 
-    partial_updated_shipment = (
-        data_provider_v2.fetch_shipment_pool().update_shipment(
-            shipment_id, existing_shipment
-        )
+    partial_updated_shipment = data_provider_v2.fetch_shipment_pool().update_shipment(
+        shipment_id, existing_shipment
     )
     data_provider_v2.fetch_shipment_pool().save()
     return partial_updated_shipment
+
 
 @shipment_router_v2.delete("/{shipment_id}")
 def delete_shipment(
