@@ -2,7 +2,7 @@ from pydantic import BaseModel
 
 
 class OrderItem(BaseModel):
-    item_id: int
+    item_id: str
     amount: int
 
 
