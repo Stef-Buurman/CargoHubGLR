@@ -2,6 +2,8 @@ import json
 from typing import List
 from models.v2.inventory import Inventory
 from models.base import Base
+from services.database_service import DatabaseService
+from utils.globals import *
 
 INVENTORIES = []
 
@@ -10,6 +12,7 @@ class InventoryService(Base):
     def __init__(self, root_path, is_debug=False):
         self.data_path = root_path + "inventories.json"
         self.load(is_debug)
+        self.db = DatabaseService()
 
     def get_inventories(self) -> List[Inventory]:
         return self.data
@@ -72,3 +75,32 @@ class InventoryService(Base):
     def save(self):
         with open(self.data_path, "w") as f:
             json.dump([inventory.model_dump() for inventory in self.data], f)
+    
+    def insert_inventory(self, inventory: Inventory):
+        table_name = inventory.table_name()
+
+        inventory.created_at = self.get_timestamp()
+        inventory.updated_at = self.get_timestamp()
+
+        fields = {}
+        for key, value in vars(inventory).items():
+            if key != "id" and key != "locations":
+                fields[key] = value
+
+        columns = ", ".join(fields.keys())
+        placeholders = ", ".join("?" for _ in fields)
+        values = tuple(fields.values())
+
+        insert_sql = f"INSERT INTO {table_name} ({columns}) VALUES ({placeholders})"
+
+        with self.db.get_connection() as conn:
+            cursor = conn.execute(insert_sql, values)
+            inventory_id = cursor.lastrowid
+
+            if inventory.locations:
+                for location_id in inventory.locations:
+                    location_insert_sql = f"""
+                    INSERT INTO {inventory_locations_table} (inventory_id, location_id)
+                    VALUES (?, ?)
+                    """
+                    conn.execute(location_insert_sql, (inventory_id, location_id))

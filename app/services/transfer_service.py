@@ -3,6 +3,8 @@ from services.data_provider_v2 import fetch_inventory_pool
 from models.v2.transfer import Transfer
 from typing import List
 from models.base import Base
+from utils.globals import *
+from services.database_service import DatabaseService
 
 TRANSFERS = []
 
@@ -11,6 +13,7 @@ class TransferService(Base):
     def __init__(self, root_path, is_debug=False):
         self.data_path = root_path + "transfers.json"
         self.load(is_debug)
+        self.db = DatabaseService()
 
     def get_transfers(self) -> List[Transfer]:
         return self.data
@@ -77,3 +80,32 @@ class TransferService(Base):
     def save(self):
         with open(self.data_path, "w") as f:
             json.dump([transfer.model_dump() for transfer in self.data], f)
+
+    def insert_transfer(self, transfer: Transfer) -> Transfer:
+        table_name = transfer.table_name()
+
+        transfer.created_at = self.get_timestamp()
+        transfer.updated_at = self.get_timestamp()
+        
+        fields = {}
+        for key, value in vars(transfer).items():
+            if key != "id" and key != "items":
+                fields[key] = value
+
+        columns = ", ".join(fields.keys())
+        placeholders = ", ".join("?" for _ in fields)
+        values = tuple(fields.values())
+
+        insert_sql = f"INSERT INTO {table_name} ({columns}) VALUES ({placeholders})"
+
+        with self.db.get_connection() as conn:
+            cursor = conn.execute(insert_sql, values)
+            transfer_id = cursor.lastrowid
+
+            if transfer.items:
+                for transfer_items in transfer.items:
+                    items_insert_sql = f"""
+                    INSERT INTO {transfer_items_table} (transfer_id, item_uid, amount)
+                    VALUES (?, ?, ?)
+                    """
+                    conn.execute(items_insert_sql, (transfer_id, transfer_items.item_id, transfer_items.amount))
