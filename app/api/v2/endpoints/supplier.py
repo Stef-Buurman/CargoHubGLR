@@ -78,6 +78,30 @@ def update_supplier(
     return updated_supplier
 
 
+@supplier_router_v2.patch("/{supplier_id}")
+def partial_update_supplier(
+    supplier_id: int,
+    supplier: dict,
+    api_key: str = Depends(auth_provider.get_api_key),
+):
+    data_provider_v2.init()
+    existing_supplier = data_provider_v2.fetch_supplier_pool().get_supplier(supplier_id)
+    if existing_supplier is None:
+        raise HTTPException(status_code=404, detail="Supplier not found")
+
+    valid_keys = Supplier.model_fields.keys()
+    update_data = {key: value for key, value in supplier.items() if key in valid_keys}
+
+    for key, value in update_data.items():
+        setattr(existing_supplier, key, value)
+
+    partial_updated_supplier = data_provider_v2.fetch_supplier_pool().update_supplier(
+        supplier_id, existing_supplier
+    )
+    data_provider_v2.fetch_supplier_pool().save()
+    return partial_updated_supplier
+
+
 @supplier_router_v2.delete("/{supplier_id}")
 def delete_supplier(
     supplier_id: int, api_key: str = Depends(auth_provider.get_api_key)
