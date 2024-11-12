@@ -1,10 +1,5 @@
 from pydantic import BaseModel
-
-
-class OrderItem(BaseModel):
-    item_id: int
-    amount: int
-
+from .ItemInObject import ItemInObject
 
 class Order(BaseModel):
     id: int | None = None
@@ -18,8 +13,8 @@ class Order(BaseModel):
     shipping_notes: str
     picking_notes: str
     warehouse_id: int
-    ship_to: int
-    bill_to: int
+    ship_to: int | None
+    bill_to: int | None
     shipment_id: int
     total_amount: float
     total_discount: float
@@ -27,4 +22,4 @@ class Order(BaseModel):
     total_surcharge: float
     created_at: str | None = None
     updated_at: str | None = None
-    items: list[OrderItem] | None = None
+    items: list[ItemInObject] | None = None

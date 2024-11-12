@@ -33,6 +33,8 @@ from api.v2.endpoints.item_type import item_type_router_v2
 from api.v2.endpoints.shipment import shipment_router_v2
 from api.v2.endpoints.client import client_router_v2
 from api.v2.endpoints.supplier import supplier_router_v2
+from api.v2.endpoints.orders import order_router_v2
+
 
 import uvicorn
 
@@ -65,6 +67,8 @@ app.include_router(item_type_router_v2, prefix=v2_url + "/item_types")
 app.include_router(shipment_router_v2, prefix=v2_url + "/shipments")
 app.include_router(client_router_v2, prefix=v2_url + "/clients")
 app.include_router(supplier_router_v2, prefix=v2_url + "/suppliers")
+app.include_router(order_router_v2, prefix=v2_url + "/orders")
+
 
 
 def main():

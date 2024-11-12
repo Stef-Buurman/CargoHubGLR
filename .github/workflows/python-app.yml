@@ -38,6 +38,7 @@ jobs:
         run: kill $(cat app_pid.txt) || echo "App already stopped"
 
       - name: Store coverage report
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           path: |

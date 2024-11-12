@@ -2,7 +2,7 @@ import json
 from typing import List, Optional
 from models.v2.shipment import Shipment
 from models.base import Base
-from app.services import data_provider
+from services import data_provider
 
 SHIPMENTS = []
 

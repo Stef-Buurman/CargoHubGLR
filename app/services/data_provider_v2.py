@@ -114,10 +114,10 @@ def get_inventories():
 
 
 def get_orders():
-    from models.orders import Orders
+    from .order_service import OrderService
 
     global _orders
-    _orders = Orders(ROOT_PATH, DEBUG)
+    _orders = OrderService(ROOT_PATH, DEBUG)
 
 
 # Fetching pools
