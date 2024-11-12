@@ -228,6 +228,55 @@ def test_update_item_group(client):
     assert response_get_item_group.json()["name"] == updated_item_group["name"]
 
 
+def test_partial_update_item_group_no_api_key(client):
+    updated_item_group = {"name": "Updated Inc"}
+    response = client.patch(
+        f"/item_groups/{test_item_group['id']}", json=updated_item_group
+    )
+    assert response.status_code == 403
+
+
+def test_partial_update_item_group_invalid_api_key(client):
+    updated_item_group = {"name": "Updated Inc"}
+    response = client.patch(
+        f"/item_groups/{test_item_group['id']}",
+        json=updated_item_group,
+        headers=invalid_headers,
+    )
+    assert response.status_code == 403
+
+
+def test_partial_update_invalid_item_group_id(client):
+    updated_item_group = {"name": "Updated Inc"}
+    response = client.patch(
+        "/item_groups/invalid_id", json=updated_item_group, headers=test_headers
+    )
+    assert response.status_code == 422
+
+
+def test_partial_update_nonexistent_item_group(client):
+    updated_item_group = {"name": "Updated Inc"}
+    response = client.patch(
+        f"/item_groups/{non_existent_id}", json=updated_item_group, headers=test_headers
+    )
+    assert response.status_code == 404
+
+
+def test_partial_update_item_group(client):
+    updated_item_group = {"name": "Updated Inc"}
+    response = client.patch(
+        f"/item_groups/{test_item_group['id']}",
+        json=updated_item_group,
+        headers=test_headers,
+    )
+    assert response.status_code == 200
+    response_get_item_group = client.get(
+        f"/item_groups/{test_item_group['id']}", headers=test_headers
+    )
+    assert response_get_item_group.status_code == 200
+    assert response_get_item_group.json()["name"] == updated_item_group["name"]
+
+
 def test_delete_item_group_no_api_key(client):
     response = client.delete("/item_groups/" + str(test_item_group["id"]))
     assert response.status_code == 403

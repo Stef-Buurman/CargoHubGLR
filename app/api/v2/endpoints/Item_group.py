@@ -54,9 +54,13 @@ def create_item_group(
     )
     if existingitem_group is not None:
         raise HTTPException(status_code=409, detail="Item_group already exists")
-    added_item_group = data_provider_v2.fetch_item_group_pool().add_item_group(item_group)
+    added_item_group = data_provider_v2.fetch_item_group_pool().add_item_group(
+        item_group
+    )
     data_provider_v2.fetch_item_group_pool().save()
-    return JSONResponse(status_code=status.HTTP_201_CREATED, content=added_item_group.model_dump())
+    return JSONResponse(
+        status_code=status.HTTP_201_CREATED, content=added_item_group.model_dump()
+    )
 
 
 @item_group_router_v2.put("/{item_group_id}")
@@ -71,9 +75,39 @@ def update_item_group(
     )
     if existingitem_group is None:
         raise HTTPException(status_code=404, detail="Item_group not found")
-    updated_item_group = data_provider_v2.fetch_item_group_pool().update_item_group(item_group_id, item_group)
+    updated_item_group = data_provider_v2.fetch_item_group_pool().update_item_group(
+        item_group_id, item_group
+    )
     data_provider_v2.fetch_item_group_pool().save()
     return updated_item_group
+
+
+@item_group_router_v2.patch("/{item_group_id}")
+def partial_update_item_group(
+    item_group_id: int,
+    item_group: dict,
+    api_key: str = Depends(auth_provider.get_api_key),
+):
+    data_provider_v2.init()
+    existing_item_group = data_provider_v2.fetch_item_group_pool().get_item_group(
+        item_group_id
+    )
+    if existing_item_group is None:
+        raise HTTPException(status_code=404, detail="Item_group not found")
+
+    valid_keys = ItemGroup.model_fields.keys()
+    update_data = {key: value for key, value in item_group.items() if key in valid_keys}
+
+    for key, value in update_data.items():
+        setattr(existing_item_group, key, value)
+
+    partial_updated_item_group = (
+        data_provider_v2.fetch_item_group_pool().update_item_group(
+            item_group_id, existing_item_group
+        )
+    )
+    data_provider_v2.fetch_item_group_pool().save()
+    return partial_updated_item_group
 
 
 @item_group_router_v2.delete("/{item_group_id}")
