@@ -280,13 +280,6 @@ def test_partial_update_item_type(client):
 
 
 def test_delete_item_type_no_api_key(client):
-    response = client.delete(f"/item_types/{test_item_type['id']}")
-    assert response.status_code == 403
-    response_get = client.get(f"/item_types/{test_item_type['id']}", headers=test_headers)
-    assert response_get.status_code == 200
-
-
-def test_delete_item_type_no_api_key(client):
     response = client.delete("/item_types/" + str(test_item_type["id"]))
     assert response.status_code == 403
     responseGet = client.get(
