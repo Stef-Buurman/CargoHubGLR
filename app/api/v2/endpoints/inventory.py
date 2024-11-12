@@ -31,34 +31,66 @@ def read_inventories(api_key: str = Depends(auth_provider.get_api_key)):
 
 @inventory_router_v2.post("/")
 def create_inventory(
-    inventorie: Inventory, api_key: str = Depends(auth_provider.get_api_key)
+    inventory: Inventory, api_key: str = Depends(auth_provider.get_api_key)
 ):
     data_provider_v2.init()
-    existingInventorie = data_provider_v2.fetch_inventory_pool().get_inventory(
-        inventorie.id
+    existingInventory = data_provider_v2.fetch_inventory_pool().get_inventory(
+        inventory.id
     )
-    if existingInventorie is not None:
+    if existingInventory is not None:
         raise HTTPException(status_code=409, detail="inventory already exists")
-    data_provider_v2.fetch_inventory_pool().add_inventory(inventorie)
+    created_inventory = data_provider_v2.fetch_inventory_pool().add_inventory(inventory)
     data_provider_v2.fetch_inventory_pool().save()
     return JSONResponse(
-        status_code=status.HTTP_201_CREATED, content=inventorie.model_dump()
+        status_code=status.HTTP_201_CREATED, content=created_inventory.model_dump()
     )
 
 
 @inventory_router_v2.put("/{inventory_id}")
 def update_inventory(
     inventory_id: int,
-    inventorie: Inventory,
+    inventory: Inventory,
     api_key: str = Depends(auth_provider.get_api_key),
 ):
     data_provider_v2.init()
-    inventory = data_provider_v2.fetch_inventory_pool().get_inventory(inventory_id)
-    if inventory is None:
+    inventory_exists = data_provider_v2.fetch_inventory_pool().get_inventory(
+        inventory_id
+    )
+    if inventory_exists is None:
         raise HTTPException(status_code=404, detail="inventory not found")
-    data_provider_v2.fetch_inventory_pool().update_inventory(inventory_id, inventorie)
+    updated_inventory = data_provider_v2.fetch_inventory_pool().update_inventory(
+        inventory_id, inventory
+    )
     data_provider_v2.fetch_inventory_pool().save()
-    return inventorie
+    return updated_inventory
+
+
+@inventory_router_v2.patch("/{inventory_id}")
+def partial_update_inventory(
+    inventory_id: int,
+    inventory: dict,
+    api_key: str = Depends(auth_provider.get_api_key),
+):
+    data_provider_v2.init()
+    existing_inventory = data_provider_v2.fetch_inventory_pool().get_inventory(
+        inventory_id
+    )
+    if existing_inventory is None:
+        raise HTTPException(status_code=404, detail="Inventory not found")
+
+    valid_keys = Inventory.model_fields.keys()
+    update_data = {key: value for key, value in inventory.items() if key in valid_keys}
+
+    for key, value in update_data.items():
+        setattr(existing_inventory, key, value)
+
+    partial_updated_inventory = (
+        data_provider_v2.fetch_inventory_pool().update_inventory(
+            inventory_id, existing_inventory
+        )
+    )
+    data_provider_v2.fetch_inventory_pool().save()
+    return partial_updated_inventory
 
 
 @inventory_router_v2.delete("/{inventory_id}")
