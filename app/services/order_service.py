@@ -2,8 +2,10 @@ import json
 from typing import List
 from models.v2.order import Order
 from models.base import Base
-from services import data_provider_v2
+from services.data_provider_v2 import fetch_inventory_pool
 from models.v2.ItemInObject import ItemInObject
+from utils.globals import *
+from services.database_service import DatabaseService
 
 ORDERS = []
 
@@ -12,6 +14,7 @@ class OrderService(Base):
     def __init__(self, root_path, is_debug=False):
         self.data_path = root_path + "orders.json"
         self.load(is_debug)
+        self.db = DatabaseService()
 
     def get_orders(self) -> List[Order]:
         return self.data
@@ -73,7 +76,7 @@ class OrderService(Base):
                     found = True
                     break
             if not found:
-                inventories = data_provider_v2.fetch_inventory_pool().get_inventories_for_item(current_item.item_id)
+                inventories = fetch_inventory_pool().get_inventories_for_item(current_item.item_id)
                 min_ordered = float("inf")
                 min_inventory = None
 
@@ -85,7 +88,7 @@ class OrderService(Base):
                 if min_inventory:
                     min_inventory.total_allocated -= current_item.amount
                     min_inventory.total_expected = min_inventory.total_on_hand + min_inventory.total_ordered
-                    data_provider_v2.fetch_inventory_pool().update_inventory(min_inventory.id, min_inventory)
+                    fetch_inventory_pool().update_inventory(min_inventory.id, min_inventory)
 
         for updated_item in items:
             found = False
@@ -98,7 +101,7 @@ class OrderService(Base):
                     break
 
             if found:
-                inventories = data_provider_v2.fetch_inventory_pool().get_inventories_for_item(updated_item.item_id)
+                inventories = fetch_inventory_pool().get_inventories_for_item(updated_item.item_id)
                 min_inventory = None
                 min_ordered = float("inf")
                 
@@ -111,7 +114,7 @@ class OrderService(Base):
                     delta_amount = updated_item.amount - matching_current_item.amount
                     min_inventory.total_allocated += delta_amount
                     min_inventory.total_expected = min_inventory.total_on_hand + min_inventory.total_ordered
-                    data_provider_v2.fetch_inventory_pool().update_inventory(min_inventory.id, min_inventory)
+                    fetch_inventory_pool().update_inventory(min_inventory.id, min_inventory)
 
         order.items = items
         self.update_order(order_id, order)
@@ -148,3 +151,32 @@ class OrderService(Base):
     def save(self):
         with open(self.data_path, "w") as f:
             json.dump([shipment.model_dump() for shipment in self.data], f)
+    
+    def insert_order(self, order: Order) -> Order:
+        table_name = order.table_name()
+
+        order.created_at = self.get_timestamp()
+        order.updated_at = self.get_timestamp()
+        
+        fields = {}
+        for key, value in vars(order).items():
+            if key != "id" and key != "items":
+                fields[key] = value
+
+        columns = ", ".join(fields.keys())
+        placeholders = ", ".join("?" for _ in fields)
+        values = tuple(fields.values())
+
+        insert_sql = f"INSERT INTO {table_name} ({columns}) VALUES ({placeholders})"
+
+        with self.db.get_connection() as conn:
+            cursor = conn.execute(insert_sql, values)
+            order_id = cursor.lastrowid
+
+            if order.items:
+                for order_items in order.items:
+                    items_insert_sql = f"""
+                    INSERT INTO {order_items_table} (order_id, item_id, amount)
+                    VALUES (?, ?, ?)
+                    """
+                    conn.execute(items_insert_sql, (order_id, order_items.item_id, order_items.amount))

@@ -1,7 +1,6 @@
-from pydantic import BaseModel
+from models.v2.base import Base
 
-
-class Client(BaseModel):
+class Client(Base):
     id: int | None = None
     name: str
     address: str

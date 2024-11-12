@@ -1,9 +1,8 @@
-from pydantic import BaseModel
-from typing import List
+from models.v2.base import Base
 from models.v2.ItemInObject import ItemInObject
 
 
-class Shipment(BaseModel):
+class Shipment(Base):
     id: int | None = None
     order_id: int
     source_id: int
@@ -22,4 +21,4 @@ class Shipment(BaseModel):
     total_package_weight: float
     created_at: str | None = None
     updated_at: str | None = None
-    items: List[ItemInObject]
+    items: list[ItemInObject]

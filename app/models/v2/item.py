@@ -1,7 +1,7 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import ConfigDict
+from models.v2.base import Base
 
-
-class Item(BaseModel):
+class Item(Base):
     uid: str | None = None
     code: str
     description: str

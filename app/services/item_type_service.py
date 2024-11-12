@@ -2,6 +2,7 @@ import json
 from typing import List
 from models.v2.item_type import ItemType
 from models.base import Base
+from services.database_service import DatabaseService
 
 ITEM_TYPES = []
 
@@ -10,6 +11,7 @@ class ItemTypeService(Base):
     def __init__(self, root_path, is_debug=False):
         self.data_path = root_path + "item_types.json"
         self.load(is_debug)
+        self.db = DatabaseService()
 
     def get_item_types(self) -> List[ItemType]:
         return self.data
@@ -50,3 +52,8 @@ class ItemTypeService(Base):
     def save(self):
         with open(self.data_path, "w") as f:
             json.dump([item_type.model_dump() for item_type in self.data], f)
+
+    def insert_item_type(self, item_type: ItemType) -> ItemType:
+        item_type.created_at = self.get_timestamp()
+        item_type.updated_at = self.get_timestamp()
+        return self.db.insert(item_type)

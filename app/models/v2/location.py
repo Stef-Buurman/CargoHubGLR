@@ -1,7 +1,7 @@
-from pydantic import BaseModel
+from models.v2.base import Base
 
 
-class Location(BaseModel):
+class Location(Base):
     id: int | None = None
     warehouse_id: int
     code: str
