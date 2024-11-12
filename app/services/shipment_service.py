@@ -34,6 +34,7 @@ class ShipmentService(Base):
         for i, existing_shipment in enumerate(self.data):
             if existing_shipment.id == shipment_id:
                 self.data[i] = shipment
+                break
         return shipment
 
     def update_items_in_shipment(self, shipment_id: str, items: List[dict]):
