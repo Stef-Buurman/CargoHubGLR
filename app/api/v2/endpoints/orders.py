@@ -72,6 +72,30 @@ def add_items_to_order(
     return items
 
 
+@order_router_v2.patch("/{order_id}")
+def partial_update_order(
+    order_id: int,
+    order: dict,
+    api_key: str = Depends(auth_provider.get_api_key),
+):
+    data_provider_v2.init()
+    existing_order = data_provider_v2.fetch_order_pool().get_order(order_id)
+    if existing_order is None:
+        raise HTTPException(status_code=404, detail="Order not found")
+
+    valid_keys = Order.model_fields.keys()
+    update_data = {key: value for key, value in order.items() if key in valid_keys}
+
+    for key, value in update_data.items():
+        setattr(existing_order, key, value)
+
+    partial_updated_order = data_provider_v2.fetch_order_pool().update_order(
+        order_id, existing_order
+    )
+    data_provider_v2.fetch_order_pool().save()
+    return partial_updated_order
+
+
 @order_router_v2.delete("/{order_id}")
 def delete_order(order_id: int, api_key: str = Depends(auth_provider.get_api_key)):
     data_provider_v2.init()

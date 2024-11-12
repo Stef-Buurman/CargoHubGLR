@@ -288,6 +288,57 @@ def test_update_order_items(client):
         )
 
 
+def test_partial_update_order_no_api_key(client):
+    updated_order = {"notes": "This order has been patched."}
+    response = client.patch(
+        "/orders/" + str(test_order["id"]), json=updated_order
+    )
+    assert response.status_code == 403
+
+
+def test_partial_update_order_invalid_api_key(client):
+    updated_order = {"notes": "This order has been patched."}
+    response = client.patch(
+        "/orders/" + str(test_order["id"]),
+        json=updated_order,
+        headers=invalid_headers,
+    )
+    assert response.status_code == 403
+
+
+def test_partial_update_order_invalid_id(client):
+    updated_order = {"notes": "This order has been patched."}
+    response = client.patch(
+        "/orders/invalid_id", json=updated_order, headers=test_headers
+    )
+    assert response.status_code == 422
+
+
+def test_partial_update_order_non_existent_id(client):
+    updated_order = {"notes": "This order has been patched."}
+    response = client.patch(
+        "/orders/" + str(non_existent_id),
+        json=updated_order,
+        headers=test_headers,
+    )
+    assert response.status_code == 404
+
+
+def test_partial_update_order(client):
+    updated_order = {"notes": "This order has been patched."}
+    response = client.patch(
+        "/orders/" + str(test_order["id"]),
+        json=updated_order,
+        headers=test_headers,
+    )
+    assert response.status_code == 200
+    response_get_order = client.get(
+        "/orders/" + str(test_order["id"]), headers=test_headers
+    )
+    assert response_get_order.status_code == 200
+    assert response_get_order.json()["notes"] == updated_order["notes"]
+
+
 def test_delete_order_no_api_key(client):
     response = client.delete("/orders/" + str(test_order["id"]))
     assert response.status_code == 403
