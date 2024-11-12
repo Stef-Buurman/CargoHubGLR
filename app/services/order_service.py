@@ -176,7 +176,7 @@ class OrderService(Base):
             if order.items:
                 for order_items in order.items:
                     items_insert_sql = f"""
-                    INSERT INTO {order_items_table} (order_id, item_uid, amount)
+                    INSERT INTO {order_items_table} (order_id, item_id, amount)
                     VALUES (?, ?, ?)
                     """
                     conn.execute(items_insert_sql, (order_id, order_items.item_id, order_items.amount))

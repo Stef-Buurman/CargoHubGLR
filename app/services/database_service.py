@@ -343,10 +343,10 @@ class DatabaseService:
         CREATE TABLE IF NOT EXISTS {table_name} (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             order_id INTEGER NOT NULL,
-            item_uid TEXT NOT NULL,
+            item_id TEXT NOT NULL,
             amount INTEGER NOT NULL,
             FOREIGN KEY (order_id) REFERENCES {Order.table_name()}(id) ON DELETE CASCADE,
-            FOREIGN KEY (item_uid) REFERENCES {Item.table_name()}(uid) ON DELETE CASCADE
+            FOREIGN KEY (item_id) REFERENCES {Item.table_name()}(uid) ON DELETE CASCADE
         );
         """
         with self.get_connection() as conn:
