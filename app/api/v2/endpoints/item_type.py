@@ -38,10 +38,7 @@ def read_items_for_item_type(
         raise HTTPException(
             status_code=404, detail=f"Item_type with id {item_type_id} not found"
         )
-    items = data_provider_v2.fetch_item_pool().get_items_for_item_type(item_type_id)
-    # if not items:
-    #     return Response(status_code=status.HTTP_204_NO_CONTENT)
-    return items
+    return data_provider_v2.fetch_item_pool().get_items_for_item_type(item_type_id)
 
 
 @item_type_router_v2.post("/")
@@ -74,6 +71,29 @@ def update_item_type(
     updated_item_type = data_provider_v2.fetch_item_type_pool().update_item_type(item_type_id, item_type)
     data_provider_v2.fetch_item_type_pool().save()
     return updated_item_type
+
+@item_type_router_v2.patch("/{item_type_id}")
+def partial_update_item_type(
+    item_type_id: int,
+    item_type: dict,
+    api_key: str = Depends(auth_provider.get_api_key),
+):
+    data_provider_v2.init()
+    existing_item_type = data_provider_v2.fetch_item_type_pool().get_item_type(item_type_id)
+    if existing_item_type is None:
+        raise HTTPException(status_code=404, detail="item_type not found")
+
+    valid_keys = ItemType.model_fields.keys()
+    update_data = {key: value for key, value in item_type.items() if key in valid_keys}
+
+    for key, value in update_data.items():
+        setattr(existing_item_type, key, value)
+
+    partial_updated_item_type = data_provider_v2.fetch_item_type_pool().update_item_type(
+        item_type_id, existing_item_type
+    )
+    data_provider_v2.fetch_item_type_pool().save()
+    return partial_updated_item_type
 
 
 @item_type_router_v2.delete("/{item_type_id}")
