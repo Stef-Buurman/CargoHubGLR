@@ -38,7 +38,8 @@ def read_items_for_item_type(
         raise HTTPException(
             status_code=404, detail=f"Item_type with id {item_type_id} not found"
         )
-    return data_provider_v2.fetch_item_pool().get_items_for_item_type(item_type_id)
+    items = data_provider_v2.fetch_item_pool().get_items_for_item_type(item_type_id)
+    return items
 
 
 @item_type_router_v2.post("/")
