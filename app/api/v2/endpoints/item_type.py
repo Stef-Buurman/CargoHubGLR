@@ -54,7 +54,9 @@ def create_item_type(
         raise HTTPException(status_code=409, detail="Item_type already exists")
     added_item_type = data_provider_v2.fetch_item_type_pool().add_item_type(item_type)
     data_provider_v2.fetch_item_type_pool().save()
-    return JSONResponse(status_code=status.HTTP_201_CREATED, content=added_item_type.model_dump())
+    return JSONResponse(
+        status_code=status.HTTP_201_CREATED, content=added_item_type.model_dump()
+    )
 
 
 @item_type_router_v2.put("/{item_type_id}")
@@ -69,9 +71,12 @@ def update_item_type(
     )
     if existingitem_type is None:
         raise HTTPException(status_code=404, detail="Item_type not found")
-    updated_item_type = data_provider_v2.fetch_item_type_pool().update_item_type(item_type_id, item_type)
+    updated_item_type = data_provider_v2.fetch_item_type_pool().update_item_type(
+        item_type_id, item_type
+    )
     data_provider_v2.fetch_item_type_pool().save()
     return updated_item_type
+
 
 @item_type_router_v2.patch("/{item_type_id}")
 def partial_update_item_type(
@@ -80,7 +85,9 @@ def partial_update_item_type(
     api_key: str = Depends(auth_provider.get_api_key),
 ):
     data_provider_v2.init()
-    existing_item_type = data_provider_v2.fetch_item_type_pool().get_item_type(item_type_id)
+    existing_item_type = data_provider_v2.fetch_item_type_pool().get_item_type(
+        item_type_id
+    )
     if existing_item_type is None:
         raise HTTPException(status_code=404, detail="item_type not found")
 
@@ -90,8 +97,10 @@ def partial_update_item_type(
     for key, value in update_data.items():
         setattr(existing_item_type, key, value)
 
-    partial_updated_item_type = data_provider_v2.fetch_item_type_pool().update_item_type(
-        item_type_id, existing_item_type
+    partial_updated_item_type = (
+        data_provider_v2.fetch_item_type_pool().update_item_type(
+            item_type_id, existing_item_type
+        )
     )
     data_provider_v2.fetch_item_type_pool().save()
     return partial_updated_item_type
