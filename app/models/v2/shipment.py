@@ -1,5 +1,4 @@
 from models.v2.base import Base
-from typing import List
 from models.v2.ItemInObject import ItemInObject
 
 
@@ -22,4 +21,4 @@ class Shipment(Base):
     total_package_weight: float
     created_at: str | None = None
     updated_at: str | None = None
-    items: List[ItemInObject]
+    items: list[ItemInObject]

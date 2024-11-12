@@ -1,4 +1,3 @@
-from typing import List
 from .ItemInObject import ItemInObject
 from models.v2.base import Base
 
@@ -23,4 +22,4 @@ class Order(Base):
     total_surcharge: float
     created_at: str | None = None
     updated_at: str | None = None
-    items: List[ItemInObject] | None = None
+    items: list[ItemInObject] | None = None
