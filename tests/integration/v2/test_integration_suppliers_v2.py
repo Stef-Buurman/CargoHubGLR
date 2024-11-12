@@ -267,6 +267,57 @@ def test_update_supplier(client):
     assert response_get_supplier.json()["name"] == updated_supplier["name"]
 
 
+def test_partial_update_supplier_no_api_key(client):
+    updated_supplier = {"name": "Super coole nieuwe naam voor de test supplier"}
+    response = client.patch(
+        "/suppliers/" + str(test_supplier["id"]), json=updated_supplier
+    )
+    assert response.status_code == 403
+
+
+def test_partial_update_supplier_invalid_api_key(client):
+    updated_supplier = {"name": "Super coole nieuwe naam voor de test supplier"}
+    response = client.patch(
+        "/suppliers/" + str(test_supplier["id"]),
+        json=updated_supplier,
+        headers=invalid_headers,
+    )
+    assert response.status_code == 403
+
+
+def test_partial_update_supplier_invalid_id(client):
+    updated_supplier = {"name": "Super coole nieuwe naam voor de test supplier"}
+    response = client.patch(
+        "/suppliers/invalid_id", json=updated_supplier, headers=test_headers
+    )
+    assert response.status_code == 422
+
+
+def test_partial_update_supplier_non_existent_id(client):
+    updated_supplier = {"name": "Super coole nieuwe naam voor de test supplier"}
+    response = client.patch(
+        "/suppliers/" + str(non_existent_id),
+        json=updated_supplier,
+        headers=test_headers,
+    )
+    assert response.status_code == 404
+
+
+def test_partial_update_supplier(client):
+    updated_supplier = {"name": "Super coole nieuwe naam voor de test supplier"}
+    response = client.patch(
+        "/suppliers/" + str(test_supplier["id"]),
+        json=updated_supplier,
+        headers=test_headers,
+    )
+    assert response.status_code == 200
+    response_get_supplier = client.get(
+        "/suppliers/" + str(test_supplier["id"]), headers=test_headers
+    )
+    assert response_get_supplier.status_code == 200
+    assert response_get_supplier.json()["name"] == updated_supplier["name"]
+
+
 def test_delete_supplier_no_api_key(client):
     response = client.delete("/suppliers/" + str(test_supplier["id"]))
     assert response.status_code == 403
