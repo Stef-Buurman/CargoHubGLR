@@ -2,7 +2,7 @@ import json
 from typing import List, Optional
 from models.v2.shipment import Shipment
 from models.base import Base
-from services import data_provider
+from services.data_provider_v2 import fetch_inventory_pool
 from services.database_service import DatabaseService
 from utils.globals import *
 
@@ -50,12 +50,12 @@ class ShipmentService(Base):
 
     def update_inventory_for_items(self, current_items: List[Shipment], new_items: List[dict]):
         def update_inventory(item_id, amount_change):
-            inventories = data_provider.fetch_inventory_pool().get_inventories_for_item(item_id)
+            inventories = fetch_inventory_pool().get_inventories_for_item(item_id)
             max_inventory = max(inventories, key=lambda z: z["total_ordered"], default=None)
             if max_inventory:
                 max_inventory["total_ordered"] += amount_change
                 max_inventory["total_expected"] = max_inventory["total_on_hand"] + max_inventory["total_ordered"]
-                data_provider.fetch_inventory_pool().update_inventory(max_inventory["id"], max_inventory)
+                fetch_inventory_pool().update_inventory(max_inventory["id"], max_inventory)
         new_items_dict = {item["item_id"]: item for item in new_items}
         for current in current_items:
             item_id = current.item_id

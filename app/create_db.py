@@ -20,52 +20,52 @@ if __name__ == "__main__":
     db_service = DatabaseService()
 
     data_provider_v2.init()
-    for client in data_provider_v2.fetch_client_pool().get_clients():
-            data_provider_v2.fetch_client_pool().insert_client(client)
+    # for client in data_provider_v2.fetch_client_pool().get_clients():
+    #         data_provider_v2.fetch_client_pool().insert_client(client)
 
-    for inventory in data_provider_v2.fetch_inventory_pool().get_inventories():
-        data_provider_v2.fetch_inventory_pool().insert_inventory(inventory)
+    # for inventory in data_provider_v2.fetch_inventory_pool().get_inventories():
+    #     data_provider_v2.fetch_inventory_pool().insert_inventory(inventory)
     
-    for item in data_provider_v2.fetch_item_pool().get_items():
-        data_provider_v2.fetch_item_pool().insert_item(item)
+    # for item in data_provider_v2.fetch_item_pool().get_items():
+    #     data_provider_v2.fetch_item_pool().insert_item(item)
     
-    for item_group in data_provider_v2.fetch_item_group_pool().get_item_groups():
-        data_provider_v2.fetch_item_group_pool().insert_item_group(item_group)
+    # for item_group in data_provider_v2.fetch_item_group_pool().get_item_groups():
+    #     data_provider_v2.fetch_item_group_pool().insert_item_group(item_group)
     
-    for item_line in data_provider_v2.fetch_item_line_pool().get_item_lines():
-        data_provider_v2.fetch_item_line_pool().insert_item_line(item_line)
+    # for item_line in data_provider_v2.fetch_item_line_pool().get_item_lines():
+    #     data_provider_v2.fetch_item_line_pool().insert_item_line(item_line)
     
-    for item_type in data_provider_v2.fetch_item_type_pool().get_item_types():
-        data_provider_v2.fetch_item_type_pool().insert_item_type(item_type)
+    # for item_type in data_provider_v2.fetch_item_type_pool().get_item_types():
+    #     data_provider_v2.fetch_item_type_pool().insert_item_type(item_type)
 
-    for location in data_provider_v2.fetch_location_pool().get_locations():
-        data_provider_v2.fetch_location_pool().insert_location(location)
+    # for location in data_provider_v2.fetch_location_pool().get_locations():
+    #     data_provider_v2.fetch_location_pool().insert_location(location)
 
-    # for order in data_provider_v2.fetch_order_pool().get_orders():
-    #     data_provider_v2.fetch_order_pool().insert_order(order)
+    for order in data_provider_v2.fetch_order_pool().get_orders():
+        data_provider_v2.fetch_order_pool().insert_order(order)
 
-    for shipment in data_provider_v2.fetch_shipment_pool().get_shipments():
-        data_provider_v2.fetch_shipment_pool().insert_shipment(shipment)
+    # for shipment in data_provider_v2.fetch_shipment_pool().get_shipments():
+    #     data_provider_v2.fetch_shipment_pool().insert_shipment(shipment)
 
-    for supplier in data_provider_v2.fetch_supplier_pool().get_suppliers():
-        data_provider_v2.fetch_supplier_pool().insert_supplier(supplier)
+    # for supplier in data_provider_v2.fetch_supplier_pool().get_suppliers():
+    #     data_provider_v2.fetch_supplier_pool().insert_supplier(supplier)
     
-    for transfer in data_provider_v2.fetch_transfer_pool().get_transfers():
-        data_provider_v2.fetch_transfer_pool().insert_transfer(transfer)
+    # for transfer in data_provider_v2.fetch_transfer_pool().get_transfers():
+    #     data_provider_v2.fetch_transfer_pool().insert_transfer(transfer)
 
-    for warehouse in data_provider_v2.fetch_warehouse_pool().get_warehouses():
-        data_provider_v2.fetch_warehouse_pool().insert_warehouse(Warehouse(
-        code=warehouse.code,
-        name=warehouse.name,
-        address=warehouse.address,
-        zip=warehouse.zip,
-        city=warehouse.city,
-        province=warehouse.province,
-        country=warehouse.country,
-        contact_name=warehouse.contact.name,
-        contact_phone=warehouse.contact.phone,
-        contact_email=warehouse.contact.email
-    ))
+    # for warehouse in data_provider_v2.fetch_warehouse_pool().get_warehouses():
+    #     data_provider_v2.fetch_warehouse_pool().insert_warehouse(Warehouse(
+    #     code=warehouse.code,
+    #     name=warehouse.name,
+    #     address=warehouse.address,
+    #     zip=warehouse.zip,
+    #     city=warehouse.city,
+    #     province=warehouse.province,
+    #     country=warehouse.country,
+    #     contact_name=warehouse.contact.name,
+    #     contact_phone=warehouse.contact.phone,
+    #     contact_email=warehouse.contact.email
+    # ))
 
     elapsed_time = time.time() - start_time
 
