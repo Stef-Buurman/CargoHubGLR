@@ -14,11 +14,13 @@ from models.v2.item_type import ItemType
 from models.v2.location import Location
 from models.v2.supplier import Supplier
 from models.v2.transfer import Transfer
+from utils.globals import *
 
-T = TypeVar('T', bound=BaseModel)
+T = TypeVar("T", bound=BaseModel)
+
 
 class DatabaseService:
-    def __init__(self, db_path: str = 'app/database/database.db'):
+    def __init__(self, db_path: str = "app/database/database.db"):
         self.db_path = db_path
         self._initialize_database()
 
@@ -26,7 +28,7 @@ class DatabaseService:
         self.create_orders_table(Order)
         self.create_clients_table(Client)
         self.create_items_table(Item)
-        self.create_order_items_table(table_name="order_items")
+        self.create_order_items_table(table_name=order_items_table)
         self.create_inventory_table(Inventory)
         self.create_item_group_table(ItemGroup)
         self.create_item_line_table(ItemLine)
@@ -34,10 +36,10 @@ class DatabaseService:
         self.create_location_table(Location)
         self.create_supplier_table(Supplier)
         self.create_transfer_table(Transfer)
-        self.create_transfer_items_table(table_name="transfer_items")
+        self.create_transfer_items_table(table_name=transfer_items_table)
         self.create_warehouse_table(Warehouse)
         self.create_shipment_table(Shipment)
-        self.create_shipment_items_table(table_name="shipment_items")
+        self.create_shipment_items_table(table_name=shipment_items_table)
 
     @contextmanager
     def get_connection(self) -> Generator[sqlite3.Connection, None, None]:
@@ -48,25 +50,56 @@ class DatabaseService:
             conn.commit()
             conn.close()
 
-    def insert(self, model: T):
+    def insert(self, model: T) -> T:
         table_name = model.table_name()
 
         fields = model.__dict__
-        fields.pop('id', None)
+
+        primary_key_field = self.get_primary_key_column(table_name)
+
+        if primary_key_field == "id":
+            fields.pop(primary_key_field, None)
+        else:
+            if (
+                self.execute_one(
+                    f"SELECT * FROM {table_name} WHERE {primary_key_field} = ?",
+                    (fields[primary_key_field],),
+                )
+                is not None
+            ):
+                return None
 
         columns = ", ".join(fields.keys())
         placeholders = ", ".join("?" for _ in fields)
         values = tuple(fields.values())
-            
+
         insert_sql = f"INSERT INTO {table_name} ({columns}) VALUES ({placeholders})"
-        
+
         with self.get_connection() as conn:
-            conn.execute(insert_sql, values)
+            cursor = conn.execute(insert_sql, values)
+
+            inserted_id = cursor.lastrowid
+
+            setattr(model, primary_key_field, inserted_id)
+
+            return model
+
+    def get_primary_key_column(self, table_name: str) -> str:
+        query = f"PRAGMA table_info({table_name})"
+        with self.get_connection() as conn:
+            cursor = conn.execute(query)
+            columns = cursor.fetchall()
+
+            for column in columns:
+                if column[5] == 1:
+                    return column[1]
+
+        return "id"
 
     def get_all(self, model: Type[T]) -> List[T]:
         table_name = model.table_name()
         select_sql = f"SELECT * FROM {table_name}"
-        
+
         with self.get_connection() as conn:
             cursor = conn.execute(select_sql)
             rows = cursor.fetchall()
@@ -75,16 +108,26 @@ class DatabaseService:
             for row in rows:
                 row_dict = {col[0]: row[i] for i, col in enumerate(cursor.description)}
                 result.append(model(**row_dict))
-        
+
         return result
 
-    
-    def execute(self, query: str, params: Tuple[Any, ...] = ()) -> List[sqlite3.Row]:
+    def execute_all(
+        self, query: str, params: Tuple[Any, ...] = ()
+    ) -> List[sqlite3.Row]:
         with self.get_connection() as conn:
             cursor = conn.execute(query, params)
             return cursor.fetchall()
 
-    def create_clients_table(self, model: Type[BaseModel] | None = None, table_name: str | None = None):
+    def execute_one(
+        self, query: str, params: Tuple[Any, ...] = ()
+    ) -> List[sqlite3.Row]:
+        with self.get_connection() as conn:
+            cursor = conn.execute(query, params)
+            return cursor.fetchone()
+
+    def create_clients_table(
+        self, model: Type[BaseModel] | None = None, table_name: str | None = None
+    ):
         if model is not None:
             table_name = model.table_name()
 
@@ -106,10 +149,12 @@ class DatabaseService:
         """
         with self.get_connection() as conn:
             conn.execute(query)
-    
-    def create_inventory_table(self, model: Type[BaseModel] | None = None, table_name: str | None = None):
+
+    def create_inventory_table(
+        self, model: Type[BaseModel] | None = None, table_name: str | None = None
+    ):
         if model is not None:
-                table_name = model.table_name()
+            table_name = model.table_name()
 
         query_inventory = f"""
         CREATE TABLE IF NOT EXISTS {table_name} (
@@ -127,9 +172,9 @@ class DatabaseService:
             FOREIGN KEY (item_id) REFERENCES {Item.table_name()}(uid) ON DELETE CASCADE
         )
         """
-        
+
         query_locations = f"""
-        CREATE TABLE IF NOT EXISTS inventory_locations (
+        CREATE TABLE IF NOT EXISTS {inventory_locations_table} (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             inventory_id INTEGER NOT NULL,
             location_id INTEGER NOT NULL,
@@ -137,14 +182,16 @@ class DatabaseService:
             FOREIGN KEY (location_id) REFERENCES {Location.table_name()}(id) ON DELETE CASCADE
         )
         """
-        
+
         with self.get_connection() as conn:
             conn.execute(query_inventory)
             conn.execute(query_locations)
 
-    def create_item_group_table(self, model: Type[BaseModel] | None = None, table_name: str | None = None):
+    def create_item_group_table(
+        self, model: Type[BaseModel] | None = None, table_name: str | None = None
+    ):
         if model is not None:
-                table_name = model.table_name()
+            table_name = model.table_name()
 
         query_item_group = f"""
         CREATE TABLE IF NOT EXISTS {table_name} (
@@ -158,9 +205,11 @@ class DatabaseService:
         with self.get_connection() as conn:
             conn.execute(query_item_group)
 
-    def create_item_line_table(self, model: Type[BaseModel] | None = None, table_name: str | None = None):
+    def create_item_line_table(
+        self, model: Type[BaseModel] | None = None, table_name: str | None = None
+    ):
         if model is not None:
-                table_name = model.table_name()
+            table_name = model.table_name()
 
         query_item_line = f"""
         CREATE TABLE IF NOT EXISTS {table_name} (
@@ -174,9 +223,11 @@ class DatabaseService:
         with self.get_connection() as conn:
             conn.execute(query_item_line)
 
-    def create_item_type_table(self, model: Type[BaseModel] | None = None, table_name: str | None = None):
+    def create_item_type_table(
+        self, model: Type[BaseModel] | None = None, table_name: str | None = None
+    ):
         if model is not None:
-                table_name = model.table_name()
+            table_name = model.table_name()
 
         query_item_type = f"""
         CREATE TABLE IF NOT EXISTS {table_name} (
@@ -190,7 +241,9 @@ class DatabaseService:
         with self.get_connection() as conn:
             conn.execute(query_item_type)
 
-    def create_items_table(self, model: Type[BaseModel] | None = None, table_name: str | None = None):
+    def create_items_table(
+        self, model: Type[BaseModel] | None = None, table_name: str | None = None
+    ):
         if model is not None:
             table_name = model.table_name()
 
@@ -223,7 +276,9 @@ class DatabaseService:
         with self.get_connection() as conn:
             conn.execute(query)
 
-    def create_location_table(self, model: Type[BaseModel] | None = None, table_name: str | None = None):
+    def create_location_table(
+        self, model: Type[BaseModel] | None = None, table_name: str | None = None
+    ):
         if model is not None:
             table_name = model.table_name()
 
@@ -240,8 +295,10 @@ class DatabaseService:
         """
         with self.get_connection() as conn:
             conn.execute(query_location)
-    
-    def create_orders_table(self, model: Type[BaseModel] | None = None, table_name: str | None = None):
+
+    def create_orders_table(
+        self, model: Type[BaseModel] | None = None, table_name: str | None = None
+    ):
         if model is not None:
             table_name = model.table_name()
 
@@ -275,8 +332,10 @@ class DatabaseService:
         """
         with self.get_connection() as conn:
             conn.execute(query)
-    
-    def create_order_items_table(self, model: Type[BaseModel] | None = None, table_name: str | None = None):
+
+    def create_order_items_table(
+        self, model: Type[BaseModel] | None = None, table_name: str | None = None
+    ):
         if model is not None:
             table_name = model.table_name()
 
@@ -293,10 +352,12 @@ class DatabaseService:
         with self.get_connection() as conn:
             conn.execute(query)
 
-    def create_shipment_table(self, model: Type[BaseModel] | None = None, table_name: str | None = None):
+    def create_shipment_table(
+        self, model: Type[BaseModel] | None = None, table_name: str | None = None
+    ):
         if model is not None:
             table_name = model.table_name()
-    
+
         query_shipment = f"""
         CREATE TABLE IF NOT EXISTS {table_name} (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -323,7 +384,9 @@ class DatabaseService:
         with self.get_connection() as conn:
             conn.execute(query_shipment)
 
-    def create_shipment_items_table(self, model: Type[BaseModel] | None = None, table_name: str | None = None):
+    def create_shipment_items_table(
+        self, model: Type[BaseModel] | None = None, table_name: str | None = None
+    ):
         if model is not None:
             table_name = model.table_name()
 
@@ -340,7 +403,9 @@ class DatabaseService:
         with self.get_connection() as conn:
             conn.execute(query)
 
-    def create_supplier_table(self, model: Type[BaseModel] | None = None, table_name: str | None = None):
+    def create_supplier_table(
+        self, model: Type[BaseModel] | None = None, table_name: str | None = None
+    ):
         if model is not None:
             table_name = model.table_name()
 
@@ -365,7 +430,9 @@ class DatabaseService:
         with self.get_connection() as conn:
             conn.execute(query_supplier)
 
-    def create_transfer_table(self, model: Type[BaseModel] | None = None, table_name: str | None = None):
+    def create_transfer_table(
+        self, model: Type[BaseModel] | None = None, table_name: str | None = None
+    ):
         if model is not None:
             table_name = model.table_name()
 
@@ -385,7 +452,9 @@ class DatabaseService:
         with self.get_connection() as conn:
             conn.execute(query_transfer)
 
-    def create_transfer_items_table(self, model: Type[BaseModel] | None = None, table_name: str | None = None):
+    def create_transfer_items_table(
+        self, model: Type[BaseModel] | None = None, table_name: str | None = None
+    ):
         if model is not None:
             table_name = model.table_name()
 
@@ -402,7 +471,9 @@ class DatabaseService:
         with self.get_connection() as conn:
             conn.execute(query)
 
-    def create_warehouse_table(self, model: Type[BaseModel] | None = None, table_name: str | None = None):
+    def create_warehouse_table(
+        self, model: Type[BaseModel] | None = None, table_name: str | None = None
+    ):
         if model is not None:
             table_name = model.table_name()
 
