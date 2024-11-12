@@ -70,6 +70,11 @@ def test_add_item_type_invalid_api_key(client):
     assert responseGet.status_code == 404
 
 
+# def test_get_items_for_item_type_without_items(client):
+#     response = client.get('/item_types/' + str(test_item_type['id']) + '/items', headers=test_headers)
+#     assert response.status_code == 204
+
+
 def test_add_item_type(client):
     response = client.post("/item_types/", json=test_item_type, headers=test_headers)
     assert response.status_code == 201 or response.status_code == 200
@@ -104,11 +109,6 @@ def test_get_item_type_invalid_api_key(client):
         "/item_types/" + str(test_item_type["id"]), headers=invalid_headers
     )
     assert response.status_code == 403
-
-
-# def test_get_items_for_item_type_without_items(client):
-#     response = client.get('/item_types/' + str(test_item_type['id']) + '/items', headers=test_headers)
-#     assert response.status_code == 204
 
 
 def test_get_items_for_item_type_non_existing_id(client):
@@ -221,6 +221,57 @@ def test_update_item_type(client):
     )
     assert responseGet.status_code == 200
     assert responseGet.json()["name"] == test_item_type_copy["name"]
+
+
+def test_partial_update_item_type_no_api_key(client):
+    updated_item_type = {"name": "Super coole nieuwe naam voor de test item_type"}
+    response = client.patch(
+        "/item_types/" + str(test_item_type["id"]), json=updated_item_type
+    )
+    assert response.status_code == 403
+
+
+def test_partial_update_item_type_invalid_api_key(client):
+    updated_item_type = {"name": "Super coole nieuwe naam voor de test item_type"}
+    response = client.patch(
+        "/item_types/" + str(test_item_type["id"]),
+        json=updated_item_type,
+        headers=invalid_headers,
+    )
+    assert response.status_code == 403
+
+
+def test_partial_update_item_type_invalid_id(client):
+    updated_item_type = {"name": "Super coole nieuwe naam voor de test item_type"}
+    response = client.patch(
+        "/item_types/invalid_id", json=updated_item_type, headers=test_headers
+    )
+    assert response.status_code == 422
+
+
+def test_partial_update_item_type_non_existent_id(client):
+    updated_item_type = {"name": "Super coole nieuwe naam voor de test item_type"}
+    response = client.patch(
+        "/item_types/" + str(non_existent_id),
+        json=updated_item_type,
+        headers=test_headers,
+    )
+    assert response.status_code == 404
+
+
+def test_partial_update_item_type(client):
+    updated_item_type = {"name": "Super coole nieuwe naam voor de test item_type"}
+    response = client.patch(
+        "/item_types/" + str(test_item_type["id"]),
+        json=updated_item_type,
+        headers=test_headers,
+    )
+    assert response.status_code == 200
+    response_get_item_type = client.get(
+        "/item_types/" + str(test_item_type["id"]), headers=test_headers
+    )
+    assert response_get_item_type.status_code == 200
+    assert response_get_item_type.json()["name"] == updated_item_type["name"]
 
 
 def test_delete_item_type_no_api_key(client):
