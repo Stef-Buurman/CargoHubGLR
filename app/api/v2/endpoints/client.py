@@ -66,6 +66,30 @@ def update_client(
     return updated_client
 
 
+@client_router_v2.patch("/{client_id}")
+def partial_update_client(
+    client_id: int,
+    client: dict,
+    api_key: str = Depends(auth_provider.get_api_key),
+):
+    data_provider_v2.init()
+    existing_client = data_provider_v2.fetch_client_pool().get_client(client_id)
+    if existing_client is None:
+        raise HTTPException(status_code=404, detail="Client not found")
+
+    valid_keys = Client.model_fields.keys()
+    update_data = {key: value for key, value in client.items() if key in valid_keys}
+
+    for key, value in update_data.items():
+        setattr(existing_client, key, value)
+
+    partial_updated_client = data_provider_v2.fetch_client_pool().update_client(
+        client_id, existing_client
+    )
+    data_provider_v2.fetch_client_pool().save()
+    return partial_updated_client
+
+
 @client_router_v2.delete("/{client_id}")
 def delete_client(client_id: int, api_key: str = Depends(auth_provider.get_api_key)):
     data_provider_v2.init()
