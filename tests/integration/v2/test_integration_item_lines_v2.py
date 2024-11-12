@@ -260,6 +260,59 @@ def test_update_item_line(client):
     )
 
 
+def test_partial_update_item_line_no_api_key(client):
+    updated_item_line = {"description": "updated item line"}
+    response = client.patch(
+        "/item_lines/" + str(test_item_line["id"]), json=updated_item_line
+    )
+    assert response.status_code == 403
+
+
+def test_partial_update_item_line_invalid_api_key(client):
+    updated_item_line = {"description": "updated item line"}
+    response = client.patch(
+        "/item_lines/" + str(test_item_line["id"]),
+        json=updated_item_line,
+        headers=invalid_headers,
+    )
+    assert response.status_code == 403
+
+
+def test_partial_update_item_line_invalid_id(client):
+    updated_item_line = {"description": "updated item line"}
+    response = client.patch(
+        "/item_lines/invalid_id", json=updated_item_line, headers=test_headers
+    )
+    assert response.status_code == 422
+
+
+def test_partial_update_item_line_non_existent_id(client):
+    updated_item_line = {"description": "updated item line"}
+    response = client.patch(
+        "/item_lines/" + str(non_existent_id),
+        json=updated_item_line,
+        headers=test_headers,
+    )
+    assert response.status_code == 404
+
+
+def test_partial_update_item_line(client):
+    updated_item_line = {"description": "updated item line"}
+    response = client.patch(
+        "/item_lines/" + str(test_item_line["id"]),
+        json=updated_item_line,
+        headers=test_headers,
+    )
+    assert response.status_code == 200
+    response_get_item_line = client.get(
+        "/item_lines/" + str(test_item_line["id"]), headers=test_headers
+    )
+    assert response_get_item_line.status_code == 200
+    assert (
+        response_get_item_line.json()["description"] == updated_item_line["description"]
+    )
+
+
 def test_delete_item_line_no_api_key(client):
     response = client.delete("/item_lines/" + str(test_item_line["id"]))
     assert response.status_code == 403

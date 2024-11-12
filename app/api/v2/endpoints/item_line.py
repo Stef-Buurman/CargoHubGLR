@@ -51,14 +51,14 @@ def read_items_for_item_line(
 @item_line_router_v2.post("/")
 def create_item(item_line: ItemLine, api_key: str = Depends(auth_provider.get_api_key)):
     data_provider_v2.init()
-    existingItem = data_provider_v2.fetch_item_line_pool().get_item_line(
-        item_line.id
-    )
+    existingItem = data_provider_v2.fetch_item_line_pool().get_item_line(item_line.id)
     if existingItem is not None:
         raise HTTPException(status_code=409, detail="Item line already exists")
     added_item_line = data_provider_v2.fetch_item_line_pool().add_item_line(item_line)
     data_provider_v2.fetch_item_line_pool().save()
-    return JSONResponse(status_code=status.HTTP_201_CREATED, content=added_item_line.model_dump())
+    return JSONResponse(
+        status_code=status.HTTP_201_CREATED, content=added_item_line.model_dump()
+    )
 
 
 @item_line_router_v2.put("/{item_line_id}")
@@ -73,9 +73,41 @@ def update_item(
         raise HTTPException(
             status_code=404, detail=f"Item line with id {item_line_id} not found"
         )
-    updated_item_line = data_provider_v2.fetch_item_line_pool().update_item_line(item_line_id, item_line)
+    updated_item_line = data_provider_v2.fetch_item_line_pool().update_item_line(
+        item_line_id, item_line
+    )
     data_provider_v2.fetch_item_line_pool().save()
     return updated_item_line
+
+
+@item_line_router_v2.patch("/{item_line_id}")
+def partial_update_item_line(
+    item_line_id: int,
+    item_line: dict,
+    api_key: str = Depends(auth_provider.get_api_key),
+):
+    data_provider_v2.init()
+    existing_item_line = data_provider_v2.fetch_item_line_pool().get_item_line(
+        item_line_id
+    )
+    if existing_item_line is None:
+        raise HTTPException(
+            status_code=404, detail=f"Item line with id {item_line_id} not found"
+        )
+
+    valid_keys = ItemLine.model_fields.keys()
+    update_data = {key: value for key, value in item_line.items() if key in valid_keys}
+
+    for key, value in update_data.items():
+        setattr(existing_item_line, key, value)
+
+    partial_updated_item_line = (
+        data_provider_v2.fetch_item_line_pool().update_item_line(
+            item_line_id, existing_item_line
+        )
+    )
+    data_provider_v2.fetch_item_line_pool().save()
+    return partial_updated_item_line
 
 
 @item_line_router_v2.delete("/{item_line_id}")
