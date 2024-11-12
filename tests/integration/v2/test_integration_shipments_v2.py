@@ -157,6 +157,56 @@ def test_update_shipment(client):
     assert response_get.status_code == 200
     assert response_get.json()["shipment_status"] == updated_shipment["shipment_status"]
 
+def test_partial_update_shipment_no_api_key(client):
+    updated_shipment = {"notes": "Super coole nieuwe note voor de test shipment"}
+    response = client.patch(
+        "/shipments/" + str(test_shipment["id"]), json=updated_shipment
+    )
+    assert response.status_code == 403
+
+
+def test_partial_update_shipment_invalid_api_key(client):
+    updated_shipment = {"notes": "Super coole nieuwe note voor de test shipment"}
+    response = client.patch(
+        "/shipments/" + str(test_shipment["id"]),
+        json=updated_shipment,
+        headers=invalid_headers,
+    )
+    assert response.status_code == 403
+
+
+def test_partial_update_shipment_invalid_id(client):
+    updated_shipment = {"notes": "Super coole nieuwe note voor de test shipment"}
+    response = client.patch(
+        "/shipments/invalid_id", json=updated_shipment, headers=test_headers
+    )
+    assert response.status_code == 422
+
+
+def test_partial_update_shipment_non_existent_id(client):
+    updated_shipment = {"notes": "Super coole nieuwe note voor de test shipment"}
+    response = client.patch(
+        "/shipments/" + str(non_existent_id),
+        json=updated_shipment,
+        headers=test_headers,
+    )
+    assert response.status_code == 404
+
+
+def test_partial_update_shipment(client):
+    updated_shipment = {"notes": "Super coole nieuwe note voor de test shipment"}
+    response = client.patch(
+        "/shipments/" + str(test_shipment["id"]),
+        json=updated_shipment,
+        headers=test_headers,
+    )
+    assert response.status_code == 200
+    response_get_shipment = client.get(
+        "/shipments/" + str(test_shipment["id"]), headers=test_headers
+    )
+    assert response_get_shipment.status_code == 200
+    assert response_get_shipment.json()["notes"] == updated_shipment["notes"]
+
 
 def test_delete_shipment_no_api_key(client):
     response = client.delete(f"/shipments/{test_shipment['id']}")
