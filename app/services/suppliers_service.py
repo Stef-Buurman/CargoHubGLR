@@ -2,6 +2,7 @@ import json
 from models.v2.supplier import Supplier
 from typing import List
 from models.base import Base
+from services.database_service import DatabaseService
 
 SUPPLIERS = []
 
@@ -10,6 +11,7 @@ class SupplierService(Base):
     def __init__(self, root_path, is_debug=False):
         self.data_path = root_path + "suppliers.json"
         self.load(is_debug)
+        self.db = DatabaseService()
 
     def get_suppliers(self) -> List[Supplier]:
         return self.data
@@ -50,3 +52,8 @@ class SupplierService(Base):
     def save(self):
         with open(self.data_path, "w") as f:
             json.dump([Supplier.model_dump() for Supplier in self.data], f)
+
+    def insert_supplier(self, supplier: Supplier):
+        supplier.created_at = self.get_timestamp()
+        supplier.updated_at = self.get_timestamp()
+        return self.db.insert(supplier)

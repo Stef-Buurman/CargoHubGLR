@@ -2,6 +2,7 @@ import json
 from typing import List
 from models.v2.item import Item
 from models.base import Base
+from services.database_service import DatabaseService
 
 ITEMS = []
 
@@ -11,6 +12,7 @@ class ItemService(Base):
         self.data_path = root_path + "items.json"
         self.load(is_debug, items)
         self.current_id = 0
+        self.db = DatabaseService()
 
     def get_items(self) -> List[Item]:
         return self.data
@@ -93,3 +95,8 @@ class ItemService(Base):
     def save(self):
         with open(self.data_path, "w") as f:
             json.dump([item.model_dump() for item in self.data], f)
+
+    def insert_item(self, item: Item) -> Item:
+        item.created_at = self.get_timestamp()
+        item.updated_at = self.get_timestamp()
+        return self.db.insert(item)

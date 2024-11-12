@@ -2,6 +2,7 @@ import json
 from typing import List
 from models.v2.item_group import ItemGroup
 from models.base import Base
+from services.database_service import DatabaseService
 
 ITEM_GROUPS = []
 
@@ -10,6 +11,7 @@ class ItemGroupService(Base):
     def __init__(self, root_path, is_debug=False):
         self.data_path = root_path + "item_groups.json"
         self.load(is_debug)
+        self.db = DatabaseService()
 
     def get_item_groups(self)-> List[ItemGroup]:
         return self.data
@@ -52,3 +54,8 @@ class ItemGroupService(Base):
     def save(self):
         with open(self.data_path, "w") as f:
             json.dump([item_group.model_dump() for item_group in self.data], f)
+
+    def insert_item_group(self, item_group: ItemGroup):
+        item_group.created_at = self.get_timestamp()
+        item_group.updated_at = self.get_timestamp()
+        return self.db.insert(item_group)
