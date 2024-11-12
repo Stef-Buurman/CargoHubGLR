@@ -222,6 +222,44 @@ def test_update_item(client):
     assert response_get_item.json()["code"] == updated_item["code"]
 
 
+def test_partial_update_item_no_api_key(client):
+    updated_item = {"code": "updated_code"}
+    response = client.patch("/items/" + test_item["uid"], json=updated_item)
+    assert response.status_code == 403
+
+
+def test_partial_update_item_invalid_api_key(client):
+    updated_item = {"code": "updated_code"}
+    response = client.patch(
+        "/items/" + test_item["uid"], json=updated_item, headers=invalid_headers
+    )
+    assert response.status_code == 403
+
+
+def test_partial_update_item_no_item(client):
+    updated_item = {"code": "updated_code"}
+    response = client.patch(
+        "/items/" + str(non_existent_id), json=updated_item, headers=test_headers
+    )
+    assert response.status_code == 404
+
+
+def test_partial_update_item(client):
+    updated_item = {"code": "updated_code"}
+
+    response = client.post("/items/", json=test_item, headers=test_headers)
+    assert response.status_code == 201
+    test_item["uid"] = response.json()["uid"]
+
+    response = client.patch(
+        "/items/" + test_item["uid"], json=updated_item, headers=test_headers
+    )
+    assert response.status_code == 200
+    response_get_item = client.get("/items/" + test_item["uid"], headers=test_headers)
+    assert response_get_item.status_code == 200
+    assert response_get_item.json()["code"] == updated_item["code"]
+
+
 def test_delete_item_no_api_key(client):
     response = client.delete("/items/" + test_item["uid"])
     assert response.status_code == 403

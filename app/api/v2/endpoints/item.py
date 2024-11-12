@@ -59,7 +59,9 @@ def create_item(item: Item, api_key: str = Depends(auth_provider.get_api_key)):
     data_provider_v2.init()
     addedItem = data_provider_v2.fetch_item_pool().add_item(item)
     data_provider_v2.fetch_item_pool().save()
-    return JSONResponse(status_code=status.HTTP_201_CREATED, content=addedItem.model_dump())
+    return JSONResponse(
+        status_code=status.HTTP_201_CREATED, content=addedItem.model_dump()
+    )
 
 
 @item_router_v2.put("/{item_id}")
@@ -73,6 +75,30 @@ def update_item(
     updated_item = data_provider_v2.fetch_item_pool().update_item(item_id, item)
     data_provider_v2.fetch_item_pool().save()
     return updated_item
+
+
+@item_router_v2.patch("/{item_id}")
+def partial_update_item(
+    item_id: str,
+    item: dict,
+    api_key: str = Depends(auth_provider.get_api_key),
+):
+    data_provider_v2.init()
+    existing_item = data_provider_v2.fetch_item_pool().get_item(item_id)
+    if existing_item is None:
+        raise HTTPException(status_code=404, detail="Item not found")
+
+    valid_keys = Item.model_fields.keys()
+    update_data = {key: value for key, value in item.items() if key in valid_keys}
+
+    for key, value in update_data.items():
+        setattr(existing_item, key, value)
+
+    partial_updated_item = data_provider_v2.fetch_item_pool().update_item(
+        item_id, existing_item
+    )
+    data_provider_v2.fetch_item_pool().save()
+    return partial_updated_item
 
 
 @item_router_v2.delete("/{item_id}")
