@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
 from services import data_provider_v2, auth_provider
 from models.v2.order import Order
+from models.v2.ItemInObject import ItemInObject
 
 order_router_v2 = APIRouter()
 
@@ -60,7 +61,7 @@ def update_order(
 
 @order_router_v2.put("/{order_id}/items")
 def add_items_to_order(
-    order_id: int, items: list[Order], api_key: str = Depends(auth_provider.get_api_key)
+    order_id: int, items: list[ItemInObject], api_key: str = Depends(auth_provider.get_api_key)
 ):
     data_provider_v2.init()
     existingOrder = data_provider_v2.fetch_order_pool().get_order(order_id)

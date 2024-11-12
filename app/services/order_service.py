@@ -1,8 +1,9 @@
 import json
 from typing import List
-from models.v2.order import Order, OrderItem
+from models.v2.order import Order
 from models.base import Base
-from app.services import data_provider_v2
+from services import data_provider_v2
+from models.v2.ItemInObject import ItemInObject
 
 ORDERS = []
 
@@ -21,7 +22,7 @@ class OrderService(Base):
                 return x
         return None
 
-    def get_items_in_order(self, order_id: int) -> List[OrderItem]:
+    def get_items_in_order(self, order_id: int) -> List[ItemInObject]:
         for x in self.data:
             if x.id == order_id:
                 return x.items
@@ -62,7 +63,7 @@ class OrderService(Base):
                 break
         return order
 
-    def update_items_in_order(self, order_id: int, items: List[OrderItem]) -> Order | None:
+    def update_items_in_order(self, order_id: int, items: List[ItemInObject]) -> Order | None:
         order = self.get_order(order_id)
         current = order.items
         for current_item in current:
