@@ -54,9 +54,9 @@ def update_order(
     existingOrder = data_provider_v2.fetch_order_pool().get_order(order_id)
     if existingOrder is None:
         raise HTTPException(status_code=404, detail="Order not found")
-    data_provider_v2.fetch_order_pool().update_order(order_id, order)
+    updatedOrder = data_provider_v2.fetch_order_pool().update_order(order_id, order)
     data_provider_v2.fetch_order_pool().save()
-    return order
+    return updatedOrder
 
 
 @order_router_v2.put("/{order_id}/items")
