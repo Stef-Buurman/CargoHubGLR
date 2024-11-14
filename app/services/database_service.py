@@ -1,5 +1,6 @@
 import sqlite3
 from contextlib import contextmanager
+import time
 from typing import Type, TypeVar, List, Generator, Any, Tuple
 from pydantic import BaseModel
 from models.v2.shipment import Shipment
@@ -22,6 +23,7 @@ T = TypeVar("T", bound=BaseModel)
 class DatabaseService:
     def __init__(self, db_path: str = "app/database/database.db"):
         self.db_path = db_path
+        self.conn = None
         self._initialize_database()
 
     def _initialize_database(self):
@@ -50,7 +52,28 @@ class DatabaseService:
             conn.commit()
             conn.close()
 
-    def insert(self, model: T) -> T:
+    @contextmanager
+    def get_connection_without_close(self) -> Generator[sqlite3.Connection, None, None]:
+        if self.conn is None:
+            self.conn = sqlite3.connect(self.db_path)
+        yield self.conn
+
+    def stop_connection(self):
+        if self.conn:
+            self.conn.close()
+            self.conn = None
+
+    def commit(self):
+        if self.conn:
+            self.conn.commit()
+
+    def commit_and_close(self):
+        if self.conn:
+            self.conn.commit()
+            self.conn.close()
+            self.conn = None
+
+    def insert(self, model: T, closeConnection:bool=True) -> T:
         table_name = model.table_name()
 
         fields = model.__dict__
@@ -75,14 +98,16 @@ class DatabaseService:
 
         insert_sql = f"INSERT INTO {table_name} ({columns}) VALUES ({placeholders})"
 
-        with self.get_connection() as conn:
+        with self.get_connection_without_close() as conn:
             cursor = conn.execute(insert_sql, values)
 
             inserted_id = cursor.lastrowid
 
             setattr(model, primary_key_field, inserted_id)
 
-            return model
+        if closeConnection:
+            self.commit_and_close()
+        return model
 
     def get_primary_key_column(self, table_name: str) -> str:
         query = f"PRAGMA table_info({table_name})"
