@@ -137,7 +137,7 @@ if __name__ == "__main__":
     all_orders = data_provider_v2.fetch_order_pool().get_orders()
     for order in all_orders:
         count += 1
-        if count % 250 == 0 or count == len(all_orders):
+        if count % amount_before_closing == 0 or count == len(all_orders):
             data_provider_v2.fetch_order_pool().insert_order(order)
         else :
             data_provider_v2.fetch_order_pool().insert_order(order, False)
