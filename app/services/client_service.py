@@ -53,7 +53,7 @@ class ClientService(Base):
         with open(self.data_path, "w") as f:
             json.dump([client.model_dump() for client in self.data], f)
     
-    def insert_client(self, client: Client):
+    def insert_client(self, client: Client, closeConnection:bool = True) -> Client:
         client.created_at = self.get_timestamp()
         client.updated_at = self.get_timestamp()
-        return self.db.insert(client)
+        return self.db.insert(client, closeConnection)

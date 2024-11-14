@@ -76,7 +76,7 @@ class InventoryService(Base):
         with open(self.data_path, "w") as f:
             json.dump([inventory.model_dump() for inventory in self.data], f)
     
-    def insert_inventory(self, inventory: Inventory):
+    def insert_inventory(self, inventory: Inventory, closeConnection:bool = True) -> Inventory:
         table_name = inventory.table_name()
 
         inventory.created_at = self.get_timestamp()
@@ -93,7 +93,7 @@ class InventoryService(Base):
 
         insert_sql = f"INSERT INTO {table_name} ({columns}) VALUES ({placeholders})"
 
-        with self.db.get_connection() as conn:
+        with self.db.get_connection_without_close() as conn:
             cursor = conn.execute(insert_sql, values)
             inventory_id = cursor.lastrowid
 
@@ -104,3 +104,7 @@ class InventoryService(Base):
                     VALUES (?, ?)
                     """
                     conn.execute(location_insert_sql, (inventory_id, location_id))
+
+        if closeConnection:
+            self.db.commit_and_close()
+        return inventory

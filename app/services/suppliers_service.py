@@ -53,7 +53,7 @@ class SupplierService(Base):
         with open(self.data_path, "w") as f:
             json.dump([Supplier.model_dump() for Supplier in self.data], f)
 
-    def insert_supplier(self, supplier: Supplier):
+    def insert_supplier(self, supplier: Supplier, closeConnection:bool=True) -> Supplier:
         supplier.created_at = self.get_timestamp()
         supplier.updated_at = self.get_timestamp()
-        return self.db.insert(supplier)
+        return self.db.insert(supplier, closeConnection)

@@ -53,7 +53,7 @@ class WarehouseService(Base):
         with open(self.data_path, "w") as f:
             json.dump([warehouse.model_dump() for warehouse in self.data], f)
 
-    def insert_warehouse(self, warehouse: WarehouseDB) -> WarehouseDB:
+    def insert_warehouse(self, warehouse: WarehouseDB, closeConnection:bool = True) -> WarehouseDB:
         warehouse.created_at = self.get_timestamp()
         warehouse.updated_at = self.get_timestamp()
-        return self.db.insert(warehouse)
+        return self.db.insert(warehouse, closeConnection)

@@ -60,7 +60,7 @@ class LocationService(Base):
         with open(self.data_path, "w") as f:
             json.dump([location.model_dump() for location in self.data], f)
 
-    def insert_location(self, location: Location):
+    def insert_location(self, location: Location, closeConnection:bool = True) -> Location:
         location.created_at = self.get_timestamp()
         location.updated_at = self.get_timestamp()
-        return self.db.insert(location)
+        return self.db.insert(location, closeConnection)

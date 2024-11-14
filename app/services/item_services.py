@@ -96,7 +96,7 @@ class ItemService(Base):
         with open(self.data_path, "w") as f:
             json.dump([item.model_dump() for item in self.data], f)
 
-    def insert_item(self, item: Item) -> Item:
+    def insert_item(self, item: Item, closeConnection:bool = True) -> Item:
         item.created_at = self.get_timestamp()
         item.updated_at = self.get_timestamp()
-        return self.db.insert(item)
+        return self.db.insert(item, closeConnection)

@@ -88,7 +88,7 @@ class ShipmentService(Base):
         with open(self.data_path, "w") as f:
             json.dump([shipment.model_dump() for shipment in self.data], f)
 
-    def insert_shipment(self, shipment: Shipment) -> Shipment:
+    def insert_shipment(self, shipment: Shipment, closeConnection:bool = True) -> Shipment:
         table_name = shipment.table_name()
 
         shipment.created_at = self.get_timestamp()
@@ -105,9 +105,10 @@ class ShipmentService(Base):
 
         insert_sql = f"INSERT INTO {table_name} ({columns}) VALUES ({placeholders})"
 
-        with self.db.get_connection() as conn:
+        with self.db.get_connection_without_close() as conn:
             cursor = conn.execute(insert_sql, values)
             shipment_id = cursor.lastrowid
+            shipment.id = shipment_id
 
             if shipment.items:
                 for shipment_items in shipment.items:
@@ -116,3 +117,7 @@ class ShipmentService(Base):
                     VALUES (?, ?, ?)
                     """
                     conn.execute(items_insert_sql, (shipment_id, shipment_items.item_id, shipment_items.amount))
+        
+        if closeConnection:
+            self.db.commit_and_close()
+        return shipment

@@ -53,7 +53,7 @@ class ItemTypeService(Base):
         with open(self.data_path, "w") as f:
             json.dump([item_type.model_dump() for item_type in self.data], f)
 
-    def insert_item_type(self, item_type: ItemType) -> ItemType:
+    def insert_item_type(self, item_type: ItemType, closeConnection:bool = True) -> ItemType:
         item_type.created_at = self.get_timestamp()
         item_type.updated_at = self.get_timestamp()
-        return self.db.insert(item_type)
+        return self.db.insert(item_type, closeConnection)

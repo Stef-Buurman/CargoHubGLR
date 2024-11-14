@@ -55,7 +55,7 @@ class ItemGroupService(Base):
         with open(self.data_path, "w") as f:
             json.dump([item_group.model_dump() for item_group in self.data], f)
 
-    def insert_item_group(self, item_group: ItemGroup):
+    def insert_item_group(self, item_group: ItemGroup, closeConnection:bool = True) -> ItemGroup:
         item_group.created_at = self.get_timestamp()
         item_group.updated_at = self.get_timestamp()
-        return self.db.insert(item_group)
+        return self.db.insert(item_group, closeConnection)
