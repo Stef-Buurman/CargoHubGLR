@@ -109,6 +109,33 @@ class DatabaseService:
             self.commit_and_close()
         return model
 
+    def update(self, model: T, id: int, closeConnection: bool = True) -> T:
+        table_name = model.table_name()
+        fields = model.__dict__
+        primary_key_field = self.get_primary_key_column(table_name)
+        fields.pop(primary_key_field, None)
+
+        columns = ", ".join(f"{key} = ?" for key in fields.keys())
+        values = tuple(fields.values())
+
+        update_sql = f"UPDATE {table_name} SET {columns} WHERE {primary_key_field} = ?"
+        with self.get_connection_without_close() as conn:
+            conn.execute(update_sql, values + (id,))
+
+        if closeConnection:
+            self.commit_and_close()
+        return model
+
+    def delete(self, model: Type[T], id: int, closeConnection: bool = True) -> bool:
+        table_name = model.table_name()
+        primary_key_field = self.get_primary_key_column(table_name)
+        delete_sql = f"DELETE FROM {table_name} WHERE {primary_key_field} = ?"
+        with self.get_connection_without_close() as conn:
+            conn.execute(delete_sql, (id,))
+        if closeConnection:
+            self.commit_and_close()
+        return True
+
     def get_primary_key_column(self, table_name: str) -> str:
         query = f"PRAGMA table_info({table_name})"
         with self.get_connection() as conn:
@@ -135,6 +162,21 @@ class DatabaseService:
                 result.append(model(**row_dict))
 
         return result
+
+    def get(self, model: Type[T], id: int) -> T | None:
+        table_name = model.table_name()
+        primary_key_field = self.get_primary_key_column(table_name)
+        select_sql = f"SELECT * FROM {table_name} WHERE {primary_key_field} = ?"
+
+        with self.get_connection() as conn:
+            cursor = conn.execute(select_sql, (id,))
+            row = cursor.fetchone()
+
+            if row is None:
+                return None
+
+            row_dict = {col[0]: row[i] for i, col in enumerate(cursor.description)}
+            return model(**row_dict)
 
     def execute_all(
         self, query: str, params: Tuple[Any, ...] = ()

@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Response
 from fastapi.responses import JSONResponse
 from services import data_provider_v2, auth_provider
-from models.v2.warehouse import Warehouse
+from models.v2.warehouse import WarehouseDB
 
 warehouse_router_v2 = APIRouter()
 
@@ -46,7 +46,7 @@ def read_locations_in_warehouse(
 
 @warehouse_router_v2.post("/")
 def create_warehouse(
-    warehouse: Warehouse, api_key: str = Depends(auth_provider.get_api_key)
+    warehouse: WarehouseDB, api_key: str = Depends(auth_provider.get_api_key)
 ):
     data_provider_v2.init()
     existing_warehouse = data_provider_v2.fetch_warehouse_pool().get_warehouse(
@@ -64,7 +64,7 @@ def create_warehouse(
 @warehouse_router_v2.put("/{warehouse_id}")
 def update_warehouse(
     warehouse_id: int,
-    warehouse: Warehouse,
+    warehouse: WarehouseDB,
     api_key: str = Depends(auth_provider.get_api_key),
 ):
     data_provider_v2.init()
