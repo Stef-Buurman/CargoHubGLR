@@ -64,7 +64,7 @@ jobs:
           cat flake8_report.txt
 
   test:
-    needs: [lint, format]
+    needs: [lint]
     runs-on: self-hosted
     outputs:
       test_status: ${{ job.status }}
