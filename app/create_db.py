@@ -31,7 +31,7 @@ if __name__ == "__main__":
 
         if count % amount_before_closing == 0 or count == len(all_clients):
             data_provider_v2.fetch_client_pool().insert_client(Client(**client))
-        else :
+        else:
             data_provider_v2.fetch_client_pool().insert_client(Client(**client), False)
 
     count = 0
@@ -39,17 +39,21 @@ if __name__ == "__main__":
     for inventory in all_items:
         count += 1
         if count % amount_before_closing == 0 or count == len(all_items):
-            data_provider_v2.fetch_inventory_pool().insert_inventory(Inventory(**inventory))
-        else :
-            data_provider_v2.fetch_inventory_pool().insert_inventory(Inventory(**inventory), False)
-    
+            data_provider_v2.fetch_inventory_pool().insert_inventory(
+                Inventory(**inventory)
+            )
+        else:
+            data_provider_v2.fetch_inventory_pool().insert_inventory(
+                Inventory(**inventory), False
+            )
+
     count = 0
     all_items = data_provider.fetch_item_pool().get_items()
     for item in all_items:
         count += 1
         if count % amount_before_closing == 0 or count == len(all_items):
             data_provider_v2.fetch_item_pool().insert_item(Item(**item))
-        else :
+        else:
             data_provider_v2.fetch_item_pool().insert_item(Item(**item), False)
 
     count = 0
@@ -57,27 +61,39 @@ if __name__ == "__main__":
     for item_group in all_item_groups:
         count += 1
         if count % amount_before_closing == 0 or count == len(all_item_groups):
-            data_provider_v2.fetch_item_group_pool().insert_item_group(ItemGroup(**item_group))
-        else :
-            data_provider_v2.fetch_item_group_pool().insert_item_group(ItemGroup(**item_group), False)
+            data_provider_v2.fetch_item_group_pool().insert_item_group(
+                ItemGroup(**item_group)
+            )
+        else:
+            data_provider_v2.fetch_item_group_pool().insert_item_group(
+                ItemGroup(**item_group), False
+            )
 
     count = 0
     all_item_lines = data_provider.fetch_item_line_pool().get_item_lines()
     for item_line in all_item_lines:
         count += 1
         if count % amount_before_closing == 0 or count == len(all_item_lines):
-            data_provider_v2.fetch_item_line_pool().insert_item_line(ItemLine(**item_line))
-        else :
-            data_provider_v2.fetch_item_line_pool().insert_item_line(ItemLine(**item_line), False)
+            data_provider_v2.fetch_item_line_pool().insert_item_line(
+                ItemLine(**item_line)
+            )
+        else:
+            data_provider_v2.fetch_item_line_pool().insert_item_line(
+                ItemLine(**item_line), False
+            )
 
-    count = 0 
-    all_item_types = data_provider.fetch_item_type_pool().get_item_types()    
+    count = 0
+    all_item_types = data_provider.fetch_item_type_pool().get_item_types()
     for item_type in all_item_types:
         count += 1
         if count % amount_before_closing == 0 or count == len(all_item_types):
-            data_provider_v2.fetch_item_type_pool().insert_item_type(ItemType(**item_type))
+            data_provider_v2.fetch_item_type_pool().insert_item_type(
+                ItemType(**item_type)
+            )
         else:
-            data_provider_v2.fetch_item_type_pool().insert_item_type(ItemType(**item_type), False)
+            data_provider_v2.fetch_item_type_pool().insert_item_type(
+                ItemType(**item_type), False
+            )
 
     count = 0
     all_shipments = data_provider.fetch_shipment_pool().get_shipments()
@@ -85,8 +101,10 @@ if __name__ == "__main__":
         count += 1
         if count % amount_before_closing == 0 or count == len(all_shipments):
             data_provider_v2.fetch_shipment_pool().insert_shipment(Shipment(**shipment))
-        else :
-            data_provider_v2.fetch_shipment_pool().insert_shipment(Shipment(**shipment), False)
+        else:
+            data_provider_v2.fetch_shipment_pool().insert_shipment(
+                Shipment(**shipment), False
+            )
 
     count = 0
     all_suppliers = data_provider.fetch_supplier_pool().get_suppliers()
@@ -94,8 +112,10 @@ if __name__ == "__main__":
         count += 1
         if count % amount_before_closing == 0 or count == len(all_suppliers):
             data_provider_v2.fetch_supplier_pool().insert_supplier(Supplier(**supplier))
-        else :
-            data_provider_v2.fetch_supplier_pool().insert_supplier(Supplier(**supplier), False)
+        else:
+            data_provider_v2.fetch_supplier_pool().insert_supplier(
+                Supplier(**supplier), False
+            )
 
     count = 0
     all_transfers = data_provider.fetch_transfer_pool().get_transfers()
@@ -103,39 +123,46 @@ if __name__ == "__main__":
         count += 1
         if count % amount_before_closing == 0 or count == len(all_transfers):
             data_provider_v2.fetch_transfer_pool().insert_transfer(Transfer(**transfer))
-        else :
-            data_provider_v2.fetch_transfer_pool().insert_transfer(Transfer(**transfer), False)
+        else:
+            data_provider_v2.fetch_transfer_pool().insert_transfer(
+                Transfer(**transfer), False
+            )
 
     count = 0
     all_warehouses = data_provider.fetch_warehouse_pool().get_warehouses()
     for warehouse in all_warehouses:
         count += 1
         if count % amount_before_closing == 0 or count == len(all_warehouses):
-            data_provider_v2.fetch_warehouse_pool().insert_warehouse(Warehouse(
-                code=warehouse["code"],
-                name=warehouse["name"],
-                address=warehouse["address"],
-                zip=warehouse["zip"],
-                city=warehouse["city"],
-                province=warehouse["province"],
-                country=warehouse["country"],
-                contact_name=warehouse["contact"]["name"],
-                contact_phone=warehouse["contact"]["phone"],
-                contact_email=warehouse["contact"]["email"]
-            ))
-        else :
-            data_provider_v2.fetch_warehouse_pool().insert_warehouse(Warehouse(
-                code=warehouse["code"],
-                name=warehouse["name"],
-                address=warehouse["address"],
-                zip=warehouse["zip"],
-                city=warehouse["city"],
-                province=warehouse["province"],
-                country=warehouse["country"],
-                contact_name=warehouse["contact"]["name"],
-                contact_phone=warehouse["contact"]["phone"],
-                contact_email=warehouse["contact"]["email"]
-            ), False)
+            data_provider_v2.fetch_warehouse_pool().insert_warehouse(
+                Warehouse(
+                    code=warehouse["code"],
+                    name=warehouse["name"],
+                    address=warehouse["address"],
+                    zip=warehouse["zip"],
+                    city=warehouse["city"],
+                    province=warehouse["province"],
+                    country=warehouse["country"],
+                    contact_name=warehouse["contact"]["name"],
+                    contact_phone=warehouse["contact"]["phone"],
+                    contact_email=warehouse["contact"]["email"],
+                )
+            )
+        else:
+            data_provider_v2.fetch_warehouse_pool().insert_warehouse(
+                Warehouse(
+                    code=warehouse["code"],
+                    name=warehouse["name"],
+                    address=warehouse["address"],
+                    zip=warehouse["zip"],
+                    city=warehouse["city"],
+                    province=warehouse["province"],
+                    country=warehouse["country"],
+                    contact_name=warehouse["contact"]["name"],
+                    contact_phone=warehouse["contact"]["phone"],
+                    contact_email=warehouse["contact"]["email"],
+                ),
+                False,
+            )
 
     count = 0
     all_locations = data_provider.fetch_location_pool().get_locations()
@@ -144,7 +171,9 @@ if __name__ == "__main__":
         if count % amount_before_closing == 0 or count == len(all_locations):
             data_provider_v2.fetch_location_pool().insert_location(Location(**location))
         else:
-            data_provider_v2.fetch_location_pool().insert_location(Location(**location), False)
+            data_provider_v2.fetch_location_pool().insert_location(
+                Location(**location), False
+            )
 
     count = 0
     all_orders = data_provider.fetch_order_pool().get_orders()
@@ -152,11 +181,11 @@ if __name__ == "__main__":
         count += 1
         if count % amount_before_closing == 0 or count == len(all_orders):
             data_provider_v2.fetch_order_pool().insert_order(Order(**order))
-        else :
+        else:
             data_provider_v2.fetch_order_pool().insert_order(Order(**order), False)
 
     elapsed_time = time.time() - start_time
 
-    elapsed_seconds = elapsed_time 
+    elapsed_seconds = elapsed_time
 
     print(f"The script ran for {elapsed_seconds:.2f} seconds.")

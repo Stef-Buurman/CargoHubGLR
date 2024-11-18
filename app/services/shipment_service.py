@@ -20,7 +20,9 @@ class ShipmentService(Base):
         return self.data
 
     def get_shipment(self, shipment_id: str) -> Optional[Shipment]:
-        return next((shipment for shipment in self.data if shipment.id == shipment_id), None)
+        return next(
+            (shipment for shipment in self.data if shipment.id == shipment_id), None
+        )
 
     def get_items_in_shipment(self, shipment_id: str) -> Optional[List[dict]]:
         shipment = self.get_shipment(shipment_id)
@@ -48,14 +50,23 @@ class ShipmentService(Base):
             self.update_shipment(shipment_id, shipment)
             return shipment
 
-    def update_inventory_for_items(self, current_items: List[Shipment], new_items: List[dict]):
+    def update_inventory_for_items(
+        self, current_items: List[Shipment], new_items: List[dict]
+    ):
         def update_inventory(item_id, amount_change):
             inventories = fetch_inventory_pool().get_inventories_for_item(item_id)
-            max_inventory = max(inventories, key=lambda z: z["total_ordered"], default=None)
+            max_inventory = max(
+                inventories, key=lambda z: z["total_ordered"], default=None
+            )
             if max_inventory:
                 max_inventory["total_ordered"] += amount_change
-                max_inventory["total_expected"] = max_inventory["total_on_hand"] + max_inventory["total_ordered"]
-                fetch_inventory_pool().update_inventory(max_inventory["id"], max_inventory)
+                max_inventory["total_expected"] = (
+                    max_inventory["total_on_hand"] + max_inventory["total_ordered"]
+                )
+                fetch_inventory_pool().update_inventory(
+                    max_inventory["id"], max_inventory
+                )
+
         new_items_dict = {item["item_id"]: item for item in new_items}
         for current in current_items:
             item_id = current.item_id
@@ -88,12 +99,14 @@ class ShipmentService(Base):
         with open(self.data_path, "w") as f:
             json.dump([shipment.model_dump() for shipment in self.data], f)
 
-    def insert_shipment(self, shipment: Shipment, closeConnection:bool = True) -> Shipment:
+    def insert_shipment(
+        self, shipment: Shipment, closeConnection: bool = True
+    ) -> Shipment:
         table_name = shipment.table_name()
 
         shipment.created_at = self.get_timestamp()
         shipment.updated_at = self.get_timestamp()
-        
+
         fields = {}
         for key, value in vars(shipment).items():
             if key != "id" and key != "items":
@@ -116,8 +129,11 @@ class ShipmentService(Base):
                     INSERT INTO {shipment_items_table} (shipment_id, item_uid, amount)
                     VALUES (?, ?, ?)
                     """
-                    conn.execute(items_insert_sql, (shipment_id, shipment_items.item_id, shipment_items.amount))
-        
+                    conn.execute(
+                        items_insert_sql,
+                        (shipment_id, shipment_items.item_id, shipment_items.amount),
+                    )
+
         if closeConnection:
             self.db.commit_and_close()
         return shipment

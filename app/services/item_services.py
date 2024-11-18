@@ -23,28 +23,28 @@ class ItemService(Base):
                 return item
         return None
 
-    def get_items_for_item_line(self, item_line_id:int) -> List[Item]:
+    def get_items_for_item_line(self, item_line_id: int) -> List[Item]:
         result = []
         for x in self.data:
             if x.item_line == item_line_id:
                 result.append(x)
         return result
 
-    def get_items_for_item_group(self, item_group_id:int) -> List[Item]:
+    def get_items_for_item_group(self, item_group_id: int) -> List[Item]:
         result = []
         for x in self.data:
             if x.item_group == item_group_id:
                 result.append(x)
         return result
 
-    def get_items_for_item_type(self, item_type_id:int) -> List[Item]:
+    def get_items_for_item_type(self, item_type_id: int) -> List[Item]:
         result = []
         for x in self.data:
             if x.item_type == item_type_id:
                 result.append(x)
         return result
 
-    def get_items_for_supplier(self, supplier_id:int) -> List[Item]:
+    def get_items_for_supplier(self, supplier_id: int) -> List[Item]:
         result = []
         for x in self.data:
             if x.supplier_id == supplier_id:
@@ -96,7 +96,7 @@ class ItemService(Base):
         with open(self.data_path, "w") as f:
             json.dump([item.model_dump() for item in self.data], f)
 
-    def insert_item(self, item: Item, closeConnection:bool = True) -> Item:
+    def insert_item(self, item: Item, closeConnection: bool = True) -> Item:
         item.created_at = self.get_timestamp()
         item.updated_at = self.get_timestamp()
         return self.db.insert(item, closeConnection)

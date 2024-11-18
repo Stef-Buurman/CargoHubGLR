@@ -290,9 +290,7 @@ def test_update_order_items(client):
 
 def test_partial_update_order_no_api_key(client):
     updated_order = {"notes": "This order has been patched."}
-    response = client.patch(
-        "/orders/" + str(test_order["id"]), json=updated_order
-    )
+    response = client.patch("/orders/" + str(test_order["id"]), json=updated_order)
     assert response.status_code == 403
 
 

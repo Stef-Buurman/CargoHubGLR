@@ -4,7 +4,8 @@ from .base import Base
 
 import sys
 import os
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 from app.services import data_provider
 
 ORDERS = []
@@ -73,7 +74,11 @@ class Orders(Base):
                     found = True
                     break
             if not found:
-                inventories = data_provider.fetch_inventory_pool().get_inventories_for_item(current_item["item_id"])
+                inventories = (
+                    data_provider.fetch_inventory_pool().get_inventories_for_item(
+                        current_item["item_id"]
+                    )
+                )
                 min_ordered = float("inf")
                 min_inventory = None
 
@@ -84,13 +89,17 @@ class Orders(Base):
 
                 if min_inventory:
                     min_inventory["total_allocated"] -= current_item["amount"]
-                    min_inventory["total_expected"] = min_inventory["total_on_hand"] + min_inventory["total_ordered"]
-                    data_provider.fetch_inventory_pool().update_inventory(min_inventory["id"], min_inventory)
+                    min_inventory["total_expected"] = (
+                        min_inventory["total_on_hand"] + min_inventory["total_ordered"]
+                    )
+                    data_provider.fetch_inventory_pool().update_inventory(
+                        min_inventory["id"], min_inventory
+                    )
 
         for updated_item in items:
             found = False
             matching_current_item = None
-            
+
             for current_item in current:
                 if current_item["item_id"] == updated_item["item_id"]:
                     found = True
@@ -98,20 +107,30 @@ class Orders(Base):
                     break
 
             if found:
-                inventories = data_provider.fetch_inventory_pool().get_inventories_for_item(updated_item["item_id"])
+                inventories = (
+                    data_provider.fetch_inventory_pool().get_inventories_for_item(
+                        updated_item["item_id"]
+                    )
+                )
                 min_inventory = None
                 min_ordered = float("inf")
-                
+
                 for inv in inventories:
                     if inv["total_allocated"] < min_ordered:
                         min_ordered = inv["total_allocated"]
                         min_inventory = inv
 
                 if min_inventory:
-                    delta_amount = updated_item["amount"] - matching_current_item["amount"]
+                    delta_amount = (
+                        updated_item["amount"] - matching_current_item["amount"]
+                    )
                     min_inventory["total_allocated"] += delta_amount
-                    min_inventory["total_expected"] = min_inventory["total_on_hand"] + min_inventory["total_ordered"]
-                    data_provider.fetch_inventory_pool().update_inventory(min_inventory["id"], min_inventory)
+                    min_inventory["total_expected"] = (
+                        min_inventory["total_on_hand"] + min_inventory["total_ordered"]
+                    )
+                    data_provider.fetch_inventory_pool().update_inventory(
+                        min_inventory["id"], min_inventory
+                    )
 
         order["items"] = items
         self.update_order(order_id, order)

@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 
+
 class Base(BaseModel):
     class Config:
         table_name: str | None = None

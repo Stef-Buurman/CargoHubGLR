@@ -163,7 +163,7 @@ def test_get_supplier_items_invalid_id(client):
 
 def test_get_supplier_items_non_existent_id(client):
     response = client.get(
-        f'/suppliers/{str(non_existent_id)}/items', headers=test_headers
+        f"/suppliers/{str(non_existent_id)}/items", headers=test_headers
     )
     assert response.status_code == 404
 
