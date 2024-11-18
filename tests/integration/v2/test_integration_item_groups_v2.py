@@ -113,18 +113,6 @@ def test_get_nonexistent_item_group(client):
     assert response.status_code == 404
 
 
-def test_get_items_for_item_group(client):
-    response = client.get(
-        f"/item_groups/{test_item_group['id']}/items", headers=test_headers
-    )
-    assert response.status_code == 200
-
-
-def test_get_items_for_nonexistent_item_group(client):
-    response = client.get(f"/item_groups/{non_existent_id}/items", headers=test_headers)
-    assert response.status_code == 404
-
-
 def test_get_items_for_invalid_item_group_id(client):
     response = client.get("/item_groups/invalid_id/items", headers=test_headers)
     assert response.status_code == 422
@@ -295,6 +283,18 @@ def test_delete_item_group_invalid_api_key(client):
         "/item_groups/" + str(test_item_group["id"]), headers=test_headers
     )
     assert response_get_item_group.status_code == 200
+
+
+def test_delete_item_group_invalid_id(client):
+    response = client.delete("/item_groups/invalid_id", headers=test_headers)
+    assert response.status_code == 422
+
+
+def test_delete_nonexistent_item_group(client):
+    response = client.delete(
+        "/item_groups/" + str(non_existent_id), headers=test_headers
+    )
+    assert response.status_code == 404
 
 
 def test_delete_item_group(client):

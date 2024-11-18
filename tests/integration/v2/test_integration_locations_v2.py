@@ -85,7 +85,7 @@ def test_get_location_invalid_api_key(client):
     assert response.status_code == 403
 
 
-def test_get_invalid_location_id(client):
+def test_get_non_existing_location_id(client):
     response = client.get("/locations/" + str(non_existent_id), headers=test_headers)
     assert response.status_code == 404
 
