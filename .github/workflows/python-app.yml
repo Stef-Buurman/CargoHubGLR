@@ -87,7 +87,7 @@ jobs:
   notify:
     needs: [lint, format, test]
     runs-on: self-hosted
-    if: always()
+    if: ${{ always() && github.event.pull_request.head.ref == 'cancelled' }}
     steps:
       - name: Set status variable
         id: set_status
