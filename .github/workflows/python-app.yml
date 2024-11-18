@@ -107,3 +107,4 @@ jobs:
             }' $ERRORWEBHOOK
           else
             echo "Workflow canceled, no notification sent."
+          fi
