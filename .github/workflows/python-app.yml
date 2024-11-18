@@ -16,8 +16,11 @@ jobs:
       - name: Install dependencies
         run: |
           python3 -m pip install --upgrade pip
-          pip install flake8 pytest
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: Check PEP 8 compliance with flake8 (ignore failure)
+        run: |
+          flake8 . || true
 
       - name: Start the application in the background
         run: |
