@@ -3,7 +3,7 @@ from typing import List, Optional
 from models.v2.shipment import Shipment
 from models.base import Base
 from services.data_provider_v2 import fetch_inventory_pool
-from services.database_service import DatabaseService
+from services.database_service import DB
 from utils.globals import *
 
 SHIPMENTS = []
@@ -14,7 +14,7 @@ class ShipmentService(Base):
         self.data_path = root_path + "shipments.json"
         self.load(is_debug)
         self.current_id = 0
-        self.db = DatabaseService()
+        self.db = DB
 
     def get_shipments(self) -> List[Shipment]:
         return self.data

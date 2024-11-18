@@ -4,7 +4,7 @@ from models.v2.transfer import Transfer
 from typing import List
 from models.base import Base
 from utils.globals import *
-from services.database_service import DatabaseService
+from services.database_service import DB
 
 TRANSFERS = []
 
@@ -13,7 +13,7 @@ class TransferService(Base):
     def __init__(self, root_path, is_debug=False):
         self.data_path = root_path + "transfers.json"
         self.load(is_debug)
-        self.db = DatabaseService()
+        self.db = DB
 
     def get_transfers(self) -> List[Transfer]:
         return self.data

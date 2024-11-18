@@ -2,7 +2,7 @@ import json
 from typing import List
 from models.v2.inventory import Inventory
 from models.base import Base
-from services.database_service import DatabaseService
+from services.database_service import DB
 from utils.globals import *
 
 INVENTORIES = []
@@ -12,7 +12,7 @@ class InventoryService(Base):
     def __init__(self, root_path, is_debug=False):
         self.data_path = root_path + "inventories.json"
         self.load(is_debug)
-        self.db = DatabaseService()
+        self.db = DB
 
     def get_inventories(self) -> List[Inventory]:
         return self.data

@@ -73,7 +73,7 @@ class DatabaseService:
             self.conn.close()
             self.conn = None
 
-    def insert(self, model: T, closeConnection:bool=True) -> T:
+    def insert(self, model: T, closeConnection: bool = True) -> T:
         table_name = model.table_name()
 
         fields = model.__dict__
@@ -521,3 +521,6 @@ class DatabaseService:
         """
         with self.get_connection() as conn:
             conn.execute(query_warehouse)
+
+
+DB = DatabaseService()

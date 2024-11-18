@@ -2,7 +2,7 @@ import json
 from typing import List
 from models.v2.item_type import ItemType
 from models.base import Base
-from services.database_service import DatabaseService
+from services.database_service import DB
 
 ITEM_TYPES = []
 
@@ -11,7 +11,7 @@ class ItemTypeService(Base):
     def __init__(self, root_path, is_debug=False):
         self.data_path = root_path + "item_types.json"
         self.load(is_debug)
-        self.db = DatabaseService()
+        self.db = DB
 
     def get_item_types(self) -> List[ItemType]:
         return self.data

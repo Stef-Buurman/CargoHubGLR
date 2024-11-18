@@ -5,7 +5,7 @@ from models.base import Base
 from services.data_provider_v2 import fetch_inventory_pool
 from models.v2.ItemInObject import ItemInObject
 from utils.globals import *
-from services.database_service import DatabaseService
+from services.database_service import DB
 
 ORDERS = []
 
@@ -14,7 +14,7 @@ class OrderService(Base):
     def __init__(self, root_path, is_debug=False):
         self.data_path = root_path + "orders.json"
         self.load(is_debug)
-        self.db = DatabaseService()
+        self.db = DB
 
     def get_orders(self) -> List[Order]:
         return self.data

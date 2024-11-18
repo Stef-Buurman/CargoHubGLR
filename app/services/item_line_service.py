@@ -2,7 +2,7 @@ import json
 from typing import List
 from models.v2.item_line import ItemLine
 from models.base import Base
-from services.database_service import DatabaseService
+from services.database_service import DB
 
 ITEM_LINES = []
 
@@ -11,7 +11,7 @@ class ItemLineService(Base):
     def __init__(self, root_path, is_debug=False):
         self.data_path = root_path + "item_lines.json"
         self.load(is_debug)
-        self.db = DatabaseService()
+        self.db = DB
 
     def get_item_lines(self) -> List[ItemLine]:
         return self.data

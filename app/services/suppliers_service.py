@@ -2,7 +2,7 @@ import json
 from models.v2.supplier import Supplier
 from typing import List
 from models.base import Base
-from services.database_service import DatabaseService
+from services.database_service import DB
 
 SUPPLIERS = []
 
@@ -11,7 +11,7 @@ class SupplierService(Base):
     def __init__(self, root_path, is_debug=False):
         self.data_path = root_path + "suppliers.json"
         self.load(is_debug)
-        self.db = DatabaseService()
+        self.db = DB
 
     def get_suppliers(self) -> List[Supplier]:
         return self.data

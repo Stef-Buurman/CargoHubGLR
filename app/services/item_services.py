@@ -2,7 +2,7 @@ import json
 from typing import List
 from models.v2.item import Item
 from models.base import Base
-from services.database_service import DatabaseService
+from services.database_service import DB
 
 ITEMS = []
 
@@ -12,7 +12,7 @@ class ItemService(Base):
         self.data_path = root_path + "items.json"
         self.load(is_debug, items)
         self.current_id = 0
-        self.db = DatabaseService()
+        self.db = DB
 
     def get_items(self) -> List[Item]:
         return self.data
