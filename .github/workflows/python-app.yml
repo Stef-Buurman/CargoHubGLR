@@ -49,7 +49,6 @@ jobs:
       # Check for changes and commit
       - name: Check for changes and commit
         run: |
-          source venv/bin/activate
           git config --global user.name "github-actions"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add .
