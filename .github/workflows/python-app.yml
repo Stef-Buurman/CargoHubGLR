@@ -57,7 +57,7 @@ jobs:
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git remote set-url origin https://github-actions:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+          # git remote set-url origin https://github-actions:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
           git add .
           git diff --cached --exit-code || git commit -m "Apply black code formatting"
           git push
