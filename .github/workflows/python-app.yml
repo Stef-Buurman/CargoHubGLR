@@ -46,6 +46,10 @@ jobs:
           source venv/bin/activate
           black .
 
+      - name: Check out the current branch
+        run: |
+            git checkout ${{ github.head_ref }}
+
       # Check for changes and commit
       - name: Check for changes and commit
         run: |
