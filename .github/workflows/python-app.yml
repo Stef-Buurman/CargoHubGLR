@@ -34,7 +34,8 @@ jobs:
       - uses: actions/checkout@v4
       - name: Install black
         run: |
-          python3 -m pip install black  # Install black if not already installed
+          python3 -m pip install --upgrade pip
+          python3 -m pip install black 
       - name: Format code with black
         id: format_step
         run: |
