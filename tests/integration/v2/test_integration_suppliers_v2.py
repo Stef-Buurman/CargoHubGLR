@@ -161,6 +161,13 @@ def test_get_supplier_items_invalid_id(client):
     assert response.status_code == 422
 
 
+def test_get_supplier_items_non_existent_id(client):
+    response = client.get(
+        f'/suppliers/{str(non_existent_id)}/items', headers=test_headers
+    )
+    assert response.status_code == 404
+
+
 def test_get_supplier_items(client):
     response_post_fake_item_1 = client.post(
         "/items/", json=test_item_1, headers=test_headers

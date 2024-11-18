@@ -152,6 +152,13 @@ def test_get_item_line_items_invalid_id(client):
     assert response.status_code == 422
 
 
+def test_get_items_for_item_line_not_found(client):
+    response = client.get(
+        "/item_lines/" + str(non_existent_id) + "/items", headers=test_headers
+    )
+    assert response.status_code == 404
+
+
 def test_get_item_line_items(client):
     response_post_fake_item_1 = client.post(
         "/items/", json=test_item_1, headers=test_headers

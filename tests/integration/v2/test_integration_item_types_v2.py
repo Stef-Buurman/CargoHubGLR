@@ -111,11 +111,14 @@ def test_get_item_type_invalid_api_key(client):
     assert response.status_code == 403
 
 
-def test_get_items_for_item_type_non_existing_id(client):
-    response = client.get(
-        "/item_types/" + str(non_existent_id) + "/items", headers=test_headers
-    )
+def test_get_item_type_not_found(client):
+    response = client.get("/item_types/" + str(non_existent_id), headers=test_headers)
     assert response.status_code == 404
+
+
+def test_get_item_type_invalid_id(client):
+    response = client.get("/item_types/invalidId", headers=test_headers)
+    assert response.status_code == 422
 
 
 def test_get_items_for_item_type_no_api_key(client):
