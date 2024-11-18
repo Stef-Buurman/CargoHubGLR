@@ -44,6 +44,7 @@ jobs:
       # Run black to reformat the code
       - name: Run black to reformat code
         run: |
+          source venv/bin/activate 
           black .
 
       # Check for changes and commit them
