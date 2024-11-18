@@ -32,13 +32,16 @@ jobs:
       format_status: ${{ steps.format_step.outcome }}
     steps:
       - uses: actions/checkout@v4
-      - name: Install black
+      - name: Set up Python and virtual environment
         run: |
-          python3 -m pip install --upgrade pip
-          python3 -m pip install black 
+          python3 -m venv venv
+          source venv/bin/activate
+          python3 -m pip install --upgrade pip 
+          python3 -m pip install black
       - name: Format code with black
         id: format_step
         run: |
+          source venv/bin/activate 
           black .
 
   test:
