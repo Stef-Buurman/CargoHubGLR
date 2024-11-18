@@ -39,16 +39,16 @@ jobs:
           python -m pip install --upgrade pip
           pip install black
 
+      - name: Check out the current branch
+        run: |
+            git checkout ${{ github.head_ref }}
+
       # Run black to reformat the code
       - name: Run black to reformat code
         id: format_step
         run: |
           source venv/bin/activate
           black .
-
-      - name: Check out the current branch
-        run: |
-            git checkout ${{ github.head_ref }}
 
       # Check for changes and commit
       - name: Check for changes and commit
