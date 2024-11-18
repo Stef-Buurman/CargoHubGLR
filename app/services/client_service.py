@@ -2,7 +2,7 @@ import json
 from typing import List
 from models.v2.client import Client
 from models.base import Base
-from services.database_service import DatabaseService
+from services.database_service import DB
 
 CLIENTS = []
 
@@ -11,7 +11,7 @@ class ClientService(Base):
     def __init__(self, root_path, is_debug=False):
         self.data_path = root_path + "clients.json"
         self.load(is_debug)
-        self.db = DatabaseService()
+        self.db = DB
 
     def get_clients(self) -> List[Client]:
         return self.data
@@ -52,8 +52,8 @@ class ClientService(Base):
     def save(self):
         with open(self.data_path, "w") as f:
             json.dump([client.model_dump() for client in self.data], f)
-    
-    def insert_client(self, client: Client):
+
+    def insert_client(self, client: Client, closeConnection: bool = True) -> Client:
         client.created_at = self.get_timestamp()
         client.updated_at = self.get_timestamp()
-        return self.db.insert(client)
+        return self.db.insert(client, closeConnection)

@@ -2,7 +2,7 @@ import json
 from models.v2.warehouse import Warehouse, WarehouseDB
 from typing import List
 from models.base import Base
-from services.database_service import DatabaseService
+from services.database_service import DB
 
 WAREHOUSES = []
 
@@ -11,7 +11,7 @@ class WarehouseService(Base):
     def __init__(self, root_path, is_debug=False):
         self.data_path = root_path + "warehouses.json"
         self.load(is_debug)
-        self.db = DatabaseService()
+        self.db = DB
 
     def get_warehouses(self) -> List[Warehouse]:
         return self.data
@@ -53,7 +53,7 @@ class WarehouseService(Base):
         with open(self.data_path, "w") as f:
             json.dump([warehouse.model_dump() for warehouse in self.data], f)
 
-    def insert_warehouse(self, warehouse: WarehouseDB) -> WarehouseDB:
+    def insert_warehouse(self, warehouse: WarehouseDB, closeConnection:bool = True) -> WarehouseDB:
         warehouse.created_at = self.get_timestamp()
         warehouse.updated_at = self.get_timestamp()
-        return self.db.insert(warehouse)
+        return self.db.insert(warehouse, closeConnection)

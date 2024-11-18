@@ -5,7 +5,7 @@ from models.base import Base
 from services.data_provider_v2 import fetch_inventory_pool
 from models.v2.ItemInObject import ItemInObject
 from utils.globals import *
-from services.database_service import DatabaseService
+from services.database_service import DB
 
 ORDERS = []
 
@@ -14,7 +14,7 @@ class OrderService(Base):
     def __init__(self, root_path, is_debug=False):
         self.data_path = root_path + "orders.json"
         self.load(is_debug)
-        self.db = DatabaseService()
+        self.db = DB
 
     def get_orders(self) -> List[Order]:
         return self.data
@@ -152,7 +152,7 @@ class OrderService(Base):
         with open(self.data_path, "w") as f:
             json.dump([shipment.model_dump() for shipment in self.data], f)
     
-    def insert_order(self, order: Order) -> Order:
+    def insert_order(self, order: Order, closeConnection:bool = True) -> Order:
         table_name = order.table_name()
 
         order.created_at = self.get_timestamp()
@@ -169,7 +169,7 @@ class OrderService(Base):
 
         insert_sql = f"INSERT INTO {table_name} ({columns}) VALUES ({placeholders})"
 
-        with self.db.get_connection() as conn:
+        with self.db.get_connection_without_close() as conn:
             cursor = conn.execute(insert_sql, values)
             order_id = cursor.lastrowid
 
@@ -180,3 +180,7 @@ class OrderService(Base):
                     VALUES (?, ?, ?)
                     """
                     conn.execute(items_insert_sql, (order_id, order_items.item_id, order_items.amount))
+        
+        if closeConnection:
+            self.db.commit_and_close()
+        return order

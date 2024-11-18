@@ -2,7 +2,7 @@ import json
 from models.v2.location import Location
 from typing import List
 from models.base import Base
-from services.database_service import DatabaseService
+from services.database_service import DB
 
 LOCATIONS = []
 
@@ -11,7 +11,7 @@ class LocationService(Base):
     def __init__(self, root_path, is_debug=False):
         self.data_path = root_path + "locations.json"
         self.load(is_debug)
-        self.db = DatabaseService()
+        self.db = DB
 
     def get_locations(self) -> List[Location]:
         return self.data
@@ -60,7 +60,7 @@ class LocationService(Base):
         with open(self.data_path, "w") as f:
             json.dump([location.model_dump() for location in self.data], f)
 
-    def insert_location(self, location: Location):
+    def insert_location(self, location: Location, closeConnection:bool = True) -> Location:
         location.created_at = self.get_timestamp()
         location.updated_at = self.get_timestamp()
-        return self.db.insert(location)
+        return self.db.insert(location, closeConnection)

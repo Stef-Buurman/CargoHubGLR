@@ -3,7 +3,7 @@ from typing import List, Optional
 from models.v2.shipment import Shipment
 from models.base import Base
 from services.data_provider_v2 import fetch_inventory_pool
-from services.database_service import DatabaseService
+from services.database_service import DB
 from utils.globals import *
 
 SHIPMENTS = []
@@ -14,7 +14,7 @@ class ShipmentService(Base):
         self.data_path = root_path + "shipments.json"
         self.load(is_debug)
         self.current_id = 0
-        self.db = DatabaseService()
+        self.db = DB
 
     def get_shipments(self) -> List[Shipment]:
         return self.data
@@ -88,7 +88,7 @@ class ShipmentService(Base):
         with open(self.data_path, "w") as f:
             json.dump([shipment.model_dump() for shipment in self.data], f)
 
-    def insert_shipment(self, shipment: Shipment) -> Shipment:
+    def insert_shipment(self, shipment: Shipment, closeConnection:bool = True) -> Shipment:
         table_name = shipment.table_name()
 
         shipment.created_at = self.get_timestamp()
@@ -105,9 +105,10 @@ class ShipmentService(Base):
 
         insert_sql = f"INSERT INTO {table_name} ({columns}) VALUES ({placeholders})"
 
-        with self.db.get_connection() as conn:
+        with self.db.get_connection_without_close() as conn:
             cursor = conn.execute(insert_sql, values)
             shipment_id = cursor.lastrowid
+            shipment.id = shipment_id
 
             if shipment.items:
                 for shipment_items in shipment.items:
@@ -116,3 +117,7 @@ class ShipmentService(Base):
                     VALUES (?, ?, ?)
                     """
                     conn.execute(items_insert_sql, (shipment_id, shipment_items.item_id, shipment_items.amount))
+        
+        if closeConnection:
+            self.db.commit_and_close()
+        return shipment

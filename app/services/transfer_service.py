@@ -4,7 +4,7 @@ from models.v2.transfer import Transfer
 from typing import List
 from models.base import Base
 from utils.globals import *
-from services.database_service import DatabaseService
+from services.database_service import DB
 
 TRANSFERS = []
 
@@ -13,7 +13,7 @@ class TransferService(Base):
     def __init__(self, root_path, is_debug=False):
         self.data_path = root_path + "transfers.json"
         self.load(is_debug)
-        self.db = DatabaseService()
+        self.db = DB
 
     def get_transfers(self) -> List[Transfer]:
         return self.data
@@ -81,7 +81,7 @@ class TransferService(Base):
         with open(self.data_path, "w") as f:
             json.dump([transfer.model_dump() for transfer in self.data], f)
 
-    def insert_transfer(self, transfer: Transfer) -> Transfer:
+    def insert_transfer(self, transfer: Transfer, closeConnection:bool = True) -> Transfer:
         table_name = transfer.table_name()
 
         transfer.created_at = self.get_timestamp()
@@ -98,9 +98,10 @@ class TransferService(Base):
 
         insert_sql = f"INSERT INTO {table_name} ({columns}) VALUES ({placeholders})"
 
-        with self.db.get_connection() as conn:
+        with self.db.get_connection_without_close() as conn:
             cursor = conn.execute(insert_sql, values)
             transfer_id = cursor.lastrowid
+            transfer.id = transfer_id
 
             if transfer.items:
                 for transfer_items in transfer.items:
@@ -109,3 +110,7 @@ class TransferService(Base):
                     VALUES (?, ?, ?)
                     """
                     conn.execute(items_insert_sql, (transfer_id, transfer_items.item_id, transfer_items.amount))
+        
+        if closeConnection:
+            self.db.commit_and_close()
+        return transfer

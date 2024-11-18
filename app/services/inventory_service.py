@@ -2,7 +2,7 @@ import json
 from typing import List
 from models.v2.inventory import Inventory
 from models.base import Base
-from services.database_service import DatabaseService
+from services.database_service import DB
 from utils.globals import *
 
 INVENTORIES = []
@@ -12,7 +12,7 @@ class InventoryService(Base):
     def __init__(self, root_path, is_debug=False):
         self.data_path = root_path + "inventories.json"
         self.load(is_debug)
-        self.db = DatabaseService()
+        self.db = DB
 
     def get_inventories(self) -> List[Inventory]:
         return self.data
@@ -76,7 +76,7 @@ class InventoryService(Base):
         with open(self.data_path, "w") as f:
             json.dump([inventory.model_dump() for inventory in self.data], f)
     
-    def insert_inventory(self, inventory: Inventory):
+    def insert_inventory(self, inventory: Inventory, closeConnection:bool = True) -> Inventory:
         table_name = inventory.table_name()
 
         inventory.created_at = self.get_timestamp()
@@ -93,7 +93,7 @@ class InventoryService(Base):
 
         insert_sql = f"INSERT INTO {table_name} ({columns}) VALUES ({placeholders})"
 
-        with self.db.get_connection() as conn:
+        with self.db.get_connection_without_close() as conn:
             cursor = conn.execute(insert_sql, values)
             inventory_id = cursor.lastrowid
 
@@ -104,3 +104,7 @@ class InventoryService(Base):
                     VALUES (?, ?)
                     """
                     conn.execute(location_insert_sql, (inventory_id, location_id))
+
+        if closeConnection:
+            self.db.commit_and_close()
+        return inventory

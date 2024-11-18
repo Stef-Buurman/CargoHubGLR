@@ -2,7 +2,7 @@ import json
 from typing import List
 from models.v2.item_line import ItemLine
 from models.base import Base
-from services.database_service import DatabaseService
+from services.database_service import DB
 
 ITEM_LINES = []
 
@@ -11,7 +11,7 @@ class ItemLineService(Base):
     def __init__(self, root_path, is_debug=False):
         self.data_path = root_path + "item_lines.json"
         self.load(is_debug)
-        self.db = DatabaseService()
+        self.db = DB
 
     def get_item_lines(self) -> List[ItemLine]:
         return self.data
@@ -55,7 +55,7 @@ class ItemLineService(Base):
         with open(self.data_path, "w") as f:
             json.dump([item_line.model_dump() for item_line in self.data], f)
 
-    def insert_item_line(self, item_line: ItemLine):
+    def insert_item_line(self, item_line: ItemLine, closeConnection:bool = True) -> ItemLine:
         item_line.created_at = self.get_timestamp()
         item_line.updated_at = self.get_timestamp()
-        return self.db.insert(item_line)
+        return self.db.insert(item_line, closeConnection)
