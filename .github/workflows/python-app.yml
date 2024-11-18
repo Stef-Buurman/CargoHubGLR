@@ -38,11 +38,49 @@ jobs:
           source venv/bin/activate
           python3 -m pip install --upgrade pip 
           python3 -m pip install black
-      - name: Format code with black
+
+      - name: Run black formatting
         id: format_step
         run: |
-          source venv/bin/activate 
-          black .
+          python3 -m black . --check
+          if [ $? -ne 0 ]; then
+            echo "Black formatting changes detected. Running black."
+            python3 -m black .
+            
+            # Git configuration
+            git config --global user.name "github-actions"
+            git config --global user.email "github-actions[bot]@users.noreply.github.com"
+            git add .
+            git diff --cached --exit-code || git commit -m "Apply black code formatting"
+            git push
+          else
+            echo "No changes detected by black."
+          fi
+
+      # - name: Run black formatting
+      #   run: |
+      #     python3 -m black . --check
+      #     if [ $? -ne 0 ]; then
+      #       source venv/bin/activate 
+      #       python3 -m black .
+      #       git diff --exit-code || git commit -am "Apply black formatting" && git push
+      #     else
+      #       echo "No changes detected by black."
+      #     fi
+      # - name: Format code with black
+      #   id: format_step
+      #   run: |
+      #     source venv/bin/activate 
+      #     black .
+      # - name: Commit changes made by black
+      #   run: |
+      #     git config --global user.name "github-actions"
+      #     git config --global user.email "github-actions[bot]@users.noreply.github.com"
+      #     git add .
+      #     git diff --cached --exit-code || git commit -m "Apply black code formatting"
+      #     git push
+      # - name: Check for pull request status
+      #   run: echo "Changes have been pushed to the pull request"
 
   test:
     needs: [lint, format]
