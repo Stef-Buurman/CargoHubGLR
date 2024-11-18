@@ -5,7 +5,7 @@ MAIN_URL = "http://localhost:8000/api/v1"
 
 MAIN_URL_V2 = "http://localhost:8000/api/v2"
 
-non_existent_id = 99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999
+non_existent_id = 999999999999999999
 
 test_headers = {"Authorization": "test_api_key"}
 
