@@ -103,7 +103,17 @@ jobs:
             echo "status=success" >> $GITHUB_ENV
           fi
 
+      - name: Check if workflow was canceled
+        id: check_canceled
+        run: |
+          # Check if the workflow was canceled based on PR state
+          if [[ "${{ github.event.pull_request.state }}" == "closed" && "${{ github.event.pull_request.merged }}" == "false" ]]; then
+            echo "Workflow was canceled or PR closed, skipping notification."
+            exit 0  # Skip the notification if the workflow was canceled or PR is closed
+          fi
+
       - name: Send Discord Notification with PR and Test Results
+        if: ${{ steps.check_canceled.outcome != 'success' }}
         env:
           ERRORWEBHOOK: ${{ secrets.ERRORWEBHOOK }}
           SUCCESSWEBHOOK: ${{ secrets.SUCCESSWEBHOOK }}
@@ -113,18 +123,20 @@ jobs:
           PR_AUTHOR="${{ github.event.pull_request.user.login }}"
 
           if [[ "$status" == "success" ]]; then
-            ICON_URL="https://media.discordapp.net/attachments/1280503605517877339/1280506426543837288/image.png?ex=672e058a&is=672cb40a&hm=2522f789e2bb9f856f9b989ff7a550f1f8499b4e2695805113f672db3cbcfdc6&=&format=jpeg"
-            MESSAGE="------------\n**Pull Request:** [${PR_TITLE}](${PR_URL})\n**Author:** ${PR_AUTHOR}\n**Test Status:** Tests completed successfully"
-            curl -X POST -H "Content-Type: application/json" -d '{
-              "content": "'"${MESSAGE}"'",
-              "avatar_url": "'"${ICON_URL}"'"
-            }' $SUCCESSWEBHOOK
+          echo "Success"
+            # ICON_URL="https://media.discordapp.net/attachments/1280503605517877339/1280506426543837288/image.png?ex=672e058a&is=672cb40a&hm=2522f789e2bb9f856f9b989ff7a550f1f8499b4e2695805113f672db3cbcfdc6&=&format=jpeg"
+            # MESSAGE="------------\n**Pull Request:** [${PR_TITLE}](${PR_URL})\n**Author:** ${PR_AUTHOR}\n**Test Status:** Tests completed successfully"
+            # curl -X POST -H "Content-Type: application/json" -d '{
+            #   "content": "'"${MESSAGE}"'",
+            #   "avatar_url": "'"${ICON_URL}"'"
+            # }' $SUCCESSWEBHOOK
 
           else
-            ICON_URL="https://media.discordapp.net/attachments/1176098997253963828/1298243289467588629/image.png?ex=672df2c8&is=672ca148&hm=08edf2f16947cfb2382ddd66c860ba5b907a534e5e04ffc5e8ef451c6eb9d8c9&=&format=jpeg"
-            MESSAGE="------------\n**Pull Request:** [${PR_TITLE}](${PR_URL})\n**Author:** ${PR_AUTHOR}\n**Test Status:** Tests failed\n[Check test run](${PR_URL}/checks)"
-            curl -X POST -H "Content-Type: application/json" -d '{
-              "content": "'"${MESSAGE}"'",
-              "avatar_url": "'"${ICON_URL}"'"
-            }' $ERRORWEBHOOK
+            # ICON_URL="https://media.discordapp.net/attachments/1176098997253963828/1298243289467588629/image.png?ex=672df2c8&is=672ca148&hm=08edf2f16947cfb2382ddd66c860ba5b907a534e5e04ffc5e8ef451c6eb9d8c9&=&format=jpeg"
+            # MESSAGE="------------\n**Pull Request:** [${PR_TITLE}](${PR_URL})\n**Author:** ${PR_AUTHOR}\n**Test Status:** Tests failed\n[Check test run](${PR_URL}/checks)"
+            # curl -X POST -H "Content-Type: application/json" -d '{
+            #   "content": "'"${MESSAGE}"'",
+            #   "avatar_url": "'"${ICON_URL}"'"
+            # }' $ERRORWEBHOOK
+            echo "Error"
           fi
