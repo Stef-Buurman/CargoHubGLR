@@ -12,23 +12,6 @@ permissions:
   contents: write
 
 jobs:
-  lint:
-    runs-on: self-hosted
-    outputs:
-      lint_status: ${{ job.status }}
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install dependencies
-        run: |
-          python3 -m pip install --upgrade pip
-          pip install flake8
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-      - name: Run flake8 checks
-        id: lint_step
-        run: |
-          python3 -m flake8 . --output-file=flake8_report.txt || true
-          cat flake8_report.txt
-
   format:
     runs-on: self-hosted
     outputs:
@@ -61,6 +44,23 @@ jobs:
           git add .
           git diff --cached --exit-code || git commit -m "Apply black code formatting"
           git push
+
+  lint:
+    runs-on: self-hosted
+    outputs:
+      lint_status: ${{ job.status }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install flake8
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - name: Run flake8 checks
+        id: lint_step
+        run: |
+          python3 -m flake8 . --output-file=flake8_report.txt || true
+          cat flake8_report.txt
 
   test:
     needs: [lint, format]
