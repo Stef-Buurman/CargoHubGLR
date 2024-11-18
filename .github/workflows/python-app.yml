@@ -11,6 +11,8 @@ concurrency:
 jobs:
   lint:
     runs-on: self-hosted
+    outputs:
+      lint_status: ${{ steps.lint_step.outcome }}
     steps:
       - uses: actions/checkout@v4
       - name: Install dependencies
@@ -19,24 +21,30 @@ jobs:
           pip install flake8
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
       - name: Run flake8 checks
+        id: lint_step
         run: |
           python3 -m flake8 . --output-file=flake8_report.txt || true
           cat flake8_report.txt
 
   format:
     runs-on: self-hosted
+    outputs:
+      format_status: ${{ steps.format_step.outcome }}
     steps:
       - uses: actions/checkout@v4
       - name: Install black
         run: |
-          python3 -m pip install black 
+          python3 -m pip install black  # Install black if not already installed
       - name: Format code with black
+        id: format_step
         run: |
-          black . --check --diff
+          black .
 
   test:
-    needs: [lint, format] 
+    needs: [lint, format]
     runs-on: self-hosted
+    outputs:
+      test_status: ${{ steps.test_step.outcome }}
     steps:
       - uses: actions/checkout@v4
       - name: Install dependencies
@@ -49,35 +57,30 @@ jobs:
           echo $! > app_pid.txt
           sleep 5
       - name: Test with pytest
+        id: test_step
         run: |
           coverage run -m pytest
-          if [ $? -eq 0 ]; then
-            echo "status=success" >> $GITHUB_ENV
-          elif [ "$(cat test_exit_code.txt)" = "143" ]; then
-            echo "status=canceled" >> $GITHUB_ENV
-            exit 0
-          else
-            echo "status=failure" >> $GITHUB_ENV
-          fi
-      - name: Run code coverage
-        run: |
-          coverage report -m --rcfile=.coveragerc --format=markdown >> $GITHUB_STEP_SUMMARY
-      - name: Stop the application
-        run: kill $(cat app_pid.txt) || echo "App already stopped"
-      - name: Store coverage report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          path: |
-            app.log
-            flake8_report.txt
-            coverage.xml
+          coverage report -m
 
   notify:
-    needs: [test]
+    needs: [lint, format, test]
     runs-on: self-hosted
-    if: always()
+    if: failure()
     steps:
+      - name: Set status variable
+        id: set_status
+        run: |
+          # Set the status based on the outcomes of previous jobs
+          if [[ "${{ needs.lint.outputs.lint_status }}" == "failure" ]]; then
+            echo "status=failure" >> $GITHUB_ENV
+          elif [[ "${{ needs.format.outputs.format_status }}" == "failure" ]]; then
+            echo "status=failure" >> $GITHUB_ENV
+          elif [[ "${{ needs.test.outputs.test_status }}" == "failure" ]]; then
+            echo "status=failure" >> $GITHUB_ENV
+          else
+            echo "status=success" >> $GITHUB_ENV
+          fi
+
       - name: Send Discord Notification with PR and Test Results
         env:
           ERRORWEBHOOK: ${{ secrets.ERRORWEBHOOK }}
@@ -104,4 +107,3 @@ jobs:
             }' $ERRORWEBHOOK
           else
             echo "Workflow canceled, no notification sent."
-          fi
