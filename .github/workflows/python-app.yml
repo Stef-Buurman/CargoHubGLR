@@ -32,6 +32,10 @@ jobs:
       format_status: ${{ steps.format_step.outcome }}
     steps:
       - uses: actions/checkout@v4
+      - name: Set up virtual environment
+        run: |
+          python3 -m venv venv
+          source venv/bin/activate
       - name: Install dependencies
         run: |
           pip install --upgrade pip
