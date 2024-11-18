@@ -46,6 +46,7 @@ jobs:
           git push
 
   lint:
+    needs: [format]
     runs-on: self-hosted
     outputs:
       lint_status: ${{ job.status }}
