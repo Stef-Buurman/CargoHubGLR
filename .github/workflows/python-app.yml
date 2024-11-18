@@ -36,21 +36,20 @@ jobs:
         run: |
           python3 -m venv venv
           source venv/bin/activate
-      - name: Install dependencies
-        run: |
-          python3 -m pip install --upgrade pip
-          python3 -m pip install black
+          python -m pip install --upgrade pip
+          pip install black
 
       # Run black to reformat the code
       - name: Run black to reformat code
         id: format_step
         run: |
-          source venv/bin/activate 
+          source venv/bin/activate
           black .
 
-      # Check for changes and commit them
+      # Check for changes and commit
       - name: Check for changes and commit
         run: |
+          source venv/bin/activate
           git config --global user.name "github-actions"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add .
