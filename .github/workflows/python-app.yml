@@ -21,8 +21,8 @@ jobs:
 
       - name: Check PEP 8 compliance with flake8 (ignore failure)
         run: |
-          flake8 . --output-file=flake8_report.txt || true
-          cat flake8_report.txt
+          python3 -m flake8 . --output-file=flake8_report.txt || true  # Use python -m to ensure flake8 is found
+          cat flake8_report.txt  # Display the report in logs
 
       - name: Start the application in the background
         run: |
