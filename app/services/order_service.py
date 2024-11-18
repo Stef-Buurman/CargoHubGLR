@@ -66,7 +66,9 @@ class OrderService(Base):
                 break
         return order
 
-    def update_items_in_order(self, order_id: int, items: List[ItemInObject]) -> Order | None:
+    def update_items_in_order(
+        self, order_id: int, items: List[ItemInObject]
+    ) -> Order | None:
         order = self.get_order(order_id)
         current = order.items
         for current_item in current:
@@ -76,7 +78,9 @@ class OrderService(Base):
                     found = True
                     break
             if not found:
-                inventories = fetch_inventory_pool().get_inventories_for_item(current_item.item_id)
+                inventories = fetch_inventory_pool().get_inventories_for_item(
+                    current_item.item_id
+                )
                 min_ordered = float("inf")
                 min_inventory = None
 
@@ -87,13 +91,17 @@ class OrderService(Base):
 
                 if min_inventory:
                     min_inventory.total_allocated -= current_item.amount
-                    min_inventory.total_expected = min_inventory.total_on_hand + min_inventory.total_ordered
-                    fetch_inventory_pool().update_inventory(min_inventory.id, min_inventory)
+                    min_inventory.total_expected = (
+                        min_inventory.total_on_hand + min_inventory.total_ordered
+                    )
+                    fetch_inventory_pool().update_inventory(
+                        min_inventory.id, min_inventory
+                    )
 
         for updated_item in items:
             found = False
             matching_current_item = None
-            
+
             for current_item in current:
                 if current_item.item_id == updated_item.item_id:
                     found = True
@@ -101,10 +109,12 @@ class OrderService(Base):
                     break
 
             if found:
-                inventories = fetch_inventory_pool().get_inventories_for_item(updated_item.item_id)
+                inventories = fetch_inventory_pool().get_inventories_for_item(
+                    updated_item.item_id
+                )
                 min_inventory = None
                 min_ordered = float("inf")
-                
+
                 for inv in inventories:
                     if inv.total_allocated > min_ordered:
                         min_ordered = inv.total_allocated
@@ -113,14 +123,20 @@ class OrderService(Base):
                 if min_inventory:
                     delta_amount = updated_item.amount - matching_current_item.amount
                     min_inventory.total_allocated += delta_amount
-                    min_inventory.total_expected = min_inventory.total_on_hand + min_inventory.total_ordered
-                    fetch_inventory_pool().update_inventory(min_inventory.id, min_inventory)
+                    min_inventory.total_expected = (
+                        min_inventory.total_on_hand + min_inventory.total_ordered
+                    )
+                    fetch_inventory_pool().update_inventory(
+                        min_inventory.id, min_inventory
+                    )
 
         order.items = items
         self.update_order(order_id, order)
         return order
 
-    def update_orders_in_shipment(self, shipment_id: int, orders: List[Order]) -> List[Order]:
+    def update_orders_in_shipment(
+        self, shipment_id: int, orders: List[Order]
+    ) -> List[Order]:
         packed_orders = self.get_orders_in_shipment(shipment_id)
         for x in packed_orders:
             if x not in orders:
@@ -151,13 +167,13 @@ class OrderService(Base):
     def save(self):
         with open(self.data_path, "w") as f:
             json.dump([shipment.model_dump() for shipment in self.data], f)
-    
-    def insert_order(self, order: Order, closeConnection:bool = True) -> Order:
+
+    def insert_order(self, order: Order, closeConnection: bool = True) -> Order:
         table_name = order.table_name()
 
         order.created_at = self.get_timestamp()
         order.updated_at = self.get_timestamp()
-        
+
         fields = {}
         for key, value in vars(order).items():
             if key != "id" and key != "items":
@@ -179,8 +195,11 @@ class OrderService(Base):
                     INSERT INTO {order_items_table} (order_id, item_id, amount)
                     VALUES (?, ?, ?)
                     """
-                    conn.execute(items_insert_sql, (order_id, order_items.item_id, order_items.amount))
-        
+                    conn.execute(
+                        items_insert_sql,
+                        (order_id, order_items.item_id, order_items.amount),
+                    )
+
         if closeConnection:
             self.db.commit_and_close()
         return order

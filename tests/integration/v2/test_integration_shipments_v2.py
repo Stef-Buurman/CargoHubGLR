@@ -157,6 +157,7 @@ def test_update_shipment(client):
     assert response_get.status_code == 200
     assert response_get.json()["shipment_status"] == updated_shipment["shipment_status"]
 
+
 def test_partial_update_shipment_no_api_key(client):
     updated_shipment = {"notes": "Super coole nieuwe note voor de test shipment"}
     response = client.patch(

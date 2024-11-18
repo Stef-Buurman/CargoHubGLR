@@ -1,5 +1,6 @@
 from models.v2.base import Base
 
+
 class Client(Base):
     id: int | None = None
     name: str

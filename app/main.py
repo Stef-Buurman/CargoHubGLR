@@ -70,7 +70,6 @@ app.include_router(supplier_router_v2, prefix=v2_url + "/suppliers")
 app.include_router(order_router_v2, prefix=v2_url + "/orders")
 
 
-
 def main():
     uvicorn.run(app, port=8000)
 

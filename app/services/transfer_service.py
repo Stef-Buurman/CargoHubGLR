@@ -81,12 +81,14 @@ class TransferService(Base):
         with open(self.data_path, "w") as f:
             json.dump([transfer.model_dump() for transfer in self.data], f)
 
-    def insert_transfer(self, transfer: Transfer, closeConnection:bool = True) -> Transfer:
+    def insert_transfer(
+        self, transfer: Transfer, closeConnection: bool = True
+    ) -> Transfer:
         table_name = transfer.table_name()
 
         transfer.created_at = self.get_timestamp()
         transfer.updated_at = self.get_timestamp()
-        
+
         fields = {}
         for key, value in vars(transfer).items():
             if key != "id" and key != "items":
@@ -109,8 +111,11 @@ class TransferService(Base):
                     INSERT INTO {transfer_items_table} (transfer_id, item_uid, amount)
                     VALUES (?, ?, ?)
                     """
-                    conn.execute(items_insert_sql, (transfer_id, transfer_items.item_id, transfer_items.amount))
-        
+                    conn.execute(
+                        items_insert_sql,
+                        (transfer_id, transfer_items.item_id, transfer_items.amount),
+                    )
+
         if closeConnection:
             self.db.commit_and_close()
         return transfer

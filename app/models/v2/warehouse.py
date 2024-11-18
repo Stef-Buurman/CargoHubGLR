@@ -21,9 +21,11 @@ class Warehouse(Base):
     created_at: str | None = None
     updated_at: str | None = None
 
+
 class WarehouseDB(Base):
     class Config:
         table_name = "warehouses"
+
     id: int | None = None
     code: str
     name: str
