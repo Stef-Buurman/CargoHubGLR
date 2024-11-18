@@ -44,7 +44,7 @@ jobs:
 
       - name: Check out the current branch
         run: |
-          git fetch --all
+          # git fetch --all
           git checkout ${{ github.head_ref }}
 
       - name: Run black to reformat code
