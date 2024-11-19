@@ -129,7 +129,13 @@ jobs:
             test_exit_code=0  # Default to 0 if the file doesn't exist
           fi
 
-          if [[ "${{ needs.lint.outputs.lint_status }}" == "failure" ]]; then
+          if [[ "${{ needs.lint.outputs.lint_status }}" == "cancelled" ]]; then
+            echo "status=cancelled" >> $GITHUB_ENV
+          elif [[ "${{ needs.format.outputs.format_status }}" == "cancelled" ]]; then
+            echo "status=cancelled" >> $GITHUB_ENV
+          elif [[ "${{ needs.test.outputs.test_status }}" == "cancelled" ]]; then
+            echo "status=cancelled" >> $GITHUB_ENV
+          elif [[ "${{ needs.lint.outputs.lint_status }}" == "failure" ]]; then
             echo "status=failure" >> $GITHUB_ENV
           elif [[ "${{ needs.format.outputs.format_status }}" == "failure" ]]; then
             echo "status=failure" >> $GITHUB_ENV
@@ -168,7 +174,7 @@ jobs:
               "avatar_url": "'"${ICON_URL}"'"
             }' $SUCCESSWEBHOOK
 
-          else
+          elif [[ "$status" == "failure" ]]
             ICON_URL="https://media.discordapp.net/attachments/1176098997253963828/1298243289467588629/image.png?ex=672df2c8&is=672ca148&hm=08edf2f16947cfb2382ddd66c860ba5b907a534e5e04ffc5e8ef451c6eb9d8c9&=&format=jpeg"
             MESSAGE="------------\n**Pull Request:** [${PR_TITLE}](${PR_URL})\n**Author:** ${PR_AUTHOR}\n**Test Status:** Tests failed\n[Check test run](${PR_URL}/checks)"
             curl -X POST -H "Content-Type: application/json" -d '{
