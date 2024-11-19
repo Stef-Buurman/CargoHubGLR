@@ -78,7 +78,9 @@ jobs:
         id: test_step
         run: |
           coverage run -m pytest
-          coverage report -m
+      - name: Run code coverage
+        run: |
+          coverage report -m --rcfile=.coveragerc --format=markdown >> $GITHUB_STEP_SUMMARY
       - name: Upload test results
         uses: actions/upload-artifact@v4
         with:
