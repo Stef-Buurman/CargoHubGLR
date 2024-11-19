@@ -104,7 +104,7 @@ jobs:
       - name: Check if lint-results artifact exists
         id: check_lint
         run: |
-          if [ -f /actions-runner/_work/_temp/lint-results.zip ]; then
+          if [ -d /actions-runner/_work/_temp/lint-results ]; then
             echo "Lint results artifact found!"
             echo "lint_exists=true" >> $GITHUB_ENV
           else
@@ -115,7 +115,7 @@ jobs:
       - name: Check if test-results artifact exists
         id: check_test
         run: |
-          if [ -f /actions-runner/_work/_temp/test-results.zip ]; then
+          if [ -d /actions-runner/_work/_temp/test-results ]; then
             echo "Test results artifact found!"
             echo "test_exists=true" >> $GITHUB_ENV
           else
@@ -136,7 +136,7 @@ jobs:
           name: test-results
 
       - name: Store combined artifacts
-        if: ${{ env.lint_exists == 'true' || env.test_exists == 'true' }}
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: reports
