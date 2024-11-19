@@ -133,7 +133,7 @@ def get_api_key(request: Request, api_key_header: str = Security(api_key_header)
     if user is None:
         raise HTTPException(status_code=403, detail="Invalid API Key")
 
-    if has_access(user, request.url.path, request.method):
+    if has_access(user, request.url.path.rstrip('/').rsplit('/', 1)[-1], request.method.lower()):
         return api_key_header
     else:
         raise HTTPException(
