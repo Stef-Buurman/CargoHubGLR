@@ -143,6 +143,11 @@ jobs:
             app.log
             flake8_report.txt
             coverage.xml
+      - name: Remove lint-results and test-results artifacts
+        if: env.lint_exists == 'true' || env.test_exists == 'true'
+        run: |
+          echo "Removing lint-results and test-results artifacts"
+          rm -f /actions-runner/_work/_temp/lint-results /actions-runner/_work/_temp/test-results
 
   notify:
     needs: [lint, format, test]
