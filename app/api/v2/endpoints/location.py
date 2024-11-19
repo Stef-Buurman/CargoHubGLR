@@ -37,7 +37,6 @@ def create_location(
             status_code=409, detail=f"Location with id {location.id} already exists"
         )
     created_location = data_provider_v2.fetch_location_pool().add_location(location)
-    data_provider_v2.fetch_location_pool().save()
     return JSONResponse(
         status_code=status.HTTP_201_CREATED, content=created_location.model_dump()
     )
@@ -58,7 +57,6 @@ def update_location(
     updated_location = data_provider_v2.fetch_location_pool().update_location(
         location_id, location
     )
-    data_provider_v2.fetch_location_pool().save()
     return updated_location
 
 
@@ -82,7 +80,6 @@ def partial_update_location(
     partial_updated_location = data_provider_v2.fetch_location_pool().update_location(
         location_id, existing_location
     )
-    data_provider_v2.fetch_location_pool().save()
     return partial_updated_location
 
 
@@ -97,5 +94,4 @@ def delete_location(
             status_code=404, detail=f"Location with id {location_id} not found"
         )
     data_provider_v2.fetch_location_pool().remove_location(location_id)
-    data_provider_v2.fetch_location_pool().save()
     return {"message": "Location deleted successfully"}
