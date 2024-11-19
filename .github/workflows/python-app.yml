@@ -123,17 +123,17 @@ jobs:
             echo "test_exists=false" >> $GITHUB_ENV
           fi
 
-      - name: Download lint results
-        if: env.lint_exists == 'true'
-        uses: actions/download-artifact@v4
-        with:
-          name: lint-results
+      # - name: Download lint results
+      #   if: env.lint_exists == 'true'
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     name: lint-results
 
-      - name: Download test results
-        if: env.test_exists == 'true'
-        uses: actions/download-artifact@v4
-        with:
-          name: test-results
+      # - name: Download test results
+      #   if: env.test_exists == 'true'
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     name: test-results
 
       - name: Store combined artifacts
         if: always()
