@@ -123,7 +123,6 @@ jobs:
           fi
 
       - name: Send Discord Notification with PR and Test Results
-        if: ${{ steps.check_canceled.outcome != 'success' }}
         env:
           ERRORWEBHOOK: ${{ secrets.ERRORWEBHOOK }}
           SUCCESSWEBHOOK: ${{ secrets.SUCCESSWEBHOOK }}
