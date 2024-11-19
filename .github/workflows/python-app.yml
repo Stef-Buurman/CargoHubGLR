@@ -112,7 +112,6 @@ jobs:
             echo "status=failure" >> $GITHUB_ENV
           elif [ "$test_exit_code" -eq 143 ]; then
             echo "status=canceled" >> $GITHUB_ENV
-            exit 0  # Skip further processing if the workflow is canceled
           else
             echo "status=success" >> $GITHUB_ENV
           fi
