@@ -122,7 +122,7 @@ jobs:
             fi
           fi
 
-          echo "status=$status" >> $GITHUB_ENV
+          echo "status=$status"
 
       - name: Check if workflow was canceled
         id: check_canceled
