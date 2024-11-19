@@ -93,13 +93,22 @@ jobs:
       - name: Set status variable
         id: set_status
         run: |
-          # Set the status based on the outcomes of previous jobs
+          # Retrieve the exit code from the test step if available
+          if [ -f test_exit_code.txt ]; then
+            test_exit_code=$(cat test_exit_code.txt)
+          else
+            test_exit_code=0  # Default to 0 if the file doesn't exist
+          fi
+
           if [[ "${{ needs.lint.outputs.lint_status }}" == "failure" ]]; then
             echo "status=failure" >> $GITHUB_ENV
           elif [[ "${{ needs.format.outputs.format_status }}" == "failure" ]]; then
             echo "status=failure" >> $GITHUB_ENV
           elif [[ "${{ needs.test.outputs.test_status }}" == "failure" ]]; then
             echo "status=failure" >> $GITHUB_ENV
+          elif [ "$test_exit_code" -eq 143 ]; then
+            echo "status=canceled" >> $GITHUB_ENV
+            exit 0  # Skip further processing if the workflow is canceled
           else
             echo "status=success" >> $GITHUB_ENV
           fi
