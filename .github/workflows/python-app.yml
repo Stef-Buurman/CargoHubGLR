@@ -136,7 +136,7 @@ jobs:
           name: test-results
 
       - name: Store combined artifacts
-        if: env.lint_exists == 'true' || env.test_exists == 'true'
+        if: ${{ env.lint_exists == 'true' || env.test_exists == 'true' }}
         uses: actions/upload-artifact@v4
         with:
           name: reports
