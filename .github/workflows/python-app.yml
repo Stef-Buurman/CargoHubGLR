@@ -133,7 +133,7 @@ jobs:
           PR_AUTHOR="${{ github.event.pull_request.user.login }}"
 
           if [[ "$status" == "success" ]]; then
-            ICON_URL="https://media.discordapp.net/attachments/1280503605517877339/1280506426543837288/image.png?ex=672e058a&is=672cb40a&hm=2522f789e2bb9f856f9b989ff7a550f1f8499b4e2695805113f672db3cbcfdc6&=&format=jpeg"
+            ICON_URL="https://media.discordapp.net/attachments/1304098990907981854/1308410201669501001/image.png?ex=673dd775&is=673c85f5&hm=4e3044416bb57e59e71bad3c2dd5932f9a8945b8c462f869d7639878b4a04992&format=jpeg"
             MESSAGE="------------\n**Pull Request:** [${PR_TITLE}](${PR_URL})\n**Author:** ${PR_AUTHOR}\n**Test Status:** Tests completed successfully"
             curl -X POST -H "Content-Type: application/json" -d "{
               \"content\": \"${MESSAGE}\",
