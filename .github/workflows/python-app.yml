@@ -98,13 +98,13 @@ jobs:
         id: set_status
         run: |
           # Retrieve the exit code from the test step if available
-          # if [[ "${{ needs.lint.outputs.lint_status }}" == "cancelled" ]]; then
-          #   echo "status=cancelled" >> $GITHUB_ENV
-          # elif [[ "${{ needs.format.outputs.format_status }}" == "cancelled" ]]; then
-          #   echo "status=cancelled" >> $GITHUB_ENV
-          # elif [[ "${{ needs.test.outputs.test_status }}" == "cancelled" ]]; then
-          #   echo "status=cancelled" >> $GITHUB_ENV
-          if [[ "${{ needs.lint.outputs.lint_status }}" == "failure" ]]; then
+          if [[ "${{ needs.lint.outputs.lint_status }}" == "cancelled" ]]; then
+            echo "status=cancelled" >> $GITHUB_ENV
+          elif [[ "${{ needs.format.outputs.format_status }}" == "cancelled" ]]; then
+            echo "status=cancelled" >> $GITHUB_ENV
+          elif [[ "${{ needs.test.outputs.test_status }}" == "cancelled" ]]; then
+            echo "status=cancelled" >> $GITHUB_ENV
+          elif [[ "${{ needs.lint.outputs.lint_status }}" == "failure" ]]; then
             echo "status=failure" >> $GITHUB_ENV
           elif [[ "${{ needs.format.outputs.format_status }}" == "failure" ]]; then
             echo "status=failure" >> $GITHUB_ENV
@@ -123,7 +123,7 @@ jobs:
             fi
           fi
 
-          echo "status=$status"
+          echo "status=$status" >> $GITHUB_ENV
 
       - name: Check if workflow was canceled
         id: check_canceled
