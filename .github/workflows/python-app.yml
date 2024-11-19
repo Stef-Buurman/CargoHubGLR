@@ -178,10 +178,11 @@ jobs:
               "avatar_url": "'"${ICON_URL}"'"
             }' $SUCCESSWEBHOOK
 
-          elif [[ "$status" == "failure" ]]
+          elif [[ "$status" == "failure" ]]; then
             ICON_URL="https://media.discordapp.net/attachments/1176098997253963828/1298243289467588629/image.png?ex=672df2c8&is=672ca148&hm=08edf2f16947cfb2382ddd66c860ba5b907a534e5e04ffc5e8ef451c6eb9d8c9&=&format=jpeg"
             MESSAGE="------------\n**Pull Request:** [${PR_TITLE}](${PR_URL})\n**Author:** ${PR_AUTHOR}\n**Test Status:** Tests failed\n[Check test run](${PR_URL}/checks)"
             curl -X POST -H "Content-Type: application/json" -d '{
               "content": "'"${MESSAGE}"'",
               "avatar_url": "'"${ICON_URL}"'"
             }' $ERRORWEBHOOK
+          fi
