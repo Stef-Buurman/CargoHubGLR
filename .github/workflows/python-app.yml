@@ -98,13 +98,13 @@ jobs:
     steps:
       - name: List available artifacts (debug)
         run: |
-          echo "Listing available artifacts..."
+          echo "Listing available files in /actions-runner/_work/_temp/"
           ls -l /actions-runner/_work/_temp || true
 
       - name: Check if lint-results artifact exists
         id: check_lint
         run: |
-          if [ -d /actions-runner/_work/_temp/lint-results ]; then
+          if [ -f /actions-runner/_work/_temp/lint-results ]; then
             echo "Lint results artifact found!"
             echo "lint_exists=true" >> $GITHUB_ENV
           else
@@ -115,7 +115,7 @@ jobs:
       - name: Check if test-results artifact exists
         id: check_test
         run: |
-          if [ -d /actions-runner/_work/_temp/test-results ]; then
+          if [ -f /actions-runner/_work/_temp/test-results ]; then
             echo "Test results artifact found!"
             echo "test_exists=true" >> $GITHUB_ENV
           else
@@ -123,26 +123,25 @@ jobs:
             echo "test_exists=false" >> $GITHUB_ENV
           fi
 
-      # - name: Download lint results
-      #   if: env.lint_exists == 'true'
-      #   uses: actions/download-artifact@v4
-      #   with:
-      #     name: lint-results
+      - name: Download lint results
+        if: env.lint_exists == 'true'
+        uses: actions/download-artifact@v4
+        with:
+          name: lint-results
 
-      # - name: Download test results
-      #   if: env.test_exists == 'true'
-      #   uses: actions/download-artifact@v4
-      #   with:
-      #     name: test-results
+      - name: Download test results
+        if: env.test_exists == 'true'
+        uses: actions/download-artifact@v4
+        with:
+          name: test-results
 
       - name: Store combined artifacts
-        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: reports
           path: |
-            flake8_report.txt
             app.log
+            flake8_report.txt
             coverage.xml
 
   notify:
