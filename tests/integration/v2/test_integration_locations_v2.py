@@ -3,7 +3,7 @@ import httpx
 from tests.integration.test_globals import *
 
 test_location = {
-    "id": 999999999999999999999999999999999,
+    "id": 99999999999999999,
     "warehouse_id": 9,
     "code": "K.14.0",
     "name": "Row: K, Rack: 14, Shelf: 0",
