@@ -55,7 +55,9 @@ class ItemLineService(Base):
         with open(self.data_path, "w") as f:
             json.dump([item_line.model_dump() for item_line in self.data], f)
 
-    def insert_item_line(self, item_line: ItemLine, closeConnection:bool = True) -> ItemLine:
+    def insert_item_line(
+        self, item_line: ItemLine, closeConnection: bool = True
+    ) -> ItemLine:
         item_line.created_at = self.get_timestamp()
         item_line.updated_at = self.get_timestamp()
         return self.db.insert(item_line, closeConnection)

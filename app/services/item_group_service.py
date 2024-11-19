@@ -13,22 +13,22 @@ class ItemGroupService(Base):
         self.load(is_debug)
         self.db = DB
 
-    def get_item_groups(self)-> List[ItemGroup]:
+    def get_item_groups(self) -> List[ItemGroup]:
         return self.data
 
-    def get_item_group(self, item_group_id:int) -> ItemGroup:
+    def get_item_group(self, item_group_id: int) -> ItemGroup:
         for x in self.data:
             if x.id == item_group_id:
                 return x
         return None
 
-    def add_item_group(self, item_group:ItemGroup) -> ItemGroup:
+    def add_item_group(self, item_group: ItemGroup) -> ItemGroup:
         item_group.created_at = self.get_timestamp()
         item_group.updated_at = self.get_timestamp()
         self.data.append(item_group)
         return item_group
 
-    def update_item_group(self, item_group_id:int, item_group:ItemGroup) -> ItemGroup:
+    def update_item_group(self, item_group_id: int, item_group: ItemGroup) -> ItemGroup:
         item_group.updated_at = self.get_timestamp()
         for i in range(len(self.data)):
             if self.data[i].id == item_group_id:
@@ -36,7 +36,7 @@ class ItemGroupService(Base):
                 break
         return item_group
 
-    def remove_item_group(self, item_group_id:int):
+    def remove_item_group(self, item_group_id: int):
         for x in self.data:
             if x.id == item_group_id:
                 self.data.remove(x)
@@ -55,7 +55,9 @@ class ItemGroupService(Base):
         with open(self.data_path, "w") as f:
             json.dump([item_group.model_dump() for item_group in self.data], f)
 
-    def insert_item_group(self, item_group: ItemGroup, closeConnection:bool = True) -> ItemGroup:
+    def insert_item_group(
+        self, item_group: ItemGroup, closeConnection: bool = True
+    ) -> ItemGroup:
         item_group.created_at = self.get_timestamp()
         item_group.updated_at = self.get_timestamp()
         return self.db.insert(item_group, closeConnection)

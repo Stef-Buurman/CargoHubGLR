@@ -43,7 +43,9 @@ def create_order(order: Order, api_key: str = Depends(auth_provider.get_api_key)
     data_provider_v2.init()
     addedOrder = data_provider_v2.fetch_order_pool().add_order(order)
     data_provider_v2.fetch_order_pool().save()
-    return JSONResponse(status_code=status.HTTP_201_CREATED, content=addedOrder.model_dump())
+    return JSONResponse(
+        status_code=status.HTTP_201_CREATED, content=addedOrder.model_dump()
+    )
 
 
 @order_router_v2.put("/{order_id}")
@@ -61,7 +63,9 @@ def update_order(
 
 @order_router_v2.put("/{order_id}/items")
 def add_items_to_order(
-    order_id: int, items: list[ItemInObject], api_key: str = Depends(auth_provider.get_api_key)
+    order_id: int,
+    items: list[ItemInObject],
+    api_key: str = Depends(auth_provider.get_api_key),
 ):
     data_provider_v2.init()
     existingOrder = data_provider_v2.fetch_order_pool().get_order(order_id)

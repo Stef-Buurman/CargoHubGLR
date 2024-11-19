@@ -75,8 +75,10 @@ class InventoryService(Base):
     def save(self):
         with open(self.data_path, "w") as f:
             json.dump([inventory.model_dump() for inventory in self.data], f)
-    
-    def insert_inventory(self, inventory: Inventory, closeConnection:bool = True) -> Inventory:
+
+    def insert_inventory(
+        self, inventory: Inventory, closeConnection: bool = True
+    ) -> Inventory:
         table_name = inventory.table_name()
 
         inventory.created_at = self.get_timestamp()

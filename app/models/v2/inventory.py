@@ -5,6 +5,7 @@ from models.v2.base import Base
 class Inventory(Base):
     class Config:
         table_name = "inventories"
+
     id: int | None = None
     item_id: str
     description: str
