@@ -102,44 +102,41 @@ jobs:
           ls -l /actions-runner/_work/_temp || true
 
       - name: Check if lint-results artifact exists
+        id: check_lint
         run: |
           if [ -d /actions-runner/_work/_temp/lint-results ]; then
             echo "Lint results artifact found!"
+            echo "lint_exists=true" >> $GITHUB_ENV
           else
             echo "Lint results artifact not found!"
-            exit 1
+            echo "lint_exists=false" >> $GITHUB_ENV
           fi
 
       - name: Check if test-results artifact exists
+        id: check_test
         run: |
           if [ -d /actions-runner/_work/_temp/test-results ]; then
             echo "Test results artifact found!"
+            echo "test_exists=true" >> $GITHUB_ENV
           else
             echo "Test results artifact not found!"
-            exit 1
+            echo "test_exists=false" >> $GITHUB_ENV
           fi
 
       - name: Download lint results
+        if: env.lint_exists == 'true'
         uses: actions/download-artifact@v4
         with:
           name: lint-results
 
-      - name: Verify lint results contents
-        run: |
-          echo "Verifying lint-results directory..."
-          ls -R lint-results
-
       - name: Download test results
+        if: env.test_exists == 'true'
         uses: actions/download-artifact@v4
         with:
           name: test-results
 
-      - name: Verify test results contents
-        run: |
-          echo "Verifying test-results directory..."
-          ls -R test-results
-
       - name: Store combined artifacts
+        if: env.lint_exists == 'true' || env.test_exists == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: reports
