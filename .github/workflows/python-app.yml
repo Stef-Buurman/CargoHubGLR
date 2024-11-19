@@ -154,7 +154,6 @@ jobs:
         id: set_status
         run: |
           # Retrieve the exit code from the test step if available
-
           # if [[ "${{ needs.lint.outputs.lint_status }}" == "cancelled" ]]; then
           #   echo "status=cancelled" >> $GITHUB_ENV
           # elif [[ "${{ needs.format.outputs.format_status }}" == "cancelled" ]]; then
