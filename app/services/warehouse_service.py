@@ -31,9 +31,7 @@ class WarehouseService(Base):
         warehouse.updated_at = self.get_timestamp()
         return self.db.update(warehouse, warehouse_id, closeConnection)
 
-    def remove_warehouse(
-        self, warehouse_id: int, closeConnection: bool = True
-    ) -> bool:
+    def remove_warehouse(self, warehouse_id: int, closeConnection: bool = True) -> bool:
         return self.db.delete(WarehouseDB, warehouse_id, closeConnection)
 
     def load(self, is_debug: bool, warehouses: List[WarehouseDB] | None = None):
