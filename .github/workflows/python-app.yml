@@ -88,6 +88,7 @@ jobs:
           path: |
             app.log
             coverage.xml
+            
   notify:
     needs: [lint, format, test]
     runs-on: self-hosted
@@ -96,11 +97,13 @@ jobs:
       - name: Set status variable
         id: set_status
         run: |
-          # Retrieve the exit code from the test step if available
-          if [[ "${{ needs.lint.outputs.lint_status }}" == "cancelled" ]] || \
-            [[ "${{ needs.format.outputs.format_status }}" == "cancelled" ]] || \
-            [[ "${{ needs.test.outputs.test_status }}" == "cancelled" ]]; then
-            echo "status=cancelled" >> $GITHUB_ENV
+          # Check if the workflow was canceled based on PR state
+          if [[ "${{ github.event.pull_request.state }}" == "closed" && "${{ github.event.pull_request.merged }}" == "false" ]]; then
+            echo "status=canceled" >> $GITHUB_ENV
+          elif [[ "${{ needs.lint.outputs.lint_status }}" == "cancelled" ]] || \
+              [[ "${{ needs.format.outputs.format_status }}" == "cancelled" ]] || \
+              [[ "${{ needs.test.outputs.test_status }}" == "cancelled" ]]; then
+            echo "status=canceled" >> $GITHUB_ENV
           elif [[ "${{ needs.lint.outputs.lint_status }}" == "failure" ]] || \
               [[ "${{ needs.format.outputs.format_status }}" == "failure" ]] || \
               [[ "${{ needs.test.outputs.test_status }}" == "failure" ]]; then
@@ -112,10 +115,10 @@ jobs:
       - name: Check if workflow was canceled
         id: check_canceled
         run: |
-          # Check if the workflow was canceled based on PR state
+          # Skip the notification if the workflow was canceled or PR is closed
           if [[ "${{ github.event.pull_request.state }}" == "closed" && "${{ github.event.pull_request.merged }}" == "false" ]]; then
             echo "Workflow was canceled or PR closed, skipping notification."
-            exit 0  # Skip the notification if the workflow was canceled or PR is closed
+            exit 0
           fi
 
       - name: Send Discord Notification with PR and Test Results
@@ -127,8 +130,9 @@ jobs:
           PR_TITLE="${{ github.event.pull_request.title }}"
           PR_AUTHOR="${{ github.event.pull_request.user.login }}"
 
+          # Only send success notification if the status is not canceled
           if [[ "$status" == "success" ]]; then
-            ICON_URL="https://cdn.discordapp.com/attachments/1304098990907981854/1308410201669501001/image.png?ex=673dd775&is=673c85f5&hm=4e3044416bb57e59e71bad3c2dd5932f9a8945b8c462f869d7639878b4a04992&format=jpeg"
+            ICON_URL="https://media.discordapp.net/attachments/1280503605517877339/1280506426543837288/image.png?ex=672e058a&is=672cb40a&hm=2522f789e2bb9f856f9b989ff7a550f1f8499b4e2695805113f672db3cbcfdc6&=&format=jpeg"
             MESSAGE="------------\n**Pull Request:** [${PR_TITLE}](${PR_URL})\n**Author:** ${PR_AUTHOR}\n**Test Status:** Tests completed successfully"
             curl -X POST -H "Content-Type: application/json" -d "{
               \"content\": \"${MESSAGE}\",
@@ -142,7 +146,12 @@ jobs:
               \"content\": \"${MESSAGE}\",
               \"avatar_url\": \"${ICON_URL}\"
             }" $ERRORWEBHOOK
+
+          # Don't send anything if the status is 'canceled'
+          elif [[ "$status" == "canceled" ]]; then
+            echo "Workflow was canceled, skipping notification."
           fi
+
 
   # notify:
   #   needs: [lint, format, test]
