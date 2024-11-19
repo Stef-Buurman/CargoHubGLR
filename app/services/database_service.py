@@ -160,22 +160,6 @@ class DatabaseService:
 
         return result
 
-    def get_all_in_warehouse(self, model: Type[T], warehouse_id: int) -> List[Location]:
-        table_name = model.table_name()
-        query = f"""
-        SELECT * FROM {table_name} WHERE warehouse_id = ?
-        """
-        with self.get_connection() as conn:
-            cursor = conn.execute(query, (warehouse_id,))
-            rows = cursor.fetchall()
-
-            result = []
-            for row in rows:
-                row_dict = {col[0]: row[i] for i, col in enumerate(cursor.description)}
-                result.append(Location(**row_dict))
-
-        return result
-
     def get(self, model: Type[T], id: int) -> T | None:
         table_name = model.table_name()
         primary_key_field = self.get_primary_key_column(table_name)
