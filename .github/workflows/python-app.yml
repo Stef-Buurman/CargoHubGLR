@@ -85,11 +85,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: test-results
-          path: app.log
-      - name: Upload Coverage
-        uses: actions/upload-artifact@v4
-        with:
-          path: coverage.xml
+          path: |
+            app.log
+            coverage.xml
 
   notify:
     needs: [lint, format, test]
