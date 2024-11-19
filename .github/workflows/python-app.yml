@@ -141,7 +141,6 @@ jobs:
             coverage.xml
 
       - name: Remove lint-results and test-results artifacts
-        if: steps.check_lint.outputs.lint_exists == 'true' || steps.check_test.outputs.test_exists == 'true'
         run: |
           echo "Removing lint-results and test-results artifacts"
           rm -f /actions-runner/_work/_temp/lint-results /actions-runner/_work/_temp/test-results
