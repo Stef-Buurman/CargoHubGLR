@@ -96,22 +96,48 @@ jobs:
     runs-on: self-hosted
     if: always()
     steps:
+      - name: List available artifacts
+        run: |
+          echo "Available artifacts:"
+          ls -l /actions-runner/_work/_temp
+
+      - name: Check if lint-results exist
+        run: |
+          if ! [ -f /actions-runner/_work/_temp/lint-results ]; then
+            echo "Lint results not found!"
+            exit 1
+          else
+            echo "Lint results found!"
+          fi
+
+      - name: Check if test-results exist
+        run: |
+          if ! [ -f /actions-runner/_work/_temp/test-results ]; then
+            echo "Test results not found!"
+            exit 1
+          else
+            echo "Test results found!"
+          fi
+
       - name: Download lint results
         uses: actions/download-artifact@v4
         with:
           name: lint-results
+
       - name: Download test results
         uses: actions/download-artifact@v4
         with:
           name: test-results
+
       - name: Store combined artifacts
         uses: actions/upload-artifact@v4
         with:
           name: reports
           path: |
-            app.log
             flake8_report.txt
+            app.log
             coverage.xml
+
 
 
   notify:
