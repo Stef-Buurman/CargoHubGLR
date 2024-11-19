@@ -32,10 +32,10 @@ def create_location(
 ):
     data_provider_v2.init()
     existing_location = data_provider_v2.fetch_location_pool().get_location(location.id)
-    if existing_location is not None:
-        raise HTTPException(
-            status_code=409, detail=f"Location with id {location.id} already exists"
-        )
+    # if existing_location is not None:
+    #     raise HTTPException(
+    #         status_code=409, detail=f"Location with id {location.id} already exists"
+    #     )
     created_location = data_provider_v2.fetch_location_pool().add_location(location)
     return JSONResponse(
         status_code=status.HTTP_201_CREATED, content=created_location.model_dump()
