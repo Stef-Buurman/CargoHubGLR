@@ -20,7 +20,7 @@ class LocationService(Base):
         return self.db.get(Location, location_id)
 
     def get_locations_in_warehouse(self, warehouse_id: int):
-        return self.db.get_all(Location, warehouse_id)
+        return self.db.get_all_in_warehouse(Location, warehouse_id)
 
     def add_location(
         self, location: Location, closeConnection: bool = True

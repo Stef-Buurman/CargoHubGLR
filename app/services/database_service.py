@@ -114,19 +114,16 @@ class DatabaseService:
         fields = model.__dict__
         primary_key_field = self.get_primary_key_column(table_name)
         fields.pop(primary_key_field, None)
-
         columns = ", ".join(f"{key} = ?" for key in fields.keys())
         values = tuple(fields.values())
-
         update_sql = f"UPDATE {table_name} SET {columns} WHERE {primary_key_field} = ?"
         with self.get_connection_without_close() as conn:
             conn.execute(update_sql, values + (id,))
-
         if closeConnection:
             self.commit_and_close()
         return model
 
-    def delete(self, model: Type[T], id: int, closeConnection: bool = True) -> bool:
+    def delete(self, model: T, id: int, closeConnection: bool = True) -> bool:
         table_name = model.table_name()
         primary_key_field = self.get_primary_key_column(table_name)
         delete_sql = f"DELETE FROM {table_name} WHERE {primary_key_field} = ?"
@@ -160,6 +157,22 @@ class DatabaseService:
             for row in rows:
                 row_dict = {col[0]: row[i] for i, col in enumerate(cursor.description)}
                 result.append(model(**row_dict))
+
+        return result
+
+    def get_all_in_warehouse(self, model: Type[T], warehouse_id: int) -> List[Location]:
+        table_name = model.table_name()
+        query = f"""
+        SELECT * FROM {table_name} WHERE warehouse_id = ?
+        """
+        with self.get_connection() as conn:
+            cursor = conn.execute(query, (warehouse_id,))
+            rows = cursor.fetchall()
+
+            result = []
+            for row in rows:
+                row_dict = {col[0]: row[i] for i, col in enumerate(cursor.description)}
+                result.append(Location(**row_dict))
 
         return result
 
