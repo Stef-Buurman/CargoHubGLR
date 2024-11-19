@@ -185,4 +185,3 @@ jobs:
               "content": "'"${MESSAGE}"'",
               "avatar_url": "'"${ICON_URL}"'"
             }' $ERRORWEBHOOK
-          fi
