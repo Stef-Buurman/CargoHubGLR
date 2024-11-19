@@ -85,6 +85,19 @@ jobs:
           coverage run -m pytest
           coverage report -m
 
+  save_result:
+    needs: [lint, format, test]
+    runs-on: self-hosted
+    steps:
+    - name: Store coverage report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        path: |
+          app.log
+          flake8_report.txt
+          coverage.xml
+
   notify:
     needs: [lint, format, test]
     runs-on: self-hosted
