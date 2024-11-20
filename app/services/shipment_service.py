@@ -1,6 +1,6 @@
 import json
 from typing import List, Optional
-from models.v2.shipment import Shipment
+from models.v2.shipment import ShipmentDB
 from models.base import Base
 from services.data_provider_v2 import fetch_inventory_pool
 from services.database_service import DB
@@ -11,36 +11,27 @@ SHIPMENTS = []
 
 class ShipmentService(Base):
     def __init__(self, root_path: str, is_debug: bool = False):
-        self.data_path = root_path + "shipments.json"
-        self.load(is_debug)
-        self.current_id = 0
         self.db = DB
+        self.load(is_debug)
 
-    def get_shipments(self) -> List[Shipment]:
-        return self.data
+    def get_shipments(self) -> List[ShipmentDB]:
+        return self.db.get_all(ShipmentDB)
 
-    def get_shipment(self, shipment_id: str) -> Optional[Shipment]:
-        return next(
-            (shipment for shipment in self.data if shipment.id == shipment_id), None
-        )
+    def get_shipment(self, shipment_id: str) -> Optional[ShipmentDB]:
+        return self.db.get(ShipmentDB, shipment_id)
 
     def get_items_in_shipment(self, shipment_id: str) -> Optional[List[dict]]:
         shipment = self.get_shipment(shipment_id)
         return shipment.items if shipment else None
 
-    def add_shipment(self, shipment: Shipment) -> Shipment:
+    def add_shipment(self, shipment: ShipmentDB, closeConnection: bool = True) -> ShipmentDB:
         shipment.created_at = self.get_timestamp()
         shipment.updated_at = self.get_timestamp()
-        self.data.append(shipment)
-        return shipment
+        return self.db.insert(shipment, closeConnection)
 
-    def update_shipment(self, shipment_id: str, shipment: Shipment):
+    def update_shipment(self, shipment_id: str, shipment: ShipmentDB, closeConnection: bool = True) -> ShipmentDB:
         shipment.updated_at = self.get_timestamp()
-        for i, existing_shipment in enumerate(self.data):
-            if existing_shipment.id == shipment_id:
-                self.data[i] = shipment
-                break
-        return shipment
+        return self.db.update(shipment, shipment_id, closeConnection)
 
     def update_items_in_shipment(self, shipment_id: str, items: List[dict]):
         shipment = self.get_shipment(shipment_id)
@@ -51,7 +42,7 @@ class ShipmentService(Base):
             return shipment
 
     def update_inventory_for_items(
-        self, current_items: List[Shipment], new_items: List[dict]
+        self, current_items: List[ShipmentDB], new_items: List[dict]
     ):
         def update_inventory(item_id, amount_change):
             inventories = fetch_inventory_pool().get_inventories_for_item(item_id)
@@ -82,26 +73,22 @@ class ShipmentService(Base):
             if item["item_id"] not in current_item_ids:
                 update_inventory(item["item_id"], item["amount"])
 
-    def remove_shipment(self, shipment_id: str):
-        shipment = self.get_shipment(shipment_id)
-        if shipment:
-            self.data.remove(shipment)
+    def remove_shipment(self, shipment_id: str, closeConnection: bool = True) -> bool:
+        return self.db.delete(ShipmentDB, shipment_id, closeConnection)
 
-    def load(self, is_debug: bool):
-        if is_debug:
-            self.data = SHIPMENTS
+    def load(self, is_debug: bool, shipments: List[ShipmentDB] | None = None):
+        if is_debug and shipments is not None:
+            self.data = shipments
         else:
-            with open(self.data_path, "r") as f:
-                raw_data = json.load(f)
-                self.data = [Shipment(**shipment_dict) for shipment_dict in raw_data]
+            self.data = self.db.get_all(ShipmentDB)
 
     def save(self):
         with open(self.data_path, "w") as f:
             json.dump([shipment.model_dump() for shipment in self.data], f)
 
     def insert_shipment(
-        self, shipment: Shipment, closeConnection: bool = True
-    ) -> Shipment:
+        self, shipment: ShipmentDB, closeConnection: bool = True
+    ) -> ShipmentDB:
         table_name = shipment.table_name()
 
         shipment.created_at = self.get_timestamp()

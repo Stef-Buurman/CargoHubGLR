@@ -3,7 +3,7 @@ from contextlib import contextmanager
 import time
 from typing import Type, TypeVar, List, Generator, Any, Tuple
 from pydantic import BaseModel
-from models.v2.shipment import Shipment
+from models.v2.shipment import ShipmentDB as Shipment
 from models.v2.warehouse import WarehouseDB as Warehouse
 from models.v2.item import Item
 from models.v2.client import Client
