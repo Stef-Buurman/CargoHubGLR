@@ -1,8 +1,9 @@
 import sqlite3
 from contextlib import contextmanager
-import time
 from typing import Type, TypeVar, List, Generator, Any, Tuple
 from pydantic import BaseModel
+from models.v2.endpoint_access import EndpointAccess
+from models.v2.user import User
 from models.v2.shipment import Shipment
 from models.v2.warehouse import WarehouseDB as Warehouse
 from models.v2.item import Item
@@ -42,6 +43,8 @@ class DatabaseService:
         self.create_warehouse_table(Warehouse)
         self.create_shipment_table(Shipment)
         self.create_shipment_items_table(table_name=shipment_items_table)
+        self.create_users_table(User)
+        self.create_endpoint_access_table(EndpointAccess)
 
     @contextmanager
     def get_connection(self) -> Generator[sqlite3.Connection, None, None]:
@@ -521,6 +524,47 @@ class DatabaseService:
         """
         with self.get_connection() as conn:
             conn.execute(query_warehouse)
+
+    def create_users_table(
+        self, model: Type[BaseModel] | None = None, table_name: str | None = None
+    ):
+        if model is not None:
+            table_name = model.table_name()
+
+        query_users = f"""
+        CREATE TABLE IF NOT EXISTS {table_name} (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            api_key TEXT UNIQUE NOT NULL,
+            app TEXT NOT NULL,
+            full_access BOOLEAN NOT NULL
+        )
+        """
+
+        with self.get_connection() as conn:
+            conn.execute(query_users)
+
+    def create_endpoint_access_table(
+        self, model: Type[BaseModel] | None = None, table_name: str | None = None
+    ):
+        if model is not None:
+            table_name = model.table_name()
+
+        query_endpoint_access = f"""
+        CREATE TABLE IF NOT EXISTS {table_name} (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            endpoint TEXT NOT NULL,
+            full BOOLEAN NOT NULL,
+            can_get BOOLEAN NOT NULL,
+            can_post BOOLEAN NOT NULL,
+            can_put BOOLEAN NOT NULL,
+            can_delete BOOLEAN NOT NULL,
+            FOREIGN KEY (user_id) REFERENCES {User.table_name()} (id)
+        )
+        """
+
+        with self.get_connection() as conn:
+            conn.execute(query_endpoint_access)
 
 
 DB = DatabaseService()
