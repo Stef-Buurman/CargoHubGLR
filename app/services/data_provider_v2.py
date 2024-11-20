@@ -17,6 +17,7 @@ _suppliers = None
 _orders = None
 _shipments = None
 _clients = None
+_users = None
 
 
 def init():
@@ -33,6 +34,7 @@ def init():
     get_clients()
     get_orders()
     get_shipments()
+    get_users()
 
 
 # Load data for each model
@@ -120,6 +122,13 @@ def get_orders():
     _orders = OrderService(ROOT_PATH, DEBUG)
 
 
+def get_users():
+    from .user_service import UserService
+
+    global _users
+    _users = UserService(DEBUG)
+
+
 # Fetching pools
 def fetch_warehouse_pool():
     if _warehouses is None:
@@ -191,3 +200,8 @@ def fetch_shipment_pool():
     if _shipments is None:
         get_shipments()
     return _shipments
+
+def fetch_user_pool():
+    if _users is None:
+        get_users()
+    return _users
