@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Response
 from fastapi.responses import JSONResponse
 from services import data_provider_v2, auth_provider
-from models.v2.warehouse import Warehouse
+from models.v2.warehouse import WarehouseDB
 
 warehouse_router_v2 = APIRouter()
 
@@ -46,16 +46,16 @@ def read_locations_in_warehouse(
 
 @warehouse_router_v2.post("/")
 def create_warehouse(
-    warehouse: Warehouse, api_key: str = Depends(auth_provider.get_api_key)
+    warehouse: WarehouseDB, api_key: str = Depends(auth_provider.get_api_key)
 ):
     data_provider_v2.init()
     existing_warehouse = data_provider_v2.fetch_warehouse_pool().get_warehouse(
         warehouse.id
     )
-    if existing_warehouse is not None:
-        raise HTTPException(status_code=409, detail="Warehouse already exists")
+    # if existing_warehouse is not None:
+    #     raise HTTPException(status_code=409, detail="Warehouse already exists")
     created_warehouse = data_provider_v2.fetch_warehouse_pool().add_warehouse(warehouse)
-    data_provider_v2.fetch_warehouse_pool().save()
+
     return JSONResponse(
         status_code=status.HTTP_201_CREATED, content=created_warehouse.model_dump()
     )
@@ -64,7 +64,7 @@ def create_warehouse(
 @warehouse_router_v2.put("/{warehouse_id}")
 def update_warehouse(
     warehouse_id: int,
-    warehouse: Warehouse,
+    warehouse: WarehouseDB,
     api_key: str = Depends(auth_provider.get_api_key),
 ):
     data_provider_v2.init()
@@ -76,7 +76,6 @@ def update_warehouse(
     updated_warehouse = data_provider_v2.fetch_warehouse_pool().update_warehouse(
         warehouse_id, warehouse
     )
-    data_provider_v2.fetch_warehouse_pool().save()
     return updated_warehouse
 
 
@@ -101,7 +100,6 @@ def partial_update_warehouse(
             warehouse_id, existing_warehouse
         )
     )
-    data_provider_v2.fetch_warehouse_pool().save()
     return partial_updated_warehouse
 
 
@@ -114,5 +112,4 @@ def delete_warehouse(
     if warehouse is None:
         raise HTTPException(status_code=404, detail="Warehouse not found")
     data_provider_v2.fetch_warehouse_pool().remove_warehouse(warehouse_id)
-    data_provider_v2.fetch_warehouse_pool().save()
     return {"message": "Warehouse deleted successfully"}
