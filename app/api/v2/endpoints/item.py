@@ -1,13 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException, Response, status
 from fastapi.responses import JSONResponse
-from services import data_provider_v2, auth_provider
+from services import data_provider_v2, auth_provider_v2
 from models.v2.item import Item
 
 item_router_v2 = APIRouter()
 
 
 @item_router_v2.get("/{item_id}")
-def read_item(item_id: str, api_key: str = Depends(auth_provider.get_api_key)):
+def read_item(item_id: str, api_key: str = Depends(auth_provider_v2.get_api_key)):
     data_provider_v2.init()
     items = data_provider_v2.fetch_item_pool().get_item(item_id)
     if items is None:
@@ -18,7 +18,7 @@ def read_item(item_id: str, api_key: str = Depends(auth_provider.get_api_key)):
 
 
 @item_router_v2.get("/")
-def read_items(api_key: str = Depends(auth_provider.get_api_key)):
+def read_items(api_key: str = Depends(auth_provider_v2.get_api_key)):
     data_provider_v2.init()
     items = data_provider_v2.fetch_item_pool().get_items()
     if items is None:
@@ -28,7 +28,7 @@ def read_items(api_key: str = Depends(auth_provider.get_api_key)):
 
 @item_router_v2.get("/{item_id}/inventory")
 def read_inventory_of_item(
-    item_id: str, api_key: str = Depends(auth_provider.get_api_key)
+    item_id: str, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
     item = data_provider_v2.fetch_item_pool().get_item(item_id)
@@ -42,7 +42,7 @@ def read_inventory_of_item(
 
 @item_router_v2.get("/{item_id}/inventory/totals")
 def read_inventory_totals_of_item(
-    item_id: str, api_key: str = Depends(auth_provider.get_api_key)
+    item_id: str, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
     item = data_provider_v2.fetch_item_pool().get_item(item_id)
@@ -55,7 +55,7 @@ def read_inventory_totals_of_item(
 
 
 @item_router_v2.post("/")
-def create_item(item: Item, api_key: str = Depends(auth_provider.get_api_key)):
+def create_item(item: Item, api_key: str = Depends(auth_provider_v2.get_api_key)):
     data_provider_v2.init()
     addedItem = data_provider_v2.fetch_item_pool().add_item(item)
     data_provider_v2.fetch_item_pool().save()
@@ -66,7 +66,7 @@ def create_item(item: Item, api_key: str = Depends(auth_provider.get_api_key)):
 
 @item_router_v2.put("/{item_id}")
 def update_item(
-    item_id: str, item: Item, api_key: str = Depends(auth_provider.get_api_key)
+    item_id: str, item: Item, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
     existingItem = data_provider_v2.fetch_item_pool().get_item(item_id)
@@ -81,7 +81,7 @@ def update_item(
 def partial_update_item(
     item_id: str,
     item: dict,
-    api_key: str = Depends(auth_provider.get_api_key),
+    api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
     existing_item = data_provider_v2.fetch_item_pool().get_item(item_id)
@@ -102,7 +102,7 @@ def partial_update_item(
 
 
 @item_router_v2.delete("/{item_id}")
-def delete_item(item_id: str, api_key: str = Depends(auth_provider.get_api_key)):
+def delete_item(item_id: str, api_key: str = Depends(auth_provider_v2.get_api_key)):
     data_provider_v2.init()
     item_pool = data_provider_v2.fetch_item_pool()
 

@@ -1,13 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
-from services import data_provider_v2, auth_provider
+from services import data_provider_v2, auth_provider_v2
 from models.v2.client import Client
 
 client_router_v2 = APIRouter()
 
 
 @client_router_v2.get("/{client_id}")
-def read_client(client_id: int, api_key: str = Depends(auth_provider.get_api_key)):
+def read_client(client_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)):
     data_provider_v2.init()
     client = data_provider_v2.fetch_client_pool().get_client(client_id)
     if client is None:
@@ -16,7 +16,7 @@ def read_client(client_id: int, api_key: str = Depends(auth_provider.get_api_key
 
 
 @client_router_v2.get("/")
-def read_clients(api_key: str = Depends(auth_provider.get_api_key)):
+def read_clients(api_key: str = Depends(auth_provider_v2.get_api_key)):
     data_provider_v2.init()
     clients = data_provider_v2.fetch_client_pool().get_clients()
     if clients is None:
@@ -26,7 +26,7 @@ def read_clients(api_key: str = Depends(auth_provider.get_api_key)):
 
 @client_router_v2.get("/{client_id}/orders")
 def read_client_orders(
-    client_id: int, api_key: str = Depends(auth_provider.get_api_key)
+    client_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
     client = data_provider_v2.fetch_client_pool().get_client(client_id)
@@ -39,7 +39,7 @@ def read_client_orders(
 
 
 @client_router_v2.post("/")
-def create_client(client: Client, api_key: str = Depends(auth_provider.get_api_key)):
+def create_client(client: Client, api_key: str = Depends(auth_provider_v2.get_api_key)):
     data_provider_v2.init()
     existing_client = data_provider_v2.fetch_client_pool().get_client(client.id)
     # if existing_client is not None:
@@ -53,7 +53,7 @@ def create_client(client: Client, api_key: str = Depends(auth_provider.get_api_k
 
 @client_router_v2.put("/{client_id}")
 def update_client(
-    client_id: int, client: Client, api_key: str = Depends(auth_provider.get_api_key)
+    client_id: int, client: Client, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
     existing_client = data_provider_v2.fetch_client_pool().get_client(client_id)
@@ -70,7 +70,7 @@ def update_client(
 def partial_update_client(
     client_id: int,
     client: dict,
-    api_key: str = Depends(auth_provider.get_api_key),
+    api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
     existing_client = data_provider_v2.fetch_client_pool().get_client(client_id)
@@ -91,7 +91,7 @@ def partial_update_client(
 
 
 @client_router_v2.delete("/{client_id}")
-def delete_client(client_id: int, api_key: str = Depends(auth_provider.get_api_key)):
+def delete_client(client_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)):
     data_provider_v2.init()
     client = data_provider_v2.fetch_client_pool().get_client(client_id)
     if client is None:

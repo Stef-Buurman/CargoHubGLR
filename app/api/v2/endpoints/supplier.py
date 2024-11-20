@@ -1,13 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException, Response, status
 from fastapi.responses import JSONResponse
-from services import data_provider_v2, auth_provider
+from services import data_provider_v2, auth_provider_v2
 from models.v2.supplier import Supplier
 
 supplier_router_v2 = APIRouter()
 
 
 @supplier_router_v2.get("/{supplier_id}")
-def read_supplier(supplier_id: int, api_key: str = Depends(auth_provider.get_api_key)):
+def read_supplier(supplier_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)):
     data_provider_v2.init()
     supplier = data_provider_v2.fetch_supplier_pool().get_supplier(supplier_id)
     if supplier is None:
@@ -18,7 +18,7 @@ def read_supplier(supplier_id: int, api_key: str = Depends(auth_provider.get_api
 
 
 @supplier_router_v2.get("/")
-def read_suppliers(api_key: str = Depends(auth_provider.get_api_key)):
+def read_suppliers(api_key: str = Depends(auth_provider_v2.get_api_key)):
     data_provider_v2.init()
     suppliers = data_provider_v2.fetch_supplier_pool().get_suppliers()
     if suppliers is None:
@@ -28,7 +28,7 @@ def read_suppliers(api_key: str = Depends(auth_provider.get_api_key)):
 
 @supplier_router_v2.get("/{supplier_id}/items")
 def read_items_of_supplier(
-    supplier_id: int, api_key: str = Depends(auth_provider.get_api_key)
+    supplier_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
 
@@ -48,7 +48,7 @@ def read_items_of_supplier(
 
 @supplier_router_v2.post("/")
 def create_supplier(
-    supplier: Supplier, api_key: str = Depends(auth_provider.get_api_key)
+    supplier: Supplier, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
     existingSupplier = data_provider_v2.fetch_supplier_pool().get_supplier(supplier.id)
@@ -65,7 +65,7 @@ def create_supplier(
 def update_supplier(
     supplier_id: int,
     supplier: Supplier,
-    api_key: str = Depends(auth_provider.get_api_key),
+    api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
     existingSupplier = data_provider_v2.fetch_supplier_pool().get_supplier(supplier_id)
@@ -82,7 +82,7 @@ def update_supplier(
 def partial_update_supplier(
     supplier_id: int,
     supplier: dict,
-    api_key: str = Depends(auth_provider.get_api_key),
+    api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
     existing_supplier = data_provider_v2.fetch_supplier_pool().get_supplier(supplier_id)
@@ -104,7 +104,7 @@ def partial_update_supplier(
 
 @supplier_router_v2.delete("/{supplier_id}")
 def delete_supplier(
-    supplier_id: int, api_key: str = Depends(auth_provider.get_api_key)
+    supplier_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
     supplier_pool = data_provider_v2.fetch_supplier_pool()
