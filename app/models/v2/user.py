@@ -1,3 +1,4 @@
+from typing import List
 from models.v2.base import Base
 from .endpoint_access import EndpointAccess
 
@@ -6,4 +7,4 @@ class User(Base):
     api_key: str
     app: str
     full: bool
-    endpoint_access: EndpointAccess | None = None
+    endpoint_access: List[EndpointAccess]
