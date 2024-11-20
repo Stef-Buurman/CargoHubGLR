@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Response
 from fastapi.responses import JSONResponse
-from services import data_provider_v2, auth_provider
+from services import data_provider_v2, auth_provider_v2
 from models.v2.warehouse import Warehouse
 
 warehouse_router_v2 = APIRouter()
@@ -8,7 +8,7 @@ warehouse_router_v2 = APIRouter()
 
 @warehouse_router_v2.get("/{warehouse_id}")
 def read_warehouse(
-    warehouse_id: int, api_key: str = Depends(auth_provider.get_api_key)
+    warehouse_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
     warehouse = data_provider_v2.fetch_warehouse_pool().get_warehouse(warehouse_id)
@@ -18,7 +18,7 @@ def read_warehouse(
 
 
 @warehouse_router_v2.get("/")
-def read_warehouses(api_key: str = Depends(auth_provider.get_api_key)):
+def read_warehouses(api_key: str = Depends(auth_provider_v2.get_api_key)):
     data_provider_v2.init()
     warehouses = data_provider_v2.fetch_warehouse_pool().get_warehouses()
     if warehouses is None:
@@ -28,7 +28,7 @@ def read_warehouses(api_key: str = Depends(auth_provider.get_api_key)):
 
 @warehouse_router_v2.get("/{warehouse_id}/locations")
 def read_locations_in_warehouse(
-    warehouse_id: int, api_key: str = Depends(auth_provider.get_api_key)
+    warehouse_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
     warehouse = data_provider_v2.fetch_warehouse_pool().get_warehouse(warehouse_id)
@@ -46,7 +46,7 @@ def read_locations_in_warehouse(
 
 @warehouse_router_v2.post("/")
 def create_warehouse(
-    warehouse: Warehouse, api_key: str = Depends(auth_provider.get_api_key)
+    warehouse: Warehouse, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
     existing_warehouse = data_provider_v2.fetch_warehouse_pool().get_warehouse(
@@ -65,7 +65,7 @@ def create_warehouse(
 def update_warehouse(
     warehouse_id: int,
     warehouse: Warehouse,
-    api_key: str = Depends(auth_provider.get_api_key),
+    api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
     existing_warehouse = data_provider_v2.fetch_warehouse_pool().get_warehouse(
@@ -84,7 +84,7 @@ def update_warehouse(
 def partial_update_warehouse(
     warehouse_id: int,
     warehouse: dict,
-    api_key: str = Depends(auth_provider.get_api_key),
+    api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
     existing_warehouse = data_provider_v2.fetch_warehouse_pool().get_warehouse(
@@ -107,7 +107,7 @@ def partial_update_warehouse(
 
 @warehouse_router_v2.delete("/{warehouse_id}")
 def delete_warehouse(
-    warehouse_id: int, api_key: str = Depends(auth_provider.get_api_key)
+    warehouse_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
     warehouse = data_provider_v2.fetch_warehouse_pool().get_warehouse(warehouse_id)

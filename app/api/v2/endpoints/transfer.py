@@ -1,13 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
-from services import data_provider_v2, auth_provider
+from services import data_provider_v2, auth_provider_v2
 from models.v2.transfer import Transfer
 
 transfer_router_v2 = APIRouter()
 
 
 @transfer_router_v2.get("/{transfer_id}")
-def read_transfer(transfer_id: int, api_key: str = Depends(auth_provider.get_api_key)):
+def read_transfer(transfer_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)):
     data_provider_v2.init()
     transfer = data_provider_v2.fetch_transfer_pool().get_transfer(transfer_id)
     if transfer is None:
@@ -16,7 +16,7 @@ def read_transfer(transfer_id: int, api_key: str = Depends(auth_provider.get_api
 
 
 @transfer_router_v2.get("/")
-def read_transfers(api_key: str = Depends(auth_provider.get_api_key)):
+def read_transfers(api_key: str = Depends(auth_provider_v2.get_api_key)):
     data_provider_v2.init()
     transfers = data_provider_v2.fetch_transfer_pool().get_transfers()
     if transfers is None:
@@ -26,7 +26,7 @@ def read_transfers(api_key: str = Depends(auth_provider.get_api_key)):
 
 @transfer_router_v2.get("/{transfer_id}/items")
 def read_transfer_items(
-    transfer_id: int, api_key: str = Depends(auth_provider.get_api_key)
+    transfer_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
     transfer = data_provider_v2.fetch_transfer_pool().get_transfer(transfer_id)
@@ -40,7 +40,7 @@ def read_transfer_items(
 
 @transfer_router_v2.post("/")
 def create_transfer(
-    transfer: Transfer, api_key: str = Depends(auth_provider.get_api_key)
+    transfer: Transfer, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
     existing_transfer = data_provider_v2.fetch_transfer_pool().get_transfer(transfer.id)
@@ -55,7 +55,7 @@ def create_transfer(
 def update_transfer(
     transfer_id: int,
     transfer: Transfer,
-    api_key: str = Depends(auth_provider.get_api_key),
+    api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
     existing_transfer = data_provider_v2.fetch_transfer_pool().get_transfer(transfer_id)
@@ -72,7 +72,7 @@ def update_transfer(
 def partial_update_transfer(
     transfer_id: int,
     transfer: dict,
-    api_key: str = Depends(auth_provider.get_api_key),
+    api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
     existing_transfer = data_provider_v2.fetch_transfer_pool().get_transfer(transfer_id)
@@ -91,7 +91,7 @@ def partial_update_transfer(
 
 @transfer_router_v2.put("/{transfer_id}/commit")
 def commit_transfer(
-    transfer_id: int, api_key: str = Depends(auth_provider.get_api_key)
+    transfer_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
     transfer = data_provider_v2.fetch_transfer_pool().get_transfer(transfer_id)
@@ -111,7 +111,7 @@ def commit_transfer(
 
 @transfer_router_v2.delete("/{transfer_id}")
 def delete_transfer(
-    transfer_id: int, api_key: str = Depends(auth_provider.get_api_key)
+    transfer_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
     transfer = data_provider_v2.fetch_transfer_pool().get_transfer(transfer_id)
