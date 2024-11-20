@@ -1,3 +1,4 @@
+from models.v2.user import User
 from services import data_provider, data_provider_v2
 from services.database_service import DatabaseService
 from models.v2.shipment import Shipment
@@ -15,6 +16,9 @@ from models.v2.transfer import Transfer
 from utils.globals import *
 import time
 
+USERS = [{"api_key": "test_api_key", "app": "Integration_Tests", "endpoint_access": {"full": True}}, {"api_key": "a1b2c3d4e5", "app": "CargoHUB Dashboard 1", "endpoint_access": {"full": True}}, {"api_key": "f6g7h8i9j0", "app": "CargoHUB Dashboard 2", "endpoint_access": {"full": False, "warehouses": {"full": False, "get": True, "post": False, "put": False, "delete": False}, "locations": {"full": False, "get": True, "post": False, "put": False, "delete": False}, "transfers": {"full": False, "get": True, "post": False, "put": False, "delete": False}, "items": {"full": False, "get": True, "post": False, "put": False, "delete": False}, "item_lines": {"full": False, "get": True, "post": False, "put": False, "delete": False}, "item_groups": {"full": False, "get": True, "post": False, "put": False, "delete": False}, "item_types": {"full": False, "get": True, "post": False, "put": False, "delete": False}, "suppliers": {"full": False, "get": True, "post": False, "put": False, "delete": False}, "orders": {"full": False, "get": True, "post": False, "put": False, "delete": False}, "clients": {"full": False, "get": True, "post": False, "put": False, "delete": False}, "shipments": {"full": False, "get": True, "post": False, "put": False, "delete": False}}}]
+
+
 if __name__ == "__main__":
     start_time = time.time()
     db_service = DatabaseService()
@@ -23,6 +27,16 @@ if __name__ == "__main__":
     data_provider.init()
 
     amount_before_closing = 500
+
+    for user in USERS:
+        endpoint_access = user["endpoint_access"].copy()
+        del endpoint_access["full"]
+        data_provider_v2.fetch_user_pool().insert_user(
+                user["api_key"],
+                user["app"],
+                user["endpoint_access"]["full"],
+                endpoint_access,
+        )
 
     count = 0
     all_clients = data_provider.fetch_client_pool().get_clients()
