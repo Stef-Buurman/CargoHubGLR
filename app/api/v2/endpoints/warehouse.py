@@ -9,7 +9,6 @@ warehouse_router_v2 = APIRouter()
 @warehouse_router_v2.get("/{warehouse_id}")
 def read_warehouse(
     warehouse_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
-    warehouse_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
     warehouse = data_provider_v2.fetch_warehouse_pool().get_warehouse(warehouse_id)
@@ -20,7 +19,6 @@ def read_warehouse(
 
 @warehouse_router_v2.get("/")
 def read_warehouses(api_key: str = Depends(auth_provider_v2.get_api_key)):
-def read_warehouses(api_key: str = Depends(auth_provider_v2.get_api_key)):
     data_provider_v2.init()
     warehouses = data_provider_v2.fetch_warehouse_pool().get_warehouses()
     if warehouses is None:
@@ -30,7 +28,6 @@ def read_warehouses(api_key: str = Depends(auth_provider_v2.get_api_key)):
 
 @warehouse_router_v2.get("/{warehouse_id}/locations")
 def read_locations_in_warehouse(
-    warehouse_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
     warehouse_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
@@ -87,7 +84,6 @@ def partial_update_warehouse(
     warehouse_id: int,
     warehouse: dict,
     api_key: str = Depends(auth_provider_v2.get_api_key),
-    api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
     existing_warehouse = data_provider_v2.fetch_warehouse_pool().get_warehouse(
@@ -109,7 +105,6 @@ def partial_update_warehouse(
 
 @warehouse_router_v2.delete("/{warehouse_id}")
 def delete_warehouse(
-    warehouse_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
     warehouse_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
