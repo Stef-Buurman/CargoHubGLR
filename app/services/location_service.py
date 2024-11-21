@@ -7,8 +7,7 @@ LOCATIONS = []
 
 
 class LocationService(Base):
-    def __init__(self, root_path, is_debug=False):
-        self.data_path = root_path + "locations.json"
+    def __init__(self, is_debug=False):
         self.db = DB
         self.load(is_debug)
 
