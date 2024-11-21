@@ -1,17 +1,14 @@
 name: Tests run
 
 on:
+    pull_request:
+      branches:
+        - "Testing"
+        - "Production"
     push:
       branches:
         - "Testing"
         - "Production"
-      # Exclude commits containing "[skip-ci]"
-      paths-ignore:
-        - '**' # Ignore all paths first
-      paths:
-        - '**' # Re-include everything to allow for normal pushes
-      tags-ignore:
-        - '*'
 
 permissions:
   contents: write
