@@ -113,8 +113,8 @@ class OrderService(Base):
             conn.execute(update_sql, values)
 
             if order.items:
-                delete_items_sql = f"DELETE FROM {
-                    order_items_table} WHERE order_id = ?"
+                delete_items_sql = f"""DELETE FROM {
+                    order_items_table} WHERE order_id = ?"""
                 conn.execute(delete_items_sql, (order.id,))
 
                 for order_items in order.items:
@@ -208,8 +208,8 @@ class OrderService(Base):
         placeholders = ", ".join("?" for _ in fields)
         values = tuple(fields.values())
 
-        insert_sql = f"INSERT INTO {
-            table_name} ({columns}) VALUES ({placeholders})"
+        insert_sql = f"""INSERT INTO {
+            table_name} ({columns}) VALUES ({placeholders})"""
 
         with self.db.get_connection_without_close() as conn:
             cursor = conn.execute(insert_sql, values)
