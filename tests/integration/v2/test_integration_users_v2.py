@@ -7,7 +7,76 @@ from tests.integration.test_globals import *
 test_user: User = User(
     api_key="blablablablablab", app="Integration_Tests", full=True, endpoint_access=[]
 )
-test_user_2: User = User(api_key="blublublublublublub", app="CargoHUB Dashboard 1", full=False, endpoint_access=[EndpointAccess(endpoint="warehouses", full=False, get=True, post=False, put=False, delete=True), EndpointAccess(endpoint="locations", full=True, get=False, post=False, put=False, delete=False), EndpointAccess(endpoint="transfers", full=False, get=True, post=False, put=True, delete=False), EndpointAccess(endpoint="items", full=False, get=False, post=False, put=False, delete=False), EndpointAccess(endpoint="item_lines", full=True, get=True, post=True, put=True, delete=True), EndpointAccess(endpoint="item_groups", full=False, get=False, post=False, put=True, delete=True), EndpointAccess(endpoint="item_types", full=False, get=False, post=True, put=True, delete=False), EndpointAccess(endpoint="suppliers", full=False, get=False, post=True, put=False, delete=True), EndpointAccess(endpoint="orders", full=False, get=True, post=False, put=True, delete=False), EndpointAccess(endpoint="clients", full=False, get=True, post=True, put=False, delete=False), EndpointAccess(endpoint="shipments", full=False, get=True, post=True, put=True, delete=True)])
+test_user_2: User = User(
+    api_key="blublublublublublub",
+    app="CargoHUB Dashboard 1",
+    full=False,
+    endpoint_access=[
+        EndpointAccess(
+            endpoint="warehouses",
+            full=False,
+            get=True,
+            post=False,
+            put=False,
+            delete=True,
+        ),
+        EndpointAccess(
+            endpoint="locations",
+            full=True,
+            get=False,
+            post=False,
+            put=False,
+            delete=False,
+        ),
+        EndpointAccess(
+            endpoint="transfers",
+            full=False,
+            get=True,
+            post=False,
+            put=True,
+            delete=False,
+        ),
+        EndpointAccess(
+            endpoint="items", full=False, get=False, post=False, put=False, delete=False
+        ),
+        EndpointAccess(
+            endpoint="item_lines", full=True, get=True, post=True, put=True, delete=True
+        ),
+        EndpointAccess(
+            endpoint="item_groups",
+            full=False,
+            get=False,
+            post=False,
+            put=True,
+            delete=True,
+        ),
+        EndpointAccess(
+            endpoint="item_types",
+            full=False,
+            get=False,
+            post=True,
+            put=True,
+            delete=False,
+        ),
+        EndpointAccess(
+            endpoint="suppliers",
+            full=False,
+            get=False,
+            post=True,
+            put=False,
+            delete=True,
+        ),
+        EndpointAccess(
+            endpoint="orders", full=False, get=True, post=False, put=True, delete=False
+        ),
+        EndpointAccess(
+            endpoint="clients", full=False, get=True, post=True, put=False, delete=False
+        ),
+        EndpointAccess(
+            endpoint="shipments", full=False, get=True, post=True, put=True, delete=True
+        ),
+    ],
+)
 
 
 @pytest.fixture

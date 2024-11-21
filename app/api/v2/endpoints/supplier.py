@@ -7,7 +7,9 @@ supplier_router_v2 = APIRouter()
 
 
 @supplier_router_v2.get("/{supplier_id}")
-def read_supplier(supplier_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)):
+def read_supplier(
+    supplier_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
+):
     data_provider_v2.init()
     supplier = data_provider_v2.fetch_supplier_pool().get_supplier(supplier_id)
     if supplier is None:

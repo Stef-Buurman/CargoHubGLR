@@ -16,24 +16,31 @@ class UserService(Base):
         self.last_updated = datetime.now()
         self.data = []
         self.load(is_debug)
-    
+
     def load(self, is_debug: bool):
         if is_debug:
             self.data = USERS
         else:
             self.data = self.get_users()
-        
 
-    def get_user(self, api_key: str, need_from_db : bool = False) -> User | None:
-        if need_from_db or self.last_updated < datetime.now() - timedelta(minutes=cache_time_minutes) or not self.data:
+    def get_user(self, api_key: str, need_from_db: bool = False) -> User | None:
+        if (
+            need_from_db
+            or self.last_updated
+            < datetime.now() - timedelta(minutes=cache_time_minutes)
+            or not self.data
+        ):
             with self.db.get_connection() as conn:
                 cursor = conn.cursor()
 
-                cursor.execute('''
+                cursor.execute(
+                    """
                     SELECT *
                     FROM users
                     WHERE api_key = ?
-                ''', (api_key,))
+                """,
+                    (api_key,),
+                )
                 user_row = cursor.fetchone()
 
                 if not user_row:
@@ -42,49 +49,101 @@ class UserService(Base):
                 user_id, api_key, app, full_access = user_row
                 full_access = bool(full_access)
 
-                cursor.execute('''
+                cursor.execute(
+                    """
                     SELECT endpoint, full, can_get, can_post, can_put, can_delete
                     FROM endpoint_access
                     WHERE user_id = ?
-                ''', (user_id,))
+                """,
+                    (user_id,),
+                )
                 endpoints = cursor.fetchall()
 
                 endpoint_access = []
                 for endpoint, full, can_get, can_post, can_put, can_delete in endpoints:
-                    endpoint_access.append(EndpointAccess(endpoint=endpoint, full=full, get=bool(can_get), post=bool(can_post), put=bool(can_put), delete=bool(can_delete)))
+                    endpoint_access.append(
+                        EndpointAccess(
+                            endpoint=endpoint,
+                            full=full,
+                            get=bool(can_get),
+                            post=bool(can_post),
+                            put=bool(can_put),
+                            delete=bool(can_delete),
+                        )
+                    )
 
-            return User(id=user_id, api_key=api_key, app=app, full=full_access, endpoint_access=endpoint_access)
+            return User(
+                id=user_id,
+                api_key=api_key,
+                app=app,
+                full=full_access,
+                endpoint_access=endpoint_access,
+            )
         else:
             for user in self.data:
                 if user.api_key == api_key:
                     return user
-    
-    def get_users(self, need_from_db : bool = False) -> List[User]:
-        if need_from_db or self.last_updated < datetime.now() - timedelta(minutes=cache_time_minutes) or not self.data:
+
+    def get_users(self, need_from_db: bool = False) -> List[User]:
+        if (
+            need_from_db
+            or self.last_updated
+            < datetime.now() - timedelta(minutes=cache_time_minutes)
+            or not self.data
+        ):
             with self.db.get_connection() as conn:
                 cursor = conn.cursor()
 
-                cursor.execute('''
+                cursor.execute(
+                    """
                     SELECT *
                     FROM users
-                ''')
+                """
+                )
                 users = cursor.fetchall()
 
                 users_list = []
                 for user_id, api_key, app, full_access in users:
-                    cursor.execute('''
+                    cursor.execute(
+                        """
                         SELECT endpoint, full, can_get, can_post, can_put, can_delete
                         FROM endpoint_access
                         WHERE user_id = ?
-                    ''', (user_id,))
+                    """,
+                        (user_id,),
+                    )
                     endpoints = cursor.fetchall()
 
                     endpoint_access = []
-                    for endpoint, full, can_get, can_post, can_put, can_delete in endpoints:
-                        endpoint_access.append(EndpointAccess(endpoint=endpoint, full=full, get=bool(can_get), post=bool(can_post), put=bool(can_put), delete=bool(can_delete)))
-                    
-                    users_list.append(User(id=user_id, api_key=api_key, app=app, full=full_access, endpoint_access=endpoint_access))
-                
+                    for (
+                        endpoint,
+                        full,
+                        can_get,
+                        can_post,
+                        can_put,
+                        can_delete,
+                    ) in endpoints:
+                        endpoint_access.append(
+                            EndpointAccess(
+                                endpoint=endpoint,
+                                full=full,
+                                get=bool(can_get),
+                                post=bool(can_post),
+                                put=bool(can_put),
+                                delete=bool(can_delete),
+                            )
+                        )
+
+                    users_list.append(
+                        User(
+                            id=user_id,
+                            api_key=api_key,
+                            app=app,
+                            full=full_access,
+                            endpoint_access=endpoint_access,
+                        )
+                    )
+
             return users_list
         else:
             return self.data
@@ -100,24 +159,36 @@ class UserService(Base):
                         return True
                     return getattr(access, method)
             return False
-    
-    def insert_user(self, api_key: str, app: str, full_access: bool, endpoint_access: List[EndpointAccess] | dict | None = None) -> User | None:
+
+    def insert_user(
+        self,
+        api_key: str,
+        app: str,
+        full_access: bool,
+        endpoint_access: List[EndpointAccess] | dict | None = None,
+    ) -> User | None:
         if self.get_user(api_key):
             return None
         with self.db.get_connection() as conn:
             cursor = conn.cursor()
 
-            cursor.execute('''
+            cursor.execute(
+                """
                 INSERT INTO users (api_key, app, full_access)
                 VALUES (?, ?, ?)
-            ''', (api_key, app, full_access))
+            """,
+                (api_key, app, full_access),
+            )
             conn.commit()
 
-            cursor.execute('''
+            cursor.execute(
+                """
                 SELECT id
                 FROM users
                 WHERE api_key = ?
-            ''', (api_key,))
+            """,
+                (api_key,),
+            )
             added_id = cursor.fetchone()[0]
 
             if endpoint_access:
@@ -125,22 +196,43 @@ class UserService(Base):
                     for endpoint, access in endpoint_access.items():
                         if not access:
                             continue
-                        
-                        cursor.execute('''
+
+                        cursor.execute(
+                            """
                             INSERT INTO endpoint_access (user_id, endpoint, full, can_get, can_post, can_put, can_delete)
                             VALUES (?, ?, ?, ?, ?, ?, ?)
-                        ''', (added_id, endpoint, access["full"], access["get"], access["post"], access["put"], access["delete"]))
+                        """,
+                            (
+                                added_id,
+                                endpoint,
+                                access["full"],
+                                access["get"],
+                                access["post"],
+                                access["put"],
+                                access["delete"],
+                            ),
+                        )
                         conn.commit()
                 elif isinstance(endpoint_access, list):
                     for access in endpoint_access:
                         if not access:
                             continue
-                        cursor.execute('''
+                        cursor.execute(
+                            """
                             INSERT INTO endpoint_access (user_id, endpoint, full, can_get, can_post, can_put, can_delete)
                             VALUES (?, ?, ?, ?, ?, ?, ?)
-                        ''', (added_id, access.endpoint, access.full, access.get, access.post, access.put, access.delete))
+                        """,
+                            (
+                                added_id,
+                                access.endpoint,
+                                access.full,
+                                access.get,
+                                access.post,
+                                access.put,
+                                access.delete,
+                            ),
+                        )
                         conn.commit()
-        
 
         added_user = self.get_user(api_key, True)
         self.data.append(added_user)
@@ -153,16 +245,22 @@ class UserService(Base):
         with self.db.get_connection() as conn:
             cursor = conn.cursor()
 
-            cursor.execute('''
+            cursor.execute(
+                """
                 DELETE FROM endpoint_access
                 WHERE user_id = ?
-            ''', (user.id,))
+            """,
+                (user.id,),
+            )
             conn.commit()
 
-            cursor.execute('''
+            cursor.execute(
+                """
                 DELETE FROM users
                 WHERE api_key = ?
-            ''', (api_key,))
+            """,
+                (api_key,),
+            )
             conn.commit()
         self.data.remove(user)
         return True

@@ -28,7 +28,9 @@ def read_orders(api_key: str = Depends(auth_provider_v2.get_api_key)):
 
 
 @order_router_v2.get("/{order_id}/items")
-def read_order_items(order_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)):
+def read_order_items(
+    order_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
+):
     data_provider_v2.init()
     items = data_provider_v2.fetch_order_pool().get_items_in_order(order_id)
     if items is None:

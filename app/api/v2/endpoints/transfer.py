@@ -7,7 +7,9 @@ transfer_router_v2 = APIRouter()
 
 
 @transfer_router_v2.get("/{transfer_id}")
-def read_transfer(transfer_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)):
+def read_transfer(
+    transfer_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
+):
     data_provider_v2.init()
     transfer = data_provider_v2.fetch_transfer_pool().get_transfer(transfer_id)
     if transfer is None:

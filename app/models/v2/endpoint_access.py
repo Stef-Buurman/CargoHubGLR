@@ -1,5 +1,6 @@
 from .base import Base
 
+
 class EndpointAccess(Base):
     class Config:
         table_name = "endpoint_access"

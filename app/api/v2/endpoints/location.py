@@ -7,7 +7,9 @@ location_router_v2 = APIRouter()
 
 
 @location_router_v2.get("/{location_id}")
-def read_location(location_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)):
+def read_location(
+    location_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
+):
     data_provider_v2.init()
     location = data_provider_v2.fetch_location_pool().get_location(location_id)
     if location is None:

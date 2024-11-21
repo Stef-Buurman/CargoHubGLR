@@ -201,6 +201,7 @@ def fetch_shipment_pool():
         get_shipments()
     return _shipments
 
+
 def fetch_user_pool():
     if _users is None:
         get_users()

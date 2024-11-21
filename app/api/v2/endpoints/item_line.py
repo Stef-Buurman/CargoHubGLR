@@ -49,7 +49,9 @@ def read_items_for_item_line(
 
 
 @item_line_router_v2.post("/")
-def create_item(item_line: ItemLine, api_key: str = Depends(auth_provider_v2.get_api_key)):
+def create_item(
+    item_line: ItemLine, api_key: str = Depends(auth_provider_v2.get_api_key)
+):
     data_provider_v2.init()
     existingItem = data_provider_v2.fetch_item_line_pool().get_item_line(item_line.id)
     if existingItem is not None:
@@ -111,7 +113,9 @@ def partial_update_item_line(
 
 
 @item_line_router_v2.delete("/{item_line_id}")
-def delete_item(item_line_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)):
+def delete_item(
+    item_line_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
+):
     data_provider_v2.init()
     item_line_pool = data_provider_v2.fetch_item_line_pool()
 

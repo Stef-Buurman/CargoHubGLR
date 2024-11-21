@@ -8,7 +8,9 @@ shipment_router_v2 = APIRouter()
 
 
 @shipment_router_v2.get("/{shipment_id}")
-def read_shipment(shipment_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)):
+def read_shipment(
+    shipment_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
+):
     data_provider_v2.init()
     shipment = data_provider_v2.fetch_shipment_pool().get_shipment(shipment_id)
     if shipment is None:
