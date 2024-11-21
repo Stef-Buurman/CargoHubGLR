@@ -1,4 +1,4 @@
-from models.v2.base import Base
+from .base import Base
 
 class EndpointAccess(Base):
     class Config:
