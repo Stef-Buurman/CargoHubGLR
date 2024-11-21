@@ -93,7 +93,9 @@ class OrderService(Base):
             self.db.commit_and_close()
         return order
 
-    def update_order(self, order_id: int, order: Order, closeConnection: bool = True) -> Order | None:
+    def update_order(
+        self, order_id: int, order: Order, closeConnection: bool = True
+    ) -> Order | None:
         table_name = order.table_name()
 
         order.updated_at = self.get_timestamp()
@@ -104,8 +106,7 @@ class OrderService(Base):
                 fields[key] = value
 
         set_clause = ", ".join(f"{key} = ?" for key in fields if key != "id")
-        values = tuple(fields[key]
-                       for key in fields if key != "id") + (order.id,)
+        values = tuple(fields[key] for key in fields if key != "id") + (order.id,)
 
         update_sql = f"UPDATE {table_name} SET {set_clause} WHERE id = ?"
 
@@ -144,9 +145,10 @@ class OrderService(Base):
                     found = True
                     break
             if not found:
-                delete_query = "DELETE FROM order_items WHERE order_id = ? AND item_id = ?"
-                self.db.execute_all(
-                    delete_query, (order_id, current_item.item_id))
+                delete_query = (
+                    "DELETE FROM order_items WHERE order_id = ? AND item_id = ?"
+                )
+                self.db.execute_all(delete_query, (order_id, current_item.item_id))
 
         for updated_item in items:
             found = False
@@ -160,7 +162,8 @@ class OrderService(Base):
                 INSERT INTO order_items (order_id, item_id, amount) VALUES (?, ?, ?)
                 """
                 self.db.execute_all(
-                    insert_query, (order_id, updated_item.item_id, updated_item.amount))
+                    insert_query, (order_id, updated_item.item_id, updated_item.amount)
+                )
 
         order = self.get_order(order_id)
         order.updated_at = self.get_timestamp()
@@ -168,7 +171,9 @@ class OrderService(Base):
 
         return order
 
-    def update_orders_in_shipment(self, shipment_id: int, orders: List[Order]) -> List[Order]:
+    def update_orders_in_shipment(
+        self, shipment_id: int, orders: List[Order]
+    ) -> List[Order]:
         packed_orders = self.get_orders_in_shipment(shipment_id)
         for x in packed_orders:
             if x not in orders:
