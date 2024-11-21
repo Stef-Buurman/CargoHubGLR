@@ -28,7 +28,6 @@ def read_item_groups(api_key: str = Depends(auth_provider_v2.get_api_key)):
     return item_groups
 
 
-
 @item_group_router_v2.get("/{item_group_id}/items")
 def read_items_for_item_group(
     item_group_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
