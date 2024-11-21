@@ -49,6 +49,47 @@ class SupplierService(Base):
                 raw_data = json.load(f)
                 self.data = [Supplier(**supplier_dict) for supplier_dict in raw_data]
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     def save(self):
         with open(self.data_path, "w") as f:
             json.dump([Supplier.model_dump() for Supplier in self.data], f)
