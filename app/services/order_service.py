@@ -1,17 +1,15 @@
-import json
 from typing import List
 from models.v2.order import Order
 from models.base import Base
-from services.data_provider_v2 import fetch_inventory_pool
 from models.v2.ItemInObject import ItemInObject
 from utils.globals import *
 from services.database_service import DB
 
 
 class OrderService(Base):
-    def __init__(self, is_debug=False):
+    def __init__(self, is_debug: bool = False, orders: List[Order] = None):
         self.db = DB
-        self.load(is_debug)
+        self.load(is_debug, orders)
 
     def get_orders(self) -> List[Order]:
         return self.db.get_all(Order)
@@ -30,11 +28,11 @@ class OrderService(Base):
         return items
 
     def get_orders_in_shipment(self, shipment_id: int) -> List[Order]:
-        result = []
-        for x in self.data:
-            if x.shipment_id == shipment_id:
-                result.append(x.id)
-        return result
+        return [
+            order
+            for order in self.db.get_all(Order)
+            if order.shipment_id == shipment_id
+        ]
 
     def get_orders_for_shipments(self, shipment_id: int) -> List[Order]:
         result = []
