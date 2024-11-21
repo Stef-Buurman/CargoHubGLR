@@ -3,6 +3,8 @@ name: Tests run
 on:
   pull_request:
     branches: ["Testing", "Production"]
+  repository_dispatch:
+      types: [retrigger_format_job]
   # push:
   #   branches:
   #     - '*' 
