@@ -3,9 +3,9 @@ name: Tests run
 on:
   pull_request:
     branches: ["Testing", "Production"]
-  push:
-    branches:
-      - '*' 
+  # push:
+  #   branches:
+  #     - '*' 
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
@@ -45,6 +45,15 @@ jobs:
           git add .
           git diff --cached --exit-code || git commit -m "Apply black code formatting"
           git push
+
+      - name: Rerun the workflow
+        run: |
+          # Trigger the workflow again after changes are pushed
+          curl -X POST \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            -d '{"event_type": "retrigger_format_job", "client_payload": {}}' \
+            https://api.github.com/repos/${{ github.repository }}/dispatches
   lint:
     runs-on: self-hosted
     steps:
