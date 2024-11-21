@@ -3,6 +3,11 @@ name: Tests run
 on:
   pull_request:
     branches: ["Testing", "Production"]
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - edited
   push:
     branches:
       - "Testing"
