@@ -30,17 +30,58 @@ jobs:
           source venv/bin/activate
           python -m pip install --upgrade pip
           pip install black
+      - name: Check out the current branch
+        run: |
+          git fetch --all
+          git checkout ${{ github.head_ref }}
+
       - name: Run black to reformat code
+        id: format_step
         run: |
           source venv/bin/activate
           black .
-      - name: Commit and push changes
+
+      - name: Check for changes and commit
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git remote set-url origin https://github-actions:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
           git add .
           git diff --cached --exit-code || git commit -m "Apply black code formatting"
           git push
+
+
+          # jobs:
+  # format:
+  #   runs-on: self-hosted
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: Set up virtual environment
+  #       run: |
+  #         python3 -m venv venv
+  #         source venv/bin/activate
+  #         python -m pip install --upgrade pip
+  #         pip install black
+
+  #     - name: Check out the current branch
+  #       run: |
+  #         git fetch --all
+  #         git checkout ${{ github.head_ref }}
+
+  #     - name: Run black to reformat code
+  #       id: format_step
+  #       run: |
+  #         source venv/bin/activate
+  #         black .
+
+  #     - name: Check for changes and commit
+  #       run: |
+  #         git config --global user.name "github-actions"
+  #         git config --global user.email "github-actions[bot]@users.noreply.github.com"
+  #         git remote set-url origin https://github-actions:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+  #         git add .
+  #         git diff --cached --exit-code || git commit -m "Apply black code formatting"
+  #         git push
 
   lint:
     needs: [format]
