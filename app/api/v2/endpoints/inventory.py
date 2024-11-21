@@ -20,7 +20,6 @@ def read_inventory(
     return inventory
 
 
-
 @inventory_router_v2.get("/")
 def read_inventories(api_key: str = Depends(auth_provider_v2.get_api_key)):
     data_provider_v2.init()
