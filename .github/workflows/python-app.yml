@@ -12,6 +12,8 @@ on:
     branches:
       - "Testing"
       - "Production"
+    paths:
+      - '**/*'
 
 permissions:
   contents: write
