@@ -163,9 +163,7 @@ class OrderService(Base):
 
         return order
 
-    def update_orders_in_shipment(
-        self, shipment_id: int, orders: List[Order]
-    ) -> List[Order]:
+    def update_orders_in_shipment(self, shipment_id: int, orders: List[Order]) -> List[Order]:
         packed_orders = self.get_orders_in_shipment(shipment_id)
         for x in packed_orders:
             if x not in orders:
