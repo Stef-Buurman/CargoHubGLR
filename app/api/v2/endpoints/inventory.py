@@ -29,7 +29,6 @@ def read_inventories(api_key: str = Depends(auth_provider_v2.get_api_key)):
     return inventories
 
 
-
 @inventory_router_v2.post("/")
 def create_inventory(
     inventory: Inventory, api_key: str = Depends(auth_provider_v2.get_api_key)
