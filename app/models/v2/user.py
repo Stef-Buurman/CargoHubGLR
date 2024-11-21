@@ -1,5 +1,5 @@
 from typing import List
-from models.v2.base import Base
+from .base import Base
 from .endpoint_access import EndpointAccess
 
 class User(Base):
