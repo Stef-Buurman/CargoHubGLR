@@ -1,13 +1,19 @@
 name: Trigger Tests and Format
 
 on:
-  push:
-    branches:
-      - "Testing"
-      - "Production"
+    push:
+        branches:
+            - "Testing"
+            - "Production"
+        paths-ignore:
+            - '.github/workflows/*'  # Ignore changes in workflow files, for example.
+    pull_request:
+        branches:
+            - "Testing"
+            - "Production"
     # Exclude pushes from github-actions[bot] using an if condition
-    paths-ignore:
-      - '.github/workflows/*'  # Ignore changes in workflow files, for example.
+        paths-ignore:
+        - '.github/workflows/*'  # Ignore changes in workflow files, for example.
 
 jobs:
   trigger:
