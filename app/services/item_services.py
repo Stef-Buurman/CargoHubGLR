@@ -19,36 +19,26 @@ class ItemService(Base):
         return self.db.get(Item, item_id)
 
     def get_items_for_item_line(self, item_line_id: int) -> List[Item]:
-        return[
-            item
-            for item in self.db.get_all(Item)
-            if item.item_line == item_line_id
+        return [
+            item for item in self.db.get_all(Item) if item.item_line == item_line_id
         ]
 
     def get_items_for_item_group(self, item_group_id: int) -> List[Item]:
-        return[
-            item
-            for item in self.db.get_all(Item)
-            if item.item_group == item_group_id
+        return [
+            item for item in self.db.get_all(Item) if item.item_group == item_group_id
         ]
 
     def get_items_for_item_type(self, item_type_id: int) -> List[Item]:
-        return[
-            item
-            for item in self.db.get_all(Item)
-            if item.item_type == item_type_id
+        return [
+            item for item in self.db.get_all(Item) if item.item_type == item_type_id
         ]
 
     def get_items_for_supplier(self, supplier_id: int) -> List[Item]:
-        return[
-            item
-            for item in self.db.get_all(Item)
-            if item.supplier_id == supplier_id
+        return [
+            item for item in self.db.get_all(Item) if item.supplier_id == supplier_id
         ]
 
-    def add_item(
-        self, item: Item, closeConnection: bool = True
-    ) -> Item:
+    def add_item(self, item: Item, closeConnection: bool = True) -> Item:
         item.created_at = self.get_timestamp()
         item.updated_at = self.get_timestamp()
         return self.db.insert(item, closeConnection)
