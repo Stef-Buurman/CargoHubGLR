@@ -15,7 +15,6 @@ def read_item_lines(api_key: str = Depends(auth_provider_v2.get_api_key)):
     return item_lines
 
 
-
 @item_line_router_v2.get("/{item_line_id}")
 def read_item_line(
     item_line_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
