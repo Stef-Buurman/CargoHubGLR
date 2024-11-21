@@ -96,9 +96,12 @@ class UserService(Base):
         else:
             for access in user.endpoint_access:
                 if access.endpoint == path:
+                    if access.full:
+                        return True
                     return getattr(access, method)
+            return False
     
-    def insert_user(self, api_key: str, app: str, full_access: bool, endpoint_access: dict) -> User | None:
+    def insert_user(self, api_key: str, app: str, full_access: bool, endpoint_access: List[EndpointAccess] | dict | None = None) -> User | None:
         if self.get_user(api_key):
             return None
         with self.db.get_connection() as conn:
@@ -117,16 +120,49 @@ class UserService(Base):
             ''', (api_key,))
             added_id = cursor.fetchone()[0]
 
-            for endpoint, access in endpoint_access.items():
-                if not access:
-                    continue
-                
-                cursor.execute('''
-                    INSERT INTO endpoint_access (user_id, endpoint, full, can_get, can_post, can_put, can_delete)
-                    VALUES (?, ?, ?, ?, ?, ?, ?)
-                ''', (added_id, endpoint, access["full"], access["get"], access["post"], access["put"], access["delete"]))
-                conn.commit()
+            if endpoint_access:
+                if isinstance(endpoint_access, dict):
+                    for endpoint, access in endpoint_access.items():
+                        if not access:
+                            continue
+                        
+                        cursor.execute('''
+                            INSERT INTO endpoint_access (user_id, endpoint, full, can_get, can_post, can_put, can_delete)
+                            VALUES (?, ?, ?, ?, ?, ?, ?)
+                        ''', (added_id, endpoint, access["full"], access["get"], access["post"], access["put"], access["delete"]))
+                        conn.commit()
+                elif isinstance(endpoint_access, list):
+                    for access in endpoint_access:
+                        if not access:
+                            continue
+                        cursor.execute('''
+                            INSERT INTO endpoint_access (user_id, endpoint, full, can_get, can_post, can_put, can_delete)
+                            VALUES (?, ?, ?, ?, ?, ?, ?)
+                        ''', (added_id, access.endpoint, access.full, access.get, access.post, access.put, access.delete))
+                        conn.commit()
+        
 
         added_user = self.get_user(api_key, True)
         self.data.append(added_user)
-        return added_id
+        return added_user
+
+    def delete_user(self, api_key: str) -> bool:
+        user = self.get_user(api_key)
+        if not user:
+            return False
+        with self.db.get_connection() as conn:
+            cursor = conn.cursor()
+
+            cursor.execute('''
+                DELETE FROM endpoint_access
+                WHERE user_id = ?
+            ''', (user.id,))
+            conn.commit()
+
+            cursor.execute('''
+                DELETE FROM users
+                WHERE api_key = ?
+            ''', (api_key,))
+            conn.commit()
+        self.data.remove(user)
+        return True
