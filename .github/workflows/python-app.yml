@@ -1,6 +1,12 @@
 name: Tests and Formatting Workflow
 
 on:
+  workflow_dispatch:
+    # Triggered manually or by the push-to-branch event
+    inputs:
+      event_type:
+        required: true
+        type: string
   pull_request:
     branches:
       - "Testing"
