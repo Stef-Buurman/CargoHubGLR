@@ -28,8 +28,6 @@ def read_locations(api_key: str = Depends(auth_provider_v2.get_api_key)):
     return locations
 
 
-
-
 @location_router_v2.post("/")
 def create_location(
     location: Location, api_key: str = Depends(auth_provider_v2.get_api_key)
