@@ -54,16 +54,14 @@ class ItemService(Base):
         return self.db.insert(item, closeConnection)
 
     def generate_uid(self) -> str | None:
-        current_id = max(
-            (int(item.uid[1:]) for item in self.db.get_all(Item)), default=0
-        )
+        self.current_id = max((int(item.uid[1:]) for item in self.data), default=0)
         new_uid = None
 
-        for _ in range(len(self.db.get_all(Item)) + 1):
-            current_id += 1
-            new_uid = f"P{current_id:06d}"
+        for _ in range(len(self.data) + 1):
+            self.current_id += 1
+            new_uid = f"P{self.current_id:06d}"
 
-            if not any(item.uid == new_uid for item in self.db.get_all(Item)):
+            if not any(item.uid == new_uid for item in self.data):
                 return new_uid
 
         return None
