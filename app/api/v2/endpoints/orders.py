@@ -42,7 +42,6 @@ def read_order_items(order_id: int, api_key: str = Depends(auth_provider.get_api
 def create_order(order: Order, api_key: str = Depends(auth_provider.get_api_key)):
     data_provider_v2.init()
     addedOrder = data_provider_v2.fetch_order_pool().add_order(order)
-    # data_provider_v2.fetch_order_pool().save()
     return JSONResponse(
         status_code=status.HTTP_201_CREATED, content=addedOrder.model_dump()
     )
@@ -57,7 +56,6 @@ def update_order(
     if existingOrder is None:
         raise HTTPException(status_code=404, detail="Order not found")
     updatedOrder = data_provider_v2.fetch_order_pool().update_order(order_id, order)
-    # data_provider_v2.fetch_order_pool().save()
     return updatedOrder
 
 
@@ -72,7 +70,6 @@ def add_items_to_order(
     if existingOrder is None:
         raise HTTPException(status_code=404, detail="Order not found")
     data_provider_v2.fetch_order_pool().update_items_in_order(order_id, items)
-    # data_provider_v2.fetch_order_pool().save()
     return items
 
 
@@ -96,7 +93,6 @@ def partial_update_order(
     partial_updated_order = data_provider_v2.fetch_order_pool().update_order(
         order_id, existing_order
     )
-    # data_provider_v2.fetch_order_pool().save()
     return partial_updated_order
 
 
@@ -110,5 +106,4 @@ def delete_order(order_id: int, api_key: str = Depends(auth_provider.get_api_key
         raise HTTPException(status_code=404, detail="Order not found")
 
     order_pool.remove_order(order_id)
-    # order_pool.save()
     return {"message": "Order deleted successfully"}
