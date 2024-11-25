@@ -10,50 +10,41 @@ CLIENTS = []
 class ClientService(Base):
     def __init__(self, root_path, is_debug=False):
         self.data_path = root_path + "clients.json"
-        self.load(is_debug)
         self.db = DB
+        self.load(is_debug)
 
     def get_clients(self) -> List[Client]:
-        return self.data
+        return self.db.get_all(Client)
 
     def get_client(self, client_id: int) -> Client | None:
-        for x in self.data:
-            if x.id == client_id:
-                return x
+        for client in self.data:
+            if client.id == client_id:
+                return client
         return None
-
-    def add_client(self, client: Client):
+    
+    def add_client(self, client: Client, closeConnection: bool = True) -> Client:
         client.created_at = self.get_timestamp()
         client.updated_at = self.get_timestamp()
-        self.data.append(client)
-        return client
+        added_client = self.db.insert(client, closeConnection)
+        self.data.append(added_client)
+        return added_client
 
-    def update_client(self, client_id: int, client: Client):
+    def update_client(self, client_id: int, client: Client, closeConnection: bool = True):
         client.updated_at = self.get_timestamp()
         for i in range(len(self.data)):
             if self.data[i].id == client_id:
                 self.data[i] = client
                 break
-        return client
+        return self.db.update(client, client_id, closeConnection)
 
-    def remove_client(self, client_id: int):
+    def remove_client(self, client_id: int, closeConnection: bool = True):
         for x in self.data:
             if x.id == client_id:
-                self.data.remove(x)
+                if self.db.delete(Client, client_id, closeConnection):
+                    self.data.remove(x)
 
     def load(self, is_debug: bool, clients: List[Client] | None = None):
         if is_debug and clients is not None:
             self.data = clients
         else:
-            with open(self.data_path, "r") as f:
-                raw_data = json.load(f)
-                self.data = [Client(**client_dict) for client_dict in raw_data]
-
-    def save(self):
-        with open(self.data_path, "w") as f:
-            json.dump([client.model_dump() for client in self.data], f)
-
-    def insert_client(self, client: Client, closeConnection: bool = True) -> Client:
-        client.created_at = self.get_timestamp()
-        client.updated_at = self.get_timestamp()
-        return self.db.insert(client, closeConnection)
+            self.data = self.get_clients()
