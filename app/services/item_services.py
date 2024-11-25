@@ -27,7 +27,7 @@ class ItemService(Base):
             if item.item_line == item_line_id:
                 result.append(item)
         return result
-    
+
     def get_items_for_item_group(self, item_group_id: int) -> List[Item]:
         result = []
         for item in self.data:
