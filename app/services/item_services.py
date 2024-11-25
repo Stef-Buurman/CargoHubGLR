@@ -39,6 +39,7 @@ class ItemService(Base):
         ]
 
     def add_item(self, item: Item, closeConnection: bool = True) -> Item:
+        item.uid = self.generate_uid()
         item.created_at = self.get_timestamp()
         item.updated_at = self.get_timestamp()
         return self.db.insert(item, closeConnection)
