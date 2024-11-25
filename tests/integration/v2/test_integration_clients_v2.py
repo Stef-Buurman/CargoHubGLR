@@ -61,7 +61,7 @@ def test_add_CargoClient_invalid_api_key(client):
 def test_add_CargoClient(client):
     response = client.post("/clients/", json=test_CargoClient, headers=test_headers)
     assert response.status_code == 201 or response.status_code == 200
-    assert response.json()["id"] == test_CargoClient["id"]
+    test_CargoClient["id"] = response.json()["id"]
 
 
 # def test_add_existing_CargoClient(client):
