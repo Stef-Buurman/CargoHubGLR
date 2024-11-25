@@ -77,7 +77,7 @@ def get_locations():
     from .location_service import LocationService
 
     global _locations
-    _locations = LocationService(ROOT_PATH, DEBUG)
+    _locations = LocationService(DEBUG)
 
 
 def get_transfers():
