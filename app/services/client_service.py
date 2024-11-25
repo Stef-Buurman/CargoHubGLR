@@ -36,10 +36,10 @@ class ClientService(Base):
         return self.db.update(client, client_id, closeConnection)
 
     def remove_client(self, client_id: int, closeConnection: bool = True):
-        for x in self.data:
-            if x.id == client_id:
+        for client in self.data:
+            if client.id == client_id:
                 if self.db.delete(Client, client_id, closeConnection):
-                    self.data.remove(x)
+                    self.data.remove(client)
 
     def load(self, is_debug: bool, clients: List[Client] | None = None):
         if is_debug and clients is not None:
