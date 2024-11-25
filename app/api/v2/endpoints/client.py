@@ -45,7 +45,6 @@ def create_client(client: Client, api_key: str = Depends(auth_provider_v2.get_ap
     # if existing_client is not None:
     #     raise HTTPException(status_code=409, detail="Client already exists")
     created_client = data_provider_v2.fetch_client_pool().add_client(client)
-    data_provider_v2.fetch_client_pool().save()
     return JSONResponse(
         status_code=status.HTTP_201_CREATED, content=created_client.model_dump()
     )
@@ -62,7 +61,6 @@ def update_client(
     updated_client = data_provider_v2.fetch_client_pool().update_client(
         client_id, client
     )
-    data_provider_v2.fetch_client_pool().save()
     return updated_client
 
 
@@ -86,7 +84,6 @@ def partial_update_client(
     partial_updated_client = data_provider_v2.fetch_client_pool().update_client(
         client_id, existing_client
     )
-    data_provider_v2.fetch_client_pool().save()
     return partial_updated_client
 
 
@@ -97,5 +94,4 @@ def delete_client(client_id: int, api_key: str = Depends(auth_provider_v2.get_ap
     if client is None:
         raise HTTPException(status_code=404, detail="Client not found")
     data_provider_v2.fetch_client_pool().remove_client(client_id)
-    data_provider_v2.fetch_client_pool().save()
     return {"message": "Client deleted successfully"}
