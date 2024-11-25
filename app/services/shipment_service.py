@@ -16,7 +16,7 @@ class ShipmentService(Base):
         self.current_id = 0
         self.db = DB
 
-    def get_shipments(self) -> List[Shipment]:
+    def get_shipments(self) -> List[Shipmen]:
         return self.data
 
     def get_shipment(self, shipment_id: str) -> Optional[Shipment]:
