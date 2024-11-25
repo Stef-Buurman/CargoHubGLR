@@ -3,7 +3,7 @@ import httpx
 from tests.integration.test_globals import *
 
 test_order = {
-    "id": 999999999999999999,
+    "id": 99999999999999999,
     "source_id": 52,
     "order_date": "1983-09-26T19:06:08Z",
     "request_date": "1983-09-30T19:06:08Z",
