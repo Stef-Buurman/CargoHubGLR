@@ -1,14 +1,14 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
 from models.v2.inventory import Inventory
-from services import data_provider_v2, auth_provider
+from services import data_provider_v2, auth_provider_v2
 
 inventory_router_v2 = APIRouter()
 
 
 @inventory_router_v2.get("/{inventory_id}")
 def read_inventory(
-    inventory_id: int, api_key: str = Depends(auth_provider.get_api_key)
+    inventory_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
     inventory = data_provider_v2.fetch_inventory_pool().get_inventory(inventory_id)
@@ -21,7 +21,7 @@ def read_inventory(
 
 
 @inventory_router_v2.get("/")
-def read_inventories(api_key: str = Depends(auth_provider.get_api_key)):
+def read_inventories(api_key: str = Depends(auth_provider_v2.get_api_key)):
     data_provider_v2.init()
     inventories = data_provider_v2.fetch_inventory_pool().get_inventories()
     if inventories is None:
@@ -31,7 +31,7 @@ def read_inventories(api_key: str = Depends(auth_provider.get_api_key)):
 
 @inventory_router_v2.post("/")
 def create_inventory(
-    inventory: Inventory, api_key: str = Depends(auth_provider.get_api_key)
+    inventory: Inventory, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
     existingInventory = data_provider_v2.fetch_inventory_pool().get_inventory(
@@ -50,7 +50,7 @@ def create_inventory(
 def update_inventory(
     inventory_id: int,
     inventory: Inventory,
-    api_key: str = Depends(auth_provider.get_api_key),
+    api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
     inventory_exists = data_provider_v2.fetch_inventory_pool().get_inventory(
@@ -69,7 +69,7 @@ def update_inventory(
 def partial_update_inventory(
     inventory_id: int,
     inventory: dict,
-    api_key: str = Depends(auth_provider.get_api_key),
+    api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
     existing_inventory = data_provider_v2.fetch_inventory_pool().get_inventory(
@@ -95,7 +95,7 @@ def partial_update_inventory(
 
 @inventory_router_v2.delete("/{inventory_id}")
 def delete_inventory(
-    inventory_id: int, api_key: str = Depends(auth_provider.get_api_key)
+    inventory_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
     inventory_pool = data_provider_v2.fetch_inventory_pool()

@@ -1,13 +1,15 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Response
 from fastapi.responses import JSONResponse
-from services import data_provider_v2, auth_provider
+from services import data_provider_v2, auth_provider_v2
 from models.v2.location import Location
 
 location_router_v2 = APIRouter()
 
 
 @location_router_v2.get("/{location_id}")
-def read_location(location_id: int, api_key: str = Depends(auth_provider.get_api_key)):
+def read_location(
+    location_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
+):
     data_provider_v2.init()
     location = data_provider_v2.fetch_location_pool().get_location(location_id)
     if location is None:
@@ -18,7 +20,7 @@ def read_location(location_id: int, api_key: str = Depends(auth_provider.get_api
 
 
 @location_router_v2.get("/")
-def read_locations(api_key: str = Depends(auth_provider.get_api_key)):
+def read_locations(api_key: str = Depends(auth_provider_v2.get_api_key)):
     data_provider_v2.init()
     locations = data_provider_v2.fetch_location_pool().get_locations()
     if locations is None:
@@ -28,7 +30,7 @@ def read_locations(api_key: str = Depends(auth_provider.get_api_key)):
 
 @location_router_v2.post("/")
 def create_location(
-    location: Location, api_key: str = Depends(auth_provider.get_api_key)
+    location: Location, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
     existing_location = data_provider_v2.fetch_location_pool().get_location(location.id)
@@ -46,7 +48,7 @@ def create_location(
 def update_location(
     location_id: int,
     location: Location,
-    api_key: str = Depends(auth_provider.get_api_key),
+    api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
     existing_location = data_provider_v2.fetch_location_pool().get_location(location_id)
@@ -64,7 +66,7 @@ def update_location(
 def partial_update_location(
     location_id: int,
     location: dict,
-    api_key: str = Depends(auth_provider.get_api_key),
+    api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
     existing_location = data_provider_v2.fetch_location_pool().get_location(location_id)
@@ -85,7 +87,7 @@ def partial_update_location(
 
 @location_router_v2.delete("/{location_id}")
 def delete_location(
-    location_id: int, api_key: str = Depends(auth_provider.get_api_key)
+    location_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
     location = data_provider_v2.fetch_location_pool().get_location(location_id)
