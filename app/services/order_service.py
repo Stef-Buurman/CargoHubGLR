@@ -30,31 +30,25 @@ class OrderService(Base):
         return items
 
     def get_orders_in_shipment(self, shipment_id: int) -> List[Order]:
-        return [
-            order
-            for order in self.db.get_all(Order)
-            if order.shipment_id == shipment_id
-        ]
+        result = []
+        for x in self.data:
+            if x.shipment_id == shipment_id:
+                result.append(x.id)
+        return result
 
     def get_orders_for_shipments(self, shipment_id: int) -> List[Order]:
-        query = "SELECT * FROM orders WHERE shipment_id = ?"
-        result = self.db.execute_all(query, (shipment_id,))
-
-        orders = []
-        for row in result:
-            order = Order(**row)
-            orders.append(order)
-        return orders
+        result = []
+        for order in self.data:
+            if order.shipment_id == shipment_id:
+                result.append(order)
+        return result
 
     def get_orders_for_client(self, client_id: str) -> List[Order]:
-        query = "SELECT * FROM orders WHERE ship_to = ? OR bill_to = ?"
-        result = self.db.execute_all(query, (client_id, client_id))
-
-        orders = []
-        for row in result:
-            order = Order(**row)
-            orders.append(order)
-        return orders
+        result = []
+        for order in self.data:
+            if order.ship_to == client_id or order.bill_to == client_id:
+                result.append(order)
+        return result
 
     def add_order(self, order: Order, closeConnection: bool = True) -> Order:
         table_name = order.table_name()
