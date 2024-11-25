@@ -28,11 +28,11 @@ class OrderService(Base):
         return items
 
     def get_orders_in_shipment(self, shipment_id: int) -> List[Order]:
-        return [
-            order
-            for order in self.db.get_all(Order)
-            if order.shipment_id == shipment_id
-        ]
+        result = []
+        for x in self.data:
+            if x.shipment_id == shipment_id:
+                result.append(x.id)
+        return result
 
     def get_orders_for_shipments(self, shipment_id: int) -> List[Order]:
         result = []
