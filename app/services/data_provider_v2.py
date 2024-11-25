@@ -91,7 +91,7 @@ def get_clients():
     from .client_service import ClientService
 
     global _clients
-    _clients = ClientService(ROOT_PATH, DEBUG)
+    _clients = ClientService(DEBUG)
 
 
 def get_shipments():

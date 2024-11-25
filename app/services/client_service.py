@@ -3,14 +3,11 @@ from models.v2.client import Client
 from models.base import Base
 from services.database_service import DB
 
-CLIENTS = []
-
 
 class ClientService(Base):
-    def __init__(self, root_path, is_debug=False):
-        self.data_path = root_path + "clients.json"
+    def __init__(self, is_debug=False, clients: List[Client] | None = None):
         self.db = DB
-        self.load(is_debug)
+        self.load(is_debug, clients)
 
     def get_clients(self) -> List[Client]:
         return self.db.get_all(Client)
