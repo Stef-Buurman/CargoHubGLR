@@ -7,23 +7,24 @@ LOCATIONS = []
 
 
 class LocationService(Base):
-    def __init__(self, root_path, is_debug=False):
-        self.data_path = root_path + "locations.json"
+    def __init__(self, is_debug=False):
         self.db = DB
         self.load(is_debug)
 
     def get_locations(self) -> List[Location]:
-        return self.db.get_all(Location)
+        return self.data
 
     def get_location(self, location_id: int) -> Location | None:
-        return self.db.get(Location, location_id)
+        for location in self.data:
+            if location.id == location_id:
+                return location
+        return None
 
     def get_locations_in_warehouse(self, warehouse_id: int):
-        return [
-            location
-            for location in self.db.get_all(Location)
-            if location.warehouse_id == warehouse_id
-        ]
+        for location in self.data:
+            if location.warehouse_id == warehouse_id:
+                return location
+        return None
 
     def add_location(
         self, location: Location, closeConnection: bool = True

@@ -70,21 +70,21 @@ def get_warehouses():
     from .warehouse_service import WarehouseService
 
     global _warehouses
-    _warehouses = WarehouseService(ROOT_PATH, DEBUG)
+    _warehouses = WarehouseService(DEBUG)
 
 
 def get_locations():
     from .location_service import LocationService
 
     global _locations
-    _locations = LocationService(ROOT_PATH, DEBUG)
+    _locations = LocationService(DEBUG)
 
 
 def get_transfers():
     from .transfer_service import TransferService
 
     global _transfers
-    _transfers = TransferService(ROOT_PATH, DEBUG)
+    _transfers = TransferService(DEBUG)
 
 
 def get_clients():

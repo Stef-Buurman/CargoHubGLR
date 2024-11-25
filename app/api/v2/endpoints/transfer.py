@@ -46,10 +46,9 @@ def create_transfer(
 ):
     data_provider_v2.init()
     existing_transfer = data_provider_v2.fetch_transfer_pool().get_transfer(transfer.id)
-    if existing_transfer is not None:
-        raise HTTPException(status_code=409, detail="Transfer already exists")
+    # if existing_transfer is not None:
+    #     raise HTTPException(status_code=409, detail="Transfer already exists")
     created_transfer = data_provider_v2.fetch_transfer_pool().add_transfer(transfer)
-    data_provider_v2.fetch_transfer_pool().save()
     return created_transfer
 
 
@@ -66,7 +65,6 @@ def update_transfer(
     updated_transfer = data_provider_v2.fetch_transfer_pool().update_transfer(
         transfer_id, transfer
     )
-    data_provider_v2.fetch_transfer_pool().save()
     return updated_transfer
 
 
@@ -87,7 +85,6 @@ def partial_update_transfer(
     partial_updated_transfer = data_provider_v2.fetch_transfer_pool().update_transfer(
         transfer_id, existing_transfer
     )
-    data_provider_v2.fetch_transfer_pool().save()
     return partial_updated_transfer
 
 
@@ -105,9 +102,7 @@ def commit_transfer(
     data_provider_v2.fetch_transfer_pool().update_transfer(
         transfer_id, committed_transfer
     )
-    data_provider_v2.fetch_transfer_pool().save()
     data_provider_v2.fetch_inventory_pool().save()
-
     return {"message": "Transfer committed successfully"}
 
 
@@ -120,5 +115,4 @@ def delete_transfer(
     if transfer is None:
         raise HTTPException(status_code=404, detail="Transfer not found")
     data_provider_v2.fetch_transfer_pool().remove_transfer(transfer_id)
-    data_provider_v2.fetch_transfer_pool().save()
     return {"message": "Transfer deleted successfully"}
