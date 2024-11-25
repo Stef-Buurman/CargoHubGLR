@@ -55,8 +55,6 @@ class TransferService(Base):
         values = tuple(fields.values())
 
         insert_sql = f"INSERT INTO {table_name} ({columns}) VALUES ({placeholders})"
-        print(insert_sql)
-        print(values)
 
         with self.db.get_connection_without_close() as conn:
             cursor = conn.execute(insert_sql, values)
