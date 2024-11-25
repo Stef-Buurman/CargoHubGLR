@@ -16,7 +16,10 @@ class ItemService(Base):
         return self.db.get_all(Item)
 
     def get_item(self, item_id: str) -> Item | None:
-        return self.db.get(Item, item_id)
+        for item in self.data:
+            if item.uid == item_id:
+                return item
+        return None
 
     def get_items_for_item_line(self, item_line_id: int) -> List[Item]:
         return [
@@ -71,10 +74,6 @@ class ItemService(Base):
             self.data = item
         else:
             self.data = self.db.get_all(Item)
-
-    # def save(self):
-    #     with open(self.data_path, "w") as f:
-    #         json.dump([item.model_dump() for item in self.data], f)
 
     def insert_item(self, item: Item, closeConnection: bool = True) -> Item:
         item.created_at = self.get_timestamp()
