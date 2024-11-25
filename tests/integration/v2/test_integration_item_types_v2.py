@@ -4,7 +4,7 @@ from tests.integration.test_globals import *
 
 
 test_item_type = {
-    "id": 9009098098908779890978162356712312736871219,
+    "id": 99999999999999999,
     "name": "Dit is een hele mooie test naam!",
     "description": "",
     "created_at": "2023-03-16 11:54:38",
