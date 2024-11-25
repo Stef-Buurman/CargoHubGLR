@@ -21,7 +21,7 @@ class ClientService(Base):
             if client.id == client_id:
                 return client
         return None
-    
+
     def add_client(self, client: Client, closeConnection: bool = True) -> Client:
         client.created_at = self.get_timestamp()
         client.updated_at = self.get_timestamp()
@@ -29,7 +29,9 @@ class ClientService(Base):
         self.data.append(added_client)
         return added_client
 
-    def update_client(self, client_id: int, client: Client, closeConnection: bool = True):
+    def update_client(
+        self, client_id: int, client: Client, closeConnection: bool = True
+    ):
         client.updated_at = self.get_timestamp()
         for i in range(len(self.data)):
             if self.data[i].id == client_id:
