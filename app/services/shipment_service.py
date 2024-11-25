@@ -18,7 +18,10 @@ class ShipmentService(Base):
         return self.db.get_all(Shipment)
 
     def get_shipment(self, shipment_id: str) -> Optional[Shipment]:
-        return self.db.get(Shipment, shipment_id)
+        for shipment in self.data:
+            if shipment.id == shipment_id:
+                return shipment
+        return None
 
     def get_items_in_shipment(self, shipment_id: str) -> Optional[List[dict]]:
         shipment = self.get_shipment(shipment_id)
