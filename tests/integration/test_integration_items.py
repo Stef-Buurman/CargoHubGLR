@@ -4,7 +4,7 @@ from test_globals import *
 
 
 test_item = {
-    "uid": "ditIsEenIdDieTochNooiZalGaanBestaan",
+    "uid": "P0999999999",
     "code": "oekiloekie",
     "description": "wat doet dit item",
     "short_description": "must",

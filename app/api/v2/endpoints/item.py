@@ -58,7 +58,6 @@ def read_inventory_totals_of_item(
 def create_item(item: Item, api_key: str = Depends(auth_provider.get_api_key)):
     data_provider_v2.init()
     addedItem = data_provider_v2.fetch_item_pool().add_item(item)
-    data_provider_v2.fetch_item_pool().save()
     return JSONResponse(
         status_code=status.HTTP_201_CREATED, content=addedItem.model_dump()
     )
@@ -73,7 +72,6 @@ def update_item(
     if existingItem is None:
         raise HTTPException(status_code=404, detail="Item not found")
     updated_item = data_provider_v2.fetch_item_pool().update_item(item_id, item)
-    data_provider_v2.fetch_item_pool().save()
     return updated_item
 
 
@@ -97,7 +95,6 @@ def partial_update_item(
     partial_updated_item = data_provider_v2.fetch_item_pool().update_item(
         item_id, existing_item
     )
-    data_provider_v2.fetch_item_pool().save()
     return partial_updated_item
 
 
@@ -111,5 +108,4 @@ def delete_item(item_id: str, api_key: str = Depends(auth_provider.get_api_key))
         raise HTTPException(status_code=404, detail="Item not found")
 
     item_pool.remove_item(item_id)
-    item_pool.save()
     return {"message": "Item deleted successfully"}

@@ -101,9 +101,9 @@ class DatabaseService:
         with self.get_connection_without_close() as conn:
             cursor = conn.execute(insert_sql, values)
 
-            inserted_id = cursor.lastrowid
-
-            setattr(model, primary_key_field, inserted_id)
+            if primary_key_field == "id":
+                inserted_id = cursor.lastrowid
+                setattr(model, primary_key_field, inserted_id)
 
         if closeConnection:
             self.commit_and_close()
