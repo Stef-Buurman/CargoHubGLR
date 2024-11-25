@@ -1,4 +1,3 @@
-import json
 from typing import List
 from models.v2.client import Client
 from models.base import Base
