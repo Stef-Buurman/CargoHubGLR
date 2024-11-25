@@ -22,24 +22,32 @@ class ItemService(Base):
         return None
 
     def get_items_for_item_line(self, item_line_id: int) -> List[Item]:
-        return [
-            item for item in self.db.get_all(Item) if item.item_line == item_line_id
-        ]
-
+        result = []
+        for item in self.data:
+            if item.item_line == item_line_id:
+                result.append(item)
+        return result
+    
     def get_items_for_item_group(self, item_group_id: int) -> List[Item]:
-        return [
-            item for item in self.db.get_all(Item) if item.item_group == item_group_id
-        ]
+        result = []
+        for item in self.data:
+            if item.item_group == item_group_id:
+                result.append(item)
+        return result
 
     def get_items_for_item_type(self, item_type_id: int) -> List[Item]:
-        return [
-            item for item in self.db.get_all(Item) if item.item_type == item_type_id
-        ]
+        result = []
+        for item in self.data:
+            if item.item_type == item_type_id:
+                result.append(item)
+        return result
 
     def get_items_for_supplier(self, supplier_id: int) -> List[Item]:
-        return [
-            item for item in self.db.get_all(Item) if item.supplier_id == supplier_id
-        ]
+        result = []
+        for item in self.data:
+            if item.supplier_id == supplier_id:
+                result.append(item)
+        return result
 
     def add_item(self, item: Item, closeConnection: bool = True) -> Item:
         item.uid = self.generate_uid()
@@ -73,7 +81,7 @@ class ItemService(Base):
         if is_debug and item is not None:
             self.data = item
         else:
-            self.data = self.db.get_all(Item)
+            self.data = self.get_items()
 
     def insert_item(self, item: Item, closeConnection: bool = True) -> Item:
         item.created_at = self.get_timestamp()
