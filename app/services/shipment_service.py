@@ -1,6 +1,6 @@
 import json
 from typing import List, Optional
-from models.v2.shipment import ShipmentDB
+from models.v2.shipment import Shipment
 from models.base import Base
 from services.data_provider_v2 import fetch_inventory_pool
 from services.database_service import DB
@@ -14,22 +14,22 @@ class ShipmentService(Base):
         self.db = DB
         self.load(is_debug)
 
-    def get_shipments(self) -> List[ShipmentDB]:
-        return self.db.get_all(ShipmentDB)
+    def get_shipments(self) -> List[Shipment]:
+        return self.db.get_all(Shipment)
 
-    def get_shipment(self, shipment_id: str) -> Optional[ShipmentDB]:
-        return self.db.get(ShipmentDB, shipment_id)
+    def get_shipment(self, shipment_id: str) -> Optional[Shipment]:
+        return self.db.get(Shipment, shipment_id)
 
     def get_items_in_shipment(self, shipment_id: str) -> Optional[List[dict]]:
         shipment = self.get_shipment(shipment_id)
         return shipment.items if shipment else None
 
-    def add_shipment(self, shipment: ShipmentDB, closeConnection: bool = True) -> ShipmentDB:
+    def add_shipment(self, shipment: Shipment, closeConnection: bool = True) -> Shipment:
         shipment.created_at = self.get_timestamp()
         shipment.updated_at = self.get_timestamp()
         return self.db.insert(shipment, closeConnection)
 
-    def update_shipment(self, shipment_id: str, shipment: ShipmentDB, closeConnection: bool = True) -> ShipmentDB:
+    def update_shipment(self, shipment_id: str, shipment: Shipment, closeConnection: bool = True) -> Shipment:
         shipment.updated_at = self.get_timestamp()
         return self.db.update(shipment, shipment_id, closeConnection)
 
@@ -42,7 +42,7 @@ class ShipmentService(Base):
             return shipment
 
     def update_inventory_for_items(
-        self, current_items: List[ShipmentDB], new_items: List[dict]
+        self, current_items: List[Shipment], new_items: List[dict]
     ):
         def update_inventory(item_id, amount_change):
             inventories = fetch_inventory_pool().get_inventories_for_item(item_id)
@@ -74,21 +74,21 @@ class ShipmentService(Base):
                 update_inventory(item["item_id"], item["amount"])
 
     def remove_shipment(self, shipment_id: str, closeConnection: bool = True) -> bool:
-        return self.db.delete(ShipmentDB, shipment_id, closeConnection)
+        return self.db.delete(Shipment, shipment_id, closeConnection)
 
-    def load(self, is_debug: bool, shipments: List[ShipmentDB] | None = None):
+    def load(self, is_debug: bool, shipments: List[Shipment] | None = None):
         if is_debug and shipments is not None:
             self.data = shipments
         else:
-            self.data = self.db.get_all(ShipmentDB)
+            self.data = self.db.get_all(Shipment)
 
     def save(self):
         with open(self.data_path, "w") as f:
             json.dump([shipment.model_dump() for shipment in self.data], f)
 
     def insert_shipment(
-        self, shipment: ShipmentDB, closeConnection: bool = True
-    ) -> ShipmentDB:
+        self, shipment: Shipment, closeConnection: bool = True
+    ) -> Shipment:
         table_name = shipment.table_name()
 
         shipment.created_at = self.get_timestamp()
