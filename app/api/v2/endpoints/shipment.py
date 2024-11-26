@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Response, status
 from fastapi.responses import JSONResponse
-from services import data_provider_v2, auth_provider
+from services import data_provider_v2, auth_provider_v2
 from models.v2.shipment import Shipment
 from typing import List, Dict, Union
 
@@ -8,7 +8,9 @@ shipment_router_v2 = APIRouter()
 
 
 @shipment_router_v2.get("/{shipment_id}")
-def read_shipment(shipment_id: int, api_key: str = Depends(auth_provider.get_api_key)):
+def read_shipment(
+    shipment_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
+):
     data_provider_v2.init()
     shipment = data_provider_v2.fetch_shipment_pool().get_shipment(shipment_id)
     if shipment is None:
@@ -19,7 +21,7 @@ def read_shipment(shipment_id: int, api_key: str = Depends(auth_provider.get_api
 
 
 @shipment_router_v2.get("/")
-def read_shipments(api_key: str = Depends(auth_provider.get_api_key)):
+def read_shipments(api_key: str = Depends(auth_provider_v2.get_api_key)):
     data_provider_v2.init()
     shipments = data_provider_v2.fetch_shipment_pool().get_shipments()
     if shipments is None:
@@ -29,7 +31,7 @@ def read_shipments(api_key: str = Depends(auth_provider.get_api_key)):
 
 @shipment_router_v2.get("/{shipment_id}/orders")
 def read_orders_for_shipment(
-    shipment_id: int, api_key: str = Depends(auth_provider.get_api_key)
+    shipment_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
     shipment = data_provider_v2.fetch_shipment_pool().get_shipment(shipment_id)
@@ -43,7 +45,7 @@ def read_orders_for_shipment(
 
 @shipment_router_v2.get("/{shipment_id}/items")
 def read_items_for_shipment(
-    shipment_id: int, api_key: str = Depends(auth_provider.get_api_key)
+    shipment_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
     shipment = data_provider_v2.fetch_shipment_pool().get_shipment(shipment_id)
@@ -57,7 +59,7 @@ def read_items_for_shipment(
 
 @shipment_router_v2.post("/")
 def create_shipment(
-    shipment: Shipment, api_key: str = Depends(auth_provider.get_api_key)
+    shipment: Shipment, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
     existingShipment = data_provider_v2.fetch_shipment_pool().get_shipment(shipment.id)
@@ -74,7 +76,7 @@ def create_shipment(
 def update_shipment(
     shipment_id: int,
     shipment: Shipment,
-    api_key: str = Depends(auth_provider.get_api_key),
+    api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
     existingShipment = data_provider_v2.fetch_shipment_pool().get_shipment(shipment_id)
@@ -91,7 +93,7 @@ def update_shipment(
 def update_orders_in_shipment(
     shipment_id: int,
     updated_orders: Dict,
-    api_key: str = Depends(auth_provider.get_api_key),
+    api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
     shipment = data_provider_v2.fetch_shipment_pool().get_shipment(shipment_id)
@@ -112,7 +114,7 @@ def update_orders_in_shipment(
 def update_items_in_shipment(
     shipment_id: int,
     updated_item: Dict[str, Union[str, int]],
-    api_key: str = Depends(auth_provider.get_api_key),
+    api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
     shipment = data_provider_v2.fetch_shipment_pool().get_shipment(shipment_id)
@@ -131,7 +133,7 @@ def update_items_in_shipment(
 
 @shipment_router_v2.put("/{shipment_id}/commit")
 def commit_shipment(
-    shipment_id: int, api_key: str = Depends(auth_provider.get_api_key)
+    shipment_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
     shipment = data_provider_v2.fetch_shipment_pool().get_shipment(shipment_id)
@@ -146,7 +148,7 @@ def commit_shipment(
 def partial_update_shipment(
     shipment_id: int,
     shipment: dict,
-    api_key: str = Depends(auth_provider.get_api_key),
+    api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
     existing_shipment = data_provider_v2.fetch_shipment_pool().get_shipment(shipment_id)
@@ -168,7 +170,7 @@ def partial_update_shipment(
 
 @shipment_router_v2.delete("/{shipment_id}")
 def delete_shipment(
-    shipment_id: int, api_key: str = Depends(auth_provider.get_api_key)
+    shipment_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
     shipment_pool = data_provider_v2.fetch_shipment_pool()

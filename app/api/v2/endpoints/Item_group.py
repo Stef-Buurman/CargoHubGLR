@@ -1,14 +1,14 @@
 from fastapi import APIRouter, Depends, HTTPException, Response, status
 from fastapi.responses import JSONResponse
 from models.v2.item_group import ItemGroup
-from services import data_provider_v2, auth_provider
+from services import data_provider_v2, auth_provider_v2
 
 item_group_router_v2 = APIRouter()
 
 
 @item_group_router_v2.get("/{item_group_id}")
 def read_item_group(
-    item_group_id: int, api_key: str = Depends(auth_provider.get_api_key)
+    item_group_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
     item_group = data_provider_v2.fetch_item_group_pool().get_item_group(item_group_id)
@@ -20,7 +20,7 @@ def read_item_group(
 
 
 @item_group_router_v2.get("/")
-def read_item_groups(api_key: str = Depends(auth_provider.get_api_key)):
+def read_item_groups(api_key: str = Depends(auth_provider_v2.get_api_key)):
     data_provider_v2.init()
     item_groups = data_provider_v2.fetch_item_group_pool().get_item_groups()
     if item_groups is None:
@@ -30,7 +30,7 @@ def read_item_groups(api_key: str = Depends(auth_provider.get_api_key)):
 
 @item_group_router_v2.get("/{item_group_id}/items")
 def read_items_for_item_group(
-    item_group_id: int, api_key: str = Depends(auth_provider.get_api_key)
+    item_group_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
     item_group = data_provider_v2.fetch_item_group_pool().get_item_group(item_group_id)
@@ -46,7 +46,7 @@ def read_items_for_item_group(
 
 @item_group_router_v2.post("/")
 def create_item_group(
-    item_group: ItemGroup, api_key: str = Depends(auth_provider.get_api_key)
+    item_group: ItemGroup, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
     existingitem_group = data_provider_v2.fetch_item_group_pool().get_item_group(
@@ -67,7 +67,7 @@ def create_item_group(
 def update_item_group(
     item_group_id: int,
     item_group: ItemGroup,
-    api_key: str = Depends(auth_provider.get_api_key),
+    api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
     existingitem_group = data_provider_v2.fetch_item_group_pool().get_item_group(
@@ -86,7 +86,7 @@ def update_item_group(
 def partial_update_item_group(
     item_group_id: int,
     item_group: dict,
-    api_key: str = Depends(auth_provider.get_api_key),
+    api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
     existing_item_group = data_provider_v2.fetch_item_group_pool().get_item_group(
@@ -112,7 +112,7 @@ def partial_update_item_group(
 
 @item_group_router_v2.delete("/{item_group_id}")
 def delete_item_group(
-    item_group_id: int, api_key: str = Depends(auth_provider.get_api_key)
+    item_group_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
     item_group_pool = data_provider_v2.fetch_item_group_pool()

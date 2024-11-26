@@ -3,14 +3,11 @@ from typing import List
 from models.base import Base
 from services.database_service import DB
 
-LOCATIONS = []
-
 
 class LocationService(Base):
-    def __init__(self, root_path, is_debug=False):
-        self.data_path = root_path + "locations.json"
+    def __init__(self, is_debug=False, locations: List[Location] | None = None):
         self.db = DB
-        self.load(is_debug)
+        self.load(is_debug, locations)
 
     def get_locations(self) -> List[Location]:
         return self.db.get_all(Location)
