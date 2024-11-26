@@ -30,6 +30,24 @@ class OrderService(Base):
             order.items = order_items_map.get(order.id, [])
 
         return all_orders
+        all_orders = self.db.get_all(Order)
+        order_ids = [order.id for order in all_orders]
+
+        with self.db.get_connection() as conn:
+            query = f"SELECT item_id, amount, order_id FROM {order_items_table} WHERE order_id IN ({', '.join(map(str, order_ids))})"
+            cursor = conn.execute(query)
+            all_order_items = cursor.fetchall()
+
+        order_items_map = {}
+        for row in all_order_items:
+            if row[2] not in order_items_map:
+                order_items_map[row[2]] = []
+            order_items_map[row[2]].append(ItemInObject(item_id=row[0], amount=row[1]))
+
+        for order in all_orders:
+            order.items = order_items_map.get(order.id, [])
+
+        return all_orders
 
     def get_order(self, order_id: int) -> Order | None:
         for order in self.data:
