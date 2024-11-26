@@ -128,6 +128,7 @@ def test_get_inventory_of_item(client):
     responseAddInventory = client.post(
         "/inventories/", json=test_inventory, headers=test_headers
     )
+    test_inventory["id"] = responseAddInventory.json()["id"]
     assert (
         responseAddInventory.status_code == 201
         or responseAddInventory.status_code == 200

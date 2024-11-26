@@ -40,7 +40,6 @@ def create_inventory(
     if existingInventory is not None:
         raise HTTPException(status_code=409, detail="inventory already exists")
     created_inventory = data_provider_v2.fetch_inventory_pool().add_inventory(inventory)
-    data_provider_v2.fetch_inventory_pool().save()
     return JSONResponse(
         status_code=status.HTTP_201_CREATED, content=created_inventory.model_dump()
     )
@@ -61,7 +60,6 @@ def update_inventory(
     updated_inventory = data_provider_v2.fetch_inventory_pool().update_inventory(
         inventory_id, inventory
     )
-    data_provider_v2.fetch_inventory_pool().save()
     return updated_inventory
 
 
@@ -89,7 +87,6 @@ def partial_update_inventory(
             inventory_id, existing_inventory
         )
     )
-    data_provider_v2.fetch_inventory_pool().save()
     return partial_updated_inventory
 
 
@@ -105,5 +102,4 @@ def delete_inventory(
         raise HTTPException(status_code=404, detail="inventory not found")
 
     inventory_pool.remove_inventory(inventory_id)
-    inventory_pool.save()
     return {"message": "inventory deleted successfully"}
