@@ -8,7 +8,7 @@ ITEMS = []
 
 
 class ItemService(Base):
-    def __init__(self, is_debug=False, items=None):
+    def __init__(self, is_debug=bool, items: list[Item] | None = None):
         self.db = DB
         self.load(is_debug, items)
 
