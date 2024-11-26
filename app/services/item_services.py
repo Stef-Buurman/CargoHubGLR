@@ -73,7 +73,10 @@ class ItemService(Base):
         self, item_id: int, item: Item, closeConnection: bool = True
     ) -> Item:
         item.updated_at = self.get_timestamp()
-        self.data = item
+        for i in range(len(self.data)):
+            if self.data[i].uid == item.uid:
+                self.data[i] = item
+                break
         return self.db.update(item, item_id, closeConnection)
 
     def remove_item(self, item_id: int, closeConnection: bool = True) -> bool:
