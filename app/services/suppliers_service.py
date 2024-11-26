@@ -7,9 +7,9 @@ SUPPLIERS = []
 
 
 class SupplierService(Base):
-    def __init__(self, is_debug: bool = False):
+    def __init__(self, is_debug: bool = False, suppliers: List[Supplier] | None = None):
         self.db = DB
-        self.load(is_debug)
+        self.load(is_debug, suppliers)
 
     def get_suppliers(self) -> List[Supplier]:
         return self.db.get_all(Supplier)
