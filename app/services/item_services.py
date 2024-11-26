@@ -53,6 +53,7 @@ class ItemService(Base):
         item.uid = self.generate_uid()
         item.created_at = self.get_timestamp()
         item.updated_at = self.get_timestamp()
+        self.data.append(item)
         return self.db.insert(item, closeConnection)
 
     def generate_uid(self) -> str | None:
@@ -72,9 +73,13 @@ class ItemService(Base):
         self, item_id: int, item: Item, closeConnection: bool = True
     ) -> Item:
         item.updated_at = self.get_timestamp()
+        self.data = item
         return self.db.update(item, item_id, closeConnection)
 
     def remove_item(self, item_id: int, closeConnection: bool = True) -> bool:
+        for item in self.data:
+            if item.uid == item_id:
+                self.data.remove(item)
         return self.db.delete(Item, item_id, closeConnection)
 
     def load(self, is_debug: bool, item: List[Item] | None = None):
