@@ -112,7 +112,7 @@ def get_inventories():
     from .inventory_service import InventoryService
 
     global _inventories
-    _inventories = InventoryService(ROOT_PATH, DEBUG)
+    _inventories = InventoryService(DEBUG)
 
 
 def get_orders():
