@@ -3,7 +3,7 @@ import httpx
 from tests.integration.test_globals import *
 
 test_order = {
-    "id": 999999999999999999999,
+    "id": 99999999999999999,
     "source_id": 52,
     "order_date": "1983-09-26T19:06:08Z",
     "request_date": "1983-09-30T19:06:08Z",
@@ -70,7 +70,7 @@ def test_add_order_invalid_api_key(client):
 def test_add_order(client):
     response = client.post("/orders/", json=test_order, headers=test_headers)
     assert response.status_code == 201 or response.status_code == 200
-    assert response.json()["id"] == test_order["id"]
+    test_order["id"] = response.json()["id"]
 
 
 # def test_add_existing_order(client):

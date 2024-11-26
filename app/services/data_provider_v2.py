@@ -70,7 +70,7 @@ def get_warehouses():
     from .warehouse_service import WarehouseService
 
     global _warehouses
-    _warehouses = WarehouseService(ROOT_PATH, DEBUG)
+    _warehouses = WarehouseService(DEBUG)
 
 
 def get_locations():
@@ -119,7 +119,7 @@ def get_orders():
     from .order_service import OrderService
 
     global _orders
-    _orders = OrderService(ROOT_PATH, DEBUG)
+    _orders = OrderService(DEBUG)
 
 
 def get_users():
