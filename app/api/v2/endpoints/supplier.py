@@ -57,7 +57,6 @@ def create_supplier(
     # if existingSupplier is not None:
     #     raise HTTPException(status_code=409, detail="Supplier already exists")
     created_supplier = data_provider_v2.fetch_supplier_pool().add_supplier(supplier)
-    data_provider_v2.fetch_supplier_pool().save()
     return JSONResponse(
         status_code=status.HTTP_201_CREATED, content=created_supplier.model_dump()
     )
@@ -76,7 +75,6 @@ def update_supplier(
     updated_supplier = data_provider_v2.fetch_supplier_pool().update_supplier(
         supplier_id, supplier
     )
-    data_provider_v2.fetch_supplier_pool().save()
     return updated_supplier
 
 
@@ -100,7 +98,6 @@ def partial_update_supplier(
     partial_updated_supplier = data_provider_v2.fetch_supplier_pool().update_supplier(
         supplier_id, existing_supplier
     )
-    data_provider_v2.fetch_supplier_pool().save()
     return partial_updated_supplier
 
 
@@ -116,5 +113,4 @@ def delete_supplier(
         raise HTTPException(status_code=404, detail="Supplier not found")
 
     supplier_pool.remove_supplier(supplier_id)
-    supplier_pool.save()
     return {"message": "Supplier deleted successfully"}

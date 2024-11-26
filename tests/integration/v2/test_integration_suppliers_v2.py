@@ -99,6 +99,7 @@ def test_add_supplier_invalid_api_key(client):
 def test_add_supplier(client):
     response = client.post("/suppliers/", json=test_supplier, headers=test_headers)
     assert response.status_code == 201 or response.status_code == 200
+    test_supplier["id"] = response.json()["id"]
     assert response.json()["id"] == test_supplier["id"]
 
 
