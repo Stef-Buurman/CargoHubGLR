@@ -9,9 +9,9 @@ TRANSFERS = []
 
 
 class TransferService(Base):
-    def __init__(self, is_debug: bool = False):
+    def __init__(self, is_debug: bool = False, transfers: List[Transfer] | None = None):
         self.db = DB
-        self.load(is_debug)
+        self.load(is_debug, transfers)
 
     def get_transfers(self) -> List[Transfer]:
         transfers = self.db.get_all(Transfer)

@@ -7,9 +7,9 @@ LOCATIONS = []
 
 
 class LocationService(Base):
-    def __init__(self, is_debug: bool = False):
+    def __init__(self, is_debug: bool = False, locations: List[Location] | None = None):
         self.db = DB
-        self.load(is_debug)
+        self.load(is_debug, locations)
 
     def get_locations(self) -> List[Location]:
         return self.db.get_all(Location)
