@@ -26,20 +26,16 @@ class TransferService(Base):
         return None
 
     def get_items_in_transfer(self, transfer_id: int, closeConnection: bool = True):
-        for transfer in self.data:
-            if transfer.id == transfer_id:
-                get_items_query = (
-                    f"SELECT * FROM {transfer_items_table} WHERE transfer_id = ?"
-                )
-                with self.db.get_connection_without_close() as conn:
-                    cursor = conn.execute(get_items_query, (transfer_id,))
-                    items = cursor.fetchall()
-                    transfer.items = items
+        found_items = []
+        get_items_query = f"SELECT * FROM {transfer_items_table} WHERE transfer_id = ?"
+        with self.db.get_connection() as conn:
+            cursor = conn.execute(get_items_query, (transfer_id,))
+            items = cursor.fetchall()
+            found_items = items
 
-                if closeConnection:
-                    self.db.commit_and_close()
-                return transfer.items
-        return None
+        if closeConnection:
+            self.db.commit_and_close()
+        return found_items
 
     def add_transfer(
         self, transfer: Transfer, closeConnection: bool = True
@@ -59,6 +55,8 @@ class TransferService(Base):
         values = tuple(fields.values())
 
         insert_sql = f"INSERT INTO {table_name} ({columns}) VALUES ({placeholders})"
+        print(insert_sql)
+        print(values)
 
         with self.db.get_connection_without_close() as conn:
             cursor = conn.execute(insert_sql, values)
