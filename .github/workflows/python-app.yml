@@ -69,11 +69,23 @@ jobs:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
+      - name: Check if port is in use and set TEST_PORT
+        run: |
+          DEFAULT_PORT=8000
+          APP_PORT=$DEFAULT_PORT
+          
+          while lsof -i :$APP_PORT; do
+            APP_PORT=$((APP_PORT + 1)) 
+          done
+          echo "TEST_PORT=$APP_PORT" >> $GITHUB_ENV
+          echo "Using port $APP_PORT for the application."
       - name: Start the application in the background
         run: |
-          python3 app/main.py > app.log 2>&1 &
-          echo $! > app_pid.txt
-          sleep 5
+          APP_PORT=$TEST_PORT
+          
+          python3 app/main.py --port $APP_PORT > app.log 2>&1 & 
+          echo $! > app_pid.txt 
+          sleep 5 
       - name: Test with pytest
         id: test_step
         run: |
