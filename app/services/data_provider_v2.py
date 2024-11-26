@@ -42,7 +42,7 @@ def get_items():
     from .item_services import ItemService
 
     global _items
-    _items = ItemService(ROOT_PATH, DEBUG)
+    _items = ItemService(DEBUG)
 
 
 def get_item_lines():
