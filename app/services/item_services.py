@@ -8,7 +8,7 @@ ITEMS = []
 
 
 class ItemService(Base):
-    def __init__(self, root_path, is_debug=False, items=None):
+    def __init__(self, is_debug=False, items=None):
         self.db = DB
         self.load(is_debug, items)
 
