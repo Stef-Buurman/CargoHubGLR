@@ -32,8 +32,10 @@ class TransferService(Base):
         get_items_query = f"SELECT * FROM {transfer_items_table} WHERE transfer_id = ?"
         with self.db.get_connection() as conn:
             cursor = conn.execute(get_items_query, (transfer_id,))
+            columns = [column[0] for column in cursor.description]
             items = cursor.fetchall()
-            found_items = items
+            for item in items:
+                found_items.append(dict(zip(columns, item)))
 
         if closeConnection:
             self.db.commit_and_close()
@@ -125,16 +127,18 @@ class TransferService(Base):
         transfer_items = self.get_items_in_transfer(transfer.id, False)
 
         for item in transfer_items:
-            inventories = fetch_inventory_pool().get_inventories_for_item(item[2])
+            inventories = fetch_inventory_pool().get_inventories_for_item(
+                item["item_uid"]
+            )
 
             for y in inventories:
                 if transfer.transfer_from in y.locations:
-                    y.total_on_hand -= item[3]
+                    y.total_on_hand -= item["amount"]
                     y.total_expected = y.total_on_hand + y.total_ordered
                     y.total_available = y.total_on_hand - y.total_allocated
                     fetch_inventory_pool().update_inventory(y.id, y)
                 elif transfer.transfer_to in y.locations:
-                    y.total_on_hand += item[3]
+                    y.total_on_hand += item["amount"]
                     y.total_expected = y.total_on_hand + y.total_ordered
                     y.total_available = y.total_on_hand - y.total_allocated
                     fetch_inventory_pool().update_inventory(y.id, y)
