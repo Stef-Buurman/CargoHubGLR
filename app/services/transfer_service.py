@@ -25,7 +25,9 @@ class TransferService(Base):
                 return transfer
         return None
 
-    def get_items_in_transfer(self, transfer_id: int, closeConnection: bool = True):
+    def get_items_in_transfer(
+        self, transfer_id: int, closeConnection: bool = True
+    ) -> List[dict]:
         found_items = []
         get_items_query = f"SELECT * FROM {transfer_items_table} WHERE transfer_id = ?"
         with self.db.get_connection() as conn:
@@ -120,17 +122,19 @@ class TransferService(Base):
         return transfer
 
     def commit_transfer(self, transfer: Transfer):
-        for x in transfer.items:
-            inventories = fetch_inventory_pool().get_inventories_for_item(x.item_id)
+        transfer_items = self.get_items_in_transfer(transfer.id, False)
+
+        for item in transfer_items:
+            inventories = fetch_inventory_pool().get_inventories_for_item(item[2])
 
             for y in inventories:
                 if transfer.transfer_from in y.locations:
-                    y.total_on_hand -= x.amount
+                    y.total_on_hand -= item[3]
                     y.total_expected = y.total_on_hand + y.total_ordered
                     y.total_available = y.total_on_hand - y.total_allocated
                     fetch_inventory_pool().update_inventory(y.id, y)
                 elif transfer.transfer_to in y.locations:
-                    y.total_on_hand += x.amount
+                    y.total_on_hand += item[3]
                     y.total_expected = y.total_on_hand + y.total_ordered
                     y.total_available = y.total_on_hand - y.total_allocated
                     fetch_inventory_pool().update_inventory(y.id, y)
