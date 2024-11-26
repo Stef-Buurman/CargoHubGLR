@@ -9,12 +9,15 @@ TRANSFERS = []
 
 
 class TransferService(Base):
-    def __init__(self, is_debug=False):
+    def __init__(self, is_debug: bool = False):
         self.db = DB
         self.load(is_debug)
 
     def get_transfers(self) -> List[Transfer]:
-        return self.data
+        transfers = self.db.get_all(Transfer)
+        for transfer in transfers:
+            transfer.items = self.get_items_in_transfer(transfer.id)
+        return transfers
 
     def get_transfer(self, transfer_id: int) -> Transfer | None:
         for transfer in self.data:
@@ -22,7 +25,7 @@ class TransferService(Base):
                 return transfer
         return None
 
-    def get_items_in_transfer(self, transfer_id: int):
+    def get_items_in_transfer(self, transfer_id: int, closeConnection: bool = True):
         for transfer in self.data:
             if transfer.id == transfer_id:
                 get_items_query = (
@@ -32,6 +35,9 @@ class TransferService(Base):
                     cursor = conn.execute(get_items_query, (transfer_id,))
                     items = cursor.fetchall()
                     transfer.items = items
+
+                if closeConnection:
+                    self.db.commit_and_close()
                 return transfer.items
         return None
 

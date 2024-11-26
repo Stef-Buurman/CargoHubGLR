@@ -7,7 +7,7 @@ WAREHOUSES = []
 
 
 class WarehouseService(Base):
-    def __init__(self, is_debug=False):
+    def __init__(self, is_debug: bool = False):
         self.db = DB
         self.load(is_debug)
 

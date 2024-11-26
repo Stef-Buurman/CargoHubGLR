@@ -10,7 +10,7 @@ class LocationService(Base):
         self.load(is_debug, locations)
 
     def get_locations(self) -> List[Location]:
-        return self.data
+        return self.db.get_all(Location)
 
     def get_location(self, location_id: int) -> Location | None:
         for location in self.data:
@@ -18,11 +18,12 @@ class LocationService(Base):
                 return location
         return None
 
-    def get_locations_in_warehouse(self, warehouse_id: int):
+    def get_locations_in_warehouse(self, warehouse_id: int) -> List[Location]:
+        warehouse_locations = []
         for location in self.data:
             if location.warehouse_id == warehouse_id:
-                return location
-        return None
+                warehouse_locations.append(location)
+        return warehouse_locations
 
     def add_location(
         self, location: Location, closeConnection: bool = True

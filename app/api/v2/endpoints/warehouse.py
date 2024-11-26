@@ -39,8 +39,10 @@ def read_locations_in_warehouse(
     locations = data_provider_v2.fetch_location_pool().get_locations_in_warehouse(
         warehouse_id
     )
-    # if locations is None:
-    #     return Response(status_code=status.HTTP_204_NO_CONTENT)
+    if locations is None:
+        raise HTTPException(
+            status_code=404, detail=f"No locations found in warehouse {warehouse_id}"
+        )
     return locations
 
 
