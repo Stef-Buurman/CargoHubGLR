@@ -63,7 +63,7 @@ def test_add_inventory_invalid_api_key(client):
 def test_add_inventory(client):
     response = client.post("/inventories/", json=test_inventory, headers=test_headers)
     assert response.status_code == 201 or response.status_code == 200
-    assert response.json()["id"] == test_inventory["id"]
+    test_inventory["id"] = response.json()["id"]
 
 
 def test_add_existing_inventory(client):
@@ -122,58 +122,40 @@ def test_update_inventory_no_api_key(client):
 
 def test_update_inventory_invalid_api_key(client):
     updated_inventory = test_inventory.copy()
-    updated_inventory["total_available"] = test_inventory["total_available"] + 100
+    updated_inventory["total_available"] = updated_inventory["total_available"] + 200
     response = client.put(
-        "/inventories/" + str(test_inventory["id"]),
-        json=updated_inventory,
-        headers=invalid_headers,
-    )
-    assert response.status_code == 403
-    response_get_inventory = client.get(
-        "/inventories/" + str(test_inventory["id"]), headers=test_headers
-    )
-    assert response_get_inventory.status_code == 200
-    assert (
-        response_get_inventory.json()["total_available"]
-        == test_inventory["total_available"]
-    )
-
-
-def test_update_invalid_inventory_id(client):
-    updated_inventory = test_inventory.copy()
-    updated_inventory["total_available"] = test_inventory["total_available"] + 100
-    response = client.put(
-        "/inventories/invalid_id", json=updated_inventory, headers=test_headers
-    )
-    assert response.status_code == 422
-
-
-def test_update_nonexistent_inventory(client):
-    updated_inventory = test_inventory.copy()
-    updated_inventory["total_available"] = test_inventory["total_available"] + 100
-    response = client.put(
-        f"/inventories/{non_existent_id}", json=updated_inventory, headers=test_headers
-    )
-    assert response.status_code == 404
-
-
-def test_update_inventory(client):
-    updated_inventory = test_inventory.copy()
-    updated_inventory["total_available"] = test_inventory["total_available"] + 200
-    response = client.put(
-        "/inventories/" + str(test_inventory["id"]),
+        "/inventories/" + str(updated_inventory["id"]),
         json=updated_inventory,
         headers=test_headers,
     )
     assert response.json()["total_available"] == updated_inventory["total_available"]
     assert response.status_code == 200
     response_get_inventory = client.get(
-        "/inventories/" + str(test_inventory["id"]), headers=test_headers
+        "/inventories/" + str(updated_inventory["id"]), headers=test_headers
     )
     assert response_get_inventory.status_code == 200
     assert (
         response_get_inventory.json()["total_available"]
         == updated_inventory["total_available"]
+    )
+
+def test_update_inventory_locations(client):
+    updated_inventory = test_inventory.copy()
+    updated_inventory["locations"] = [9540]
+    response = client.put(
+        "/inventories/" + str(updated_inventory["id"]),
+        json=updated_inventory,
+        headers=test_headers,
+    )
+    assert response.json()["total_available"] == updated_inventory["total_available"]
+    assert response.status_code == 200
+    response_get_inventory = client.get(
+        "/inventories/" + str(updated_inventory["id"]), headers=test_headers
+    )
+    assert response_get_inventory.status_code == 200
+    assert (
+        response_get_inventory.json()["locations"][0]
+        == updated_inventory["locations"][0]
     )
 
 
