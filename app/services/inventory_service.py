@@ -113,8 +113,10 @@ class InventoryService(Base):
         self.data.append(inventory)
         return inventory
 
-    def update_inventory(self, inventory_id: int, inventory: Inventory, closeConnection: bool = True) -> Inventory:
-        if(self.get_inventory(inventory_id) is None):
+    def update_inventory(
+        self, inventory_id: int, inventory: Inventory, closeConnection: bool = True
+    ) -> Inventory:
+        if self.get_inventory(inventory_id) is None:
             return None
         table_name = inventory.table_name()
 
@@ -127,7 +129,7 @@ class InventoryService(Base):
         update_sql = f"UPDATE {table_name} SET {columns} WHERE id = ?"
 
         with self.db.get_connection_without_close() as conn:
-        # Update inventory
+            # Update inventory
             conn.execute(update_sql, values + (inventory_id,))
 
             if inventory.locations:
