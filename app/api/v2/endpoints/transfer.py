@@ -106,7 +106,6 @@ def commit_transfer(
         transfer_id, committed_transfer
     )
     data_provider_v2.fetch_transfer_pool().save()
-    data_provider_v2.fetch_inventory_pool().save()
 
     return {"message": "Transfer committed successfully"}
 
