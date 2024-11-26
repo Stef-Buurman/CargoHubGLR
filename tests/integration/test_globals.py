@@ -1,9 +1,12 @@
+import os
 import httpx
 
+TEST_PORT = os.getenv("TEST_PORT", "8000")
 
-MAIN_URL = "http://localhost:8000/api/v1"
 
-MAIN_URL_V2 = "http://localhost:8000/api/v2"
+MAIN_URL = f"http://localhost:{TEST_PORT}/api/v1"
+
+MAIN_URL_V2 = f"http://localhost:{TEST_PORT}/api/v2"
 
 non_existent_id = 999999999999999999
 
