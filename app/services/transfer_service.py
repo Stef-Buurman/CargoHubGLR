@@ -14,10 +14,33 @@ class TransferService(Base):
         self.load(is_debug, transfers)
 
     def get_transfers(self) -> List[Transfer]:
-        transfers = self.db.get_all(Transfer)
-        for transfer in transfers:
-            transfer.items = self.get_items_in_transfer(transfer.id)
-        return transfers
+        query = f"""
+        SELECT t.*, ti.item_uid, ti.amount
+        FROM {Transfer.table_name()} t
+        LEFT JOIN {transfer_items_table} ti ON t.id = ti.transfer_id
+        """
+        transfers_dict = {}
+        with self.db.get_connection() as conn:
+            cursor = conn.execute(query)
+            columns = [column[0] for column in cursor.description]
+            rows = cursor.fetchall()
+            for row in rows:
+                row_dict = dict(zip(columns, row))
+                transfer_id = row_dict["id"]
+                if transfer_id not in transfers_dict:
+                    transfers_dict[transfer_id] = Transfer(
+                        **{
+                            k: v
+                            for k, v in row_dict.items()
+                            if k not in ["item_uid", "amount"]
+                        }
+                    )
+                    transfers_dict[transfer_id].items = []
+                if row_dict["item_uid"] is not None:
+                    transfers_dict[transfer_id].items.append(
+                        {"item_uid": row_dict["item_uid"], "amount": row_dict["amount"]}
+                    )
+        return list(transfers_dict.values())
 
     def get_transfer(self, transfer_id: int) -> Transfer | None:
         for transfer in self.data:
@@ -59,8 +82,6 @@ class TransferService(Base):
         values = tuple(fields.values())
 
         insert_sql = f"INSERT INTO {table_name} ({columns}) VALUES ({placeholders})"
-        print(insert_sql)
-        print(values)
 
         with self.db.get_connection_without_close() as conn:
             cursor = conn.execute(insert_sql, values)
