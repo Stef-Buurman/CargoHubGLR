@@ -139,6 +139,7 @@ def test_update_inventory_invalid_api_key(client):
         == updated_inventory["total_available"]
     )
 
+
 def test_update_inventory_locations(client):
     updated_inventory = test_inventory.copy()
     updated_inventory["locations"] = [9540]
