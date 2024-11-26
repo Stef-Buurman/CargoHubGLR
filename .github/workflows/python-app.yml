@@ -81,11 +81,20 @@ jobs:
           echo "Using port $APP_PORT for the application."
       - name: Start the application in the background
         run: |
-          APP_PORT=$TEST_PORT
+          DEFAULT_PORT=8000
+          APP_PORT=$DEFAULT_PORT
           
-          python3 app/main.py --port $APP_PORT > app.log 2>&1 & 
-          echo $! > app_pid.txt 
-          sleep 5 
+          # Check if the port is already in use
+          while lsof -i :$APP_PORT; do
+            APP_PORT=$((APP_PORT + 1))
+          done
+
+          echo "Using port $APP_PORT for the application."
+
+          # Pass the port to the application
+          python3 app/main.py --port $APP_PORT > app.log 2>&1 &
+          echo $! > app_pid.txt
+          sleep 5
       - name: Test with pytest
         id: test_step
         run: |
