@@ -7,6 +7,7 @@
 
 # from processors import notification_processor
 
+import os
 from fastapi import FastAPI
 from api.v1.endpoints.item import item_router
 from api.v1.endpoints.item_line import item_line_router
@@ -71,7 +72,8 @@ app.include_router(order_router_v2, prefix=v2_url + "/orders")
 
 
 def main():
-    uvicorn.run(app, port=8000)
+    app_port = int(os.getenv("TEST_PORT", 8000))
+    uvicorn.run(app, port=app_port)
 
 
 if __name__ == "__main__":
