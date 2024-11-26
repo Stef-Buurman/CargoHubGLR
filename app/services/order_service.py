@@ -12,20 +12,36 @@ class OrderService(Base):
         self.load(is_debug, orders)
 
     def get_orders(self) -> List[Order]:
-        return self.db.get_all(Order)
+        all_orders = self.db.get_all(Order)
+        order_ids = [order.id for order in all_orders]
+
+        with self.db.get_connection() as conn:
+            query = f"SELECT item_id, amount, order_id FROM {order_items_table} WHERE order_id IN ({', '.join(map(str, order_ids))})"
+            cursor = conn.execute(query)
+            all_order_items = cursor.fetchall()
+
+        order_items_map = {}
+        for row in all_order_items:
+            if row[2] not in order_items_map:
+                order_items_map[row[2]] = []
+            order_items_map[row[2]].append(ItemInObject(item_id=row[0], amount=row[1]))
+
+        for order in all_orders:
+            order.items = order_items_map.get(order.id, [])
+
+        return all_orders
 
     def get_order(self, order_id: int) -> Order | None:
-        return self.db.get(Order, order_id)
+        for order in self.data:
+            if order.id == order_id:
+                return order
+        return None
 
     def get_items_in_order(self, order_id: int) -> List[ItemInObject]:
-        query = "SELECT item_id, amount FROM order_items WHERE order_id = ?"
-        result = self.db.execute_all(query, (order_id,))
-
-        items = []
-        for row in result:
-            item = ItemInObject(item_id=row[0], amount=row[1])
-            items.append(item)
-        return items
+        for x in self.data:
+            if x.id == order_id:
+                return x.items
+        return None
 
     def get_orders_in_shipment(self, shipment_id: int) -> List[Order]:
         result = []
@@ -56,7 +72,7 @@ class OrderService(Base):
 
         fields = {}
         for key, value in vars(order).items():
-            if key != "items":
+            if key != "id" and key != "items":
                 fields[key] = value
 
         columns = ", ".join(fields.keys())
@@ -69,6 +85,7 @@ class OrderService(Base):
         with self.db.get_connection_without_close() as conn:
             cursor = conn.execute(insert_sql, values)
             order_id = cursor.lastrowid
+            order.id = order_id
 
             if order.items:
                 for order_items in order.items:
@@ -83,6 +100,7 @@ class OrderService(Base):
 
         if closeConnection:
             self.db.commit_and_close()
+        self.data.append(order)
         return order
 
     def update_order(
@@ -123,45 +141,17 @@ class OrderService(Base):
         if closeConnection:
             self.db.commit_and_close()
 
+        for i in range(len(self.data)):
+            if self.data[i].id == order_id:
+                self.data[i] = order
         return order
 
     def update_items_in_order(
         self, order_id: int, items: List[ItemInObject]
     ) -> Order | None:
-        current_items = self.get_items_in_order(order_id)
-
-        for current_item in current_items:
-            found = False
-            for updated_item in items:
-                if current_item.item_id == updated_item.item_id:
-                    found = True
-                    break
-            if not found:
-                delete_query = (
-                    "DELETE FROM order_items WHERE order_id = ? AND item_id = ?"
-                )
-                self.db.execute_all(delete_query, (order_id, current_item.item_id))
-
-        for updated_item in items:
-            found = False
-            for current_item in current_items:
-                if current_item.item_id == updated_item.item_id:
-                    found = True
-                    break
-
-            if not found:
-                insert_query = """
-                INSERT INTO order_items (order_id, item_id, amount) VALUES (?, ?, ?)
-                """
-                self.db.execute_all(
-                    insert_query, (order_id, updated_item.item_id, updated_item.amount)
-                )
-
         order = self.get_order(order_id)
-        order.updated_at = self.get_timestamp()
-        self.update_order(order_id, order)
-
-        return order
+        order.items = items
+        return self.update_order(order_id, order)
 
     def update_orders_in_shipment(
         self, shipment_id: int, orders: List[Order]
@@ -182,13 +172,25 @@ class OrderService(Base):
         return orders
 
     def remove_order(self, order_id: int, closeConnection: bool = True) -> bool:
-        return self.db.delete(Order, order_id, closeConnection)
+        for order in self.data:
+            if order.id == order_id:
+                if self.db.delete(Order, order_id, closeConnection):
+                    with self.db.get_connection_without_close() as conn:
+                        conn.execute(
+                            f"DELETE FROM {order_items_table} WHERE order_id = ?",
+                            (order_id,),
+                        )
+                    if closeConnection:
+                        self.db.commit_and_close()
+                    self.data.remove(order)
+                break
+        return True
 
     def load(self, is_debug: bool, orders: List[Order] | None = None):
         if is_debug and orders is not None:
             self.data = orders
         else:
-            self.data = self.db.get_all(Order)
+            self.data = self.get_orders()
 
     def insert_order(self, order: Order, closeConnection: bool = True) -> Order:
         table_name = order.table_name()
