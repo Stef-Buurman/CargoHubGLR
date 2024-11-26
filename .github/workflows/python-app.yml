@@ -77,24 +77,18 @@ jobs:
           while lsof -i :$APP_PORT; do
             APP_PORT=$((APP_PORT + 1)) 
           done
+
           echo "TEST_PORT=$APP_PORT" >> $GITHUB_ENV
+
           echo "Using port $APP_PORT for the application."
+
       - name: Start the application in the background
         run: |
-          DEFAULT_PORT=8000
-          APP_PORT=$DEFAULT_PORT
+          APP_PORT=$TEST_PORT
           
-          # Check if the port is already in use
-          while lsof -i :$APP_PORT; do
-            APP_PORT=$((APP_PORT + 1))
-          done
-
-          echo "Using port $APP_PORT for the application."
-
-          # Pass the port to the application
-          python3 app/main.py --port $APP_PORT > app.log 2>&1 &
-          echo $! > app_pid.txt
-          sleep 5
+          python3 app/main.py --port $APP_PORT > app.log 2>&1 & 
+          echo $! > app_pid.txt  # Save the process ID of the application
+          sleep 5  # Wait for the application to start
       - name: Test with pytest
         id: test_step
         run: |
