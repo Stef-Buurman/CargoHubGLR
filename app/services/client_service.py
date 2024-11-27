@@ -16,7 +16,7 @@ class ClientService(Base):
         for client in self.data:
             if client.id == client_id:
                 return client
-        return None
+        return self.db.get(Client, client_id)
 
     def add_client(self, client: Client, closeConnection: bool = True) -> Client:
         client.created_at = self.get_timestamp()
