@@ -40,8 +40,12 @@ class SupplierService(Base):
     def remove_supplier(self, supplier_id: int) -> bool:
         if len(data_provider_v2.fetch_supplier_pool().get_supplier(supplier_id)) > 0:
             return False
-        self.data.remove(self.get_supplier(supplier_id))
-        return self.db.delete(Supplier, supplier_id)
+        for x in self.data:
+            if x.id == supplier_id:
+                if self.db.delete(Supplier, supplier_id):
+                    self.data.remove(x)
+                    return True
+        return False
 
     def load(self, is_debug: bool, suppliers: List[Supplier] | None = None):
         if is_debug and suppliers is not None:
