@@ -49,7 +49,38 @@ class TransferService(Base):
         for transfer in self.data:
             if transfer.id == transfer_id:
                 return transfer
-        return None
+        query = f"""
+        SELECT t.*, ti.item_uid, ti.amount
+        FROM {Transfer.table_name()} t
+        LEFT JOIN {transfer_items_table} ti ON t.id = ti.transfer_id
+        WHERE t.id = {transfer_id}
+        """
+        transfers_dict = {}
+        with self.db.get_connection() as conn:
+            cursor = conn.execute(query)
+            columns = [column[0] for column in cursor.description]
+            rows = cursor.fetchall()
+            for row in rows:
+                row_dict = dict(zip(columns, row))
+                transfer_id = row_dict["id"]
+                if transfer_id not in transfers_dict:
+                    transfers_dict[transfer_id] = Transfer(
+                        **{
+                            k: v
+                            for k, v in row_dict.items()
+                            if k not in ["item_uid", "amount"]
+                        }
+                    )
+                    transfers_dict[transfer_id].items = []
+                if row_dict["item_uid"] is not None:
+                    transfers_dict[transfer_id].items.append(
+                        ItemInObject(
+                            item_id=row_dict["item_uid"], amount=row_dict["amount"]
+                        )
+                    )
+
+        
+        return self.db.get(Transfer, transfer_id)
 
     def get_items_in_transfer(self, transfer_id: int) -> List[ItemInObject]:
         for transfer in self.data:

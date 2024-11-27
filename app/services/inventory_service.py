@@ -48,6 +48,22 @@ class InventoryService(Base):
         for inventory in self.data:
             if inventory.id == inventory_id:
                 return inventory
+        
+        with self.db.get_connection() as conn:
+            cursor_inventories = conn.execute(f"SELECT * FROM {Inventory.table_name()} WHERE id = {inventory_id}")
+            inventory = cursor_inventories.fetchone()
+
+            cursor_locations = conn.execute(
+                f"SELECT inventory_id, location_id FROM {inventory_locations_table} WHERE inventory_id = {inventory_id}"
+            )
+            location_rows = cursor_locations.fetchall()
+
+            inventory["locations"] = []
+            for inventory_id, location_id in location_rows:
+                inventory["locations"].append(location_id)
+
+            return Inventory(**inventory)
+
         return None
 
     def get_inventories_for_item(self, item_id: str) -> List[Inventory]:

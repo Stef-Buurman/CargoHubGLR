@@ -19,7 +19,7 @@ class ItemLineService(Base):
         for item_line in self.data:
             if item_line.id == item_line_id:
                 return item_line
-        return None
+        return self.db.get(ItemLine, item_line_id)
 
     def add_item_line(
         self, item_line: ItemLine, closeConnection: bool = True
