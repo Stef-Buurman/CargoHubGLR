@@ -38,7 +38,7 @@ class ItemLineService(Base):
         return self.db.update(item_line, item_line_id, closeConnection)
 
     def remove_item_line(self, item_line_id: int, closeConnection: bool = True) -> bool:
-        if data_provider_v2.fetch_item_pool().get_items_for_item_line(item_line_id) > 0:
+        if len(data_provider_v2.fetch_item_pool().get_items_for_item_line(item_line_id)) > 0:
             return False
         self.data.remove(self.get_item_line(item_line_id))
         return self.db.delete(ItemLine, item_line_id, closeConnection)
