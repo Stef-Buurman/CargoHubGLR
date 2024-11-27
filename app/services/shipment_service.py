@@ -1,6 +1,7 @@
 import json
 from typing import List, Optional
 from models.v2.shipment import Shipment
+from models.v2.ItemInObject import ItemInObject
 from models.base import Base
 from services.data_provider_v2 import fetch_inventory_pool
 from services.database_service import DB
@@ -10,12 +11,40 @@ SHIPMENTS = []
 
 
 class ShipmentService(Base):
-    def __init__(self, root_path: str, is_debug: bool = False):
+    def __init__(self, is_debug: bool = False):
         self.db = DB
         self.load(is_debug)
 
     def get_shipments(self) -> List[Shipment]:
-        return self.db.get_all(Shipment)
+        shipments = []
+        query = """
+        SELECT s.*, i.item_uid, i.amount
+        FROM shipments s
+        LEFT JOIN shipment_items i ON s.id = i.shipment_id
+        """
+        with self.db.get_connection_without_close() as conn:
+            cursor = conn.execute(query)
+            rows = cursor.fetchall()
+            columns = [column[0] for column in cursor.description]
+            shipments_dict = {}
+            for row in rows:
+                row_dict = dict(zip(columns, row))
+                shipment_id = row_dict["id"]
+                if shipment_id not in shipments_dict:
+                    shipments_dict[shipment_id] = Shipment(
+                        **{
+                            k: v
+                            for k, v in row_dict.items()
+                            if k not in ["item_uid", "amount"]
+                        }
+                    )
+                    shipments_dict[shipment_id].items = []
+                item = ItemInObject(
+                    item_id=row_dict["item_uid"], amount=row_dict["amount"]
+                )
+                shipments_dict[shipment_id].items.append(item)
+            shipments = list(shipments_dict.values())
+        return shipments
 
     def get_shipment(self, shipment_id: str) -> Optional[Shipment]:
         for shipment in self.data:
@@ -23,16 +52,52 @@ class ShipmentService(Base):
                 return shipment
         return None
 
-    def get_items_in_shipment(self, shipment_id: str) -> Optional[List[dict]]:
+    def get_items_in_shipment(self, shipment_id: str) -> Optional[List[ItemInObject]]:
         shipment = self.get_shipment(shipment_id)
         return shipment.items if shipment else None
 
-    def add_shipment(self, shipment: Shipment, closeConnection: bool = True) -> Shipment:
+    def add_shipment(
+        self, shipment: Shipment, closeConnection: bool = True
+    ) -> Shipment:
+        table_name = shipment.table_name()
+
         shipment.created_at = self.get_timestamp()
         shipment.updated_at = self.get_timestamp()
-        return self.db.insert(shipment, closeConnection)
 
-    def update_shipment(self, shipment_id: str, shipment: Shipment, closeConnection: bool = True) -> Shipment:
+        fields = {}
+        for key, value in vars(shipment).items():
+            if key != "id" and key != "items":
+                fields[key] = value
+
+        columns = ", ".join(fields.keys())
+        placeholders = ", ".join("?" for _ in fields)
+        values = tuple(fields.values())
+
+        insert_sql = f"INSERT INTO {table_name} ({columns}) VALUES ({placeholders})"
+
+        with self.db.get_connection_without_close() as conn:
+            cursor = conn.execute(insert_sql, values)
+            shipment_id = cursor.lastrowid
+            shipment.id = shipment_id
+
+            if shipment.items:
+                for shipment_items in shipment.items:
+                    items_insert_sql = f"""
+                    INSERT INTO {shipment_items_table} (shipment_id, item_uid, amount)
+                    VALUES (?, ?, ?)
+                    """
+                    conn.execute(
+                        items_insert_sql,
+                        (shipment_id, shipment_items.item_id, shipment_items.amount),
+                    )
+
+        if closeConnection:
+            self.db.commit_and_close()
+        return shipment
+
+    def update_shipment(
+        self, shipment_id: str, shipment: Shipment, closeConnection: bool = True
+    ) -> Shipment:
         shipment.updated_at = self.get_timestamp()
         return self.db.update(shipment, shipment_id, closeConnection)
 
@@ -83,47 +148,4 @@ class ShipmentService(Base):
         if is_debug and shipments is not None:
             self.data = shipments
         else:
-            self.data = self.db.get_all(Shipment)
-
-    def save(self):
-        with open(self.data_path, "w") as f:
-            json.dump([shipment.model_dump() for shipment in self.data], f)
-
-    def insert_shipment(
-        self, shipment: Shipment, closeConnection: bool = True
-    ) -> Shipment:
-        table_name = shipment.table_name()
-
-        shipment.created_at = self.get_timestamp()
-        shipment.updated_at = self.get_timestamp()
-
-        fields = {}
-        for key, value in vars(shipment).items():
-            if key != "id" and key != "items":
-                fields[key] = value
-
-        columns = ", ".join(fields.keys())
-        placeholders = ", ".join("?" for _ in fields)
-        values = tuple(fields.values())
-
-        insert_sql = f"INSERT INTO {table_name} ({columns}) VALUES ({placeholders})"
-
-        with self.db.get_connection_without_close() as conn:
-            cursor = conn.execute(insert_sql, values)
-            shipment_id = cursor.lastrowid
-            shipment.id = shipment_id
-
-            if shipment.items:
-                for shipment_items in shipment.items:
-                    items_insert_sql = f"""
-                    INSERT INTO {shipment_items_table} (shipment_id, item_uid, amount)
-                    VALUES (?, ?, ?)
-                    """
-                    conn.execute(
-                        items_insert_sql,
-                        (shipment_id, shipment_items.item_id, shipment_items.amount),
-                    )
-
-        if closeConnection:
-            self.db.commit_and_close()
-        return shipment
+            self.data = self.get_shipments()

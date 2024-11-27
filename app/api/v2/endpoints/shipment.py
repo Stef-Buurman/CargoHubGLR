@@ -63,10 +63,9 @@ def create_shipment(
 ):
     data_provider_v2.init()
     existingShipment = data_provider_v2.fetch_shipment_pool().get_shipment(shipment.id)
-    if existingShipment is not None:
-        raise HTTPException(status_code=409, detail="Shipment already exists")
+    # if existingShipment is not None:
+    #     raise HTTPException(status_code=409, detail="Shipment already exists")
     created_shipment = data_provider_v2.fetch_shipment_pool().add_shipment(shipment)
-    data_provider_v2.fetch_shipment_pool().save()
     return JSONResponse(
         status_code=status.HTTP_201_CREATED, content=created_shipment.model_dump()
     )
@@ -85,7 +84,6 @@ def update_shipment(
     updated_shipment = data_provider_v2.fetch_shipment_pool().update_shipment(
         shipment_id, shipment
     )
-    data_provider_v2.fetch_shipment_pool().save()
     return updated_shipment
 
 
@@ -106,7 +104,6 @@ def update_orders_in_shipment(
             shipment_id, updated_orders
         )
     )
-    data_provider_v2.fetch_order_pool().save()
     return updated_order_in_shipment
 
 
@@ -127,7 +124,6 @@ def update_items_in_shipment(
             shipment_id, [updated_item]
         )
     )
-    data_provider_v2.fetch_shipment_pool().save()
     return updated_item_in_shipment
 
 
@@ -164,7 +160,6 @@ def partial_update_shipment(
     partial_updated_shipment = data_provider_v2.fetch_shipment_pool().update_shipment(
         shipment_id, existing_shipment
     )
-    data_provider_v2.fetch_shipment_pool().save()
     return partial_updated_shipment
 
 
@@ -178,5 +173,4 @@ def delete_shipment(
     if shipment is None:
         raise HTTPException(status_code=404, detail="Shipment not found")
     shipment_pool.remove_shipment(shipment_id)
-    shipment_pool.save()
     return {"massage": "Shipment deleted successfully"}
