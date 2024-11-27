@@ -79,7 +79,6 @@ class TransferService(Base):
                         )
                     )
 
-        
         return self.db.get(Transfer, transfer_id)
 
     def get_items_in_transfer(self, transfer_id: int) -> List[ItemInObject]:
