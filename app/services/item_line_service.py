@@ -2,6 +2,7 @@ from typing import List
 from models.v2.item_line import ItemLine
 from models.base import Base
 from services.database_service import DB
+from services import data_provider_v2
 
 ITEM_LINES = []
 
@@ -25,15 +26,21 @@ class ItemLineService(Base):
     ) -> ItemLine:
         item_line.created_at = self.get_timestamp()
         item_line.updated_at = self.get_timestamp()
+        self.data.append(item_line)
         return self.db.insert(item_line, closeConnection)
 
     def update_item_line(
         self, item_line_id: int, item_line: ItemLine, closeConnection: bool = True
     ) -> ItemLine:
         item_line.updated_at = self.get_timestamp()
+        if self.get_item_line(item_line_id) is not None:
+            self.data[self.data.index(self.get_item_line(item_line_id))] = item_line
         return self.db.update(item_line, item_line_id, closeConnection)
 
     def remove_item_line(self, item_line_id: int, closeConnection: bool = True) -> bool:
+        if data_provider_v2.fetch_item_line_pool().get_item_line(item_line_id) > 0:
+            return False
+        self.data.remove(self.get_item_line(item_line_id))
         return self.db.delete(ItemLine, item_line_id, closeConnection)
 
     def load(self, is_debug: bool, item_lines: List[ItemLine] | None = None):
