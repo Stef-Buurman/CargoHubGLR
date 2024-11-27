@@ -90,8 +90,3 @@ class ItemService(Base):
             self.data = item
         else:
             self.data = self.get_items()
-
-    def insert_item(self, item: Item, closeConnection: bool = True) -> Item:
-        item.created_at = self.get_timestamp()
-        item.updated_at = self.get_timestamp()
-        return self.db.insert(item, closeConnection)
