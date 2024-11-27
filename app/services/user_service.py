@@ -160,7 +160,7 @@ class UserService(Base):
                     return getattr(access, method)
             return False
 
-    def insert_user(
+    def add_user(
         self,
         api_key: str,
         app: str,
