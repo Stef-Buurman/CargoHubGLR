@@ -17,7 +17,7 @@ class ItemTypeService(Base):
         for item_type in self.data:
             if item_type.id == item_type_id:
                 return item_type
-        return None
+        return self.db.get(ItemType, item_type_id)
 
     def add_item_type(
         self, item_type: ItemType, closeConnection: bool = True
