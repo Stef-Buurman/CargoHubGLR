@@ -50,7 +50,7 @@ class ShipmentService(Base):
         for shipment in self.data:
             if shipment.id == shipment_id:
                 return shipment
-        return None
+        return self.db.get(Shipment, shipment_id)
 
     def get_items_in_shipment(self, shipment_id: str) -> Optional[List[ItemInObject]]:
         shipment = self.get_shipment(shipment_id)
