@@ -40,4 +40,4 @@ class SupplierService(Base):
         if is_debug and suppliers is not None:
             self.data = suppliers
         else:
-            self.data = self.db.get_all(Supplier)
+            self.data = self.get_suppliers()
