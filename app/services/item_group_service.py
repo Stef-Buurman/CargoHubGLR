@@ -1,4 +1,3 @@
-import json
 from typing import List
 from models.v2.item_group import ItemGroup
 from models.base import Base
