@@ -35,7 +35,7 @@ class OrderService(Base):
         for order in self.data:
             if order.id == order_id:
                 return order
-            
+
         with self.db.get_connection() as conn:
             query = f"SELECT item_id, amount, order_id FROM {order_items_table} WHERE order_id = {order_id}"
             cursor = conn.execute(query)
