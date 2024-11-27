@@ -47,13 +47,7 @@ def create_item_type(
     item_type: ItemType, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
-    existingitem_type = data_provider_v2.fetch_item_type_pool().get_item_type(
-        item_type.id
-    )
-    if existingitem_type is not None:
-        raise HTTPException(status_code=409, detail="Item_type already exists")
     added_item_type = data_provider_v2.fetch_item_type_pool().add_item_type(item_type)
-    data_provider_v2.fetch_item_type_pool().save()
     return JSONResponse(
         status_code=status.HTTP_201_CREATED, content=added_item_type.model_dump()
     )
@@ -74,7 +68,6 @@ def update_item_type(
     updated_item_type = data_provider_v2.fetch_item_type_pool().update_item_type(
         item_type_id, item_type
     )
-    data_provider_v2.fetch_item_type_pool().save()
     return updated_item_type
 
 
@@ -102,7 +95,6 @@ def partial_update_item_type(
             item_type_id, existing_item_type
         )
     )
-    data_provider_v2.fetch_item_type_pool().save()
     return partial_updated_item_type
 
 
@@ -115,6 +107,9 @@ def delete_item_type(
     item_type = item_type_pool.get_item_type(item_type_id)
     if item_type is None:
         raise HTTPException(status_code=404, detail="Item_type not found")
-    item_type_pool.remove_item_type(item_type_id)
-    item_type_pool.save()
+    if not item_type_pool.remove_item_type(item_type_id):
+        raise HTTPException(
+            status_code=409,
+            detail="Item_type is in use and cannot be deleted",
+        )
     return {"message": "Item_type deleted successfully"}

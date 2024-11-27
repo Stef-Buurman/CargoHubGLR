@@ -63,7 +63,7 @@ def get_item_types():
     from .item_type_service import ItemTypeService
 
     global _item_types
-    _item_types = ItemTypeService(ROOT_PATH, DEBUG)
+    _item_types = ItemTypeService(DEBUG)
 
 
 def get_warehouses():
