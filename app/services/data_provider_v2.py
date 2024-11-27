@@ -56,7 +56,7 @@ def get_item_groups():
     from .item_group_service import ItemGroupService
 
     global _item_groups
-    _item_groups = ItemGroupService(ROOT_PATH, DEBUG)
+    _item_groups = ItemGroupService(DEBUG)
 
 
 def get_item_types():
