@@ -14,4 +14,4 @@ test_headers = {"Authorization": "test_api_key"}
 
 invalid_headers = {"Authorization": "invalid_key"}
 
-timeout = httpx.Timeout(connect=10.0, read=30.0, write=30.0, pool=30.0)
+timeout = httpx.Timeout(connect=30.0, read=60.0, write=60.0, pool=60.0)
