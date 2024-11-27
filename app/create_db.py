@@ -126,7 +126,7 @@ if __name__ == "__main__":
     for user in USERS:
         endpoint_access = user["endpoint_access"].copy()
         del endpoint_access["full"]
-        data_provider_v2.fetch_user_pool().insert_user(
+        data_provider_v2.fetch_user_pool().add_user(
             user["api_key"],
             user["app"],
             user["endpoint_access"]["full"],
@@ -139,20 +139,20 @@ if __name__ == "__main__":
         count += 1
 
         if count % amount_before_closing == 0 or count == len(all_clients):
-            data_provider_v2.fetch_client_pool().insert_client(Client(**client))
+            data_provider_v2.fetch_client_pool().add_client(Client(**client))
         else:
-            data_provider_v2.fetch_client_pool().insert_client(Client(**client), False)
+            data_provider_v2.fetch_client_pool().add_client(Client(**client), False)
 
     count = 0
     all_items = data_provider.fetch_inventory_pool().get_inventories()
     for inventory in all_items:
         count += 1
         if count % amount_before_closing == 0 or count == len(all_items):
-            data_provider_v2.fetch_inventory_pool().insert_inventory(
+            data_provider_v2.fetch_inventory_pool().add_inventory(
                 Inventory(**inventory)
             )
         else:
-            data_provider_v2.fetch_inventory_pool().insert_inventory(
+            data_provider_v2.fetch_inventory_pool().add_inventory(
                 Inventory(**inventory), False
             )
 
@@ -161,20 +161,20 @@ if __name__ == "__main__":
     for item in all_items:
         count += 1
         if count % amount_before_closing == 0 or count == len(all_items):
-            data_provider_v2.fetch_item_pool().insert_item(Item(**item))
+            data_provider_v2.fetch_item_pool().add_item(Item(**item))
         else:
-            data_provider_v2.fetch_item_pool().insert_item(Item(**item), False)
+            data_provider_v2.fetch_item_pool().add_item(Item(**item), False)
 
     count = 0
     all_item_groups = data_provider.fetch_item_group_pool().get_item_groups()
     for item_group in all_item_groups:
         count += 1
         if count % amount_before_closing == 0 or count == len(all_item_groups):
-            data_provider_v2.fetch_item_group_pool().insert_item_group(
+            data_provider_v2.fetch_item_group_pool().add_item_group(
                 ItemGroup(**item_group)
             )
         else:
-            data_provider_v2.fetch_item_group_pool().insert_item_group(
+            data_provider_v2.fetch_item_group_pool().add_item_group(
                 ItemGroup(**item_group), False
             )
 
@@ -183,11 +183,11 @@ if __name__ == "__main__":
     for item_line in all_item_lines:
         count += 1
         if count % amount_before_closing == 0 or count == len(all_item_lines):
-            data_provider_v2.fetch_item_line_pool().insert_item_line(
+            data_provider_v2.fetch_item_line_pool().add_item_line(
                 ItemLine(**item_line)
             )
         else:
-            data_provider_v2.fetch_item_line_pool().insert_item_line(
+            data_provider_v2.fetch_item_line_pool().add_item_line(
                 ItemLine(**item_line), False
             )
 
@@ -196,11 +196,11 @@ if __name__ == "__main__":
     for item_type in all_item_types:
         count += 1
         if count % amount_before_closing == 0 or count == len(all_item_types):
-            data_provider_v2.fetch_item_type_pool().insert_item_type(
+            data_provider_v2.fetch_item_type_pool().add_item_type(
                 ItemType(**item_type)
             )
         else:
-            data_provider_v2.fetch_item_type_pool().insert_item_type(
+            data_provider_v2.fetch_item_type_pool().add_item_type(
                 ItemType(**item_type), False
             )
 
@@ -209,9 +209,9 @@ if __name__ == "__main__":
     for shipment in all_shipments:
         count += 1
         if count % amount_before_closing == 0 or count == len(all_shipments):
-            data_provider_v2.fetch_shipment_pool().insert_shipment(Shipment(**shipment))
+            data_provider_v2.fetch_shipment_pool().add_shipment(Shipment(**shipment))
         else:
-            data_provider_v2.fetch_shipment_pool().insert_shipment(
+            data_provider_v2.fetch_shipment_pool().add_shipment(
                 Shipment(**shipment), False
             )
 
@@ -220,9 +220,9 @@ if __name__ == "__main__":
     for supplier in all_suppliers:
         count += 1
         if count % amount_before_closing == 0 or count == len(all_suppliers):
-            data_provider_v2.fetch_supplier_pool().insert_supplier(Supplier(**supplier))
+            data_provider_v2.fetch_supplier_pool().add_supplier(Supplier(**supplier))
         else:
-            data_provider_v2.fetch_supplier_pool().insert_supplier(
+            data_provider_v2.fetch_supplier_pool().add_supplier(
                 Supplier(**supplier), False
             )
 
@@ -231,9 +231,9 @@ if __name__ == "__main__":
     for transfer in all_transfers:
         count += 1
         if count % amount_before_closing == 0 or count == len(all_transfers):
-            data_provider_v2.fetch_transfer_pool().insert_transfer(Transfer(**transfer))
+            data_provider_v2.fetch_transfer_pool().add_transfer(Transfer(**transfer))
         else:
-            data_provider_v2.fetch_transfer_pool().insert_transfer(
+            data_provider_v2.fetch_transfer_pool().add_transfer(
                 Transfer(**transfer), False
             )
 
@@ -242,7 +242,7 @@ if __name__ == "__main__":
     for warehouse in all_warehouses:
         count += 1
         if count % amount_before_closing == 0 or count == len(all_warehouses):
-            data_provider_v2.fetch_warehouse_pool().insert_warehouse(
+            data_provider_v2.fetch_warehouse_pool().add_warehouse(
                 Warehouse(
                     code=warehouse["code"],
                     name=warehouse["name"],
@@ -257,7 +257,7 @@ if __name__ == "__main__":
                 )
             )
         else:
-            data_provider_v2.fetch_warehouse_pool().insert_warehouse(
+            data_provider_v2.fetch_warehouse_pool().add_warehouse(
                 Warehouse(
                     code=warehouse["code"],
                     name=warehouse["name"],
