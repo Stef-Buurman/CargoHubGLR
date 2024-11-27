@@ -19,7 +19,7 @@ class SupplierService(Base):
         for supplier in self.data:
             if supplier.id == supplier_id:
                 return supplier
-        return None
+        return self.db.get(Supplier, supplier_id)
 
     def add_supplier(
         self, supplier: Supplier, closeConnection: bool = True
