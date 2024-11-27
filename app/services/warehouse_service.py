@@ -39,4 +39,4 @@ class WarehouseService(Base):
         if is_debug and warehouses is not None:
             self.data = warehouses
         else:
-            self.data = self.db.get_all(WarehouseDB)
+            self.data = self.get_warehouses()

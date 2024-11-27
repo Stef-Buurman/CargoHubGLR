@@ -45,4 +45,4 @@ class LocationService(Base):
         if is_debug and locations is not None:
             self.data = locations
         else:
-            self.data = self.db.get_all(Location)
+            self.data = self.get_locations()

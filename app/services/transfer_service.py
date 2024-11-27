@@ -1,5 +1,6 @@
 from services.data_provider_v2 import fetch_inventory_pool
 from models.v2.transfer import Transfer
+from models.v2.ItemInObject import ItemInObject
 from typing import List
 from models.base import Base
 from utils.globals import *
@@ -38,7 +39,9 @@ class TransferService(Base):
                     transfers_dict[transfer_id].items = []
                 if row_dict["item_uid"] is not None:
                     transfers_dict[transfer_id].items.append(
-                        {"item_uid": row_dict["item_uid"], "amount": row_dict["amount"]}
+                        ItemInObject(
+                            item_id=row_dict["item_uid"], amount=row_dict["amount"]
+                        )
                     )
         return list(transfers_dict.values())
 
@@ -48,21 +51,11 @@ class TransferService(Base):
                 return transfer
         return None
 
-    def get_items_in_transfer(
-        self, transfer_id: int, closeConnection: bool = True
-    ) -> List[dict]:
-        found_items = []
-        get_items_query = f"SELECT * FROM {transfer_items_table} WHERE transfer_id = ?"
-        with self.db.get_connection() as conn:
-            cursor = conn.execute(get_items_query, (transfer_id,))
-            columns = [column[0] for column in cursor.description]
-            items = cursor.fetchall()
-            for item in items:
-                found_items.append(dict(zip(columns, item)))
-
-        if closeConnection:
-            self.db.commit_and_close()
-        return found_items
+    def get_items_in_transfer(self, transfer_id: int) -> List[ItemInObject]:
+        for transfer in self.data:
+            if transfer.id == transfer_id:
+                return transfer.items
+        return None
 
     def add_transfer(
         self, transfer: Transfer, closeConnection: bool = True
@@ -145,21 +138,19 @@ class TransferService(Base):
         return transfer
 
     def commit_transfer(self, transfer: Transfer):
-        transfer_items = self.get_items_in_transfer(transfer.id, False)
+        transfer_items = self.get_items_in_transfer(transfer.id)
 
         for item in transfer_items:
-            inventories = fetch_inventory_pool().get_inventories_for_item(
-                item["item_uid"]
-            )
+            inventories = fetch_inventory_pool().get_inventories_for_item(item.item_id)
 
             for y in inventories:
                 if transfer.transfer_from in y.locations:
-                    y.total_on_hand -= item["amount"]
+                    y.total_on_hand -= item.amount
                     y.total_expected = y.total_on_hand + y.total_ordered
                     y.total_available = y.total_on_hand - y.total_allocated
                     fetch_inventory_pool().update_inventory(y.id, y)
                 elif transfer.transfer_to in y.locations:
-                    y.total_on_hand += item["amount"]
+                    y.total_on_hand += item.amount
                     y.total_expected = y.total_on_hand + y.total_ordered
                     y.total_available = y.total_on_hand - y.total_allocated
                     fetch_inventory_pool().update_inventory(y.id, y)
@@ -174,4 +165,4 @@ class TransferService(Base):
         if is_debug and transfers is not None:
             self.data = transfers
         else:
-            self.data = self.db.get_all(Transfer)
+            self.data = self.get_transfers()
