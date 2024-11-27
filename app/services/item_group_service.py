@@ -14,9 +14,9 @@ class ItemGroupService(Base):
         return self.db.get_all(ItemGroup)
 
     def get_item_group(self, item_group_id: int) -> ItemGroup:
-        for x in self.data:
-            if x.id == item_group_id:
-                return x
+        for item_group in self.data:
+            if item_group.id == item_group_id:
+                return item_group
         return None
 
     def add_item_group(self, item_group: ItemGroup, closeConnection: bool = True) -> ItemGroup:
