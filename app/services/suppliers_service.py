@@ -38,7 +38,7 @@ class SupplierService(Base):
         return self.db.update(supplier, supplier_id, closeConnection)
 
     def remove_supplier(self, supplier_id: int) -> bool:
-        if data_provider_v2.fetch_supplier_pool().get_supplier(supplier_id) > 0:
+        if len(data_provider_v2.fetch_supplier_pool().get_supplier(supplier_id)) > 0:
             return False
         self.data.remove(self.get_supplier(supplier_id))
         return self.db.delete(Supplier, supplier_id)
