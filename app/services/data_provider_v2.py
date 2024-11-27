@@ -105,7 +105,7 @@ def get_suppliers():
     from .suppliers_service import SupplierService
 
     global _suppliers
-    _suppliers = SupplierService(ROOT_PATH, DEBUG)
+    _suppliers = SupplierService(DEBUG)
 
 
 def get_inventories():
