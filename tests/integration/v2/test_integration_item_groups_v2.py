@@ -30,7 +30,7 @@ test_item = {
 
 @pytest.fixture
 def client():
-    with httpx.Client(base_url=MAIN_URL_V2) as client:
+    with httpx.Client(base_url=MAIN_URL_V2, timeout=timeout) as client:
         yield client
 
 
@@ -73,12 +73,8 @@ def test_add_item_group_invalid_api_key(client):
 def test_add_item_group(client):
     response = client.post("/item_groups/", json=test_item_group, headers=test_headers)
     assert response.status_code == 201 or response.status_code == 200
-    assert response.json()["id"] == test_item_group["id"]
-
-
-def test_add_existing_item_group(client):
-    response = client.post("/item_groups/", json=test_item_group, headers=test_headers)
-    assert response.status_code == 409
+    test_item_group["id"] = response.json()["id"]
+    test_item["item_group"] = response.json()["id"]
 
 
 def test_get_item_group_by_id(client):
@@ -295,6 +291,19 @@ def test_delete_nonexistent_item_group(client):
         "/item_groups/" + str(non_existent_id), headers=test_headers
     )
     assert response.status_code == 404
+
+
+def test_delete_item_group_with_items(client):
+    responseAddItem = client.post("/items/", json=test_item, headers=test_headers)
+    assert responseAddItem.status_code == 201 or responseAddItem.status_code == 200
+    response = client.delete(
+        "/item_groups/" + str(test_item_group["id"]), headers=test_headers
+    )
+    assert response.status_code == 409
+    responseDeleteItem = client.delete(
+        "/items/" + responseAddItem.json()["uid"], headers=test_headers
+    )
+    assert responseDeleteItem.status_code == 200
 
 
 def test_delete_item_group(client):

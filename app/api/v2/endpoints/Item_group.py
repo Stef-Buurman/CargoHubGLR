@@ -49,15 +49,9 @@ def create_item_group(
     item_group: ItemGroup, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
-    existingitem_group = data_provider_v2.fetch_item_group_pool().get_item_group(
-        item_group.id
-    )
-    if existingitem_group is not None:
-        raise HTTPException(status_code=409, detail="Item_group already exists")
     added_item_group = data_provider_v2.fetch_item_group_pool().add_item_group(
         item_group
     )
-    data_provider_v2.fetch_item_group_pool().save()
     return JSONResponse(
         status_code=status.HTTP_201_CREATED, content=added_item_group.model_dump()
     )
@@ -78,7 +72,6 @@ def update_item_group(
     updated_item_group = data_provider_v2.fetch_item_group_pool().update_item_group(
         item_group_id, item_group
     )
-    data_provider_v2.fetch_item_group_pool().save()
     return updated_item_group
 
 
@@ -106,7 +99,6 @@ def partial_update_item_group(
             item_group_id, existing_item_group
         )
     )
-    data_provider_v2.fetch_item_group_pool().save()
     return partial_updated_item_group
 
 
@@ -119,6 +111,9 @@ def delete_item_group(
     item_group = item_group_pool.get_item_group(item_group_id)
     if item_group is None:
         raise HTTPException(status_code=404, detail="Item_group not found")
-    item_group_pool.remove_item_group(item_group_id)
-    item_group_pool.save()
+    if not item_group_pool.remove_item_group(item_group_id):
+        raise HTTPException(
+            status_code=409,
+            detail="Item_group has items associated with it. Cannot delete",
+        )
     return {"massage": "Item_group deleted successfully"}
