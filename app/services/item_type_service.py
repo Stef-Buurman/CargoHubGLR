@@ -14,9 +14,9 @@ class ItemTypeService(Base):
         return self.db.get_all(ItemType)
 
     def get_item_type(self, item_type_id: int) -> ItemType | None:
-        for x in self.data:
-            if x.id == item_type_id:
-                return x
+        for item_type in self.data:
+            if item_type.id == item_type_id:
+                return item_type
         return None
 
     def add_item_type(
@@ -45,10 +45,10 @@ class ItemTypeService(Base):
             > 0
         ):
             return False
-        for x in self.data:
-            if x.id == item_type_id:
+        for item_type in self.data:
+            if item_type.id == item_type_id:
                 if self.db.delete(ItemType, item_type_id, closeConnection):
-                    self.data.remove(x)
+                    self.data.remove(item_type)
                     return True
         return False
 
