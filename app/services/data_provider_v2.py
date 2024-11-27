@@ -49,7 +49,7 @@ def get_item_lines():
     from .item_line_service import ItemLineService
 
     global _item_lines
-    _item_lines = ItemLineService(ROOT_PATH, DEBUG)
+    _item_lines = ItemLineService(DEBUG)
 
 
 def get_item_groups():
