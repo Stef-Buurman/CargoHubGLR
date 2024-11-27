@@ -181,7 +181,7 @@ class ShipmentService(Base):
                 update_inventory(item["item_id"], item["amount"])
 
     def remove_shipment(self, shipment_id: str, closeConnection: bool = True) -> bool:
-        if data_provider_v2.fetch_shipment_pool().get_shipment(shipment_id) > 0:
+        if len(data_provider_v2.fetch_shipment_pool().get_shipment(shipment_id)) > 0:
             return False
         self.data.remove(self.get_shipment(shipment_id))
         return self.db.delete(Shipment, shipment_id, closeConnection)
