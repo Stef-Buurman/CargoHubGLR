@@ -98,8 +98,38 @@ class ShipmentService(Base):
     def update_shipment(
         self, shipment_id: str, shipment: Shipment, closeConnection: bool = True
     ) -> Shipment:
+        table_name = shipment.table_name()
         shipment.updated_at = self.get_timestamp()
-        return self.db.update(shipment, shipment_id, closeConnection)
+
+        fields = {}
+        for key, value in vars(shipment).items():
+            if key != "id" and key != "items":
+                fields[key] = value
+
+        columns = ", ".join(f"{key} = ?" for key in fields)
+        values = tuple(fields.values())
+
+        update_sql = f"UPDATE {table_name} SET {columns} WHERE id = ?"
+        with self.db.get_connection_without_close() as conn:
+            conn.execute(update_sql, values + (shipment_id,))
+
+            if shipment.items:
+                conn.execute(
+                    f"DELETE FROM {shipment_items_table} WHERE shipment_id = ?",
+                    (shipment_id,),
+                )
+                for shipment_items in shipment.items:
+                    items_insert_sql = f"""
+                    INSERT INTO {shipment_items_table} (shipment_id, item_uid, amount)
+                    VALUES (?, ?, ?)
+                    """
+                    conn.execute(
+                        items_insert_sql,
+                        (shipment_id, shipment_items.item_id, shipment_items.amount),
+                    )
+        if closeConnection:
+            self.db.commit_and_close()
+        return shipment
 
     def update_items_in_shipment(self, shipment_id: str, items: List[dict]):
         shipment = self.get_shipment(shipment_id)
