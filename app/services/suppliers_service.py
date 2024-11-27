@@ -2,6 +2,7 @@ from models.v2.supplier import Supplier
 from typing import List
 from models.base import Base
 from services.database_service import DB
+from services import data_provider_v2
 
 SUPPLIERS = []
 
@@ -33,7 +34,9 @@ class SupplierService(Base):
         supplier.updated_at = self.get_timestamp()
         return self.db.update(supplier, supplier_id, closeConnection)
 
-    def remove_supplier(self, supplier_id: int):
+    def remove_supplier(self, supplier_id: int) -> bool:
+        if data_provider_v2.fetch_supplier_pool().get_supplier(supplier_id) > 0:
+            return False
         return self.db.delete(Supplier, supplier_id)
 
     def load(self, is_debug: bool, suppliers: List[Supplier] | None = None):
