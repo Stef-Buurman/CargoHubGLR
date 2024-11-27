@@ -62,9 +62,6 @@ def create_shipment(
     shipment: Shipment, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
-    existingShipment = data_provider_v2.fetch_shipment_pool().get_shipment(shipment.id)
-    # if existingShipment is not None:
-    #     raise HTTPException(status_code=409, detail="Shipment already exists")
     created_shipment = data_provider_v2.fetch_shipment_pool().add_shipment(shipment)
     return JSONResponse(
         status_code=status.HTTP_201_CREATED, content=created_shipment.model_dump()
