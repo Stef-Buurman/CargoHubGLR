@@ -54,10 +54,9 @@ def create_item(
 ):
     data_provider_v2.init()
     existingItem = data_provider_v2.fetch_item_line_pool().get_item_line(item_line.id)
-    if existingItem is not None:
-        raise HTTPException(status_code=409, detail="Item line already exists")
+    # if existingItem is not None:
+    #     raise HTTPException(status_code=409, detail="Item line already exists")
     added_item_line = data_provider_v2.fetch_item_line_pool().add_item_line(item_line)
-    data_provider_v2.fetch_item_line_pool().save()
     return JSONResponse(
         status_code=status.HTTP_201_CREATED, content=added_item_line.model_dump()
     )
@@ -78,7 +77,6 @@ def update_item(
     updated_item_line = data_provider_v2.fetch_item_line_pool().update_item_line(
         item_line_id, item_line
     )
-    data_provider_v2.fetch_item_line_pool().save()
     return updated_item_line
 
 
@@ -108,7 +106,6 @@ def partial_update_item_line(
             item_line_id, existing_item_line
         )
     )
-    data_provider_v2.fetch_item_line_pool().save()
     return partial_updated_item_line
 
 
@@ -126,5 +123,4 @@ def delete_item(
         )
 
     item_line_pool.remove_item_line(item_line_id)
-    item_line_pool.save()
     return {"message": "Item line deleted successfully"}
