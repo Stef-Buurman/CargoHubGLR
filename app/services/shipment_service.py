@@ -3,8 +3,8 @@ from typing import List, Optional
 from models.v2.shipment import Shipment
 from models.v2.ItemInObject import ItemInObject
 from models.base import Base
-from services.data_provider_v2 import fetch_inventory_pool
 from services.database_service import DB
+from services import data_provider_v2
 from utils.globals import *
 
 SHIPMENTS = []
@@ -93,6 +93,7 @@ class ShipmentService(Base):
 
         if closeConnection:
             self.db.commit_and_close()
+        self.data.append(shipment)
         return shipment
 
     def update_shipment(
@@ -129,6 +130,10 @@ class ShipmentService(Base):
                     )
         if closeConnection:
             self.db.commit_and_close()
+
+        if self.get_shipment(shipment_id) is not None:
+            self.data[self.data.index(self.get_shipment(shipment_id))] = shipment
+
         return shipment
 
     def update_items_in_shipment(self, shipment_id: str, items: List[dict]):
@@ -143,7 +148,11 @@ class ShipmentService(Base):
         self, current_items: List[Shipment], new_items: List[dict]
     ):
         def update_inventory(item_id, amount_change):
-            inventories = fetch_inventory_pool().get_inventories_for_item(item_id)
+            inventories = (
+                data_provider_v2.fetch_inventory_pool().get_inventories_for_item(
+                    item_id
+                )
+            )
             max_inventory = max(
                 inventories, key=lambda z: z["total_ordered"], default=None
             )
@@ -152,7 +161,7 @@ class ShipmentService(Base):
                 max_inventory["total_expected"] = (
                     max_inventory["total_on_hand"] + max_inventory["total_ordered"]
                 )
-                fetch_inventory_pool().update_inventory(
+                data_provider_v2.fetch_inventory_pool().update_inventory(
                     max_inventory["id"], max_inventory
                 )
 
@@ -172,6 +181,8 @@ class ShipmentService(Base):
                 update_inventory(item["item_id"], item["amount"])
 
     def remove_shipment(self, shipment_id: str, closeConnection: bool = True) -> bool:
+        if data_provider_v2.fetch_shipment_pool().get_shipment(shipment_id) > 0:
+            return False
         return self.db.delete(Shipment, shipment_id, closeConnection)
 
     def load(self, is_debug: bool, shipments: List[Shipment] | None = None):
