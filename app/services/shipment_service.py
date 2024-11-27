@@ -183,8 +183,13 @@ class ShipmentService(Base):
     def remove_shipment(self, shipment_id: str, closeConnection: bool = True) -> bool:
         if len(data_provider_v2.fetch_shipment_pool().get_shipment(shipment_id)) > 0:
             return False
-        self.data.remove(self.get_shipment(shipment_id))
-        return self.db.delete(Shipment, shipment_id, closeConnection)
+        
+        for x in self.data:
+            if x.id == shipment_id:
+                if self.db.delete(Shipment, shipment_id, closeConnection):
+                    self.data.remove(x) 
+                    return True
+        return False
 
     def load(self, is_debug: bool, shipments: List[Shipment] | None = None):
         if is_debug and shipments is not None:
