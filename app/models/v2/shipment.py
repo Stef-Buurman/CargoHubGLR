@@ -21,4 +21,4 @@ class Shipment(Base):
     total_package_weight: float
     created_at: str | None = None
     updated_at: str | None = None
-    items: list[ItemInObject]
+    items: list[ItemInObject] | None = None
