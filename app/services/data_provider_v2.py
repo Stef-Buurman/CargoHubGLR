@@ -84,7 +84,7 @@ def get_transfers():
     from .transfer_service import TransferService
 
     global _transfers
-    _transfers = TransferService(ROOT_PATH, DEBUG)
+    _transfers = TransferService(DEBUG)
 
 
 def get_clients():

@@ -7,9 +7,11 @@ WAREHOUSES = []
 
 
 class WarehouseService(Base):
-    def __init__(self, is_debug=False):
+    def __init__(
+        self, is_debug: bool = False, warehouses: List[WarehouseDB] | None = None
+    ):
         self.db = DB
-        self.load(is_debug)
+        self.load(is_debug, warehouses)
 
     def get_warehouses(self) -> List[WarehouseDB]:
         return self.db.get_all(WarehouseDB)
@@ -37,4 +39,4 @@ class WarehouseService(Base):
         if is_debug and warehouses is not None:
             self.data = warehouses
         else:
-            self.data = self.db.get_all(WarehouseDB)
+            self.data = self.get_warehouses()
