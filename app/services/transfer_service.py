@@ -47,9 +47,8 @@ class TransferService(Base):
         for transfer in self.data:
             if transfer.id == transfer_id:
                 return transfer
-        query = "SELECT * FROM {Transfer.table_name()} WHERE id = {transfer_id}"
+        query = f"SELECT * FROM {Transfer.table_name()} WHERE id = {transfer_id}"
         with self.db.get_connection() as conn:
-
             cursor = conn.execute(query)
             transfer = cursor.fetchone()
             if transfer:
