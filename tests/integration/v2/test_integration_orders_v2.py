@@ -210,14 +210,8 @@ def test_update_order_items_no_api_key(client):
     assert response_get_order.status_code == 200
     assert len(response_data) == len(test_order["items"])
     for i in range(len(response_data)):
-        assert (
-            response_data[i - 1]["item_id"]
-            == test_order["items"][i - 1]["item_id"]
-        )
-        assert (
-            response_data[i - 1]["amount"]
-            == test_order["items"][i - 1]["amount"]
-        )
+        assert response_data[i - 1]["item_id"] == test_order["items"][i - 1]["item_id"]
+        assert response_data[i - 1]["amount"] == test_order["items"][i - 1]["amount"]
 
 
 def test_update_order_items_invalid_api_key(client):
@@ -236,14 +230,8 @@ def test_update_order_items_invalid_api_key(client):
     assert response_get_order.status_code == 200
     assert len(response_data) == len(test_order["items"])
     for i in range(len(response_data)):
-        assert (
-            response_data[i - 1]["item_id"]
-            == test_order["items"][i - 1]["item_id"]
-        )
-        assert (
-            response_data[i - 1]["amount"]
-            == test_order["items"][i - 1]["amount"]
-        )
+        assert response_data[i - 1]["item_id"] == test_order["items"][i - 1]["item_id"]
+        assert response_data[i - 1]["amount"] == test_order["items"][i - 1]["amount"]
 
 
 def test_update_order_items_invalid_id(client):
@@ -282,14 +270,8 @@ def test_update_order_items(client):
     assert response_get_order.status_code == 200
     assert len(response_data) == len(test_order_items)
     for i in range(len(response_data)):
-        assert (
-            response_data[i - 1]["item_id"]
-            == test_order_items[i - 1]["item_id"]
-        )
-        assert (
-            response_data[i - 1]["amount"]
-            == test_order_items[i - 1]["amount"]
-        )
+        assert response_data[i - 1]["item_id"] == test_order_items[i - 1]["item_id"]
+        assert response_data[i - 1]["amount"] == test_order_items[i - 1]["amount"]
 
 
 def test_partial_update_order_no_api_key(client):
