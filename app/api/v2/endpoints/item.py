@@ -32,9 +32,9 @@ def read_items(
 
 @item_router_v2.get("/{item_id}/inventory")
 def read_inventory_of_item(
-    item_id: str, 
+    item_id: str,
     pagination: Pagination = Depends(),
-    api_key: str = Depends(auth_provider_v2.get_api_key)
+    api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
     item = data_provider_v2.fetch_item_pool().get_item(item_id)

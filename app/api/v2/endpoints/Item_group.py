@@ -34,9 +34,9 @@ def read_item_groups(
 
 @item_group_router_v2.get("/{item_group_id}/items")
 def read_items_for_item_group(
-    item_group_id: int, 
+    item_group_id: int,
     pagination: Pagination = Depends(),
-    api_key: str = Depends(auth_provider_v2.get_api_key)
+    api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
     item_group = data_provider_v2.fetch_item_group_pool().get_item_group(item_group_id)

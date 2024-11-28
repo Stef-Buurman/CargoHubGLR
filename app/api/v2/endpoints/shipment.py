@@ -35,9 +35,9 @@ def read_shipments(
 
 @shipment_router_v2.get("/{shipment_id}/orders")
 def read_orders_for_shipment(
-    shipment_id: int, 
+    shipment_id: int,
     pagination: Pagination = Depends(),
-    api_key: str = Depends(auth_provider_v2.get_api_key)
+    api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
     shipment = data_provider_v2.fetch_shipment_pool().get_shipment(shipment_id)
@@ -51,9 +51,9 @@ def read_orders_for_shipment(
 
 @shipment_router_v2.get("/{shipment_id}/items")
 def read_items_for_shipment(
-    shipment_id: int, 
+    shipment_id: int,
     pagination: Pagination = Depends(),
-    api_key: str = Depends(auth_provider_v2.get_api_key)
+    api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
     shipment = data_provider_v2.fetch_shipment_pool().get_shipment(shipment_id)

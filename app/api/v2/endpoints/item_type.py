@@ -34,9 +34,9 @@ def read_item_types(
 
 @item_type_router_v2.get("/{item_type_id}/items")
 def read_items_for_item_type(
-    item_type_id: int, 
+    item_type_id: int,
     pagination: Pagination = Depends(),
-    api_key: str = Depends(auth_provider_v2.get_api_key)
+    api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
     item_type = data_provider_v2.fetch_item_type_pool().get_item_type(item_type_id)
