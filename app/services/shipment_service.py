@@ -50,7 +50,18 @@ class ShipmentService(Base):
         for shipment in self.data:
             if shipment.id == shipment_id:
                 return shipment
-        return self.db.get(Shipment, shipment_id)
+            
+        with self.db.get_connection() as conn:
+            query = f"SELECT * FROM {Shipment.table_name()} WHERE id = {shipment_id}"
+            cursor = conn.execute(query)
+            shipment = cursor.fetchone()
+            if shipment:
+                query_items = f"SELECT item_uid, amount FROM {shipment_items_table} WHERE shipment_id = {shipment_id}"
+                cursor = conn.execute(query_items)
+                all_shipment_items = cursor.fetchall()
+                shipment["items"] = all_shipment_items
+                return Shipment(**shipment)
+        return None
 
     def get_items_in_shipment(self, shipment_id: str) -> Optional[List[ItemInObject]]:
         shipment = self.get_shipment(shipment_id)
