@@ -39,7 +39,7 @@ def client():
 def test_get_all_item_types(client):
     response = client.get("/item_types/", headers=test_headers)
     assert response.status_code == 200
-    assert isinstance(response.json(), list)
+    assert isinstance(response.json()["data"], list)
 
 
 def test_get_all_item_types_no_api_key(client):
