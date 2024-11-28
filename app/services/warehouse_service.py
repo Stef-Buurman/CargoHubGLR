@@ -17,6 +17,9 @@ class WarehouseService(Base):
         return self.db.get_all(WarehouseDB)
 
     def get_warehouse(self, warehouse_id: int) -> WarehouseDB | None:
+        for warehouse in self.data:
+            if warehouse.id == warehouse_id:
+                return warehouse
         return self.db.get(WarehouseDB, warehouse_id)
 
     def add_warehouse(
@@ -24,16 +27,26 @@ class WarehouseService(Base):
     ) -> WarehouseDB:
         warehouse.created_at = self.get_timestamp()
         warehouse.updated_at = self.get_timestamp()
+        self.data
         return self.db.insert(warehouse, closeConnection)
 
     def update_warehouse(
         self, warehouse_id: int, warehouse: WarehouseDB, closeConnection: bool = True
     ) -> WarehouseDB:
         warehouse.updated_at = self.get_timestamp()
+        for i in range(len(self.data)):
+            if self.data[i].id == warehouse_id:
+                self.data[i] = warehouse
+                break
         return self.db.update(warehouse, warehouse_id, closeConnection)
 
     def remove_warehouse(self, warehouse_id: int, closeConnection: bool = True) -> bool:
-        return self.db.delete(WarehouseDB, warehouse_id, closeConnection)
+        for warehouse in self.data:
+            if warehouse.id == warehouse_id:
+                if self.db.delete(WarehouseDB, warehouse_id, closeConnection):
+                    self.data.remove(warehouse)
+                    return True
+        return False
 
     def load(self, is_debug: bool, warehouses: List[WarehouseDB] | None = None):
         if is_debug and warehouses is not None:

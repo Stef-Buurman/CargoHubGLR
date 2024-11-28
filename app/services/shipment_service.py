@@ -1,4 +1,3 @@
-import json
 from typing import List, Optional
 from models.v2.shipment import Shipment
 from models.v2.ItemInObject import ItemInObject
@@ -6,8 +5,6 @@ from models.base import Base
 from services.database_service import DB
 from services import data_provider_v2
 from utils.globals import *
-
-SHIPMENTS = []
 
 
 class ShipmentService(Base):
@@ -50,7 +47,18 @@ class ShipmentService(Base):
         for shipment in self.data:
             if shipment.id == shipment_id:
                 return shipment
-        return self.db.get(Shipment, shipment_id)
+
+        with self.db.get_connection() as conn:
+            query = f"SELECT * FROM {Shipment.table_name()} WHERE id = {shipment_id}"
+            cursor = conn.execute(query)
+            shipment = cursor.fetchone()
+            if shipment:
+                query_items = f"SELECT item_uid, amount FROM {shipment_items_table} WHERE shipment_id = {shipment_id}"
+                cursor = conn.execute(query_items)
+                all_shipment_items = cursor.fetchall()
+                shipment["items"] = all_shipment_items
+                return Shipment(**shipment)
+        return None
 
     def get_items_in_shipment(self, shipment_id: str) -> Optional[List[ItemInObject]]:
         shipment = self.get_shipment(shipment_id)

@@ -16,7 +16,7 @@ class LocationService(Base):
         for location in self.data:
             if location.id == location_id:
                 return location
-        return None
+        return self.db.get(Location, location_id)
 
     def get_locations_in_warehouse(self, warehouse_id: int) -> List[Location]:
         warehouse_locations = []

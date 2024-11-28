@@ -19,7 +19,7 @@ class ItemService(Base):
         for item in self.data:
             if item.uid == item_id:
                 return item
-        return None
+        return self.db.get(Item, item_id)
 
     def get_items_for_item_line(self, item_line_id: int) -> List[Item]:
         result = []

@@ -6,8 +6,6 @@ from models.base import Base
 from utils.globals import *
 from services.database_service import DB
 
-TRANSFERS = []
-
 
 class TransferService(Base):
     def __init__(self, is_debug: bool = False, transfers: List[Transfer] | None = None):
@@ -49,6 +47,32 @@ class TransferService(Base):
         for transfer in self.data:
             if transfer.id == transfer_id:
                 return transfer
+        query = f"SELECT * FROM {Transfer.table_name()} WHERE id = {transfer_id}"
+        with self.db.get_connection() as conn:
+            cursor = conn.execute(query)
+            transfer = cursor.fetchone()
+            if transfer:
+                cursor_items = conn.execute(
+                    f"""
+                SELECT t.*, ti.item_uid, ti.amount
+                FROM {Transfer.table_name()} t
+                LEFT JOIN {transfer_items_table} ti ON t.id = ti.transfer_id
+                WHERE t.id = {transfer_id}
+                """
+                )
+
+                columns = [column[0] for column in cursor_items.description]
+                rows = cursor_items.fetchall()
+                transfer["items"] = []
+                for row in rows:
+                    row_dict = dict(zip(columns, row))
+                    if row_dict["item_uid"] is not None:
+                        transfer["items"].append(
+                            ItemInObject(
+                                item_id=row_dict["item_uid"], amount=row_dict["amount"]
+                            )
+                        )
+                return Transfer(**transfer)
         return None
 
     def get_items_in_transfer(self, transfer_id: int) -> List[ItemInObject]:
