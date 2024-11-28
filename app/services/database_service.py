@@ -138,7 +138,7 @@ class DatabaseService:
 
     def get_primary_key_column(self, table_name: str) -> str:
         query = f"PRAGMA table_info({table_name})"
-        with self.get_connection() as conn:
+        with self.get_connection_without_close() as conn:
             cursor = conn.execute(query)
             columns = cursor.fetchall()
 
