@@ -106,7 +106,7 @@ def test_get_orders_for_client(client):
         f'/clients/{test_CargoClient["id"]}/orders', headers=test_headers
     )
     assert response.status_code == 200
-    assert isinstance(response.json(), list)
+    assert isinstance(response.json()["data"], list)
 
 
 def test_get_orders_for_nonexistent_client(client):

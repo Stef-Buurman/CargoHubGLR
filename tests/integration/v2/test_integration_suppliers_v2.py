@@ -193,7 +193,7 @@ def test_get_supplier_items(client):
 
     assert response.status_code == 200
 
-    response_items = response.json()
+    response_items = response.json()["data"]
     assert len(response_items) == 2
     assert response_items[0]["code"] == test_item_1["code"]
     assert response_items[1]["code"] == test_item_2["code"]

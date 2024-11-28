@@ -98,7 +98,7 @@ def test_get_transfer_items(client):
         f"/transfers/{str(test_transfer['id'])}/items", headers=test_headers
     )
     assert response.status_code == 200
-    assert isinstance(response.json(), list)
+    assert isinstance(response.json()["data"], list)
 
 
 def test_get_transfer_items_no_api_key(client):
