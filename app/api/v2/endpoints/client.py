@@ -30,9 +30,9 @@ def read_clients(
 
 @client_router_v2.get("/{client_id}/orders")
 def read_client_orders(
-    client_id: int, 
+    client_id: int,
     pagination: Pagination = Depends(),
-    api_key: str = Depends(auth_provider_v2.get_api_key)
+    api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
     client = data_provider_v2.fetch_client_pool().get_client(client_id)

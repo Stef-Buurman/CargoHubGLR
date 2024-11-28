@@ -19,8 +19,10 @@ def read_transfer(
 
 
 @transfer_router_v2.get("/")
-def read_transfers(pagination: Pagination = Depends(),
-                   api_key: str = Depends(auth_provider_v2.get_api_key)):
+def read_transfers(
+    pagination: Pagination = Depends(),
+    api_key: str = Depends(auth_provider_v2.get_api_key),
+):
     data_provider_v2.init()
     transfers = data_provider_v2.fetch_transfer_pool().get_transfers()
     if transfers is None:
@@ -30,9 +32,9 @@ def read_transfers(pagination: Pagination = Depends(),
 
 @transfer_router_v2.get("/{transfer_id}/items")
 def read_transfer_items(
-    transfer_id: int, 
+    transfer_id: int,
     pagination: Pagination = Depends(),
-    api_key: str = Depends(auth_provider_v2.get_api_key)
+    api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
     transfer = data_provider_v2.fetch_transfer_pool().get_transfer(transfer_id)

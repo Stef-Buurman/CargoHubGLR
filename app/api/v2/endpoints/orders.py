@@ -33,9 +33,9 @@ def read_orders(
 
 @order_router_v2.get("/{order_id}/items")
 def read_order_items(
-    order_id: int, 
+    order_id: int,
     pagination: Pagination = Depends(),
-    api_key: str = Depends(auth_provider_v2.get_api_key)
+    api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
     items = data_provider_v2.fetch_order_pool().get_items_in_order(order_id)

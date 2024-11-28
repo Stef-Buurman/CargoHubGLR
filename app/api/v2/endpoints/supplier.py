@@ -34,9 +34,9 @@ def read_suppliers(
 
 @supplier_router_v2.get("/{supplier_id}/items")
 def read_items_of_supplier(
-    supplier_id: int, 
+    supplier_id: int,
     pagination: Pagination = Depends(),
-    api_key: str = Depends(auth_provider_v2.get_api_key)
+    api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
 
