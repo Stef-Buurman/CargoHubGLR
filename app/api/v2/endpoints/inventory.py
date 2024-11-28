@@ -23,8 +23,8 @@ def read_inventory(
 
 @inventory_router_v2.get("/")
 def read_inventories(
-    pagination: Pagination = Depends(), 
-    api_key: str = Depends(auth_provider_v2.get_api_key)
+    pagination: Pagination = Depends(),
+    api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
     inventories = data_provider_v2.fetch_inventory_pool().get_inventories()
@@ -32,7 +32,6 @@ def read_inventories(
         raise HTTPException(status_code=404, detail="No inventories found")
 
     return pagination.apply(inventories)
-
 
 
 @inventory_router_v2.post("/")
