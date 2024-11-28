@@ -56,7 +56,7 @@ def client():
 def test_get_all_item_lines(client):
     response = client.get("/item_lines/", headers=test_headers)
     assert response.status_code == 200
-    assert isinstance(response.json(), list)
+    assert isinstance(response.json()["data"], list)
 
 
 def test_get_all_item_lines_no_api_key(client):
@@ -181,10 +181,8 @@ def test_get_item_line_items(client):
     response = client.get(
         f"/item_lines/{test_item_line['id']}/items", headers=test_headers
     )
-
+    response_items = response.json()["data"]
     assert response.status_code == 200
-
-    response_items = response.json()
     assert len(response_items) == 2
     assert response_items[0]["code"] == response_post_fake_item_1.json()["code"]
     assert response_items[1]["code"] == response_post_fake_item_2.json()["code"]

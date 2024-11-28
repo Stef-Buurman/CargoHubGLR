@@ -5,8 +5,6 @@ from models.base import Base
 from services.database_service import DB
 from utils.globals import *
 
-INVENTORIES = []
-
 
 class InventoryService(Base):
     def __init__(

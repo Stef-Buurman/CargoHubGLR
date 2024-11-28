@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
+from services.pagination_service import Pagination
 from services import data_provider_v2, auth_provider_v2
 from models.v2.order import Order
 from models.v2.ItemInObject import ItemInObject
@@ -19,17 +20,22 @@ def read_order(order_id: int, api_key: str = Depends(auth_provider_v2.get_api_ke
 
 
 @order_router_v2.get("/")
-def read_orders(api_key: str = Depends(auth_provider_v2.get_api_key)):
+def read_orders(
+    pagination: Pagination = Depends(),
+    api_key: str = Depends(auth_provider_v2.get_api_key),
+):
     data_provider_v2.init()
     orders = data_provider_v2.fetch_order_pool().get_orders()
     if orders is None:
         raise HTTPException(status_code=404, detail="Orders not found")
-    return orders
+    return pagination.apply(orders)
 
 
 @order_router_v2.get("/{order_id}/items")
 def read_order_items(
-    order_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
+    order_id: int,
+    pagination: Pagination = Depends(),
+    api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
     items = data_provider_v2.fetch_order_pool().get_items_in_order(order_id)
@@ -37,7 +43,7 @@ def read_order_items(
         raise HTTPException(
             status_code=404, detail=f"Order with id {order_id} not found"
         )
-    return items
+    return pagination.apply(items)
 
 
 @order_router_v2.post("/")

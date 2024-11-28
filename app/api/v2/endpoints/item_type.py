@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
+from services.pagination_service import Pagination
 from services import data_provider_v2, auth_provider_v2
 from models.v2.item_type import ItemType
 
@@ -20,17 +21,22 @@ def read_item_type(
 
 
 @item_type_router_v2.get("/")
-def read_item_types(api_key: str = Depends(auth_provider_v2.get_api_key)):
+def read_item_types(
+    pagination: Pagination = Depends(),
+    api_key: str = Depends(auth_provider_v2.get_api_key),
+):
     data_provider_v2.init()
     item_types = data_provider_v2.fetch_item_type_pool().get_item_types()
     if item_types is None:
         raise HTTPException(status_code=404, detail="No item_types found")
-    return item_types
+    return pagination.apply(item_types)
 
 
 @item_type_router_v2.get("/{item_type_id}/items")
 def read_items_for_item_type(
-    item_type_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
+    item_type_id: int,
+    pagination: Pagination = Depends(),
+    api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
     item_type = data_provider_v2.fetch_item_type_pool().get_item_type(item_type_id)
@@ -39,7 +45,7 @@ def read_items_for_item_type(
             status_code=404, detail=f"Item_type with id {item_type_id} not found"
         )
     items = data_provider_v2.fetch_item_pool().get_items_for_item_type(item_type_id)
-    return items
+    return pagination.apply(items)
 
 
 @item_type_router_v2.post("/")

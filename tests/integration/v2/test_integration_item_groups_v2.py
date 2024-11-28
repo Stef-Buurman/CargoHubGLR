@@ -37,7 +37,7 @@ def client():
 def test_get_all_item_groups(client):
     response = client.get("/item_groups/", headers=test_headers)
     assert response.status_code == 200
-    assert isinstance(response.json(), list)
+    assert isinstance(response.json()["data"], list)
 
 
 def test_get_all_item_groups_no_api_key(client):
@@ -139,11 +139,12 @@ def test_get_items_for_item_group(client):
     response = client.get(
         "/item_groups/" + str(test_item_group["id"]) + "/items", headers=test_headers
     )
+    response_items = response.json()["data"]
     assert response.status_code == 200
-    assert isinstance(response.json(), list)
-    assert response.json()[0]["uid"] == responseAddItem.json()["uid"]
+    assert isinstance(response_items, list)
+    assert response_items[0]["uid"] == responseAddItem.json()["uid"]
     responseDeleteItem = client.delete(
-        "/items/" + responseAddItem.json()["uid"], headers=test_headers
+        "/items/" + response_items[0]["uid"], headers=test_headers
     )
     assert responseDeleteItem.status_code == 200
 

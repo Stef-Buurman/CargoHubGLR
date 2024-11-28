@@ -45,7 +45,7 @@ def client():
 def test_get_all_items(client):
     response = client.get("/items/", headers=test_headers)
     assert response.status_code == 200
-    assert isinstance(response.json(), list)
+    assert isinstance(response.json()["data"], list)
 
 
 def test_get_all_items_no_api_key(client):
@@ -133,12 +133,15 @@ def test_get_inventory_of_item(client):
         responseAddInventory.status_code == 201
         or responseAddInventory.status_code == 200
     )
+
     response = client.get(
         "/items/" + test_item["uid"] + "/inventory", headers=test_headers
     )
+    response_inventory = response.json()["data"]
+
     assert response.status_code == 200
-    assert isinstance(response.json(), list)
-    assert response.json()[0]["item_id"] == test_item["uid"]
+    assert isinstance(response_inventory, list)
+    assert response_inventory[0]["item_id"] == test_item["uid"]
 
 
 def test_get_inventory_totals_of_item_no_api_key(client):

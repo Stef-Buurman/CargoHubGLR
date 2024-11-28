@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Response
 from fastapi.responses import JSONResponse
+from services.pagination_service import Pagination
 from services import data_provider_v2, auth_provider_v2
 from models.v2.location import Location
 
@@ -20,12 +21,15 @@ def read_location(
 
 
 @location_router_v2.get("/")
-def read_locations(api_key: str = Depends(auth_provider_v2.get_api_key)):
+def read_locations(
+    pagination: Pagination = Depends(),
+    api_key: str = Depends(auth_provider_v2.get_api_key),
+):
     data_provider_v2.init()
     locations = data_provider_v2.fetch_location_pool().get_locations()
     if locations is None:
         raise HTTPException(status_code=404, detail="No locations found")
-    return locations
+    return pagination.apply(locations)
 
 
 @location_router_v2.post("/")
@@ -33,11 +37,6 @@ def create_location(
     location: Location, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
-    existing_location = data_provider_v2.fetch_location_pool().get_location(location.id)
-    # if existing_location is not None:
-    #     raise HTTPException(
-    #         status_code=409, detail=f"Location with id {location.id} already exists"
-    #     )
     created_location = data_provider_v2.fetch_location_pool().add_location(location)
     return JSONResponse(
         status_code=status.HTTP_201_CREATED, content=created_location.model_dump()

@@ -38,7 +38,7 @@ def client():
 def test_get_all_shipments(client):
     response = client.get("/shipments/", headers=test_headers)
     assert response.status_code == 200
-    assert isinstance(response.json(), list)
+    assert isinstance(response.json()["data"], list)
 
 
 def test_get_all_shipments_no_api_key(client):

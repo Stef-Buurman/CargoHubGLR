@@ -40,7 +40,7 @@ def client():
 def test_get_all_orders(client):
     response = client.get("/orders/", headers=test_headers)
     assert response.status_code == 200
-    assert isinstance(response.json(), list)
+    assert isinstance(response.json()["data"], list)
 
 
 def test_get_all_orders_no_api_key(client):
@@ -110,10 +110,11 @@ def test_get_order_items(client):
     response = client.get(
         f'/orders/{str(test_order["id"])}/items', headers=test_headers
     )
+    response_items = response.json()["data"]
     assert response.status_code == 200
-    assert isinstance(response.json(), list)
-    assert len(response.json()) == len(test_order["items"])
-    for i, item in enumerate(response.json()):
+    assert isinstance(response_items, list)
+    assert len(response_items) == len(test_order["items"])
+    for i, item in enumerate(response_items):
         assert item["item_id"] == test_order["items"][i]["item_id"]
         assert item["amount"] == test_order["items"][i]["amount"]
 
@@ -205,17 +206,12 @@ def test_update_order_items_no_api_key(client):
     response_get_order = client.get(
         f'/orders/{str(test_order["id"])}/items', headers=test_headers
     )
+    response_data = response_get_order.json()["data"]
     assert response_get_order.status_code == 200
-    assert len(response_get_order.json()) == len(test_order["items"])
-    for i in range(len(response_get_order.json())):
-        assert (
-            response_get_order.json()[i - 1]["item_id"]
-            == test_order["items"][i - 1]["item_id"]
-        )
-        assert (
-            response_get_order.json()[i - 1]["amount"]
-            == test_order["items"][i - 1]["amount"]
-        )
+    assert len(response_data) == len(test_order["items"])
+    for i in range(len(response_data)):
+        assert response_data[i - 1]["item_id"] == test_order["items"][i - 1]["item_id"]
+        assert response_data[i - 1]["amount"] == test_order["items"][i - 1]["amount"]
 
 
 def test_update_order_items_invalid_api_key(client):
@@ -230,17 +226,12 @@ def test_update_order_items_invalid_api_key(client):
     response_get_order = client.get(
         f'/orders/{str(test_order["id"])}/items', headers=test_headers
     )
+    response_data = response_get_order.json()["data"]
     assert response_get_order.status_code == 200
-    assert len(response_get_order.json()) == len(test_order["items"])
-    for i in range(len(response_get_order.json())):
-        assert (
-            response_get_order.json()[i - 1]["item_id"]
-            == test_order["items"][i - 1]["item_id"]
-        )
-        assert (
-            response_get_order.json()[i - 1]["amount"]
-            == test_order["items"][i - 1]["amount"]
-        )
+    assert len(response_data) == len(test_order["items"])
+    for i in range(len(response_data)):
+        assert response_data[i - 1]["item_id"] == test_order["items"][i - 1]["item_id"]
+        assert response_data[i - 1]["amount"] == test_order["items"][i - 1]["amount"]
 
 
 def test_update_order_items_invalid_id(client):
@@ -275,17 +266,12 @@ def test_update_order_items(client):
     response_get_order = client.get(
         f'/orders/{str(test_order["id"])}/items', headers=test_headers
     )
+    response_data = response_get_order.json()["data"]
     assert response_get_order.status_code == 200
-    assert len(response_get_order.json()) == len(test_order_items)
-    for i in range(len(response_get_order.json())):
-        assert (
-            response_get_order.json()[i - 1]["item_id"]
-            == test_order_items[i - 1]["item_id"]
-        )
-        assert (
-            response_get_order.json()[i - 1]["amount"]
-            == test_order_items[i - 1]["amount"]
-        )
+    assert len(response_data) == len(test_order_items)
+    for i in range(len(response_data)):
+        assert response_data[i - 1]["item_id"] == test_order_items[i - 1]["item_id"]
+        assert response_data[i - 1]["amount"] == test_order_items[i - 1]["amount"]
 
 
 def test_partial_update_order_no_api_key(client):

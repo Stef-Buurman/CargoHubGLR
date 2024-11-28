@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Response, status
 from fastapi.responses import JSONResponse
+from services.pagination_service import Pagination
 from services import data_provider_v2, auth_provider_v2
 from models.v2.item import Item
 
@@ -18,17 +19,22 @@ def read_item(item_id: str, api_key: str = Depends(auth_provider_v2.get_api_key)
 
 
 @item_router_v2.get("/")
-def read_items(api_key: str = Depends(auth_provider_v2.get_api_key)):
+def read_items(
+    pagination: Pagination = Depends(),
+    api_key: str = Depends(auth_provider_v2.get_api_key),
+):
     data_provider_v2.init()
     items = data_provider_v2.fetch_item_pool().get_items()
     if items is None:
         raise HTTPException(status_code=404, detail="Items not found")
-    return items
+    return pagination.apply(items)
 
 
 @item_router_v2.get("/{item_id}/inventory")
 def read_inventory_of_item(
-    item_id: str, api_key: str = Depends(auth_provider_v2.get_api_key)
+    item_id: str,
+    pagination: Pagination = Depends(),
+    api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
     item = data_provider_v2.fetch_item_pool().get_item(item_id)
@@ -37,7 +43,7 @@ def read_inventory_of_item(
     inventories = data_provider_v2.fetch_inventory_pool().get_inventories_for_item(
         item_id
     )
-    return inventories
+    return pagination.apply(inventories)
 
 
 @item_router_v2.get("/{item_id}/inventory/totals")

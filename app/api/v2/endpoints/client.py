@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
+from services.pagination_service import Pagination
 from services import data_provider_v2, auth_provider_v2
 from models.v2.client import Client
 
@@ -16,17 +17,22 @@ def read_client(client_id: int, api_key: str = Depends(auth_provider_v2.get_api_
 
 
 @client_router_v2.get("/")
-def read_clients(api_key: str = Depends(auth_provider_v2.get_api_key)):
+def read_clients(
+    pagination: Pagination = Depends(),
+    api_key: str = Depends(auth_provider_v2.get_api_key),
+):
     data_provider_v2.init()
     clients = data_provider_v2.fetch_client_pool().get_clients()
     if clients is None:
         raise HTTPException(status_code=404, detail="No clients found")
-    return clients
+    return pagination.apply(clients)
 
 
 @client_router_v2.get("/{client_id}/orders")
 def read_client_orders(
-    client_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
+    client_id: int,
+    pagination: Pagination = Depends(),
+    api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
     client = data_provider_v2.fetch_client_pool().get_client(client_id)
@@ -35,7 +41,7 @@ def read_client_orders(
     orders = data_provider_v2.fetch_order_pool().get_orders_for_client(client_id)
     if orders is None:
         raise HTTPException(status_code=404, detail="No orders found for client")
-    return orders
+    return pagination.apply(orders)
 
 
 @client_router_v2.post("/")
