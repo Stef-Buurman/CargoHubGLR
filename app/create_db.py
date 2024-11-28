@@ -183,9 +183,7 @@ if __name__ == "__main__":
     for item_line in all_item_lines:
         count += 1
         if count % amount_before_closing == 0 or count == len(all_item_lines):
-            data_provider_v2.fetch_item_line_pool().add_item_line(
-                ItemLine(**item_line)
-            )
+            data_provider_v2.fetch_item_line_pool().add_item_line(ItemLine(**item_line))
         else:
             data_provider_v2.fetch_item_line_pool().add_item_line(
                 ItemLine(**item_line), False
@@ -196,9 +194,7 @@ if __name__ == "__main__":
     for item_type in all_item_types:
         count += 1
         if count % amount_before_closing == 0 or count == len(all_item_types):
-            data_provider_v2.fetch_item_type_pool().add_item_type(
-                ItemType(**item_type)
-            )
+            data_provider_v2.fetch_item_type_pool().add_item_type(ItemType(**item_type))
         else:
             data_provider_v2.fetch_item_type_pool().add_item_type(
                 ItemType(**item_type), False
@@ -278,9 +274,9 @@ if __name__ == "__main__":
     for location in all_locations:
         count += 1
         if count % amount_before_closing == 0 or count == len(all_locations):
-            data_provider_v2.fetch_location_pool().insert_location(Location(**location))
+            data_provider_v2.fetch_location_pool().add_location(Location(**location))
         else:
-            data_provider_v2.fetch_location_pool().insert_location(
+            data_provider_v2.fetch_location_pool().add_location(
                 Location(**location), False
             )
 
@@ -289,9 +285,9 @@ if __name__ == "__main__":
     for order in all_orders:
         count += 1
         if count % amount_before_closing == 0 or count == len(all_orders):
-            data_provider_v2.fetch_order_pool().insert_order(Order(**order))
+            data_provider_v2.fetch_order_pool().add_order(Order(**order))
         else:
-            data_provider_v2.fetch_order_pool().insert_order(Order(**order), False)
+            data_provider_v2.fetch_order_pool().add_order(Order(**order), False)
 
     elapsed_time = time.time() - start_time
 
