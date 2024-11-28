@@ -98,7 +98,7 @@ def get_shipments():
     from .shipment_service import ShipmentService
 
     global _shipments
-    _shipments = ShipmentService(ROOT_PATH, DEBUG)
+    _shipments = ShipmentService(DEBUG)
 
 
 def get_suppliers():
