@@ -90,8 +90,8 @@ def test_get_all_users(user_service):
     assert isinstance(users, list)
 
 
-def test_insert_user(user_service):
-    user_service.insert_user(
+def test_add_user(user_service):
+    user_service.add_user(
         test_user.api_key, test_user.app, test_user.full, test_user.endpoint_access
     )
     users = user_service.get_users()
@@ -108,7 +108,7 @@ def test_get_user_by_api_key(user_service):
 
 
 def test_has_access_warehouses(user_service):
-    user = user_service.insert_user(
+    user = user_service.add_user(
         test_user_2.api_key,
         test_user_2.app,
         test_user_2.full,
@@ -125,7 +125,7 @@ def test_has_access_warehouses(user_service):
 
 
 def test_has_access_locations(user_service):
-    user = user_service.insert_user(
+    user = user_service.add_user(
         test_user_2.api_key,
         test_user_2.app,
         test_user_2.full,
@@ -142,7 +142,7 @@ def test_has_access_locations(user_service):
 
 
 def test_has_access_transfers(user_service):
-    user = user_service.insert_user(
+    user = user_service.add_user(
         test_user_2.api_key,
         test_user_2.app,
         test_user_2.full,
@@ -159,7 +159,7 @@ def test_has_access_transfers(user_service):
 
 
 def test_has_access_items(user_service):
-    user = user_service.insert_user(
+    user = user_service.add_user(
         test_user_2.api_key,
         test_user_2.app,
         test_user_2.full,
@@ -176,7 +176,7 @@ def test_has_access_items(user_service):
 
 
 def test_has_access_item_lines(user_service):
-    user = user_service.insert_user(
+    user = user_service.add_user(
         test_user_2.api_key,
         test_user_2.app,
         test_user_2.full,
@@ -193,7 +193,7 @@ def test_has_access_item_lines(user_service):
 
 
 def test_has_access_item_groups(user_service):
-    user = user_service.insert_user(
+    user = user_service.add_user(
         test_user_2.api_key,
         test_user_2.app,
         test_user_2.full,
@@ -210,7 +210,7 @@ def test_has_access_item_groups(user_service):
 
 
 def test_has_access_item_types(user_service):
-    user = user_service.insert_user(
+    user = user_service.add_user(
         test_user_2.api_key,
         test_user_2.app,
         test_user_2.full,
@@ -227,7 +227,7 @@ def test_has_access_item_types(user_service):
 
 
 def test_has_access_suppliers(user_service):
-    user = user_service.insert_user(
+    user = user_service.add_user(
         test_user_2.api_key,
         test_user_2.app,
         test_user_2.full,
@@ -244,7 +244,7 @@ def test_has_access_suppliers(user_service):
 
 
 def test_has_access_orders(user_service):
-    user = user_service.insert_user(
+    user = user_service.add_user(
         test_user_2.api_key,
         test_user_2.app,
         test_user_2.full,
@@ -261,7 +261,7 @@ def test_has_access_orders(user_service):
 
 
 def test_has_access_clients(user_service):
-    user = user_service.insert_user(
+    user = user_service.add_user(
         test_user_2.api_key,
         test_user_2.app,
         test_user_2.full,
@@ -278,7 +278,7 @@ def test_has_access_clients(user_service):
 
 
 def test_has_access_shipments(user_service):
-    user = user_service.insert_user(
+    user = user_service.add_user(
         test_user_2.api_key,
         test_user_2.app,
         test_user_2.full,
