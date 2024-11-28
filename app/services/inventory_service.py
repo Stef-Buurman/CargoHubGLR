@@ -60,11 +60,12 @@ class InventoryService(Base):
             )
             location_rows = cursor_locations.fetchall()
 
-            inventory["locations"] = []
-            for inventory_id, location_id in location_rows:
-                inventory["locations"].append(location_id)
+            if inventory:
+                inventory["locations"] = []
+                for inventory_id, location_id in location_rows:
+                    inventory["locations"].append(location_id)
 
-            return Inventory(**inventory)
+                return Inventory(**inventory)
 
         return None
 
