@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
+from services.pagination_service import Pagination
 from models.v2.inventory import Inventory
 from services import data_provider_v2, auth_provider_v2
 
@@ -21,12 +22,17 @@ def read_inventory(
 
 
 @inventory_router_v2.get("/")
-def read_inventories(api_key: str = Depends(auth_provider_v2.get_api_key)):
+def read_inventories(
+    pagination: Pagination = Depends(), 
+    api_key: str = Depends(auth_provider_v2.get_api_key)
+):
     data_provider_v2.init()
     inventories = data_provider_v2.fetch_inventory_pool().get_inventories()
-    if inventories is None:
-        raise HTTPException(status_code=404, detail="inventories not found")
-    return inventories
+    if not inventories:
+        raise HTTPException(status_code=404, detail="No inventories found")
+
+    return pagination.apply(inventories)
+
 
 
 @inventory_router_v2.post("/")
