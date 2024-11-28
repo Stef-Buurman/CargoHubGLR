@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
+from services.pagination_service import Pagination
 from models.v2.item_line import ItemLine
 from services import data_provider_v2, auth_provider_v2
 
@@ -7,12 +8,15 @@ item_line_router_v2 = APIRouter()
 
 
 @item_line_router_v2.get("/")
-def read_item_lines(api_key: str = Depends(auth_provider_v2.get_api_key)):
+def read_item_lines(
+    pagination: Pagination = Depends(),
+    api_key: str = Depends(auth_provider_v2.get_api_key),
+):
     data_provider_v2.init()
     item_lines = data_provider_v2.fetch_item_line_pool().get_item_lines()
     if item_lines is None:
         raise HTTPException(status_code=404, detail="Item lines not found")
-    return item_lines
+    return pagination.apply(item_lines)
 
 
 @item_line_router_v2.get("/{item_line_id}")
@@ -30,7 +34,9 @@ def read_item_line(
 
 @item_line_router_v2.get("/{item_line_id}/items")
 def read_items_for_item_line(
-    item_line_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
+    item_line_id: int,
+    pagination: Pagination = Depends(),
+    api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
 
@@ -43,9 +49,7 @@ def read_items_for_item_line(
     items_for_item_line = data_provider_v2.fetch_item_pool().get_items_for_item_line(
         item_line_id
     )
-    # if not items_for_item_line:
-    #     return Response(status_code=status.HTTP_204_NO_CONTENT)
-    return items_for_item_line
+    return pagination.apply(items_for_item_line)
 
 
 @item_line_router_v2.post("/")

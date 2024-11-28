@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Response, status
 from fastapi.responses import JSONResponse
+from services.pagination_service import Pagination
 from services import data_provider_v2, auth_provider_v2
 from models.v2.supplier import Supplier
 
@@ -20,17 +21,22 @@ def read_supplier(
 
 
 @supplier_router_v2.get("/")
-def read_suppliers(api_key: str = Depends(auth_provider_v2.get_api_key)):
+def read_suppliers(
+    pagination: Pagination = Depends(),
+    api_key: str = Depends(auth_provider_v2.get_api_key),
+):
     data_provider_v2.init()
     suppliers = data_provider_v2.fetch_supplier_pool().get_suppliers()
     if suppliers is None:
         raise HTTPException(status_code=404, detail="Suppliers not found")
-    return suppliers
+    return pagination.apply(suppliers)
 
 
 @supplier_router_v2.get("/{supplier_id}/items")
 def read_items_of_supplier(
-    supplier_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
+    supplier_id: int, 
+    pagination: Pagination = Depends(),
+    api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
 
@@ -43,9 +49,7 @@ def read_items_of_supplier(
     items_for_supplier = data_provider_v2.fetch_item_pool().get_items_for_supplier(
         supplier_id
     )
-    # if not items_for_supplier:
-    #     return Response(status_code=status.HTTP_204_NO_CONTENT)
-    return items_for_supplier
+    return pagination.apply(items_for_supplier)
 
 
 @supplier_router_v2.post("/")
@@ -53,9 +57,6 @@ def create_supplier(
     supplier: Supplier, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
-    existingSupplier = data_provider_v2.fetch_supplier_pool().get_supplier(supplier.id)
-    # if existingSupplier is not None:
-    #     raise HTTPException(status_code=409, detail="Supplier already exists")
     created_supplier = data_provider_v2.fetch_supplier_pool().add_supplier(supplier)
     return JSONResponse(
         status_code=status.HTTP_201_CREATED, content=created_supplier.model_dump()

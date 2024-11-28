@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Response
 from fastapi.responses import JSONResponse
+from services.pagination_service import Pagination
 from services import data_provider_v2, auth_provider_v2
 from models.v2.warehouse import WarehouseDB
 
@@ -18,17 +19,22 @@ def read_warehouse(
 
 
 @warehouse_router_v2.get("/")
-def read_warehouses(api_key: str = Depends(auth_provider_v2.get_api_key)):
+def read_warehouses(
+    pagination: Pagination = Depends(),
+    api_key: str = Depends(auth_provider_v2.get_api_key),
+):
     data_provider_v2.init()
     warehouses = data_provider_v2.fetch_warehouse_pool().get_warehouses()
     if warehouses is None:
         raise HTTPException(status_code=404, detail="No warehouses found")
-    return warehouses
+    return pagination.apply(warehouses)
 
 
 @warehouse_router_v2.get("/{warehouse_id}/locations")
 def read_locations_in_warehouse(
-    warehouse_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
+    warehouse_id: int,
+    pagination: Pagination = Depends(),
+    api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
     warehouse = data_provider_v2.fetch_warehouse_pool().get_warehouse(warehouse_id)
@@ -43,7 +49,7 @@ def read_locations_in_warehouse(
         raise HTTPException(
             status_code=404, detail=f"No locations found in warehouse {warehouse_id}"
         )
-    return locations
+    return pagination.apply(locations)
 
 
 @warehouse_router_v2.post("/")

@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Response, status
 from fastapi.responses import JSONResponse
+from services.pagination_service import Pagination
 from models.v2.item_group import ItemGroup
 from services import data_provider_v2, auth_provider_v2
 
@@ -20,17 +21,22 @@ def read_item_group(
 
 
 @item_group_router_v2.get("/")
-def read_item_groups(api_key: str = Depends(auth_provider_v2.get_api_key)):
+def read_item_groups(
+    pagination: Pagination = Depends(),
+    api_key: str = Depends(auth_provider_v2.get_api_key),
+):
     data_provider_v2.init()
     item_groups = data_provider_v2.fetch_item_group_pool().get_item_groups()
     if item_groups is None:
         raise HTTPException(status_code=404, detail="No item_groups found")
-    return item_groups
+    return pagination.apply(item_groups)
 
 
 @item_group_router_v2.get("/{item_group_id}/items")
 def read_items_for_item_group(
-    item_group_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
+    item_group_id: int, 
+    pagination: Pagination = Depends(),
+    api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
     item_group = data_provider_v2.fetch_item_group_pool().get_item_group(item_group_id)
@@ -39,9 +45,7 @@ def read_items_for_item_group(
             status_code=404, detail=f"Item_group with id {item_group_id} not found"
         )
     items = data_provider_v2.fetch_item_pool().get_items_for_item_group(item_group_id)
-    # if not items:
-    #     return Response(status_code=status.HTTP_204_NO_CONTENT)
-    return items
+    return pagination.apply(items)
 
 
 @item_group_router_v2.post("/")

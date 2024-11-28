@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Response, status
 from fastapi.responses import JSONResponse
+from services.pagination_service import Pagination
 from services import data_provider_v2, auth_provider_v2
 from models.v2.shipment import Shipment
 from typing import List, Dict, Union
@@ -21,17 +22,22 @@ def read_shipment(
 
 
 @shipment_router_v2.get("/")
-def read_shipments(api_key: str = Depends(auth_provider_v2.get_api_key)):
+def read_shipments(
+    pagination: Pagination = Depends(),
+    api_key: str = Depends(auth_provider_v2.get_api_key),
+):
     data_provider_v2.init()
     shipments = data_provider_v2.fetch_shipment_pool().get_shipments()
     if shipments is None:
         raise HTTPException(status_code=404, detail="No shipments found")
-    return shipments
+    return pagination.apply(shipments)
 
 
 @shipment_router_v2.get("/{shipment_id}/orders")
 def read_orders_for_shipment(
-    shipment_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
+    shipment_id: int, 
+    pagination: Pagination = Depends(),
+    api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
     shipment = data_provider_v2.fetch_shipment_pool().get_shipment(shipment_id)
@@ -40,12 +46,14 @@ def read_orders_for_shipment(
             status_code=404, detail=f"Shipment with id {shipment_id} not found"
         )
     orders = data_provider_v2.fetch_order_pool().get_orders_for_shipments(shipment_id)
-    return orders
+    return pagination.apply(orders)
 
 
 @shipment_router_v2.get("/{shipment_id}/items")
 def read_items_for_shipment(
-    shipment_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
+    shipment_id: int, 
+    pagination: Pagination = Depends(),
+    api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
     shipment = data_provider_v2.fetch_shipment_pool().get_shipment(shipment_id)
@@ -54,7 +62,7 @@ def read_items_for_shipment(
             status_code=404, detail=f"Shipment with id {shipment_id} not found"
         )
     items = data_provider_v2.fetch_shipment_pool().get_items_in_shipment(shipment_id)
-    return items
+    return pagination.apply(items)
 
 
 @shipment_router_v2.post("/")
