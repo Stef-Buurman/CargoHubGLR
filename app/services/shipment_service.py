@@ -1,4 +1,3 @@
-import json
 from typing import List, Optional
 from models.v2.shipment import Shipment
 from models.v2.ItemInObject import ItemInObject
@@ -6,8 +5,6 @@ from models.base import Base
 from services.database_service import DB
 from services import data_provider_v2
 from utils.globals import *
-
-SHIPMENTS = []
 
 
 class ShipmentService(Base):
@@ -50,7 +47,7 @@ class ShipmentService(Base):
         for shipment in self.data:
             if shipment.id == shipment_id:
                 return shipment
-            
+
         with self.db.get_connection() as conn:
             query = f"SELECT * FROM {Shipment.table_name()} WHERE id = {shipment_id}"
             cursor = conn.execute(query)

@@ -4,8 +4,6 @@ from models.base import Base
 from services.database_service import DB
 from services import data_provider_v2
 
-SUPPLIERS = []
-
 
 class SupplierService(Base):
     def __init__(self, is_debug: bool = False, suppliers: List[Supplier] | None = None):
