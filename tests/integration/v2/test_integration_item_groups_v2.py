@@ -142,9 +142,9 @@ def test_get_items_for_item_group(client):
     response_items = response.json()
     assert response.status_code == 200
     assert isinstance(response_items, list)
-    assert response_items[0]["uid"] == responseAddItem.json()["uid"]
+    assert response_items["uid"] == responseAddItem.json()["uid"]
     responseDeleteItem = client.delete(
-        "/items/" + responseAddItem.json()["uid"], headers=test_headers
+        "/items/" + response_items["uid"], headers=test_headers
     )
     assert responseDeleteItem.status_code == 200
 
