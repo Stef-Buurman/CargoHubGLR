@@ -1,5 +1,6 @@
 from fastapi import Query
 
+
 class Pagination:
     def __init__(self, page: int = Query(1, ge=1), items_per_page: int = 50):
         self.page = page
