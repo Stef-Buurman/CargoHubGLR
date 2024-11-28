@@ -30,7 +30,6 @@ def read_inventories(
     inventories = data_provider_v2.fetch_inventory_pool().get_inventories()
     if not inventories:
         raise HTTPException(status_code=404, detail="No inventories found")
-
     return pagination.apply(inventories)
 
 
