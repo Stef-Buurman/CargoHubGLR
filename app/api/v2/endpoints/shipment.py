@@ -4,7 +4,7 @@ from services.v2.pagination_service import Pagination
 from services.v2 import data_provider_v2, auth_provider_v2
 from models.v2.shipment import Shipment
 from typing import Dict, Union
-
+from utils.globals import pagination_url
 shipment_router_v2 = APIRouter()
 
 
@@ -22,6 +22,7 @@ def read_shipment(
 
 
 @shipment_router_v2.get("/")
+@shipment_router_v2.get(pagination_url)
 def read_shipments(
     pagination: Pagination = Depends(),
     api_key: str = Depends(auth_provider_v2.get_api_key),
@@ -34,6 +35,7 @@ def read_shipments(
 
 
 @shipment_router_v2.get("/{shipment_id}/orders")
+@shipment_router_v2.get("/{shipment_id}/orders" + pagination_url)
 def read_orders_for_shipment(
     shipment_id: int,
     pagination: Pagination = Depends(),
@@ -50,6 +52,7 @@ def read_orders_for_shipment(
 
 
 @shipment_router_v2.get("/{shipment_id}/items")
+@shipment_router_v2.get("/{shipment_id}/items" + pagination_url)
 def read_items_for_shipment(
     shipment_id: int,
     pagination: Pagination = Depends(),
