@@ -39,91 +39,91 @@ def init():
 
 # Load data for each model
 def get_items():
-    from model_services.item_services import ItemService
+    from .model_services.item_services import ItemService
 
     global _items
     _items = ItemService(DEBUG)
 
 
 def get_item_lines():
-    from model_services.item_line_service import ItemLineService
+    from .model_services.item_line_service import ItemLineService
 
     global _item_lines
     _item_lines = ItemLineService(DEBUG)
 
 
 def get_item_groups():
-    from model_services.item_group_service import ItemGroupService
+    from .model_services.item_group_service import ItemGroupService
 
     global _item_groups
     _item_groups = ItemGroupService(DEBUG)
 
 
 def get_item_types():
-    from model_services.item_type_service import ItemTypeService
+    from .model_services.item_type_service import ItemTypeService
 
     global _item_types
     _item_types = ItemTypeService(DEBUG)
 
 
 def get_warehouses():
-    from model_services.warehouse_service import WarehouseService
+    from .model_services.warehouse_service import WarehouseService
 
     global _warehouses
     _warehouses = WarehouseService(DEBUG)
 
 
 def get_locations():
-    from model_services.location_service import LocationService
+    from .model_services.location_service import LocationService
 
     global _locations
     _locations = LocationService(DEBUG)
 
 
 def get_transfers():
-    from model_services.transfer_service import TransferService
+    from .model_services.transfer_service import TransferService
 
     global _transfers
     _transfers = TransferService(DEBUG)
 
 
 def get_clients():
-    from model_services.client_service import ClientService
+    from .model_services.client_service import ClientService
 
     global _clients
     _clients = ClientService(DEBUG)
 
 
 def get_shipments():
-    from model_services.shipment_service import ShipmentService
+    from .model_services.shipment_service import ShipmentService
 
     global _shipments
     _shipments = ShipmentService(DEBUG)
 
 
 def get_suppliers():
-    from model_services.suppliers_service import SupplierService
+    from .model_services.suppliers_service import SupplierService
 
     global _suppliers
     _suppliers = SupplierService(DEBUG)
 
 
 def get_inventories():
-    from model_services.inventory_service import InventoryService
+    from .model_services.inventory_service import InventoryService
 
     global _inventories
     _inventories = InventoryService(DEBUG)
 
 
 def get_orders():
-    from model_services.order_service import OrderService
+    from .model_services.order_service import OrderService
 
     global _orders
     _orders = OrderService(DEBUG)
 
 
 def get_users():
-    from model_services.user_service import UserService
+    from .model_services.user_service import UserService
 
     global _users
     _users = UserService(DEBUG)
