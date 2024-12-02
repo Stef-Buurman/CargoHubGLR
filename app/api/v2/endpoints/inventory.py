@@ -3,6 +3,7 @@ from fastapi.responses import JSONResponse
 from services.v2.pagination_service import Pagination
 from models.v2.inventory import Inventory
 from services.v2 import data_provider_v2, auth_provider_v2
+from utils.globals import pagination_url
 
 inventory_router_v2 = APIRouter()
 
@@ -22,6 +23,7 @@ def read_inventory(
 
 
 @inventory_router_v2.get("/")
+@inventory_router_v2.get(pagination_url)
 def read_inventories(
     pagination: Pagination = Depends(),
     api_key: str = Depends(auth_provider_v2.get_api_key),

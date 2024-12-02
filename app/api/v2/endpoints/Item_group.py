@@ -3,6 +3,7 @@ from fastapi.responses import JSONResponse
 from services.v2.pagination_service import Pagination
 from models.v2.item_group import ItemGroup
 from services.v2 import data_provider_v2, auth_provider_v2
+from utils.globals import pagination_url
 
 item_group_router_v2 = APIRouter()
 
@@ -21,6 +22,7 @@ def read_item_group(
 
 
 @item_group_router_v2.get("/")
+@item_group_router_v2.get(pagination_url)
 def read_item_groups(
     pagination: Pagination = Depends(),
     api_key: str = Depends(auth_provider_v2.get_api_key),
@@ -33,6 +35,7 @@ def read_item_groups(
 
 
 @item_group_router_v2.get("/{item_group_id}/items")
+@item_group_router_v2.get("/{item_group_id}/items" + pagination_url)
 def read_items_for_item_group(
     item_group_id: int,
     pagination: Pagination = Depends(),

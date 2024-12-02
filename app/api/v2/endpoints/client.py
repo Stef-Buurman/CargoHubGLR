@@ -1,8 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.responses import JSONResponse
 from services.v2.pagination_service import Pagination
 from services.v2 import data_provider_v2, auth_provider_v2
 from models.v2.client import Client
+from utils.globals import pagination_url
 
 client_router_v2 = APIRouter()
 
@@ -17,6 +18,7 @@ def read_client(client_id: int, api_key: str = Depends(auth_provider_v2.get_api_
 
 
 @client_router_v2.get("/")
+@client_router_v2.get(pagination_url)
 def read_clients(
     pagination: Pagination = Depends(),
     api_key: str = Depends(auth_provider_v2.get_api_key),
@@ -29,6 +31,7 @@ def read_clients(
 
 
 @client_router_v2.get("/{client_id}/orders")
+@client_router_v2.get("/{client_id}/orders" + pagination_url)
 def read_client_orders(
     client_id: int,
     pagination: Pagination = Depends(),
@@ -47,9 +50,6 @@ def read_client_orders(
 @client_router_v2.post("/")
 def create_client(client: Client, api_key: str = Depends(auth_provider_v2.get_api_key)):
     data_provider_v2.init()
-    existing_client = data_provider_v2.fetch_client_pool().get_client(client.id)
-    # if existing_client is not None:
-    #     raise HTTPException(status_code=409, detail="Client already exists")
     created_client = data_provider_v2.fetch_client_pool().add_client(client)
     return JSONResponse(
         status_code=status.HTTP_201_CREATED, content=created_client.model_dump()

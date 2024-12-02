@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 from services.v2.pagination_service import Pagination
 from services.v2 import data_provider_v2, auth_provider_v2
 from models.v2.location import Location
-
+from utils.globals import pagination_url
 location_router_v2 = APIRouter()
 
 
@@ -21,6 +21,7 @@ def read_location(
 
 
 @location_router_v2.get("/")
+@location_router_v2.get(pagination_url)
 def read_locations(
     pagination: Pagination = Depends(),
     api_key: str = Depends(auth_provider_v2.get_api_key),
