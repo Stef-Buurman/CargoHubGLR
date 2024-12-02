@@ -4,6 +4,7 @@ from services.v2.pagination_service import Pagination
 from services.v2 import data_provider_v2, auth_provider_v2
 from models.v2.warehouse import WarehouseDB
 from utils.globals import pagination_url
+
 warehouse_router_v2 = APIRouter()
 
 
