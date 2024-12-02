@@ -30,6 +30,7 @@ class LocationService(Base):
     ) -> Location:
         location.created_at = self.get_timestamp()
         location.updated_at = self.get_timestamp()
+        self.data.append(location)
         return self.db.insert(location, closeConnection)
 
     def update_location(
