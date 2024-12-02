@@ -1,6 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Response
+from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
-from services import data_provider, auth_provider
+from services.v1 import data_provider, auth_provider
 
 warehouse_router = APIRouter()
 
@@ -38,8 +38,6 @@ def read_locations_in_warehouse(
     locations = data_provider.fetch_location_pool().get_locations_in_warehouse(
         warehouse_id
     )
-    # if locations is None:
-    #     return Response(status_code=status.HTTP_204_NO_CONTENT)
     return locations
 
 

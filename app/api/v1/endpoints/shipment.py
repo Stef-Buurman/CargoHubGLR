@@ -1,6 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException, Response, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
-from services import data_provider, auth_provider
+from services.v1 import data_provider, auth_provider
 from typing import List, Dict, Union
 
 shipment_router = APIRouter()
@@ -37,8 +37,6 @@ def read_orders_for_shipment(
             status_code=404, detail=f"Shipment with id {shipment_id} not found"
         )
     orders = data_provider.fetch_order_pool().get_orders_for_shipments(shipment_id)
-    # if not orders:
-    #     return Response(status_code=status.HTTP_204_NO_CONTENT)
     return orders
 
 
