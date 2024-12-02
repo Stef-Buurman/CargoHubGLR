@@ -1,7 +1,7 @@
 import pytest
 from app.models.v2.endpoint_access import EndpointAccess
 from app.models.v2.user import User
-from app.services.user_service import UserService
+from app.services.v2.model_services.user_service import UserService
 from test_globals import *
 
 test_user: User = User(
