@@ -1,6 +1,6 @@
 import pytest
 from unittest.mock import patch, mock_open
-from app.models.shipments import Shipments
+from app.models.v1.shipments import Shipments
 
 
 @pytest.fixture
