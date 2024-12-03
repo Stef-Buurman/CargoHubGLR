@@ -30,16 +30,25 @@ class LocationService(Base):
     ) -> Location:
         location.created_at = self.get_timestamp()
         location.updated_at = self.get_timestamp()
+        self.data.append(location)
         return self.db.insert(location, closeConnection)
 
     def update_location(
         self, location_id: int, location: Location, closeConnection: bool = True
     ) -> Location:
         location.updated_at = self.get_timestamp()
+        for i in range(len(self.data)):
+            if self.data[i].id == location_id:
+                self.data[i] = location
         return self.db.update(location, location_id, closeConnection)
 
     def remove_location(self, location_id: int, closeConnection: bool = True) -> bool:
-        return self.db.delete(Location, location_id, closeConnection)
+        for i in range(len(self.data)):
+            if self.data[i].id == location_id:
+                if self.db.delete(Location, location_id, closeConnection):
+                    del self.data[i]
+                    return True
+        return False
 
     def load(self, is_debug: bool, locations: List[Location] | None = None):
         if is_debug and locations is not None:
