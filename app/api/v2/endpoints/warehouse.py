@@ -108,6 +108,7 @@ def partial_update_warehouse(
     )
     return partial_updated_warehouse
 
+
 @warehouse_router_v2.delete("/{warehouse_id}")
 def delete_warehouse(
     warehouse_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
