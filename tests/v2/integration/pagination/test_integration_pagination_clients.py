@@ -65,7 +65,7 @@ def test_get_all_clients_page_too_high(client):
     assert response_clients.json()["pagination"]["page"] == 1
 
 
-def test_get_all_clients_page_wrong_page_number(client):
+def test_get_all_clients_wrong_page_number(client):
     response = client.get("/clients" + wrong_page_1, headers=test_headers)
     assert response.status_code == 422
     response = client.get("/clients" + wrong_page_2, headers=test_headers)
@@ -123,7 +123,7 @@ def test_get_all_client_orders_page_too_high(client):
     assert response_orders.json()["pagination"]["page"] == 1
 
 
-def test_get_all_client_orders_page_wrong_page_number(client):
+def test_get_all_client_orders_wrong_page_number(client):
     response = client.get(
         f"/clients/{test_CargoClient['id']}/orders{wrong_page_1}",
         headers=test_headers,
