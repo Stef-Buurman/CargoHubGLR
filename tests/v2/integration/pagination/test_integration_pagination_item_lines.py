@@ -57,7 +57,7 @@ def test_get_all_item_lines_page_too_high(client):
     assert response_item_lines.json()["pagination"]["page"] == 1
 
 
-def test_get_all_item_lines_page_wrong_page_number(client):
+def test_get_all_item_lines_wrong_page_number(client):
     response = client.get("/item_lines" + wrong_page_1, headers=test_headers)
     assert response.status_code == 422
     response = client.get("/item_lines" + wrong_page_2, headers=test_headers)
@@ -129,7 +129,7 @@ def test_get_all_item_lines_items_page_too_high(client):
     assert response_items.json()["pagination"]["page"] == 1
 
 
-def test_get_all_item_lines_items_page_wrong_page_number(client):
+def test_get_all_item_lines_items_wrong_page_number(client):
     response = client.get(
         f"/item_lines/{test_item_line['id']}/items" + wrong_page_1, headers=test_headers
     )
