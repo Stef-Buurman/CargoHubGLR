@@ -57,7 +57,7 @@ def test_get_all_item_types_page_too_high(client):
     assert response_item_types.json()["pagination"]["page"] == 1
 
 
-def test_get_all_item_types_page_wrong_page_number(client):
+def test_get_all_item_types_wrong_page_number(client):
     response = client.get("/item_types" + wrong_page_1, headers=test_headers)
     assert response.status_code == 422
     response = client.get("/item_types" + wrong_page_2, headers=test_headers)
