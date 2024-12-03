@@ -3,6 +3,7 @@ from fastapi.responses import JSONResponse
 from services.v2.pagination_service import Pagination
 from services.v2 import data_provider_v2, auth_provider_v2
 from models.v2.warehouse import WarehouseDB
+from utils.globals import pagination_url
 
 warehouse_router_v2 = APIRouter()
 
@@ -19,6 +20,7 @@ def read_warehouse(
 
 
 @warehouse_router_v2.get("/")
+@warehouse_router_v2.get(pagination_url)
 def read_warehouses(
     pagination: Pagination = Depends(),
     api_key: str = Depends(auth_provider_v2.get_api_key),
@@ -31,6 +33,7 @@ def read_warehouses(
 
 
 @warehouse_router_v2.get("/{warehouse_id}/locations")
+@warehouse_router_v2.get("/{warehouse_id}/locations" + pagination_url)
 def read_locations_in_warehouse(
     warehouse_id: int,
     pagination: Pagination = Depends(),
@@ -57,11 +60,6 @@ def create_warehouse(
     warehouse: WarehouseDB, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
-    existing_warehouse = data_provider_v2.fetch_warehouse_pool().get_warehouse(
-        warehouse.id
-    )
-    # if existing_warehouse is not None:
-    #     raise HTTPException(status_code=409, detail="Warehouse already exists")
     created_warehouse = data_provider_v2.fetch_warehouse_pool().add_warehouse(warehouse)
 
     return JSONResponse(

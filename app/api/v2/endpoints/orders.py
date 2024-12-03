@@ -4,6 +4,7 @@ from services.v2.pagination_service import Pagination
 from services.v2 import data_provider_v2, auth_provider_v2
 from models.v2.order import Order
 from models.v2.ItemInObject import ItemInObject
+from utils.globals import pagination_url
 
 order_router_v2 = APIRouter()
 
@@ -20,6 +21,7 @@ def read_order(order_id: int, api_key: str = Depends(auth_provider_v2.get_api_ke
 
 
 @order_router_v2.get("/")
+@order_router_v2.get(pagination_url)
 def read_orders(
     pagination: Pagination = Depends(),
     api_key: str = Depends(auth_provider_v2.get_api_key),
@@ -32,6 +34,7 @@ def read_orders(
 
 
 @order_router_v2.get("/{order_id}/items")
+@order_router_v2.get("/{order_id}/items" + pagination_url)
 def read_order_items(
     order_id: int,
     pagination: Pagination = Depends(),

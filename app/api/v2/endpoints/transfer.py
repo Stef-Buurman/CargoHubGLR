@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from services.v2.pagination_service import Pagination
 from services.v2 import data_provider_v2, auth_provider_v2
 from models.v2.transfer import Transfer
+from utils.globals import pagination_url
 
 transfer_router_v2 = APIRouter()
 
@@ -18,6 +19,7 @@ def read_transfer(
 
 
 @transfer_router_v2.get("/")
+@transfer_router_v2.get(pagination_url)
 def read_transfers(
     pagination: Pagination = Depends(),
     api_key: str = Depends(auth_provider_v2.get_api_key),
@@ -30,6 +32,7 @@ def read_transfers(
 
 
 @transfer_router_v2.get("/{transfer_id}/items")
+@transfer_router_v2.get("/{transfer_id}/items" + pagination_url)
 def read_transfer_items(
     transfer_id: int,
     pagination: Pagination = Depends(),
