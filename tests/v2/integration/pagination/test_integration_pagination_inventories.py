@@ -50,7 +50,7 @@ def test_get_all_inventories_page_too_high(client):
     assert response_inventories.json()["pagination"]["page"] == 1
 
 
-def test_get_all_inventories_page_wrong_page_number(client):
+def test_get_all_inventories_wrong_page_number(client):
     response = client.get("/inventories" + wrong_page_1, headers=test_headers)
     assert response.status_code == 422
     response = client.get("/inventories" + wrong_page_2, headers=test_headers)
