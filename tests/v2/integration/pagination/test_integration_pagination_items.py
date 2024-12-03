@@ -68,7 +68,7 @@ def test_get_all_items_page_too_high(client):
     assert response_items.json()["pagination"]["page"] == 1
 
 
-def test_get_all_items_page_wrong_page_number(client):
+def test_get_all_items_wrong_page_number(client):
     response = client.get("/items" + wrong_page_1, headers=test_headers)
     assert response.status_code == 422
     response = client.get("/items" + wrong_page_2, headers=test_headers)
@@ -125,7 +125,7 @@ def test_get_all_item_inventories_page_too_high(client):
     assert response_item_inventories.json()["pagination"]["page"] == 1
 
 
-def test_get_all_item_inventories_page_wrong_page_number(client):
+def test_get_all_item_inventories_wrong_page_number(client):
     response = client.get(
         f"/items/{test_item['id']}/inventories" + wrong_page_1, headers=test_headers
     )
