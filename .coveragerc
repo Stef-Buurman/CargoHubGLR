@@ -1,0 +1,7 @@
+[run]
+omit = test_*
+
+[report]
+omit =
+    /usr/lib/python3/dist-packages/*
+    ./app/services/data_provider.py

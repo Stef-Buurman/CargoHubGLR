@@ -1,0 +1,169 @@
+import json
+
+from .base import Base
+
+import sys
+import os
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
+from services.v1 import data_provider
+
+ORDERS = []
+
+
+class Orders(Base):
+    def __init__(self, root_path, is_debug=False):
+        self.data_path = root_path + "orders.json"
+        self.load(is_debug)
+
+    def get_orders(self):
+        return self.data
+
+    def get_order(self, order_id):
+        for x in self.data:
+            if x["id"] == order_id:
+                return x
+        return None
+
+    def get_items_in_order(self, order_id):
+        for x in self.data:
+            if x["id"] == order_id:
+                return x["items"]
+        return None
+
+    def get_orders_in_shipment(self, shipment_id):
+        result = []
+        for x in self.data:
+            if x["shipment_id"] == shipment_id:
+                result.append(x["id"])
+        return result
+
+    def get_orders_for_shipments(self, shipment_id):
+        result = []
+        for x in self.data:
+            if x["shipment_id"] == shipment_id:
+                result.append(x)
+        return result
+
+    def get_orders_for_client(self, client_id):
+        result = []
+        for x in self.data:
+            if x["ship_to"] == client_id or x["bill_to"] == client_id:
+                result.append(x)
+        return result
+
+    def add_order(self, order):
+        order["created_at"] = self.get_timestamp()
+        order["updated_at"] = self.get_timestamp()
+        self.data.append(order)
+
+    def update_order(self, order_id, order):
+        order["updated_at"] = self.get_timestamp()
+        for i in range(len(self.data)):
+            if self.data[i]["id"] == order_id:
+                self.data[i] = order
+                break
+
+    def update_items_in_order(self, order_id, items):
+        order = self.get_order(order_id)
+        current = order["items"]
+        for current_item in current:
+            found = False
+            for updated_item in items:
+                if current_item["item_id"] == updated_item["item_id"]:
+                    found = True
+                    break
+            if not found:
+                inventories = (
+                    data_provider.fetch_inventory_pool().get_inventories_for_item(
+                        current_item["item_id"]
+                    )
+                )
+                min_ordered = float("inf")
+                min_inventory = None
+
+                for inv in inventories:
+                    if inv["total_allocated"] > min_ordered:
+                        min_ordered = inv["total_allocated"]
+                        min_inventory = inv
+
+                if min_inventory:
+                    min_inventory["total_allocated"] -= current_item["amount"]
+                    min_inventory["total_expected"] = (
+                        min_inventory["total_on_hand"] + min_inventory["total_ordered"]
+                    )
+                    data_provider.fetch_inventory_pool().update_inventory(
+                        min_inventory["id"], min_inventory
+                    )
+
+        for updated_item in items:
+            found = False
+            matching_current_item = None
+
+            for current_item in current:
+                if current_item["item_id"] == updated_item["item_id"]:
+                    found = True
+                    matching_current_item = current_item
+                    break
+
+            if found:
+                inventories = (
+                    data_provider.fetch_inventory_pool().get_inventories_for_item(
+                        updated_item["item_id"]
+                    )
+                )
+                min_inventory = None
+                min_ordered = float("inf")
+
+                for inv in inventories:
+                    if inv["total_allocated"] < min_ordered:
+                        min_ordered = inv["total_allocated"]
+                        min_inventory = inv
+
+                if min_inventory:
+                    delta_amount = (
+                        updated_item["amount"] - matching_current_item["amount"]
+                    )
+                    min_inventory["total_allocated"] += delta_amount
+                    min_inventory["total_expected"] = (
+                        min_inventory["total_on_hand"] + min_inventory["total_ordered"]
+                    )
+                    data_provider.fetch_inventory_pool().update_inventory(
+                        min_inventory["id"], min_inventory
+                    )
+
+        order["items"] = items
+        self.update_order(order_id, order)
+
+    def update_orders_in_shipment(self, shipment_id, orders):
+        packed_orders = self.get_orders_in_shipment(shipment_id)
+        for x in packed_orders:
+            if x not in orders:
+                order = self.get_order(x)
+                order["shipment_id"] = -1
+                order["order_status"] = "Scheduled"
+                self.update_order(x, order)
+        for x in orders:
+            order = self.get_order(x)
+            order["shipment_id"] = shipment_id
+            order["order_status"] = "Packed"
+            self.update_order(x, order)
+            return order
+
+    def remove_order(self, order_id):
+        for x in self.data:
+            if x["id"] == order_id:
+                self.data.remove(x)
+
+    def load(self, is_debug):
+        if is_debug:
+            self.data = ORDERS
+        else:
+            f = open(self.data_path, "r")
+            self.data = json.load(f)
+            f.close()
+
+    def save(self):
+        f = open(self.data_path, "w")
+        json.dump(self.data, f)
+        f.close()

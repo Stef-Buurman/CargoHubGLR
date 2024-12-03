@@ -1,0 +1,143 @@
+name: Test API on PR
+
+on:
+  pull_request:
+    branches: ["Production"]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  smoke:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check if port is in use and set TEST_PORT
+        run: |
+          DEFAULT_PORT=8000
+          APP_PORT=$DEFAULT_PORT
+
+          while lsof -i :$APP_PORT; do
+            APP_PORT=$((APP_PORT + 1)) 
+          done
+          echo "TEST_PORT=$APP_PORT" >> $GITHUB_ENV
+          echo "Using port $APP_PORT for the application."
+      - name: Start the application in the background
+        run: |
+          APP_PORT=$TEST_PORT
+
+          python3 app/main.py --port $APP_PORT > app.log 2>&1 & 
+          echo $! > app_pid.txt 
+          sleep 5
+      - name: Smoke test with pytest
+        id: test_step
+        run: |
+          coverage run -m pytest ./tests/v1/smoke
+          coverage run -m pytest ./tests/v2/smoke
+      - name: Run code coverage
+        run: |
+          coverage report -m --rcfile=.coveragerc --format=markdown >> $GITHUB_STEP_SUMMARY
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-smoke
+          path: |
+            app.log
+            coverage.xml
+
+  test:
+    needs: [smoke]
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check if port is in use and set TEST_PORT
+        run: |
+          DEFAULT_PORT=8000
+          APP_PORT=$DEFAULT_PORT
+
+          while lsof -i :$APP_PORT; do
+            APP_PORT=$((APP_PORT + 1)) 
+          done
+          echo "TEST_PORT=$APP_PORT" >> $GITHUB_ENV
+          echo "Using port $APP_PORT for the application."
+      - name: Start the application in the background
+        run: |
+          APP_PORT=$TEST_PORT
+
+          python3 app/main.py --port $APP_PORT > app.log 2>&1 & 
+          echo $! > app_pid.txt 
+          sleep 5
+      - name: Test with pytest
+        id: test_step
+        run: |
+          coverage run -m pytest
+      - name: Run code coverage
+        run: |
+          coverage report -m --rcfile=.coveragerc --format=markdown >> $GITHUB_STEP_SUMMARY
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: |
+            app.log
+            coverage.xml
+
+  notify:
+    needs: [smoke, test]
+    runs-on: self-hosted
+    if: always()
+    steps:
+      - name: Set status variable
+        id: set_status
+        run: |
+          # Check for cancellation in dependent jobs
+
+          if [[ "${{ needs.test.result }}" == "cancelled" ]]; then
+            echo "status=cancelled" >> $GITHUB_ENV
+          elif [[ "${{ needs.smoke.result }} == "cancelled" ]]; then
+            echo "status=cancelled" >> $GITHUB_ENV
+          elif [[ "${{ needs.test.result }}" == "failure" ]]; then
+            echo "status=failure" >> $GITHUB_ENV
+          elif [[ "${{ needs.smoke.result}}" == "failure" ]]; then
+            echo "status=failure" >> $GITHUB_ENV
+          else
+            echo "status=success" >> $GITHUB_ENV
+          fi
+
+      - name: Check if workflow was canceled
+        id: check_canceled
+        run: |
+          # If the status is cancelled, exit early
+          if [[ "$status" == "cancelled" ]]; then
+            echo "Workflow was canceled, skipping notification."
+            exit 0
+          fi
+
+      - name: Send Discord Notification with PR and Test Results
+        env:
+          ERRORWEBHOOK: ${{ secrets.ERRORWEBHOOK }}
+          SUCCESSWEBHOOK: ${{ secrets.SUCCESSWEBHOOK }}
+        run: |
+          PR_URL="https://github.com/${{ github.repository }}/pull/${{ github.event.pull_request.number }}"
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          PR_AUTHOR="${{ github.event.pull_request.user.login }}"
+
+          if [[ "$status" == "success" ]]; then
+            ICON_URL="https://media.discordapp.net/attachments/1304098990907981854/1308410201669501001/image.png?ex=673dd775&is=673c85f5&hm=4e3044416bb57e59e71bad3c2dd5932f9a8945b8c462f869d7639878b4a04992&format=jpeg"
+            MESSAGE="------------\n**Pull Request:** [${PR_TITLE}](${PR_URL})\n**Author:** ${PR_AUTHOR}\n**Test Status:** Tests completed successfully"
+            curl -X POST -H "Content-Type: application/json" -d "{
+              \"content\": \"${MESSAGE}\",
+              \"avatar_url\": \"${ICON_URL}\"
+            }" $SUCCESSWEBHOOK
+
+          elif [[ "$status" == "failure" ]]; then
+            ICON_URL="https://media.discordapp.net/attachments/1176098997253963828/1298243289467588629/image.png?ex=672df2c8&is=672ca148&hm=08edf2f16947cfb2382ddd66c860ba5b907a534e5e04ffc5e8ef451c6eb9d8c9&=&format=jpeg"
+            MESSAGE="------------\n**Pull Request:** [${PR_TITLE}](${PR_URL})\n**Author:** ${PR_AUTHOR}\n**Test Status:** Tests failed\n[Check test run](${PR_URL}/checks)"
+            curl -X POST -H "Content-Type: application/json" -d "{
+              \"content\": \"${MESSAGE}\",
+              \"avatar_url\": \"${ICON_URL}\"
+            }" $ERRORWEBHOOK
+          fi

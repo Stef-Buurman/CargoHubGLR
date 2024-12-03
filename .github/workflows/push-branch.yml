@@ -1,0 +1,68 @@
+name: Format branch on push
+
+on:
+  push:
+    branches-ignore: ["Testing", "Production"]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up virtual environment
+        run: |
+          python3 -m venv venv
+          source venv/bin/activate
+          python -m pip install --upgrade pip
+          pip install black
+
+      - name: Check out the current branch
+        run: |
+          git fetch --all
+          git checkout ${{ github.head_ref }}
+
+      - name: Run black to reformat code
+        id: format_step
+        run: |
+          source venv/bin/activate
+          black .
+
+      - name: Check for changes and commit
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git remote set-url origin https://github-actions:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+
+          git add .
+          if ! git diff --cached --quiet; then
+            git commit --amend --no-edit
+            git push --force
+          fi
+
+  lint:
+    needs: [format]
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install flake8
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - name: Run flake8 checks
+        id: lint_step
+        run: |
+          python3 -m flake8 . --output-file=flake8_report.txt || true
+          cat flake8_report.txt
+      - name: Upload lint results
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-results
+          path: flake8_report.txt
