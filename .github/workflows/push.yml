@@ -1,8 +1,10 @@
 name: Push Code Changes Back to PR
 
 on:
-  pull_request:
-    types: [synchronize, opened, reopened]
+  workflow_run:
+    workflows: ["Format Code with Black"] 
+    types:
+      - completed 
 
 jobs:
   push:
@@ -19,6 +21,6 @@ jobs:
 
       - name: Push changes back to PR branch
         run: |
-          PR_BRANCH="${{ github.head_ref }}"
+          PR_BRANCH="${{ github.event.workflow_run.pull_requests[0].head.ref }}"
           echo "Pushing changes to $PR_BRANCH"
-          git push
+          git push origin "$PR_BRANCH"
