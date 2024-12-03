@@ -1,0 +1,24 @@
+name: Push Code Changes Back to PR
+
+on:
+  pull_request:
+    types: [synchronize, opened, reopened]
+
+jobs:
+  push:
+    runs-on: self-hosted
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Git
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git remote set-url origin https://github-actions:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+      
+      - name: Push changes back to PR branch
+        run: |
+          # Extract the branch name from the ref
+          PR_BRANCH="${GITHUB_REF#refs/heads/}"
+          git push origin "$PR_BRANCH"  # Push changes back to the pull request branch
