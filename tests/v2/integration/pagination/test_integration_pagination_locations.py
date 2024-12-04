@@ -41,12 +41,12 @@ def test_get_all_locations_page_too_high(client):
     response_locations = client.get("/locations/", headers=test_headers)
     assert response_locations.status_code == 200
     response = client.get(
-        "/locations/page/" + str(response_locations.json()["pagination"]["page"] + 1),
+        "/locations/page/" + str(response_locations.json()["pagination"]["pages"] + 1),
         headers=test_headers,
     )
     assert response.status_code == 200
     assert isinstance(response.json()["data"], list)
-    assert response_locations.json()["pagination"]["page"] == 1
+    assert response.json()["pagination"]["page"] == 1
 
 
 def test_get_all_locations_wrong_page_number(client):

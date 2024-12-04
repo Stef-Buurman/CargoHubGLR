@@ -56,12 +56,12 @@ def test_get_all_suppliers_page_too_high(client):
     response_suppliers = client.get("/suppliers/", headers=test_headers)
     assert response_suppliers.status_code == 200
     response = client.get(
-        "/suppliers/page/" + str(response_suppliers.json()["pagination"]["page"] + 1),
+        "/suppliers/page/" + str(response_suppliers.json()["pagination"]["pages"] + 1),
         headers=test_headers,
     )
     assert response.status_code == 200
     assert isinstance(response.json()["data"], list)
-    assert response_suppliers.json()["pagination"]["page"] == 1
+    assert response.json()["pagination"]["page"] == 1
 
 
 def test_get_all_suppliers_wrong_page_number(client):
@@ -117,12 +117,12 @@ def test_get_all_supplier_items_page_too_high(client):
     assert response_supplier_items.status_code == 200
     response = client.get(
         f"/suppliers/{test_supplier['id']}/items/page/"
-        + str(response_supplier_items.json()["pagination"]["page"] + 1),
+        + str(response_supplier_items.json()["pagination"]["pages"] + 1),
         headers=test_headers,
     )
     assert response.status_code == 200
     assert isinstance(response.json()["data"], list)
-    assert response_supplier_items.json()["pagination"]["page"] == 1
+    assert response.json()["pagination"]["page"] == 1
 
 
 def test_get_all_supplier_items_wrong_page_number(client):

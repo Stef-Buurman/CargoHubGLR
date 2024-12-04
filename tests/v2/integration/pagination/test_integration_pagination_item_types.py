@@ -49,12 +49,12 @@ def test_get_all_item_types_page_too_high(client):
     response_item_types = client.get("/item_types/", headers=test_headers)
     assert response_item_types.status_code == 200
     response = client.get(
-        "/item_types/page/" + str(response_item_types.json()["pagination"]["page"] + 1),
+        "/item_types/page/" + str(response_item_types.json()["pagination"]["pages"] + 1),
         headers=test_headers,
     )
     assert response.status_code == 200
     assert isinstance(response.json()["data"], list)
-    assert response_item_types.json()["pagination"]["page"] == 1
+    assert response.json()["pagination"]["page"] == 1
 
 
 def test_get_all_item_types_wrong_page_number(client):
@@ -110,12 +110,31 @@ def test_get_all_item_types_items_page_too_high(client):
     assert response_item_types.status_code == 200
     response = client.get(
         f"/item_types/{test_item_type['id']}/items/page/"
-        + str(response_item_types.json()["pagination"]["page"] + 1),
+        + str(response_item_types.json()["pagination"]["pages"] + 1),
         headers=test_headers,
     )
     assert response.status_code == 200
     assert isinstance(response.json()["data"], list)
-    assert response_item_types.json()["pagination"]["page"] == 1
+    assert response.json()["pagination"]["page"] == 1
+
+
+def test_get_all_item_types_items_wrong_page_number(client):
+    response = client.get(
+        f"/item_types/{test_item_type['id']}/items" + wrong_page_1, headers=test_headers
+    )
+    assert response.status_code == 422
+    response = client.get(
+        f"/item_types/{test_item_type['id']}/items" + wrong_page_2, headers=test_headers
+    )
+    assert response.status_code == 422
+    response = client.get(
+        f"/item_types/{test_item_type['id']}/items" + wrong_page_3, headers=test_headers
+    )
+    assert response.status_code == 422
+    response = client.get(
+        f"/item_types/{test_item_type['id']}/items" + wrong_page_4, headers=test_headers
+    )
+    assert response.status_code == 422
     response_delete = client.delete(
         f"/item_types/{test_item_type['id']}", headers=test_headers
     )

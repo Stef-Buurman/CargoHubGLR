@@ -69,12 +69,12 @@ def test_get_all_orders_page_too_high(client):
     response_orders = client.get("/orders/", headers=test_headers)
     assert response_orders.status_code == 200
     response = client.get(
-        "/orders/page/" + str(response_orders.json()["pagination"]["page"] + 1),
+        "/orders/page/" + str(response_orders.json()["pagination"]["pages"] + 1),
         headers=test_headers,
     )
     assert response.status_code == 200
     assert isinstance(response.json()["data"], list)
-    assert response_orders.json()["pagination"]["page"] == 1
+    assert response.json()["pagination"]["page"] == 1
 
 
 def test_get_all_orders_wrong_page_number(client):
@@ -126,12 +126,12 @@ def test_get_all_order_items_page_too_high(client):
     assert response_order_items.status_code == 200
     response = client.get(
         f"/orders/{test_order['id']}/items/page/"
-        + str(response_order_items.json()["pagination"]["page"] + 1),
+        + str(response_order_items.json()["pagination"]["pages"] + 1),
         headers=test_headers,
     )
     assert response.status_code == 200
     assert isinstance(response.json()["data"], list)
-    assert response_order_items.json()["pagination"]["page"] == 1
+    assert response.json()["pagination"]["page"] == 1
 
 
 def test_get_all_order_items_wrong_page_number(client):

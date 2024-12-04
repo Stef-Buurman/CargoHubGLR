@@ -57,12 +57,12 @@ def test_get_all_clients_page_too_high(client):
     response_clients = client.get("/clients/", headers=test_headers)
     assert response_clients.status_code == 200
     response = client.get(
-        "/clients/page/" + str(response_clients.json()["pagination"]["page"] + 1),
+        "/clients/page/" + str(response_clients.json()["pagination"]["pages"] + 1),
         headers=test_headers,
     )
     assert response.status_code == 200
     assert isinstance(response.json()["data"], list)
-    assert response_clients.json()["pagination"]["page"] == 1
+    assert response.json()["pagination"]["page"] == 1
 
 
 def test_get_all_clients_wrong_page_number(client):
@@ -115,12 +115,12 @@ def test_get_all_client_orders_page_too_high(client):
     )
     assert response_orders.status_code == 200
     response = client.get(
-        f"/clients/{test_CargoClient['id']}/orders/page/{response_orders.json()['pagination']['page'] + 1}",
+        f"/clients/{test_CargoClient['id']}/orders/page/{response_orders.json()['pagination']['pages'] + 1}",
         headers=test_headers,
     )
     assert response.status_code == 200
     assert isinstance(response.json()["data"], list)
-    assert response_orders.json()["pagination"]["page"] == 1
+    assert response.json()["pagination"]["page"] == 1
 
 
 def test_get_all_client_orders_wrong_page_number(client):

@@ -44,12 +44,12 @@ def test_get_all_inventories_page_too_high(client):
     assert response_inventories.status_code == 200
     response = client.get(
         "/inventories/page/"
-        + str(response_inventories.json()["pagination"]["page"] + 1),
+        + str(response_inventories.json()["pagination"]["pages"] + 1),
         headers=test_headers,
     )
     assert response.status_code == 200
     assert isinstance(response.json()["data"], list)
-    assert response_inventories.json()["pagination"]["page"] == 1
+    assert response.json()["pagination"]["page"] == 1
 
 
 def test_get_all_inventories_wrong_page_number(client):

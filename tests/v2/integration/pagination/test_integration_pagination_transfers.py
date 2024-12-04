@@ -52,12 +52,12 @@ def test_get_all_transfers_page_too_high(client):
     response_transfers = client.get("/transfers/", headers=test_headers)
     assert response_transfers.status_code == 200
     response = client.get(
-        "/transfers/page/" + str(response_transfers.json()["pagination"]["page"] + 1),
+        "/transfers/page/" + str(response_transfers.json()["pagination"]["pages"] + 1),
         headers=test_headers,
     )
     assert response.status_code == 200
     assert isinstance(response.json()["data"], list)
-    assert response_transfers.json()["pagination"]["page"] == 1
+    assert response.json()["pagination"]["page"] == 1
 
 
 def test_get_all_transfers_wrong_page_number(client):
@@ -109,17 +109,17 @@ def test_get_all_transfer_items_page_negative(client):
 
 def test_get_all_transfer_items_page_too_high(client):
     response_transfer_items = client.get(
-        f"/transfers/{test_transfer['id']}/items/", headers=test_headers
+        f"/transfers/{test_transfer['id']}/items", headers=test_headers
     )
     assert response_transfer_items.status_code == 200
     response = client.get(
         f"/transfers/{test_transfer['id']}/items/page/"
-        + str(response_transfer_items.json()["pagination"]["page"] + 1),
+        + str(response_transfer_items.json()["pagination"]["pages"] + 1),
         headers=test_headers,
     )
     assert response.status_code == 200
     assert isinstance(response.json()["data"], list)
-    assert response_transfer_items.json()["pagination"]["page"] == 1
+    assert response.json()["pagination"]["page"] == 1
 
 
 def test_get_all_transfer_items_wrong_page_number(client):

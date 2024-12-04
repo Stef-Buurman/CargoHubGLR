@@ -52,12 +52,12 @@ def test_get_all_item_groups_page_too_high(client):
     assert response_item_groups.status_code == 200
     response = client.get(
         "/item_groups/page/"
-        + str(response_item_groups.json()["pagination"]["page"] + 1),
+        + str(response_item_groups.json()["pagination"]["pages"] + 1),
         headers=test_headers,
     )
     assert response.status_code == 200
     assert isinstance(response.json()["data"], list)
-    assert response_item_groups.json()["pagination"]["page"] == 1
+    assert response.json()["pagination"]["page"] == 1
 
 
 def test_get_all_item_groups_wrong_page_number(client):
@@ -112,12 +112,12 @@ def test_get_all_item_group_items_page_too_high(client):
     )
     assert response_items.status_code == 200
     response = client.get(
-        f"/item_groups/{test_item_group['id']}/items/page/{response_items.json()['pagination']['page'] + 1}",
+        f"/item_groups/{test_item_group['id']}/items/page/{response_items.json()['pagination']['pages'] + 1}",
         headers=test_headers,
     )
     assert response.status_code == 200
     assert isinstance(response.json()["data"], list)
-    assert response_items.json()["pagination"]["page"] == 1
+    assert response.json()["pagination"]["page"] == 1
 
 
 def test_get_all_item_group_items_wrong_page_number(client):
