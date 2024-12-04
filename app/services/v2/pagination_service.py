@@ -1,5 +1,7 @@
 class Pagination:
     def __init__(self, page: int = 1, items_per_page: int = 50):
+        if page < 1:
+            page = 1
         self.page = page
         self.items_per_page = items_per_page
 
