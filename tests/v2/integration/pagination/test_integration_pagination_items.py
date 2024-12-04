@@ -84,7 +84,7 @@ def test_get_all_item_inventories_page_1(client):
     assert response_add_item.status_code in [200, 201]
     test_item["uid"] = response_add_item.json()["uid"]
     response = client.get(
-        f"/items/{test_item['uid']}/inventories{pagination_url_1}", headers=test_headers
+        f"/items/{test_item['uid']}/inventory{pagination_url_1}", headers=test_headers
     )
     assert response.status_code == 200
     assert isinstance(response.json()["data"], list)
@@ -93,7 +93,7 @@ def test_get_all_item_inventories_page_1(client):
 
 def test_get_all_item_inventories_page_0(client):
     response = client.get(
-        f"/items/{test_item['uid']}/inventories{pagination_url_0}", headers=test_headers
+        f"/items/{test_item['uid']}/inventory{pagination_url_0}", headers=test_headers
     )
     assert response.status_code == 200
     assert isinstance(response.json()["data"], list)
@@ -102,7 +102,7 @@ def test_get_all_item_inventories_page_0(client):
 
 def test_get_all_item_inventories_page_negative(client):
     response = client.get(
-        f"/items/{test_item['uid']}/inventories{pagination_url_negative}",
+        f"/items/{test_item['uid']}/inventory{pagination_url_negative}",
         headers=test_headers,
     )
     assert response.status_code == 200
@@ -112,11 +112,11 @@ def test_get_all_item_inventories_page_negative(client):
 
 def test_get_all_item_inventories_page_too_high(client):
     response_item_inventories = client.get(
-        f"/items/{test_item['uid']}/inventories", headers=test_headers
+        f"/items/{test_item['uid']}/inventory", headers=test_headers
     )
     assert response_item_inventories.status_code == 200
     response = client.get(
-        f"/items/{test_item['uid']}/inventories/page/"
+        f"/items/{test_item['uid']}/inventory/page/"
         + str(response_item_inventories.json()["pagination"]["page"] + 1),
         headers=test_headers,
     )
@@ -127,19 +127,19 @@ def test_get_all_item_inventories_page_too_high(client):
 
 def test_get_all_item_inventories_wrong_page_number(client):
     response = client.get(
-        f"/items/{test_item['uid']}/inventories" + wrong_page_1, headers=test_headers
+        f"/items/{test_item['uid']}/inventory" + wrong_page_1, headers=test_headers
     )
     assert response.status_code == 422
     response = client.get(
-        f"/items/{test_item['uid']}/inventories" + wrong_page_2, headers=test_headers
+        f"/items/{test_item['uid']}/inventory" + wrong_page_2, headers=test_headers
     )
     assert response.status_code == 422
     response = client.get(
-        f"/items/{test_item['uid']}/inventories" + wrong_page_3, headers=test_headers
+        f"/items/{test_item['uid']}/inventory" + wrong_page_3, headers=test_headers
     )
     assert response.status_code == 422
     response = client.get(
-        f"/items/{test_item['uid']}/inventories" + wrong_page_4, headers=test_headers
+        f"/items/{test_item['uid']}/inventory" + wrong_page_4, headers=test_headers
     )
     assert response.status_code == 422
     response_delete = client.delete(f"/items/{test_item['uid']}", headers=test_headers)
