@@ -49,7 +49,8 @@ def test_get_all_item_types_page_too_high(client):
     response_item_types = client.get("/item_types/", headers=test_headers)
     assert response_item_types.status_code == 200
     response = client.get(
-        "/item_types/page/" + str(response_item_types.json()["pagination"]["pages"] + 1),
+        "/item_types/page/"
+        + str(response_item_types.json()["pagination"]["pages"] + 1),
         headers=test_headers,
     )
     assert response.status_code == 200
