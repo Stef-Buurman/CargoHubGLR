@@ -112,6 +112,7 @@ def test_get_all_transfer_items_page_too_high(client):
         f"/transfers/{test_transfer['id']}/items", headers=test_headers
     )
     assert response_transfer_items.status_code == 200
+
     response = client.get(
         f"/transfers/{test_transfer['id']}/items/page/"
         + str(response_transfer_items.json()["pagination"]["pages"] + 1),
