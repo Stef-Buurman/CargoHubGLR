@@ -90,32 +90,43 @@ def test_get_all_shipment_orders_page_1(client):
     add_response = client.post("/shipments/", json=test_shipment, headers=test_headers)
     assert add_response.status_code in [200, 201]
     test_shipment["id"] = add_response.json()["id"]
-    response = client.get(f"/shipments/{test_shipment['id']}/orders{pagination_url_1}", headers=test_headers)
+    response = client.get(
+        f"/shipments/{test_shipment['id']}/orders{pagination_url_1}",
+        headers=test_headers,
+    )
     assert response.status_code == 200
     assert isinstance(response.json()["data"], list)
     assert response.json()["pagination"]["page"] == 1
 
 
-
 def test_get_all_shipment_orders_page_0(client):
-    response = client.get(f"/shipments/{test_shipment['id']}/orders{pagination_url_0}", headers=test_headers)
+    response = client.get(
+        f"/shipments/{test_shipment['id']}/orders{pagination_url_0}",
+        headers=test_headers,
+    )
     assert response.status_code == 200
     assert isinstance(response.json()["data"], list)
     assert response.json()["pagination"]["page"] == 1
 
 
 def test_get_all_shipment_orders_page_negative(client):
-    response = client.get(f"/shipments/{test_shipment['id']}/orders{pagination_url_negative}", headers=test_headers)
+    response = client.get(
+        f"/shipments/{test_shipment['id']}/orders{pagination_url_negative}",
+        headers=test_headers,
+    )
     assert response.status_code == 200
     assert isinstance(response.json()["data"], list)
     assert response.json()["pagination"]["page"] == 1
 
 
 def test_get_all_shipment_orders_page_too_high(client):
-    response_orders = client.get(f"/shipments/{test_shipment['id']}/orders", headers=test_headers)
+    response_orders = client.get(
+        f"/shipments/{test_shipment['id']}/orders", headers=test_headers
+    )
     assert response_orders.status_code == 200
     response = client.get(
-        f"/shipments/{test_shipment['id']}/orders/page/" + str(response_orders.json()["pagination"]["page"] + 1),
+        f"/shipments/{test_shipment['id']}/orders/page/"
+        + str(response_orders.json()["pagination"]["page"] + 1),
         headers=test_headers,
     )
     assert response.status_code == 200
@@ -124,13 +135,21 @@ def test_get_all_shipment_orders_page_too_high(client):
 
 
 def test_get_all_shipment_orders_wrong_page_number(client):
-    response = client.get(f"/shipments/{test_shipment['id']}/orders" + wrong_page_1, headers=test_headers)
+    response = client.get(
+        f"/shipments/{test_shipment['id']}/orders" + wrong_page_1, headers=test_headers
+    )
     assert response.status_code == 422
-    response = client.get(f"/shipments/{test_shipment['id']}/orders" + wrong_page_2, headers=test_headers)
+    response = client.get(
+        f"/shipments/{test_shipment['id']}/orders" + wrong_page_2, headers=test_headers
+    )
     assert response.status_code == 422
-    response = client.get(f"/shipments/{test_shipment['id']}/orders" + wrong_page_3, headers=test_headers)
+    response = client.get(
+        f"/shipments/{test_shipment['id']}/orders" + wrong_page_3, headers=test_headers
+    )
     assert response.status_code == 422
-    response = client.get(f"/shipments/{test_shipment['id']}/orders" + wrong_page_4, headers=test_headers)
+    response = client.get(
+        f"/shipments/{test_shipment['id']}/orders" + wrong_page_4, headers=test_headers
+    )
     assert response.status_code == 422
 
 
@@ -138,31 +157,43 @@ def test_get_all_shipment_items_page_1(client):
     add_response = client.post("/shipments/", json=test_shipment, headers=test_headers)
     assert add_response.status_code in [200, 201]
     test_shipment["id"] = add_response.json()["id"]
-    response = client.get(f"/shipments/{test_shipment['id']}/items{pagination_url_1}", headers=test_headers)
+    response = client.get(
+        f"/shipments/{test_shipment['id']}/items{pagination_url_1}",
+        headers=test_headers,
+    )
     assert response.status_code == 200
     assert isinstance(response.json()["data"], list)
     assert response.json()["pagination"]["page"] == 1
 
 
 def test_get_all_shipment_items_page_0(client):
-    response = client.get(f"/shipments/{test_shipment['id']}/items{pagination_url_0}", headers=test_headers)
+    response = client.get(
+        f"/shipments/{test_shipment['id']}/items{pagination_url_0}",
+        headers=test_headers,
+    )
     assert response.status_code == 200
     assert isinstance(response.json()["data"], list)
     assert response.json()["pagination"]["page"] == 1
 
 
 def test_get_all_shipment_items_page_negative(client):
-    response = client.get(f"/shipments/{test_shipment['id']}/items{pagination_url_negative}", headers=test_headers)
+    response = client.get(
+        f"/shipments/{test_shipment['id']}/items{pagination_url_negative}",
+        headers=test_headers,
+    )
     assert response.status_code == 200
     assert isinstance(response.json()["data"], list)
     assert response.json()["pagination"]["page"] == 1
 
 
 def test_get_all_shipment_items_page_too_high(client):
-    response_items = client.get(f"/shipments/{test_shipment['id']}/items", headers=test_headers)
+    response_items = client.get(
+        f"/shipments/{test_shipment['id']}/items", headers=test_headers
+    )
     assert response_items.status_code == 200
     response = client.get(
-        f"/shipments/{test_shipment['id']}/items/page/" + str(response_items.json()["pagination"]["page"] + 1),
+        f"/shipments/{test_shipment['id']}/items/page/"
+        + str(response_items.json()["pagination"]["page"] + 1),
         headers=test_headers,
     )
     assert response.status_code == 200
@@ -171,11 +202,19 @@ def test_get_all_shipment_items_page_too_high(client):
 
 
 def test_get_all_shipment_items_wrong_page_number(client):
-    response = client.get(f"/shipments/{test_shipment['id']}/items" + wrong_page_1, headers=test_headers)
+    response = client.get(
+        f"/shipments/{test_shipment['id']}/items" + wrong_page_1, headers=test_headers
+    )
     assert response.status_code == 422
-    response = client.get(f"/shipments/{test_shipment['id']}/items" + wrong_page_2, headers=test_headers)
+    response = client.get(
+        f"/shipments/{test_shipment['id']}/items" + wrong_page_2, headers=test_headers
+    )
     assert response.status_code == 422
-    response = client.get(f"/shipments/{test_shipment['id']}/items" + wrong_page_3, headers=test_headers)
+    response = client.get(
+        f"/shipments/{test_shipment['id']}/items" + wrong_page_3, headers=test_headers
+    )
     assert response.status_code == 422
-    response = client.get(f"/shipments/{test_shipment['id']}/items" + wrong_page_4, headers=test_headers)
+    response = client.get(
+        f"/shipments/{test_shipment['id']}/items" + wrong_page_4, headers=test_headers
+    )
     assert response.status_code == 422
