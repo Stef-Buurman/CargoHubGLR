@@ -31,7 +31,9 @@ def test_get_all_inventories_page_0(client):
 
 
 def test_get_all_inventories_page_negative(client):
-    response = client.get(f"/inventories{pagination_url_negative}", headers=test_headers)
+    response = client.get(
+        f"/inventories{pagination_url_negative}", headers=test_headers
+    )
     assert response.status_code == 200
     assert isinstance(response.json()["data"], list)
     assert response.json()["pagination"]["page"] == 1
