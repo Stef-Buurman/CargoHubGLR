@@ -78,14 +78,14 @@ def test_get_all_transfer_items_page_1(client):
     assert add_transfer_response.status_code in [200, 201]
     test_transfer["id"] = add_transfer_response.json()["id"]
 
-    response = client.get(f"/transfers/items{pagination_url_1}", headers=test_headers)
+    response = client.get(f"/transfers/{test_transfer['id']}/items{pagination_url_1}", headers=test_headers)
     assert response.status_code == 200
     assert isinstance(response.json()["data"], list)
     assert response.json()["pagination"]["page"] == 1
 
 
 def test_get_all_transfer_items_page_0(client):
-    response = client.get(f"/transfers/items{pagination_url_0}", headers=test_headers)
+    response = client.get(f"/transfers/{test_transfer['id']}/items{pagination_url_0}", headers=test_headers)
     assert response.status_code == 200
     assert isinstance(response.json()["data"], list)
     assert response.json()["pagination"]["page"] == 1
@@ -93,7 +93,7 @@ def test_get_all_transfer_items_page_0(client):
 
 def test_get_all_transfer_items_page_negative(client):
     response = client.get(
-        f"/transfers/items{pagination_url_negative}", headers=test_headers
+        f"/transfers/{test_transfer['id']}/items{pagination_url_negative}", headers=test_headers
     )
     assert response.status_code == 200
     assert isinstance(response.json()["data"], list)
@@ -104,7 +104,7 @@ def test_get_all_transfer_items_page_too_high(client):
     response_transfer_items = client.get("/transfers/items", headers=test_headers)
     assert response_transfer_items.status_code == 200
     response = client.get(
-        "/transfers/items/page/"
+        f"/transfers/{test_transfer['id']}/items/page/"
         + str(response_transfer_items.json()["pagination"]["page"] + 1),
         headers=test_headers,
     )
@@ -114,13 +114,13 @@ def test_get_all_transfer_items_page_too_high(client):
 
 
 def test_get_all_transfer_items_wrong_page_number(client):
-    response = client.get("/transfers/items" + wrong_page_1, headers=test_headers)
+    response = client.get(f"/transfers/{test_transfer['id']}/items" + wrong_page_1, headers=test_headers)
     assert response.status_code == 422
-    response = client.get("/transfers/items" + wrong_page_2, headers=test_headers)
+    response = client.get(f"/transfers/{test_transfer['id']}/items" + wrong_page_2, headers=test_headers)
     assert response.status_code == 422
-    response = client.get("/transfers/items" + wrong_page_3, headers=test_headers)
+    response = client.get(f"/transfers/{test_transfer['id']}/items" + wrong_page_3, headers=test_headers)
     assert response.status_code == 422
-    response = client.get("/transfers/items" + wrong_page_4, headers=test_headers)
+    response = client.get(f"/transfers/{test_transfer['id']}/items" + wrong_page_4, headers=test_headers)
     assert response.status_code == 422
     response_delete = client.delete(
         f"/transfers/{test_transfer['id']}", headers=test_headers

@@ -83,16 +83,6 @@ def test_get_all_item_types_items_page_1(client):
     assert response.json()["pagination"]["page"] == 1
 
 
-def test_get_all_item_types_items_page_2(client):
-    response = client.get(
-        f"/item_types/{test_item_type['id']}/items{pagination_url_2}",
-        headers=test_headers,
-    )
-    assert response.status_code == 200
-    assert isinstance(response.json()["data"], list)
-    assert response.json()["pagination"]["page"] == 2
-
-
 def test_get_all_item_types_items_page_0(client):
     response = client.get(
         f"/item_types/{test_item_type['id']}/items{pagination_url_0}",

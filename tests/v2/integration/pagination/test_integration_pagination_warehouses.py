@@ -77,6 +77,9 @@ def test_get_all_warehouses_wrong_page_number(client):
 
 
 def test_get_all_warehouse_locations_page_1(client):
+    add_response = client.post("/warehouses", headers=test_headers, json=test_warehouse)
+    assert add_response.status_code in [200, 201]
+    test_warehouse["id"] = add_response.json()["id"]
     response = client.get(
         f"/warehouses/{test_warehouse['id']}/locations{pagination_url_1}",
         headers=test_headers,
