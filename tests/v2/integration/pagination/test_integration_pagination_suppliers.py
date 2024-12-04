@@ -76,7 +76,9 @@ def test_get_all_suppliers_wrong_page_number(client):
 
 
 def test_get_all_supplier_items_page_1(client):
-    add_supplier_response = client.post("/suppliers/", json=test_supplier, headers=test_headers)
+    add_supplier_response = client.post(
+        "/suppliers/", json=test_supplier, headers=test_headers
+    )
     assert add_supplier_response.status_code in [200, 201]
     test_supplier["id"] = add_supplier_response.json()["id"]
     response = client.get(
@@ -144,4 +146,3 @@ def test_get_all_supplier_items_wrong_page_number(client):
         f"/suppliers/{test_supplier['id']}", headers=test_headers
     )
     assert response_delete.status_code == 200
-    
