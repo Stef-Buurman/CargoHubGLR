@@ -1,6 +1,7 @@
 from models.v2.user import User
-from services import data_provider, data_provider_v2
-from services.database_service import DatabaseService
+from services.v1 import data_provider
+from services.v2 import data_provider_v2
+from services.v2.database_service import DatabaseService
 from models.v2.shipment import Shipment
 from models.v2.warehouse import WarehouseDB as Warehouse
 from models.v2.item import Item
