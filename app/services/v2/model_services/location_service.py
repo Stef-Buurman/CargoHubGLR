@@ -77,7 +77,7 @@ class LocationService(Base):
         if is_debug and locations is not None:
             self.data = locations
         else:
-            self.data = self.get_locations()
+            self.data = self.get_all_locations()
 
     def is_location_archived(self, location_id: int) -> bool:
         for location in self.data:
