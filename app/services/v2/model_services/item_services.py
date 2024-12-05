@@ -96,6 +96,7 @@ class ItemService(Base):
         for i in range(len(self.data)):
             if self.data[i].uid == item_id:
                 self.data[i].is_archived = True
+                self.data[i].updated_at = self.get_timestamp()
                 return self.db.update(self.data[i], item_id, closeConnection)
         return None
 
