@@ -68,7 +68,10 @@ def create_item(item: Item, api_key: str = Depends(auth_provider_v2.get_api_key)
     data_provider_v2.init()
     addedItem = data_provider_v2.fetch_item_pool().add_item(item)
     if addedItem is None:
-        raise HTTPException(status_code=400, detail="Item cannot be created, maybe due to archived entities")
+        raise HTTPException(
+            status_code=400,
+            detail="Item cannot be created, maybe due to archived entities",
+        )
     return JSONResponse(
         status_code=status.HTTP_201_CREATED, content=addedItem.model_dump()
     )

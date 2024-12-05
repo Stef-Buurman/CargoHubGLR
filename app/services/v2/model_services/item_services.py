@@ -53,9 +53,14 @@ class ItemService(Base):
             if item.supplier_id == supplier_id:
                 result.append(item)
         return result
-    
+
     def has_item_archived_entities(self, item: Item) -> bool:
-        if item.item_group is not None and data_provider_v2.fetch_item_group_pool().is_item_group_archived(item.item_group):
+        if (
+            item.item_group is not None
+            and data_provider_v2.fetch_item_group_pool().is_item_group_archived(
+                item.item_group
+            )
+        ):
             return True
         return False
 
