@@ -71,11 +71,14 @@ def update_item_group(
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
-    existingitem_group = data_provider_v2.fetch_item_group_pool().get_item_group(
+    is_archived = data_provider_v2.fetch_item_group_pool().is_item_group_archived(
         item_group_id
     )
-    if existingitem_group is None:
+    if is_archived is None:
         raise HTTPException(status_code=404, detail="Item_group not found")
+    elif is_archived is False:
+        raise HTTPException(status_code=400, detail="Item_group is archived")
+
     updated_item_group = data_provider_v2.fetch_item_group_pool().update_item_group(
         item_group_id, item_group
     )
@@ -95,7 +98,7 @@ def partial_update_item_group(
     if is_archived is None:
         raise HTTPException(status_code=404, detail="Item_group not found")
     elif is_archived is False:
-        raise HTTPException(status_code=400, detail="Item_group is not archived")
+        raise HTTPException(status_code=400, detail="Item_group is archived")
 
     existing_item_group = data_provider_v2.fetch_item_group_pool().get_item_group(
         item_group_id
