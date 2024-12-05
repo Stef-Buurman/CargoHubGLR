@@ -94,7 +94,7 @@ def partial_update_warehouse(
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
-    existing_warehouse = data_provider_v2.fetch_warehouse_pool().is_warehouse_archived(
+    existing_warehouse = data_provider_v2.fetch_warehouse_pool().get_warehouse(
         warehouse_id
     )
     if existing_warehouse is None:
