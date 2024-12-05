@@ -211,7 +211,8 @@ class DatabaseService:
             contact_phone TEXT,
             contact_email TEXT,
             created_at TEXT,
-            updated_at TEXT
+            updated_at TEXT,
+            is_archived BOOLEAN DEFAULT 0
         );
         """
         with self.get_connection() as conn:
@@ -236,6 +237,7 @@ class DatabaseService:
             total_available INTEGER NOT NULL,
             created_at TEXT,
             updated_at TEXT,
+            is_archived BOOLEAN DEFAULT 0,
             FOREIGN KEY (item_id) REFERENCES {Item.table_name()}(uid) ON DELETE CASCADE
         )
         """
@@ -266,7 +268,8 @@ class DatabaseService:
             name TEXT NOT NULL,
             description TEXT NOT NULL,
             created_at TEXT,
-            updated_at TEXT
+            updated_at TEXT,
+            is_archived BOOLEAN DEFAULT 0
         )
         """
         with self.get_connection() as conn:
@@ -284,7 +287,8 @@ class DatabaseService:
             name TEXT NOT NULL,
             description TEXT NOT NULL,
             created_at TEXT,
-            updated_at TEXT
+            updated_at TEXT,
+            is_archived BOOLEAN DEFAULT 0
         )
         """
         with self.get_connection() as conn:
@@ -302,7 +306,8 @@ class DatabaseService:
             name TEXT NOT NULL,
             description TEXT NOT NULL,
             created_at TEXT,
-            updated_at TEXT
+            updated_at TEXT,
+            is_archived BOOLEAN DEFAULT 0
         )
         """
         with self.get_connection() as conn:
@@ -334,6 +339,7 @@ class DatabaseService:
             supplier_part_number TEXT,
             created_at TEXT,
             updated_at TEXT,
+            is_archived BOOLEAN DEFAULT 0,
             FOREIGN KEY (item_line) REFERENCES {ItemLine.table_name()}(id) ON DELETE CASCADE,
             FOREIGN KEY (item_group) REFERENCES {ItemGroup.table_name()}(id) ON DELETE CASCADE,
             FOREIGN KEY (item_type) REFERENCES {ItemType.table_name()}(id) ON DELETE CASCADE,
@@ -357,6 +363,7 @@ class DatabaseService:
             name TEXT NOT NULL,
             created_at TEXT,
             updated_at TEXT,
+            is_archived BOOLEAN DEFAULT 0,
             FOREIGN KEY (warehouse_id) REFERENCES {Warehouse.table_name()}(id) ON DELETE CASCADE
         )
         """
@@ -391,6 +398,7 @@ class DatabaseService:
             total_surcharge REAL NOT NULL,
             created_at TEXT,
             updated_at TEXT,
+            is_archived BOOLEAN DEFAULT 0,
             FOREIGN KEY (warehouse_id) REFERENCES {Warehouse.table_name()}(id) ON DELETE CASCADE,
             FOREIGN KEY (ship_to) REFERENCES {Client.table_name()}(id) ON DELETE CASCADE,
             FOREIGN KEY (bill_to) REFERENCES {Client.table_name()}(id) ON DELETE CASCADE,
@@ -445,6 +453,7 @@ class DatabaseService:
             total_package_weight REAL NOT NULL,
             created_at TEXT,
             updated_at TEXT,
+            is_archived BOOLEAN DEFAULT 0,
             FOREIGN KEY (order_id) REFERENCES {Order.table_name()}(id) ON DELETE CASCADE
         )
         """
@@ -491,7 +500,8 @@ class DatabaseService:
             phonenumber TEXT NOT NULL,
             reference TEXT NOT NULL,
             created_at TEXT,
-            updated_at TEXT
+            updated_at TEXT,
+            is_archived BOOLEAN DEFAULT 0
         )
         """
         with self.get_connection() as conn:
@@ -512,6 +522,7 @@ class DatabaseService:
             transfer_status TEXT NOT NULL,
             created_at TEXT NOT NULL,
             updated_at TEXT NOT NULL,
+            is_archived BOOLEAN DEFAULT 0,
             FOREIGN KEY (transfer_from) REFERENCES {Location.table_name()}(id) ON DELETE CASCADE
             FOREIGN KEY (transfer_to) REFERENCES {Location.table_name()}(id) ON DELETE CASCADE
         )
@@ -558,7 +569,8 @@ class DatabaseService:
             contact_phone TEXT NOT NULL,
             contact_email TEXT NOT NULL,
             created_at TEXT,
-            updated_at TEXT
+            updated_at TEXT,
+            is_archived BOOLEAN DEFAULT 0
         )
         """
         with self.get_connection() as conn:
@@ -575,7 +587,8 @@ class DatabaseService:
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             api_key TEXT UNIQUE NOT NULL,
             app TEXT NOT NULL,
-            full_access BOOLEAN NOT NULL
+            full_access BOOLEAN NOT NULL,
+            is_active BOOLEAN DEFAULT 0
         )
         """
 
