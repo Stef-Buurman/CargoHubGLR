@@ -50,14 +50,18 @@ class ItemTypeService(Base):
                 return item_type.is_archived
         return None
 
-    def archive_item_type(self, item_type_id: int, closeConnection: bool = True) -> ItemType | None:
+    def archive_item_type(
+        self, item_type_id: int, closeConnection: bool = True
+    ) -> ItemType | None:
         for i in range(len(self.data)):
             if self.data[i].id == item_type_id:
                 self.data[i].is_archived = True
                 return self.db.update(self.data[i], item_type_id, closeConnection)
         return None
 
-    def unarchive_item_type(self, item_type_id: int, closeConnection: bool = True) -> ItemType | None:
+    def unarchive_item_type(
+        self, item_type_id: int, closeConnection: bool = True
+    ) -> ItemType | None:
         for i in range(len(self.data)):
             if self.data[i].id == item_type_id:
                 self.data[i].is_archived = False
