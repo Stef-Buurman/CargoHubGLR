@@ -1,14 +1,14 @@
 from pydantic import EmailStr
-from models.v2.base import Base
+from models.v2.base import Base2
 
 
-class Contact(Base):
+class Contact(Base2):
     name: str
     phone: str
     email: EmailStr
 
 
-class Warehouse(Base):
+class Warehouse(Base2):
     id: int | None = None
     code: str
     name: str
@@ -22,7 +22,7 @@ class Warehouse(Base):
     updated_at: str | None = None
 
 
-class WarehouseDB(Base):
+class WarehouseDB(Base2):
     class Config:
         table_name = "warehouses"
 

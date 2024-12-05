@@ -1,8 +1,8 @@
-from models.v2.base import Base
+from models.v2.base import Base2
 from models.v2.ItemInObject import ItemInObject
 
 
-class Transfer(Base):
+class Transfer(Base2):
     id: int | None = None
     reference: str
     transfer_from: int | None = None
