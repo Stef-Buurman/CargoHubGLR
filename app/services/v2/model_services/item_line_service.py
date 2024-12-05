@@ -2,9 +2,6 @@ from typing import List
 from models.v2.item_line import ItemLine
 from services.v2.base_service import Base
 from services.v2.database_service import DB
-from services.v2 import data_provider_v2
-
-ITEM_LINES = []
 
 
 class ItemLineService(Base):
