@@ -58,7 +58,7 @@ class LocationService(Base):
             if self.data[i].id == location_id:
                 self.data[i].updated_at = self.get_timestamp()
                 self.data[i].is_archived = True
-                if self.db.update(Location, location_id, closeConnection):
+                if self.db.update(self.data[i], location_id, closeConnection):
                     return True
         return False
 
@@ -69,7 +69,7 @@ class LocationService(Base):
             if self.data[i].id == location_id:
                 self.data[i].updated_at = self.get_timestamp()
                 self.data[i].is_archived = False
-                if self.db.update(Location, location_id, closeConnection):
+                if self.db.update(self.data[i], location_id, closeConnection):
                     return True
         return False
 
