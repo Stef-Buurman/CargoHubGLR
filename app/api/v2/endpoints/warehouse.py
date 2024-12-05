@@ -86,7 +86,7 @@ def update_warehouse(
         warehouse_id, warehouse
     )
     return updated_warehouse
-    
+
 
 @warehouse_router_v2.patch("/{warehouse_id}")
 def partial_update_warehouse(
