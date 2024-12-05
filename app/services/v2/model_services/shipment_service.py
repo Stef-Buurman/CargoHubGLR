@@ -147,10 +147,15 @@ class ShipmentService(Base):
     def update_items_in_shipment(self, shipment_id: str, items: List[dict]):
         shipment = self.get_shipment(shipment_id)
         if shipment:
-            self.update_inventory_for_items(shipment.items, items)
-            shipment.items = items
-            self.update_shipment(shipment_id, shipment)
-            return shipment
+            items_to_add = []
+            for item in items:
+                if data_provider_v2.fetch_item_pool().is_item_archived(item["item_id"]):
+                    items_to_add.append(item)
+            if len(items_to_add) > 0:
+                self.update_inventory_for_items(shipment.items, items_to_add)
+                shipment.items = items_to_add
+                self.update_shipment(shipment_id, shipment)
+                return shipment
 
     def update_inventory_for_items(
         self, current_items: List[Shipment], new_items: List[dict]
