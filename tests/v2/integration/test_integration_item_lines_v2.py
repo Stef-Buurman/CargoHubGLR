@@ -428,7 +428,10 @@ def test_update_archived_item_line(client):
         "/item_lines/" + str(updated_item_line["id"]), headers=test_headers
     )
     assert response_get_item_line.status_code == 200
-    assert response_get_item_line.json()["name"] == previous_response_get_item_line.json()["name"]
+    assert (
+        response_get_item_line.json()["name"]
+        == previous_response_get_item_line.json()["name"]
+    )
 
 
 def test_partial_update_archived_item_line(client):
@@ -447,4 +450,7 @@ def test_partial_update_archived_item_line(client):
         "/item_lines/" + str(test_item_line["id"]), headers=test_headers
     )
     assert response_get_item_line.status_code == 200
-    assert response_get_item_line.json()["name"] == previous_response_get_item_line.json()["name"]
+    assert (
+        response_get_item_line.json()["name"]
+        == previous_response_get_item_line.json()["name"]
+    )
