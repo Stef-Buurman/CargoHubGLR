@@ -56,6 +56,7 @@ class WarehouseService(Base):
     ) -> bool:
         for warehouse in self.data:
             if warehouse.id == warehouse_id:
+                warehouse.updated_at = self.get_timestamp()
                 warehouse.is_archived = True
                 if self.db.update(warehouse, warehouse_id, closeConnection):
                     return True
@@ -66,6 +67,7 @@ class WarehouseService(Base):
     ) -> bool:
         for warehouse in self.data:
             if warehouse.id == warehouse_id:
+                warehouse.updated_at = self.get_timestamp()
                 warehouse.is_archived = False
                 if self.db.update(warehouse, warehouse_id, closeConnection):
                     return True
