@@ -9,19 +9,28 @@ class LocationService(Base):
         self.db = DB
         self.load(is_debug, locations)
 
-    def get_locations(self) -> List[Location]:
+    def get_all_locations(self) -> List[Location]:
         return self.db.get_all(Location)
+
+    def get_locations(self) -> List[Location]:
+        locations = []
+        for location in self.data:
+            if not location.is_archived:
+                locations.append(location)
+        return locations
 
     def get_location(self, location_id: int) -> Location | None:
         for location in self.data:
             if location.id == location_id:
+                if location.is_archived:
+                    return None
                 return location
         return self.db.get(Location, location_id)
 
     def get_locations_in_warehouse(self, warehouse_id: int) -> List[Location]:
         warehouse_locations = []
         for location in self.data:
-            if location.warehouse_id == warehouse_id:
+            if not location.is_archived and location.warehouse_id == warehouse_id:
                 warehouse_locations.append(location)
         return warehouse_locations
 
@@ -39,14 +48,28 @@ class LocationService(Base):
         location.updated_at = self.get_timestamp()
         for i in range(len(self.data)):
             if self.data[i].id == location_id:
+                if location.is_archived:
+                    return None
                 self.data[i] = location
         return self.db.update(location, location_id, closeConnection)
 
-    def remove_location(self, location_id: int, closeConnection: bool = True) -> bool:
+    def archive_location(self, location_id: int, closeConnection: bool = True) -> bool:
         for i in range(len(self.data)):
             if self.data[i].id == location_id:
-                if self.db.delete(Location, location_id, closeConnection):
-                    del self.data[i]
+                self.data[i].updated_at = self.get_timestamp()
+                self.data[i].is_archived = True
+                if self.db.update(self.data[i], location_id, closeConnection):
+                    return True
+        return False
+
+    def unarchive_location(
+        self, location_id: int, closeConnection: bool = True
+    ) -> bool:
+        for i in range(len(self.data)):
+            if self.data[i].id == location_id:
+                self.data[i].updated_at = self.get_timestamp()
+                self.data[i].is_archived = False
+                if self.db.update(self.data[i], location_id, closeConnection):
                     return True
         return False
 
@@ -54,4 +77,10 @@ class LocationService(Base):
         if is_debug and locations is not None:
             self.data = locations
         else:
-            self.data = self.get_locations()
+            self.data = self.get_all_locations()
+
+    def is_location_archived(self, location_id: int) -> bool:
+        for location in self.data:
+            if location.id == location_id:
+                return location.is_archived
+        return None

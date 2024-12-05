@@ -338,8 +338,7 @@ def test_already_unarchived_warehouse(client):
     response = client.patch(
         "/warehouses/" + str(test_warehouse["id"]) + "/unarchive", headers=test_headers
     )
-    assert response.status_code == 404
-
+    assert response.status_code == 400
 
 def test_already_archived_warehouse(client):
     response = client.delete(
@@ -349,4 +348,25 @@ def test_already_archived_warehouse(client):
     response = client.delete(
         "/warehouses/" + str(test_warehouse["id"]), headers=test_headers
     )
-    assert response.status_code == 404
+    assert response.status_code == 400
+
+
+def test_update_archived_warehouse(client):
+    updated_warehouse = test_warehouse
+    updated_warehouse["name"] = "Updated Warehouse"
+    response = client.put(
+        "/warehouses/" + str(test_warehouse["id"]),
+        json=updated_warehouse,
+        headers=test_headers,
+    )
+    assert response.status_code == 400
+
+
+def test_partial_update_archived_warehouse(client):
+    updated_warehouse = {"name": "Updated Warehouse"}
+    response = client.patch(
+        "/warehouses/" + str(test_warehouse["id"]),
+        json=updated_warehouse,
+        headers=test_headers,
+    )
+    assert response.status_code == 400

@@ -84,7 +84,10 @@ def partial_update_transfer(
     if existing_transfer is None:
         raise HTTPException(status_code=404, detail="Transfer not found")
 
-    for key, value in transfer.items():
+    valid_keys = Transfer.model_fields.keys()
+    update_data = {key: value for key, value in transfer.items() if key in valid_keys}
+
+    for key, value in update_data.items():
         setattr(existing_transfer, key, value)
 
     partial_updated_transfer = data_provider_v2.fetch_transfer_pool().update_transfer(
