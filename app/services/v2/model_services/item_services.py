@@ -78,6 +78,7 @@ class ItemService(Base):
     ) -> Item | None:
         if self.is_item_archived(item_id):
             return None
+
         item.updated_at = self.get_timestamp()
         for i in range(len(self.data)):
             if self.data[i].uid == item.uid:
