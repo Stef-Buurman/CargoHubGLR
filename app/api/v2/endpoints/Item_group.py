@@ -76,7 +76,7 @@ def update_item_group(
     )
     if is_archived is None:
         raise HTTPException(status_code=404, detail="Item_group not found")
-    elif is_archived is False:
+    elif is_archived is True:
         raise HTTPException(status_code=400, detail="Item_group is archived")
 
     updated_item_group = data_provider_v2.fetch_item_group_pool().update_item_group(
@@ -97,7 +97,7 @@ def partial_update_item_group(
     )
     if is_archived is None:
         raise HTTPException(status_code=404, detail="Item_group not found")
-    elif is_archived is False:
+    elif is_archived is True:
         raise HTTPException(status_code=400, detail="Item_group is archived")
 
     existing_item_group = data_provider_v2.fetch_item_group_pool().get_item_group(

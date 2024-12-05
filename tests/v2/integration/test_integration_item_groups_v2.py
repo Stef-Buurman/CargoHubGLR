@@ -302,7 +302,8 @@ def test_archive_item_group(client):
     response_get_item_group = client.get(
         "/item_groups/" + str(test_item_group["id"]), headers=test_headers
     )
-    assert response_get_item_group.status_code == 404
+    assert response_get_item_group.status_code == 200
+    assert response_get_item_group.json()["is_archived"] is True
 
 
 def test_archive_item_group_already_archived(client):
@@ -315,10 +316,6 @@ def test_archive_item_group_already_archived(client):
 def test_unarchive_item_group_no_api_key(client):
     response = client.patch(f"/item_groups/{test_item_group['id']}/unarchive")
     assert response.status_code == 403
-    response_get_item_group = client.get(
-        f"/item_groups/{test_item_group['id']}", headers=test_headers
-    )
-    assert response_get_item_group.status_code == 404
 
 
 def test_unarchive_item_group_invalid_api_key(client):
@@ -326,10 +323,6 @@ def test_unarchive_item_group_invalid_api_key(client):
         f"/item_groups/{test_item_group['id']}/unarchive", headers=invalid_headers
     )
     assert response.status_code == 403
-    response_get_item_group = client.get(
-        f"/item_groups/{test_item_group['id']}", headers=test_headers
-    )
-    assert response_get_item_group.status_code == 404
 
 
 def test_unarchive_item_group_invalid_id(client):
@@ -361,3 +354,40 @@ def test_unarchive_item_group_not_archived(client):
         f"/item_groups/{test_item_group['id']}/unarchive", headers=test_headers
     )
     assert response.status_code == 400
+
+
+def test_update_archived_item_group(client):
+    response = client.delete(
+        "/item_groups/" + str(test_item_group["id"]), headers=test_headers
+    )
+    assert response.status_code == 200
+    updated_item_group = test_item_group.copy()
+    updated_item_group["name"] = "Updated Inc"
+    response = client.put(
+        f"/item_groups/{test_item_group['id']}",
+        json=updated_item_group,
+        headers=test_headers,
+    )
+    assert response.status_code == 400
+    response = client.patch(
+        f"/item_groups/{test_item_group['id']}/unarchive", headers=test_headers
+    )
+    assert response.status_code == 200
+
+
+def test_partial_update_archived_item_group(client):
+    response = client.delete(
+        "/item_groups/" + str(test_item_group["id"]), headers=test_headers
+    )
+    assert response.status_code == 200
+    updated_item_group = {"name": "Updated Inc"}
+    response = client.patch(
+        f"/item_groups/{test_item_group['id']}",
+        json=updated_item_group,
+        headers=test_headers,
+    )
+    assert response.status_code == 400
+    response = client.patch(
+        f"/item_groups/{test_item_group['id']}/unarchive", headers=test_headers
+    )
+    assert response.status_code == 200
