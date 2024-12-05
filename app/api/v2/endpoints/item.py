@@ -114,7 +114,7 @@ def partial_update_item(
 
 
 @item_router_v2.patch("/{item_id}/unarchive")
-def partial_update_item(
+def unarchive_item(
     item_id: str,
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
@@ -132,7 +132,7 @@ def partial_update_item(
 
 
 @item_router_v2.delete("/{item_id}")
-def delete_item(item_id: str, api_key: str = Depends(auth_provider_v2.get_api_key)):
+def archive_item(item_id: str, api_key: str = Depends(auth_provider_v2.get_api_key)):
     data_provider_v2.init()
     item_pool = data_provider_v2.fetch_item_pool()
 
