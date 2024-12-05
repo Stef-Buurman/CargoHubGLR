@@ -60,9 +60,6 @@ def create_item(
     item_line: ItemLine, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
-    existingItem = data_provider_v2.fetch_item_line_pool().get_item_line(item_line.id)
-    # if existingItem is not None:
-    #     raise HTTPException(status_code=409, detail="Item line already exists")
     added_item_line = data_provider_v2.fetch_item_line_pool().add_item_line(item_line)
     return JSONResponse(
         status_code=status.HTTP_201_CREATED, content=added_item_line.model_dump()
@@ -94,13 +91,19 @@ def partial_update_item_line(
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
-    existing_item_line = data_provider_v2.fetch_item_line_pool().get_item_line(
+    is_archived = data_provider_v2.fetch_item_line_pool().is_item_line_archived(
         item_line_id
     )
-    if existing_item_line is None:
+    if is_archived is None:
         raise HTTPException(
             status_code=404, detail=f"Item line with id {item_line_id} not found"
         )
+    elif is_archived is True:
+        raise HTTPException(status_code=400, detail=f"Item line is archived")
+
+    existing_item_line = data_provider_v2.fetch_item_line_pool().get_item_line(
+        item_line_id
+    )
 
     valid_keys = ItemLine.model_fields.keys()
     update_data = {key: value for key, value in item_line.items() if key in valid_keys}
@@ -116,18 +119,42 @@ def partial_update_item_line(
     return partial_updated_item_line
 
 
+@item_line_router_v2.patch("/{item_line_id}/unarchive")
+def unarchive_item_line(
+    item_line_id: int,
+    api_key: str = Depends(auth_provider_v2.get_api_key),
+):
+    data_provider_v2.init()
+    is_archived = data_provider_v2.fetch_item_line_pool().is_item_line_archived(
+        item_line_id
+    )
+    if is_archived is None:
+        raise HTTPException(
+            status_code=404, detail=f"Item line with id {item_line_id} not found"
+        )
+    elif is_archived is True:
+        raise HTTPException(status_code=400, detail=f"Item line is not archived")
+
+    updated_item_line = data_provider_v2.fetch_item_line_pool().unarchive_item_line(
+        item_line_id
+    )
+    return updated_item_line
+
+
 @item_line_router_v2.delete("/{item_line_id}")
-def delete_item(
+def archive_item_line(
     item_line_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
     item_line_pool = data_provider_v2.fetch_item_line_pool()
 
-    item_line = item_line_pool.get_item_line(item_line_id)
-    if item_line is None:
+    is_archived = item_line_pool.is_item_line_archived(item_line_id)
+    if is_archived is None:
         raise HTTPException(
             status_code=404, detail=f"Item line with id {item_line_id} not found"
         )
+    elif is_archived is True:
+        raise HTTPException(status_code=400, detail=f"Item line is already archived")
 
-    item_line_pool.remove_item_line(item_line_id)
-    return {"message": "Item line deleted successfully"}
+    updated_item_line = item_line_pool.archive_item_line(item_line_id)
+    return updated_item_line
