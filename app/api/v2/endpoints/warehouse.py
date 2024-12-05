@@ -98,7 +98,10 @@ def partial_update_warehouse(
     if existing_warehouse is None:
         raise HTTPException(status_code=404, detail="Warehouse not found")
 
-    for key, value in warehouse.items():
+    valid_keys = WarehouseDB.model_fields.keys()
+    update_data = {key: value for key, value in warehouse.items() if key in valid_keys}
+
+    for key, value in update_data.items():
         setattr(existing_warehouse, key, value)
 
     partial_updated_warehouse = (
