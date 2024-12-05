@@ -99,7 +99,7 @@ def partial_update_warehouse(
     )
     if existing_warehouse is None:
         raise HTTPException(status_code=404, detail="Warehouse not found")
-    elif existing_warehouse:
+    elif existing_warehouse.is_archived:
         raise HTTPException(status_code=404, detail="Warehouse is archived")
 
     for key, value in warehouse.items():
