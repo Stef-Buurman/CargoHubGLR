@@ -2,6 +2,7 @@ from typing import List
 from models.v2.item import Item
 from services.v2.base_service import Base
 from services.v2.database_service import DB
+from services.v2 import data_provider_v2
 
 
 class ItemService(Base):
@@ -53,7 +54,19 @@ class ItemService(Base):
                 result.append(item)
         return result
 
-    def add_item(self, item: Item, closeConnection: bool = True) -> Item:
+    def has_item_archived_entities(self, item: Item) -> bool:
+        if (
+            item.item_group is not None
+            and data_provider_v2.fetch_item_group_pool().is_item_group_archived(
+                item.item_group
+            )
+        ):
+            return True
+        return False
+
+    def add_item(self, item: Item, closeConnection: bool = True) -> Item | None:
+        if self.has_item_archived_entities(item):
+            return None
         item.uid = self.generate_uid()
         item.created_at = self.get_timestamp()
         item.updated_at = self.get_timestamp()
@@ -76,7 +89,7 @@ class ItemService(Base):
     def update_item(
         self, item_id: int, item: Item, closeConnection: bool = True
     ) -> Item | None:
-        if self.is_item_archived(item_id):
+        if self.is_item_archived(item_id) or self.has_item_archived_entities(item):
             return None
 
         item.updated_at = self.get_timestamp()
