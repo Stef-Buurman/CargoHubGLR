@@ -77,9 +77,11 @@ def update_item(
     item_id: str, item: Item, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
-    existingItem = data_provider_v2.fetch_item_pool().get_item(item_id)
-    if existingItem is None:
+    existing_item = data_provider_v2.fetch_item_pool().is_item_archived(item_id)
+    if existing_item is None:
         raise HTTPException(status_code=404, detail="Item not found")
+    elif existing_item is True:
+        raise HTTPException(status_code=400, detail="Item is archived")
     updated_item = data_provider_v2.fetch_item_pool().update_item(item_id, item)
     return updated_item
 
@@ -91,9 +93,11 @@ def partial_update_item(
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
-    existing_item = data_provider_v2.fetch_item_pool().get_item(item_id)
+    existing_item = data_provider_v2.fetch_item_pool().is_item_archived(item_id)
     if existing_item is None:
         raise HTTPException(status_code=404, detail="Item not found")
+    elif existing_item is True:
+        raise HTTPException(status_code=400, detail="Item is archived")
 
     valid_keys = Item.model_fields.keys()
     update_data = {key: value for key, value in item.items() if key in valid_keys}
@@ -107,14 +111,33 @@ def partial_update_item(
     return partial_updated_item
 
 
+@item_router_v2.patch("/{item_id}/unarchive")
+def partial_update_item(
+    item_id: str,
+    api_key: str = Depends(auth_provider_v2.get_api_key),
+):
+    data_provider_v2.init()
+    item_pool = data_provider_v2.fetch_item_pool()
+
+    is_archived = item_pool.is_item_archived(item_id)
+    if is_archived is None:
+        raise HTTPException(status_code=404, detail="Item not found")
+    elif is_archived is False:
+        raise HTTPException(status_code=400, detail="Item is not archived")
+
+    updated_item = item_pool.unarchive_item(item_id)
+    return updated_item
+
 @item_router_v2.delete("/{item_id}")
 def delete_item(item_id: str, api_key: str = Depends(auth_provider_v2.get_api_key)):
     data_provider_v2.init()
     item_pool = data_provider_v2.fetch_item_pool()
 
-    item = item_pool.get_item(item_id)
-    if item is None:
+    is_archived = item_pool.is_item_archived(item_id)
+    if is_archived is None:
         raise HTTPException(status_code=404, detail="Item not found")
+    elif is_archived is True:
+        raise HTTPException(status_code=400, detail="Item is already archived")
 
-    item_pool.remove_item(item_id)
-    return {"message": "Item deleted successfully"}
+    updated_item = item_pool.archive_item(item_id)
+    return updated_item
