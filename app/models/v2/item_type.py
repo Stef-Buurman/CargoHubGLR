@@ -1,7 +1,7 @@
-from models.v2.base import Base
+from models.v2.base import Base2
 
 
-class ItemType(Base):
+class ItemType(Base2):
     id: int | None = None
     name: str
     description: str

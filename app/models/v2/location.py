@@ -1,7 +1,7 @@
-from models.v2.base import Base
+from models.v2.base import Base2
 
 
-class Location(Base):
+class Location(Base2):
     id: int | None = None
     warehouse_id: int
     code: str

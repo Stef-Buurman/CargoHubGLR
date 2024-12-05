@@ -1,7 +1,7 @@
-from models.v2.base import Base
+from models.v2.base import Base2
 
 
-class Supplier(Base):
+class Supplier(Base2):
     id: int | None = None
     code: str
     name: str

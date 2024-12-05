@@ -1,8 +1,8 @@
 from .ItemInObject import ItemInObject
-from models.v2.base import Base
+from models.v2.base import Base2
 
 
-class Order(Base):
+class Order(Base2):
     id: int | None = None
     source_id: int
     order_date: str

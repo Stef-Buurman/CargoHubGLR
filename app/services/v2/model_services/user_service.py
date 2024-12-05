@@ -46,7 +46,7 @@ class UserService(Base):
                 if not user_row:
                     return None
 
-                user_id, api_key, app, full_access = user_row
+                user_id, api_key, app, full_access, is_archived = user_row
                 full_access = bool(full_access)
 
                 cursor.execute(
@@ -78,6 +78,7 @@ class UserService(Base):
                 app=app,
                 full=full_access,
                 endpoint_access=endpoint_access,
+                is_archived=is_archived,
             )
         else:
             for user in self.data:
@@ -103,7 +104,7 @@ class UserService(Base):
                 users = cursor.fetchall()
 
                 users_list = []
-                for user_id, api_key, app, full_access in users:
+                for user_id, api_key, app, full_access, is_archived in users:
                     cursor.execute(
                         """
                         SELECT endpoint, full, can_get, can_post, can_put, can_delete
@@ -141,6 +142,7 @@ class UserService(Base):
                             app=app,
                             full=full_access,
                             endpoint_access=endpoint_access,
+                            is_archived=is_archived,
                         )
                     )
 

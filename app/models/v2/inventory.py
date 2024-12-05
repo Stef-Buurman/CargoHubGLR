@@ -1,8 +1,8 @@
 from typing import List
-from models.v2.base import Base
+from models.v2.base import Base2
 
 
-class Inventory(Base):
+class Inventory(Base2):
     class Config:
         table_name = "inventories"
 
