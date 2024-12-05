@@ -340,6 +340,7 @@ def test_already_unarchived_warehouse(client):
     )
     assert response.status_code == 400
 
+
 def test_already_archived_warehouse(client):
     response = client.delete(
         "/warehouses/" + str(test_warehouse["id"]), headers=test_headers
