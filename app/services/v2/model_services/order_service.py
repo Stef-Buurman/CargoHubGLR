@@ -1,4 +1,5 @@
 from typing import List
+from services.v2 import data_provider_v2
 from models.v2.order import Order
 from services.v2.base_service import Base
 from models.v2.ItemInObject import ItemInObject
@@ -161,7 +162,10 @@ class OrderService(Base):
         self, order_id: int, items: List[ItemInObject]
     ) -> Order | None:
         order = self.get_order(order_id)
-        order.items = items
+        order.items = []
+        for item in items:
+            if not data_provider_v2.fetch_item_pool().is_item_archived(item.item_id):
+                order.items.append(item)
         return self.update_order(order_id, order)
 
     def update_orders_in_shipment(
