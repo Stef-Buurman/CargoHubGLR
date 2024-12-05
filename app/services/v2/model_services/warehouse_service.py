@@ -62,17 +62,6 @@ class WarehouseService(Base):
                     return True
         return False
 
-    def archive_warehouse(
-        self, warehouse_id: int, closeConnection: bool = True
-    ) -> bool:
-        for warehouse in self.data:
-            if warehouse.id == warehouse_id:
-                warehouse.updated_at = self.get_timestamp()
-                warehouse.is_archived = True
-                if self.db.update(warehouse, warehouse_id, closeConnection):
-                    return True
-        return False
-
     def unarchive_warehouse(
         self, warehouse_id: int, closeConnection: bool = True
     ) -> bool:
