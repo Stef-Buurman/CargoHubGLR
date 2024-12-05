@@ -10,8 +10,15 @@ class ItemTypeService(Base):
         self.db = DB
         self.load(is_debug, item_types)
 
-    def get_item_types(self) -> List[ItemType]:
+    def get_all_item_types(self) -> List[ItemType]:
         return self.db.get_all(ItemType)
+
+    def get_item_types(self) -> List[ItemType]:
+        item_types = []
+        for item_type in self.data:
+            if not item_type.is_archived:
+                item_types.append(item_type)
+        return item_types
 
     def get_item_type(self, item_type_id: int) -> ItemType | None:
         for item_type in self.data:
@@ -56,4 +63,4 @@ class ItemTypeService(Base):
         if is_debug and item_types is not None:
             self.data = item_types
         else:
-            self.data = self.get_item_types()
+            self.data = self.get_all_item_types()
