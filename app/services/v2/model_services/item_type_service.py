@@ -37,6 +37,8 @@ class ItemTypeService(Base):
     def update_item_type(
         self, item_type_id: int, item_type: ItemType, closeConnection: bool = True
     ) -> ItemType:
+        if self.is_item_type_archived(item_type_id):
+            return None
         item_type.updated_at = self.get_timestamp()
         for i in range(len(self.data)):
             if self.data[i].id == item_type_id:
