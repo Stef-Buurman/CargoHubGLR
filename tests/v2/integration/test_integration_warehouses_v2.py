@@ -361,3 +361,13 @@ def test_update_archived_warehouse(client):
         headers=test_headers,
     )
     assert response.status_code == 400
+
+
+def test_partial_update_archived_warehouse(client):
+    updated_warehouse = {"name": "Updated Warehouse"}
+    response = client.patch(
+        "/warehouses/" + str(test_warehouse["id"]),
+        json=updated_warehouse,
+        headers=test_headers,
+    )
+    assert response.status_code == 400
