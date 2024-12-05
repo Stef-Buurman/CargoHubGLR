@@ -272,7 +272,7 @@ def test_partial_update_invalid_warehouse_id(client):
     assert response.status_code == 422
 
 
-def test_delete_warehouse(client):
+def test_archive_warehouse(client):
     response = client.delete(
         "/warehouses/" + str(test_warehouse["id"]), headers=test_headers
     )
@@ -283,13 +283,70 @@ def test_delete_warehouse(client):
     assert response_get.status_code == 404
 
 
-def test_delete_warehouse_no_api_key(client):
+def test_archive_warehouse_no_api_key(client):
     response = client.delete("/warehouses/" + str(test_warehouse["id"]))
     assert response.status_code == 403
 
 
-def test_delete_warehouse_invalid_api_key(client):
+def test_archive_warehouse_invalid_api_key(client):
     response = client.delete(
         "/warehouses/" + str(test_warehouse["id"]), headers=invalid_headers
     )
     assert response.status_code == 403
+
+
+def test_unarchive_warehouse(client):
+    response = client.patch(
+        "/warehouses/" + str(test_warehouse["id"]) + "/unarchive", headers=test_headers
+    )
+    assert response.status_code == 200
+    response_get = client.get(
+        "/warehouses/" + str(test_warehouse["id"]), headers=test_headers
+    )
+    assert response_get.status_code == 200
+    response_json = response_get.json()
+    assert response_json is not None
+    assert response_json["is_archived"] is False
+
+
+def test_unarchive_warehouse_no_api_key(client):
+    response = client.patch("/warehouses/" + str(test_warehouse["id"]) + "/unarchive")
+    assert response.status_code == 403
+
+
+def test_unarchive_warehouse_invalid_api_key(client):
+    response = client.patch(
+        "/warehouses/" + str(test_warehouse["id"]) + "/unarchive",
+        headers=invalid_headers,
+    )
+    assert response.status_code == 403
+
+
+def test_unarchive_nonexistent_warehouse(client):
+    response = client.patch(
+        "/warehouses/" + str(non_existent_id) + "/unarchive", headers=test_headers
+    )
+    assert response.status_code == 404
+
+
+def test_unarchive_invalid_warehouse_id(client):
+    response = client.patch("/warehouses/invalid_id/unarchive", headers=test_headers)
+    assert response.status_code == 422
+
+
+def test_already_unarchived_warehouse(client):
+    response = client.patch(
+        "/warehouses/" + str(test_warehouse["id"]) + "/unarchive", headers=test_headers
+    )
+    assert response.status_code == 404
+
+
+def test_already_archived_warehouse(client):
+    response = client.delete(
+        "/warehouses/" + str(test_warehouse["id"]), headers=test_headers
+    )
+    assert response.status_code == 200
+    response = client.delete(
+        "/warehouses/" + str(test_warehouse["id"]), headers=test_headers
+    )
+    assert response.status_code == 404
