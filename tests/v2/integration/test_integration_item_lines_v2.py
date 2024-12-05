@@ -94,11 +94,6 @@ def test_add_item_line(client):
     assert response.json()["id"] == test_item_line["id"]
 
 
-# def test_add_existing_item_line(client):
-#     response = client.post("/item_lines/", json=test_item_line, headers=test_headers)
-#     assert response.status_code == 409
-
-
 def test_get_item_line_by_id(client):
     response = client.get(
         "/item_lines/" + str(test_item_line["id"]), headers=test_headers
@@ -129,11 +124,6 @@ def test_get_item_line_invalid_api_key(client):
         "/item_lines/" + str(test_item_line["id"]), headers=invalid_headers
     )
     assert response.status_code == 403
-
-
-# def test_get_item_line_items_no_items(client):
-#     response = client.get(f'/item_lines/{str(test_item_line["id"])}/items', headers=test_headers)
-#     assert response.status_code == 204
 
 
 def test_get_item_line_items_no_api_key(client):
@@ -321,7 +311,7 @@ def test_partial_update_item_line(client):
     )
 
 
-def test_delete_item_line_no_api_key(client):
+def test_archive_item_line_no_api_key(client):
     response = client.delete("/item_lines/" + str(test_item_line["id"]))
     assert response.status_code == 403
     response_get_item_line = client.get(
@@ -330,7 +320,7 @@ def test_delete_item_line_no_api_key(client):
     assert response_get_item_line.status_code == 200
 
 
-def test_delete_item_line_invalid_api_key(client):
+def test_archive_item_line_invalid_api_key(client):
     response = client.delete(
         "/item_lines/" + str(test_item_line["id"]), headers=invalid_headers
     )
@@ -341,12 +331,12 @@ def test_delete_item_line_invalid_api_key(client):
     assert response_get_item_line.status_code == 200
 
 
-def test_delete_item_line_invalid_id(client):
+def test_archive_item_line_invalid_id(client):
     response = client.delete("/item_lines/invalid_id", headers=test_headers)
     assert response.status_code == 422
 
 
-def test_delete_item_line_non_existent_id(client):
+def test_archive_item_line_non_existent_id(client):
     response = client.delete(
         "/item_lines/" + str(non_existent_id), headers=test_headers
     )
@@ -357,7 +347,7 @@ def test_delete_item_line_non_existent_id(client):
     assert response_get_item_line.status_code == 200
 
 
-def test_delete_item_line(client):
+def test_archive_item_line(client):
     response = client.delete(
         "/item_lines/" + str(test_item_line["id"]), headers=test_headers
     )
@@ -366,3 +356,66 @@ def test_delete_item_line(client):
         "/item_lines/" + str(test_item_line["id"]), headers=test_headers
     )
     assert response_get_item_line.status_code == 404
+
+
+def test_archive_item_line_already_archived(client):
+    response = client.delete(
+        "/item_lines/" + str(test_item_line["id"]), headers=test_headers
+    )
+    assert response.status_code == 400
+
+
+def test_unarchive_item_line_no_api_key(client):
+    response = client.patch("/item_lines/" + str(test_item_line["id"]) + "/unarchive")
+    assert response.status_code == 403
+    response_get_item_line = client.get(
+        "/item_lines/" + str(test_item_line["id"]), headers=test_headers
+    )
+    assert response_get_item_line.status_code == 404
+
+
+def test_unarchive_item_line_invalid_api_key(client):
+    response = client.patch(
+        "/item_lines/" + str(test_item_line["id"]) + "/unarchive", headers=invalid_headers
+    )
+    assert response.status_code == 403
+    response_get_item_line = client.get(
+        "/item_lines/" + str(test_item_line["id"]), headers=test_headers
+    )
+    assert response_get_item_line.status_code == 404
+
+
+def test_unarchive_item_line_invalid_id(client):
+    response = client.patch("/item_lines/invalid_id/unarchive", headers=test_headers)
+    assert response.status_code == 422
+
+
+def test_unarchive_item_line_non_existent_id(client):
+    response = client.patch(
+        "/item_lines/" + str(non_existent_id) + "/unarchive", headers=test_headers
+    )
+    assert response.status_code == 404
+
+
+def test_unarchive_item_line(client):
+    response = client.patch(
+        "/item_lines/" + str(test_item_line["id"]) + "/unarchive", headers=test_headers
+    )
+    assert response.status_code == 200
+    response_get_item_line = client.get(
+        "/item_lines/" + str(test_item_line["id"]), headers=test_headers
+    )
+    assert response_get_item_line.status_code == 200
+    assert response_get_item_line.json()["is_archived"] is False
+
+
+def test_unarchive_item_line_already_unarchived(client):
+    response = client.patch(
+        "/item_lines/" + str(test_item_line["id"]) + "/unarchive", headers=test_headers
+    )
+    assert response.status_code == 400
+    response_get_item_line = client.get(
+        "/item_lines/" + str(test_item_line["id"]), headers=test_headers
+    )
+    assert response_get_item_line.status_code == 200
+    assert response_get_item_line.json()["is_archived"] is False
