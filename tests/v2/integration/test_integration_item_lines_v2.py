@@ -376,7 +376,8 @@ def test_unarchive_item_line_no_api_key(client):
 
 def test_unarchive_item_line_invalid_api_key(client):
     response = client.patch(
-        "/item_lines/" + str(test_item_line["id"]) + "/unarchive", headers=invalid_headers
+        "/item_lines/" + str(test_item_line["id"]) + "/unarchive",
+        headers=invalid_headers,
     )
     assert response.status_code == 403
     response_get_item_line = client.get(
