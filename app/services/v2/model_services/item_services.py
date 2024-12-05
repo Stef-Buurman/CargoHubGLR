@@ -69,6 +69,13 @@ class ItemService(Base):
             )
         ):
             return True
+        elif (
+            item.item_type is not None
+            and data_provider_v2.fetch_item_type_pool().is_item_type_archived(
+                item.item_type
+            )
+        ):
+            return True
         return False
 
     def add_item(self, item: Item, closeConnection: bool = True) -> Item | None:
