@@ -408,12 +408,16 @@ def test_unarchive_item_line_already_unarchived(client):
 
 
 def test_update_archived_item_line(client):
+    previous_response_get_item_line = client.get(
+        "/item_lines/" + str(updated_item_line["id"]), headers=test_headers
+    )
+    assert previous_response_get_item_line.status_code == 200
     response = client.delete(
         "/item_lines/" + str(test_item_line["id"]), headers=test_headers
     )
     assert response.status_code == 200
     updated_item_line = test_item_line.copy()
-    updated_item_line["description"] = "updated item line"
+    updated_item_line["name"] = "test2"
     response = client.put(
         "/item_lines/" + str(updated_item_line["id"]),
         json=updated_item_line,
@@ -424,11 +428,15 @@ def test_update_archived_item_line(client):
         "/item_lines/" + str(updated_item_line["id"]), headers=test_headers
     )
     assert response_get_item_line.status_code == 200
-    assert response_get_item_line.json()["description"] == test_item_line["description"]
+    assert response_get_item_line.json()["name"] == previous_response_get_item_line.json()["name"]
 
 
 def test_partial_update_archived_item_line(client):
-    updated_item_line = {"description": "partial updated item line"}
+    previous_response_get_item_line = client.get(
+        "/item_lines/" + str(updated_item_line["id"]), headers=test_headers
+    )
+    assert previous_response_get_item_line.status_code == 200
+    updated_item_line = {"name": "test"}
     response = client.patch(
         "/item_lines/" + str(test_item_line["id"]),
         json=updated_item_line,
@@ -439,4 +447,4 @@ def test_partial_update_archived_item_line(client):
         "/item_lines/" + str(test_item_line["id"]), headers=test_headers
     )
     assert response_get_item_line.status_code == 200
-    assert response_get_item_line.json()["description"] == test_item_line["description"]
+    assert response_get_item_line.json()["name"] == previous_response_get_item_line.json()["name"]
