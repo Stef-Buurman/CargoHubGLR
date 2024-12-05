@@ -93,11 +93,13 @@ def partial_update_item(
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
-    existing_item = data_provider_v2.fetch_item_pool().is_item_archived(item_id)
-    if existing_item is None:
+    is_archived = data_provider_v2.fetch_item_pool().is_item_archived(item_id)
+    if is_archived is None:
         raise HTTPException(status_code=404, detail="Item not found")
-    elif existing_item is True:
+    elif is_archived is True:
         raise HTTPException(status_code=400, detail="Item is archived")
+
+    existing_item = data_provider_v2.fetch_item_pool().get_item(item_id)
 
     valid_keys = Item.model_fields.keys()
     update_data = {key: value for key, value in item.items() if key in valid_keys}
