@@ -53,23 +53,25 @@ class ItemGroupService(Base):
                 break
         return self.db.update(item_group, item_group_id, closeConnection)
 
-    def archive_item_group(self, item_group_id: int, closeConnection: bool = True) -> ItemGroup | None:
+    def archive_item_group(
+        self, item_group_id: int, closeConnection: bool = True
+    ) -> ItemGroup | None:
         for item_group in self.data:
             if item_group.id == item_group_id:
                 item_group.is_archived = True
                 item_group.updated_at = self.get_timestamp()
                 return self.db.update(item_group, item_group_id, closeConnection)
         return None
-    
 
-    def unarchive_item_group(self, item_group_id: int, closeConnection: bool = True) -> ItemGroup | None:
+    def unarchive_item_group(
+        self, item_group_id: int, closeConnection: bool = True
+    ) -> ItemGroup | None:
         for item_group in self.data:
             if item_group.id == item_group_id:
                 item_group.is_archived = False
                 item_group.updated_at = self.get_timestamp()
                 return self.db.update(item_group, item_group_id, closeConnection)
         return None
-            
 
     def load(self, is_debug: bool, item_groups: List[ItemGroup] | None = None):
         if is_debug and item_groups is not None:
