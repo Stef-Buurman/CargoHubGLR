@@ -73,11 +73,16 @@ def update_item(
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
-    existingItem = data_provider_v2.fetch_item_line_pool().get_item_line(item_line_id)
-    if existingItem is None:
+    is_archived = data_provider_v2.fetch_item_line_pool().is_item_line_archived(
+        item_line_id
+    )
+    if is_archived is None:
         raise HTTPException(
             status_code=404, detail=f"Item line with id {item_line_id} not found"
         )
+    elif is_archived is True:
+        raise HTTPException(status_code=400, detail=f"Item line is archived")
+
     updated_item_line = data_provider_v2.fetch_item_line_pool().update_item_line(
         item_line_id, item_line
     )
@@ -132,7 +137,7 @@ def unarchive_item_line(
         raise HTTPException(
             status_code=404, detail=f"Item line with id {item_line_id} not found"
         )
-    elif is_archived is True:
+    elif is_archived is False:
         raise HTTPException(status_code=400, detail=f"Item line is not archived")
 
     updated_item_line = data_provider_v2.fetch_item_line_pool().unarchive_item_line(
