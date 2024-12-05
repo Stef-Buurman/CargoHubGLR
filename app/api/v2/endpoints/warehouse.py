@@ -80,7 +80,7 @@ def update_warehouse(
     if existing_warehouse is None:
         raise HTTPException(status_code=404, detail="Warehouse not found")
     elif existing_warehouse:
-        raise HTTPException(status_code=404, detail="Warehouse is archived")
+        raise HTTPException(status_code=400, detail="Warehouse is archived")
     updated_warehouse = data_provider_v2.fetch_warehouse_pool().update_warehouse(
         warehouse_id, warehouse
     )
@@ -100,7 +100,7 @@ def partial_update_warehouse(
     if existing_warehouse is None:
         raise HTTPException(status_code=404, detail="Warehouse not found")
     elif existing_warehouse.is_archived:
-        raise HTTPException(status_code=404, detail="Warehouse is archived")
+        raise HTTPException(status_code=400, detail="Warehouse is archived")
 
     for key, value in warehouse.items():
         setattr(existing_warehouse, key, value)
@@ -124,7 +124,7 @@ def archive_warehouse(
     if warehouse is None:
         raise HTTPException(status_code=404, detail="Warehouse not found")
     elif warehouse:
-        raise HTTPException(status_code=404, detail="Warehouse already archived")
+        raise HTTPException(status_code=400, detail="Warehouse already archived")
     data_provider_v2.fetch_warehouse_pool().archive_warehouse(warehouse_id)
     return {"message": "Warehouse archived successfully"}
 
@@ -141,6 +141,6 @@ def unarchive_warehouse(
     if warehouse is None:
         raise HTTPException(status_code=404, detail="Warehouse not found")
     elif not warehouse:
-        raise HTTPException(status_code=404, detail="Warehouse already unarchived")
+        raise HTTPException(status_code=400, detail="Warehouse already unarchived")
     data_provider_v2.fetch_warehouse_pool().unarchive_warehouse(warehouse_id)
     return {"message": "Warehouse unarchived successfully"}
