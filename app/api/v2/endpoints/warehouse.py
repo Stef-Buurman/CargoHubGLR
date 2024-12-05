@@ -94,12 +94,12 @@ def partial_update_warehouse(
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
-    existing_warehouse = data_provider_v2.fetch_warehouse_pool().get_warehouse(
+    existing_warehouse = data_provider_v2.fetch_warehouse_pool().is_warehouse_archived(
         warehouse_id
     )
     if existing_warehouse is None:
         raise HTTPException(status_code=404, detail="Warehouse not found")
-    elif existing_warehouse.is_archived:
+    elif existing_warehouse:
         raise HTTPException(status_code=404, detail="Warehouse is archived")
 
     for key, value in warehouse.items():

@@ -23,18 +23,9 @@ class WarehouseService(Base):
                 warehouses.append(warehouse)
         return warehouses
 
-    def get_warehouses(self) -> List[WarehouseDB]:
-        warehouses = []
-        for warehouse in self.data:
-            if not warehouse.is_archived:
-                warehouses.append(warehouse)
-        return warehouses
-
     def get_warehouse(self, warehouse_id: int) -> WarehouseDB | None:
         for warehouse in self.data:
             if warehouse.id == warehouse_id:
-                if warehouse.is_archived:
-                    return None
                 if warehouse.is_archived:
                     return None
                 return warehouse
@@ -56,11 +47,19 @@ class WarehouseService(Base):
             if self.data[i].id == warehouse_id:
                 if warehouse.is_archived:
                     return None
-                if warehouse.is_archived:
-                    return None
                 self.data[i] = warehouse
                 break
         return self.db.update(warehouse, warehouse_id, closeConnection)
+
+    def archive_warehouse(
+        self, warehouse_id: int, closeConnection: bool = True
+    ) -> bool:
+        for warehouse in self.data:
+            if warehouse.id == warehouse_id:
+                warehouse.is_archived = True
+                if self.db.update(warehouse, warehouse_id, closeConnection):
+                    return True
+        return False
 
     def archive_warehouse(
         self, warehouse_id: int, closeConnection: bool = True
