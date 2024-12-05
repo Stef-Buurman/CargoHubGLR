@@ -328,9 +328,7 @@ def test_archive_item_type_already_archived(client):
 
 
 def test_unarchive_item_type_no_api_key(client):
-    response = client.patch(
-        "/item_types/" + str(test_item_type["id"]) + "/unarchive"
-    )
+    response = client.patch("/item_types/" + str(test_item_type["id"]) + "/unarchive")
     assert response.status_code == 403
     responseGet = client.get(
         "/item_types/" + str(test_item_type["id"]), headers=test_headers
@@ -341,7 +339,8 @@ def test_unarchive_item_type_no_api_key(client):
 
 def test_unarchive_item_type_invalid_api_key(client):
     response = client.patch(
-        "/item_types/" + str(test_item_type["id"]) + "/unarchive", headers=invalid_headers
+        "/item_types/" + str(test_item_type["id"]) + "/unarchive",
+        headers=invalid_headers,
     )
     assert response.status_code == 403
     responseGet = client.get(
