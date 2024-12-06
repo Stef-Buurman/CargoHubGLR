@@ -10,8 +10,15 @@ class ItemTypeService(Base):
         self.db = DB
         self.load(is_debug, item_types)
 
-    def get_item_types(self) -> List[ItemType]:
+    def get_all_item_types(self) -> List[ItemType]:
         return self.db.get_all(ItemType)
+
+    def get_item_types(self) -> List[ItemType]:
+        item_types = []
+        for item_type in self.data:
+            if not item_type.is_archived:
+                item_types.append(item_type)
+        return item_types
 
     def get_item_type(self, item_type_id: int) -> ItemType | None:
         for item_type in self.data:
@@ -30,6 +37,9 @@ class ItemTypeService(Base):
     def update_item_type(
         self, item_type_id: int, item_type: ItemType, closeConnection: bool = True
     ) -> ItemType:
+        if self.is_item_type_archived(item_type_id):
+            return None
+
         item_type.updated_at = self.get_timestamp()
         for i in range(len(self.data)):
             if self.data[i].id == item_type_id:
@@ -37,23 +47,32 @@ class ItemTypeService(Base):
                 break
         return self.db.update(item_type, item_type_id, closeConnection)
 
-    def remove_item_type(self, item_type_id: int, closeConnection: bool = True) -> bool:
-        if (
-            len(
-                data_provider_v2.fetch_item_pool().get_items_for_item_type(item_type_id)
-            )
-            > 0
-        ):
-            return False
+    def is_item_type_archived(self, item_type_id: int) -> bool:
         for item_type in self.data:
             if item_type.id == item_type_id:
-                if self.db.delete(ItemType, item_type_id, closeConnection):
-                    self.data.remove(item_type)
-                    return True
-        return False
+                return item_type.is_archived
+        return None
+
+    def archive_item_type(
+        self, item_type_id: int, closeConnection: bool = True
+    ) -> ItemType | None:
+        for i in range(len(self.data)):
+            if self.data[i].id == item_type_id:
+                self.data[i].is_archived = True
+                return self.db.update(self.data[i], item_type_id, closeConnection)
+        return None
+
+    def unarchive_item_type(
+        self, item_type_id: int, closeConnection: bool = True
+    ) -> ItemType | None:
+        for i in range(len(self.data)):
+            if self.data[i].id == item_type_id:
+                self.data[i].is_archived = False
+                return self.db.update(self.data[i], item_type_id, closeConnection)
+        return None
 
     def load(self, is_debug: bool, item_types: List[ItemType] | None = None):
         if is_debug and item_types is not None:
             self.data = item_types
         else:
-            self.data = self.get_item_types()
+            self.data = self.get_all_item_types()

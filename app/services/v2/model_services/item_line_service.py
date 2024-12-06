@@ -2,9 +2,6 @@ from typing import List
 from models.v2.item_line import ItemLine
 from services.v2.base_service import Base
 from services.v2.database_service import DB
-from services.v2 import data_provider_v2
-
-ITEM_LINES = []
 
 
 class ItemLineService(Base):
@@ -12,14 +9,27 @@ class ItemLineService(Base):
         self.db = DB
         self.load(is_debug)
 
-    def get_item_lines(self) -> List[ItemLine]:
+    def get_all_item_lines(self) -> List[ItemLine]:
         return self.db.get_all(ItemLine)
+
+    def get_item_lines(self) -> List[ItemLine]:
+        item_lines = []
+        for item_line in self.data:
+            if not item_line.is_archived:
+                item_lines.append(item_line)
+        return item_lines
 
     def get_item_line(self, item_line_id: int) -> ItemLine | None:
         for item_line in self.data:
             if item_line.id == item_line_id:
                 return item_line
         return self.db.get(ItemLine, item_line_id)
+
+    def is_item_line_archived(self, item_line_id: int) -> bool:
+        for item_line in self.data:
+            if item_line.id == item_line_id:
+                return item_line.is_archived
+        return None
 
     def add_item_line(
         self, item_line: ItemLine, closeConnection: bool = True
@@ -32,24 +42,36 @@ class ItemLineService(Base):
     def update_item_line(
         self, item_line_id: int, item_line: ItemLine, closeConnection: bool = True
     ) -> ItemLine:
+        if self.is_item_line_archived(item_line_id):
+            return None
+
         item_line.updated_at = self.get_timestamp()
         if self.get_item_line(item_line_id) is not None:
             self.data[self.data.index(self.get_item_line(item_line_id))] = item_line
         return self.db.update(item_line, item_line_id, closeConnection)
 
-    def remove_item_line(self, item_line_id: int, closeConnection: bool = True) -> bool:
-        if (
-            len(
-                data_provider_v2.fetch_item_pool().get_items_for_item_line(item_line_id)
-            )
-            > 0
-        ):
-            return False
-        self.data.remove(self.get_item_line(item_line_id))
-        return self.db.delete(ItemLine, item_line_id, closeConnection)
+    def archive_item_line(
+        self, item_line_id: int, closeConnection: bool = True
+    ) -> ItemLine | None:
+        for i in range(len(self.data)):
+            if self.data[i].id == item_line_id:
+                self.data[i].is_archived = True
+                self.data[i].updated_at = self.get_timestamp()
+                return self.db.update(self.data[i], item_line_id, closeConnection)
+        return None
+
+    def unarchive_item_line(
+        self, item_line_id: int, closeConnection: bool = True
+    ) -> ItemLine | None:
+        for i in range(len(self.data)):
+            if self.data[i].id == item_line_id:
+                self.data[i].is_archived = False
+                self.data[i].updated_at = self.get_timestamp()
+                return self.db.update(self.data[i], item_line_id, closeConnection)
+        return None
 
     def load(self, is_debug: bool, item_lines: List[ItemLine] | None = None):
         if is_debug and item_lines is not None:
             self.data = item_lines
         else:
-            self.data = self.get_item_lines()
+            self.data = self.get_all_item_lines()

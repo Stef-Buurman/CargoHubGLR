@@ -280,7 +280,7 @@ def test_delete_item_type_no_api_key(client):
     assert responseGet.status_code == 200
 
 
-def test_delete_item_type_invalid_api_key(client):
+def test_archive_item_type_invalid_api_key(client):
     response = client.delete(
         "/item_types/" + str(test_item_type["id"]), headers=invalid_headers
     )
@@ -289,34 +289,22 @@ def test_delete_item_type_invalid_api_key(client):
         "/item_types/" + str(test_item_type["id"]), headers=test_headers
     )
     assert responseGet.status_code == 200
+    assert responseGet.json()["is_archived"] == False
 
 
-def test_delete_item_type_invalid_id(client):
+def test_archive_item_type_invalid_id(client):
     response = client.delete("/item_types/invalidId", headers=test_headers)
     assert response.status_code == 422
 
 
-def test_delete_item_type_not_found(client):
+def test_archive_item_type_not_found(client):
     response = client.delete(
         "/item_types/" + str(non_existent_id), headers=test_headers
     )
     assert response.status_code == 404
 
 
-def test_delete_item_type_with_items(client):
-    responseAddItem = client.post("/items/", json=test_item, headers=test_headers)
-    assert responseAddItem.status_code == 201 or responseAddItem.status_code == 200
-    response = client.delete(
-        "/item_types/" + str(test_item_type["id"]), headers=test_headers
-    )
-    assert response.status_code == 409
-    responseDeleteItem = client.delete(
-        "/items/" + responseAddItem.json()["uid"], headers=test_headers
-    )
-    assert responseDeleteItem.status_code == 200
-
-
-def test_delete_item_type(client):
+def test_archive_item_type(client):
     response = client.delete(
         "/item_types/" + str(test_item_type["id"]), headers=test_headers
     )
@@ -324,4 +312,171 @@ def test_delete_item_type(client):
     responseGet = client.get(
         "/item_types/" + str(test_item_type["id"]), headers=test_headers
     )
-    assert responseGet.status_code == 404
+    assert responseGet.status_code == 200
+    assert responseGet.json()["is_archived"] == True
+
+
+def test_archive_item_type_already_archived(client):
+    response = client.delete(
+        "/item_types/" + str(test_item_type["id"]), headers=test_headers
+    )
+    assert response.status_code == 400
+    responseGet = client.get(
+        "/item_types/" + str(test_item_type["id"]), headers=test_headers
+    )
+    assert responseGet.status_code == 200
+    assert responseGet.json()["is_archived"] == True
+
+
+def test_unarchive_item_type_no_api_key(client):
+    response = client.patch("/item_types/" + str(test_item_type["id"]) + "/unarchive")
+    assert response.status_code == 403
+    responseGet = client.get(
+        "/item_types/" + str(test_item_type["id"]), headers=test_headers
+    )
+    assert responseGet.status_code == 200
+    assert responseGet.json()["is_archived"] == True
+
+
+def test_unarchive_item_type_invalid_api_key(client):
+    response = client.patch(
+        "/item_types/" + str(test_item_type["id"]) + "/unarchive",
+        headers=invalid_headers,
+    )
+    assert response.status_code == 403
+    responseGet = client.get(
+        "/item_types/" + str(test_item_type["id"]), headers=test_headers
+    )
+    assert responseGet.status_code == 200
+    assert responseGet.json()["is_archived"] == True
+
+
+def test_unarchive_item_type_invalid_id(client):
+    response = client.patch("/item_types/invalidId/unarchive", headers=test_headers)
+    assert response.status_code == 422
+
+
+def test_unarchive_item_type_not_found(client):
+    response = client.patch(
+        "/item_types/" + str(non_existent_id) + "/unarchive", headers=test_headers
+    )
+    assert response.status_code == 404
+
+
+def test_unarchive_item_type(client):
+    response = client.patch(
+        "/item_types/" + str(test_item_type["id"]) + "/unarchive", headers=test_headers
+    )
+    assert response.status_code == 200
+    responseGet = client.get(
+        "/item_types/" + str(test_item_type["id"]), headers=test_headers
+    )
+    assert responseGet.status_code == 200
+    assert responseGet.json()["is_archived"] == False
+
+
+def test_unarchive_item_type_already_unarchived(client):
+    response = client.patch(
+        "/item_types/" + str(test_item_type["id"]) + "/unarchive", headers=test_headers
+    )
+    assert response.status_code == 400
+    responseGet = client.get(
+        "/item_types/" + str(test_item_type["id"]), headers=test_headers
+    )
+    assert responseGet.status_code == 200
+    assert responseGet.json()["is_archived"] == False
+
+
+def test_archive_item_type_invalid_id(client):
+    response = client.delete("/item_types/invalidId", headers=test_headers)
+    assert response.status_code == 422
+
+
+def test_archive_item_type_not_found(client):
+    response = client.delete(
+        "/item_types/" + str(non_existent_id), headers=test_headers
+    )
+    assert response.status_code == 404
+
+
+def test_archive_item_type(client):
+    response = client.delete(
+        "/item_types/" + str(test_item_type["id"]), headers=test_headers
+    )
+    assert response.status_code == 200
+    responseGet = client.get(
+        "/item_types/" + str(test_item_type["id"]), headers=test_headers
+    )
+    assert responseGet.status_code == 200
+    assert responseGet.json()["is_archived"] == True
+
+
+def test_archive_item_type_already_archived(client):
+    response = client.delete(
+        "/item_types/" + str(test_item_type["id"]), headers=test_headers
+    )
+    assert response.status_code == 400
+    responseGet = client.get(
+        "/item_types/" + str(test_item_type["id"]), headers=test_headers
+    )
+    assert responseGet.status_code == 200
+    assert responseGet.json()["is_archived"] == True
+
+
+def test_unarchive_item_type_no_api_key(client):
+    response = client.patch("/item_types/" + str(test_item_type["id"]) + "/unarchive")
+    assert response.status_code == 403
+    responseGet = client.get(
+        "/item_types/" + str(test_item_type["id"]), headers=test_headers
+    )
+    assert responseGet.status_code == 200
+    assert responseGet.json()["is_archived"] == True
+
+
+def test_unarchive_item_type_invalid_api_key(client):
+    response = client.patch(
+        "/item_types/" + str(test_item_type["id"]) + "/unarchive",
+        headers=invalid_headers,
+    )
+    assert response.status_code == 403
+    responseGet = client.get(
+        "/item_types/" + str(test_item_type["id"]), headers=test_headers
+    )
+    assert responseGet.status_code == 200
+    assert responseGet.json()["is_archived"] == True
+
+
+def test_unarchive_item_type_invalid_id(client):
+    response = client.patch("/item_types/invalidId/unarchive", headers=test_headers)
+    assert response.status_code == 422
+
+
+def test_unarchive_item_type_not_found(client):
+    response = client.patch(
+        "/item_types/" + str(non_existent_id) + "/unarchive", headers=test_headers
+    )
+    assert response.status_code == 404
+
+
+def test_unarchive_item_type(client):
+    response = client.patch(
+        "/item_types/" + str(test_item_type["id"]) + "/unarchive", headers=test_headers
+    )
+    assert response.status_code == 200
+    responseGet = client.get(
+        "/item_types/" + str(test_item_type["id"]), headers=test_headers
+    )
+    assert responseGet.status_code == 200
+    assert responseGet.json()["is_archived"] == False
+
+
+def test_unarchive_item_type_already_unarchived(client):
+    response = client.patch(
+        "/item_types/" + str(test_item_type["id"]) + "/unarchive", headers=test_headers
+    )
+    assert response.status_code == 400
+    responseGet = client.get(
+        "/item_types/" + str(test_item_type["id"]), headers=test_headers
+    )
+    assert responseGet.status_code == 200
+    assert responseGet.json()["is_archived"] == False
