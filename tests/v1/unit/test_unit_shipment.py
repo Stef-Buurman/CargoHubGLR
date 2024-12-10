@@ -52,6 +52,68 @@ def test_update_shipment(shipments_instance):
     assert "updated_at" in shipments_instance.data[0]
 
 
+def test_update_items_in_shipment(shipments_instance):
+    shipments_instance.data = [{"id": 1, "items": [{"item_id": 1, "amount": 5}]}]
+    items = [{"item_id": 1, "amount": 10}, {"item_id": 2, "amount": 5}]
+    shipments_instance.update_items_in_shipment(1, items)
+    assert len(shipments_instance.data[0]["items"]) == 2
+    assert shipments_instance.data[0]["items"][0]["amount"] == 10
+    assert shipments_instance.data[0]["items"][1]["item_id"] == 2
+
+
+def test_update_items_in_shipment_no_items(shipments_instance):
+    shipments_instance.data = [{"id": 1, "items": [{"item_id": 1, "amount": 5}]}]
+    items = []
+    shipments_instance.update_items_in_shipment(1, items)
+    assert len(shipments_instance.data[0]["items"]) == 0
+
+
+def test_update_items_in_shipment_no_current_items(shipments_instance):
+    shipments_instance.data = [{"id": 1, "items": []}]
+    items = [{"item_id": 1, "amount": 10}]
+    shipments_instance.update_items_in_shipment(1, items)
+    assert len(shipments_instance.data[0]["items"]) == 1
+    assert shipments_instance.data[0]["items"][0]["amount"] == 10
+
+
+# def test_update_items_in_shipment_no_inventory(shipments_instance):
+#     shipments_instance.data = [{"id": 1, "items": [{"item_id": 1, "amount": 5}]}]
+#     items = [{"item_id": 2, "amount": 10}]
+#     shipments_instance.update_items_in_shipment(1, items)
+#     assert len(shipments_instance.data[0]["items"]) == 1
+#     assert shipments_instance.data[0]["items"][0]["amount"] == 5
+
+
+def test_update_items_for_shipment_no_current_items(shipments_instance):
+    shipments_instance.data = [{"id": 1, "items": []}]
+    items = [{"item_id": 1, "amount": 10}]
+    shipments_instance.update_items_for_shipment(1, items)
+    assert len(shipments_instance.data[0]["items"]) == 1
+    assert shipments_instance.data[0]["items"][0]["amount"] == 10
+
+
+def test_update_items_for_shipment(shipments_instance):
+    shipments_instance.data = [{"id": 1, "items": [{"item_id": 1, "amount": 5}]}]
+    items = [{"item_id": 1, "amount": 10}, {"item_id": 2, "amount": 5}]
+    shipments_instance.update_items_for_shipment(1, items)
+    assert len(shipments_instance.data[0]["items"]) == 2
+    assert shipments_instance.data[0]["items"][0]["amount"] == 10
+    assert shipments_instance.data[0]["items"][1]["item_id"] == 2
+
+
+def test_update_items_for_shipment_no_items(shipments_instance):
+    shipments_instance.data = [{"id": 1, "items": [{"item_id": 1, "amount": 5}]}]
+    items = []
+    shipments_instance.update_items_for_shipment(1, items)
+    assert len(shipments_instance.data[0]["items"]) == 0
+
+
+def test_remove_shipment_no_shipments(shipments_instance):
+    shipments_instance.data = []
+    shipments_instance.remove_shipment(1)
+    assert len(shipments_instance.data) == 0
+
+
 def test_remove_shipment(shipments_instance):
     shipments_instance.data = [{"id": 1, "items": [{"item_id": 1, "amount": 5}]}]
     shipments_instance.remove_shipment(1)
