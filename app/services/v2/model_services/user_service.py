@@ -238,7 +238,6 @@ class UserService(Base):
                     """,
                         (api_key,),
                     )
-
                 if close_connection:
                     self.db.commit_and_close()
                 return True
@@ -259,7 +258,6 @@ class UserService(Base):
                     """,
                         (api_key,),
                     )
-
                 if close_connection:
                     self.db.commit_and_close()
                 return True
