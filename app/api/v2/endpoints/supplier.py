@@ -5,7 +5,7 @@ from services.v2 import data_provider_v2, auth_provider_v2
 from models.v2.supplier import Supplier
 from utils.globals import pagination_url
 
-supplier_router_v2 = APIRouter()
+supplier_router_v2 = APIRouter(tags=["v2.Suppliers"])
 
 
 @supplier_router_v2.get("/{supplier_id}")

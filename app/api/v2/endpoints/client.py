@@ -1,11 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
 from services.v2.pagination_service import Pagination
 from services.v2 import data_provider_v2, auth_provider_v2
 from models.v2.client import Client
 from utils.globals import pagination_url
 
-client_router_v2 = APIRouter()
+client_router_v2 = APIRouter(tags=["v2.Clients"])
 
 
 @client_router_v2.get("/{client_id}")
