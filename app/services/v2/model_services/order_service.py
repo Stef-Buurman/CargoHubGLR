@@ -12,7 +12,7 @@ class OrderService(Base):
         self.db = DB
         self.load(is_debug, orders)
 
-    def get_orders(self) -> List[Order]:
+    def get_all_orders(self) -> List[Order]:
         all_orders = self.db.get_all(Order)
         order_ids = [order.id for order in all_orders]
 
@@ -32,9 +32,18 @@ class OrderService(Base):
 
         return all_orders
 
+    def get_orders(self) -> List[Order]:
+        orders = []
+        for order in self.data:
+            if not order.is_archived:
+                orders.append(order)
+        return orders
+
     def get_order(self, order_id: int) -> Order | None:
         for order in self.data:
             if order.id == order_id:
+                if order.is_archived:
+                    return None
                 return order
 
         with self.db.get_connection() as conn:
@@ -52,6 +61,8 @@ class OrderService(Base):
     def get_items_in_order(self, order_id: int) -> List[ItemInObject]:
         for x in self.data:
             if x.id == order_id:
+                if x.is_archived:
+                    return None
                 return x.items
         return None
 
@@ -59,6 +70,8 @@ class OrderService(Base):
         result = []
         for x in self.data:
             if x.shipment_id == shipment_id:
+                if x.is_archived:
+                    return None
                 result.append(x.id)
         return result
 
@@ -66,12 +79,16 @@ class OrderService(Base):
         result = []
         for order in self.data:
             if order.shipment_id == shipment_id:
+                if order.is_archived:
+                    return None
                 result.append(order)
         return result
 
     def get_orders_for_client(self, client_id: str) -> List[Order]:
         result = []
         for order in self.data:
+            if order.is_archived:
+                return None
             if order.ship_to == client_id or order.bill_to == client_id:
                 result.append(order)
         return result
@@ -118,6 +135,9 @@ class OrderService(Base):
     def update_order(
         self, order_id: int, order: Order, closeConnection: bool = True
     ) -> Order | None:
+        if order.is_archived:
+            return None
+
         table_name = order.table_name()
 
         order.updated_at = self.get_timestamp()
@@ -162,6 +182,10 @@ class OrderService(Base):
         self, order_id: int, items: List[ItemInObject]
     ) -> Order | None:
         order = self.get_order(order_id)
+
+        if order.is_archived:
+            return None
+
         order.items = []
         for item in items:
             if not data_provider_v2.fetch_item_pool().is_item_archived(item.item_id):
@@ -186,23 +210,68 @@ class OrderService(Base):
 
         return orders
 
-    def remove_order(self, order_id: int, closeConnection: bool = True) -> bool:
-        for order in self.data:
-            if order.id == order_id:
-                if self.db.delete(Order, order_id, closeConnection):
-                    with self.db.get_connection_without_close() as conn:
-                        conn.execute(
-                            f"DELETE FROM {order_items_table} WHERE order_id = ?",
-                            (order_id,),
-                        )
-                    if closeConnection:
-                        self.db.commit_and_close()
-                    self.data.remove(order)
-                break
-        return True
+    def archive_order(self, order_id: int, closeConnection: bool = True) -> bool:
+        for i in range(len(self.data)):
+            if self.data[i].id == order_id:
+                self.data[i].updated_at = self.get_timestamp()
+                self.data[i].is_archived = True
+
+                fields = {}
+                for key, value in vars(self.data[i]).items():
+                    if key != "id" and key != "items":
+                        fields[key] = value
+
+                columns = ", ".join(f"{key} = ?" for key in fields)
+                values = tuple(fields.values())
+
+                update_sql = (
+                    f"UPDATE {self.data[i].table_name()} SET {columns} WHERE id = ?"
+                )
+                values += (order_id,)
+
+                with self.db.get_connection_without_close() as conn:
+                    conn.execute(update_sql, values)
+
+                if closeConnection:
+                    self.db.commit_and_close()
+                return True
+        return False
+
+    def unarchive_order(self, order_id: int, closeConnection: bool = True) -> bool:
+        for i in range(len(self.data)):
+            if self.data[i].id == order_id:
+                self.data[i].updated_at = self.get_timestamp()
+                self.data[i].is_archived = False
+
+                fields = {}
+                for key, value in vars(self.data[i]).items():
+                    if key != "id" and key != "items":
+                        fields[key] = value
+
+                columns = ", ".join(f"{key} = ?" for key in fields)
+                values = tuple(fields.values())
+
+                update_sql = (
+                    f"UPDATE {self.data[i].table_name()} SET {columns} WHERE id = ?"
+                )
+                values += (order_id,)
+
+                with self.db.get_connection_without_close() as conn:
+                    conn.execute(update_sql, values)
+
+                if closeConnection:
+                    self.db.commit_and_close()
+                return True
+        return False
 
     def load(self, is_debug: bool, orders: List[Order] | None = None):
         if is_debug and orders is not None:
             self.data = orders
         else:
-            self.data = self.get_orders()
+            self.data = self.get_all_orders()
+
+    def is_order_archived(self, order_id: int) -> bool:
+        for order in self.data:
+            if order.id == order_id:
+                return order.is_archived
+        return None

@@ -63,9 +63,12 @@ def update_order(
     order_id: int, order: Order, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
-    existingOrder = data_provider_v2.fetch_order_pool().get_order(order_id)
+    existingOrder = data_provider_v2.fetch_order_pool().is_order_archived(order_id)
     if existingOrder is None:
         raise HTTPException(status_code=404, detail="Order not found")
+    elif existingOrder:
+        raise HTTPException(status_code=400, detail="Order is archived")
+
     updatedOrder = data_provider_v2.fetch_order_pool().update_order(order_id, order)
     return updatedOrder
 
@@ -77,9 +80,12 @@ def add_items_to_order(
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
-    existingOrder = data_provider_v2.fetch_order_pool().get_order(order_id)
+    existingOrder = data_provider_v2.fetch_order_pool().is_order_archived(order_id)
     if existingOrder is None:
         raise HTTPException(status_code=404, detail="Order not found")
+    elif existingOrder:
+        raise HTTPException(status_code=400, detail="Order is archived")
+
     data_provider_v2.fetch_order_pool().update_items_in_order(order_id, items)
     return items
 
@@ -91,9 +97,13 @@ def partial_update_order(
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
-    existing_order = data_provider_v2.fetch_order_pool().get_order(order_id)
+    existing_order = data_provider_v2.fetch_order_pool().is_order_archived(order_id)
     if existing_order is None:
         raise HTTPException(status_code=404, detail="Order not found")
+    elif existing_order:
+        raise HTTPException(status_code=400, detail="Order is archived")
+
+    existing_order = data_provider_v2.fetch_order_pool().get_order(order_id)
 
     valid_keys = Order.model_fields.keys()
     update_data = {key: value for key, value in order.items() if key in valid_keys}
@@ -108,13 +118,30 @@ def partial_update_order(
 
 
 @order_router_v2.delete("/{order_id}")
-def delete_order(order_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)):
+def archive_order(order_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)):
     data_provider_v2.init()
-    order_pool = data_provider_v2.fetch_order_pool()
+    order = data_provider_v2.fetch_order_pool().is_order_archived(order_id)
 
-    order = order_pool.get_order(order_id)
     if order is None:
         raise HTTPException(status_code=404, detail="Order not found")
+    elif order:
+        raise HTTPException(status_code=400, detail="Order is already archived")
 
-    order_pool.remove_order(order_id)
-    return {"message": "Order deleted successfully"}
+    data_provider_v2.fetch_order_pool().archive_order(order_id)
+    return {"message": "Order archived successfully"}
+
+
+@order_router_v2.patch("/{order_id}/unarchive")
+def unarchive_order(
+    order_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
+):
+    data_provider_v2.init()
+    order = data_provider_v2.fetch_order_pool().is_order_archived(order_id)
+
+    if order is None:
+        raise HTTPException(status_code=404, detail="Order not found")
+    elif not order:
+        raise HTTPException(status_code=400, detail="Order is not archived")
+
+    data_provider_v2.fetch_order_pool().unarchive_order(order_id)
+    return {"message": "Order unarchived successfully"}
