@@ -65,11 +65,11 @@ class ClientService(Base):
                 return self.db.update(self.data[i], client_id, closeConnection)
         return None
 
-    def is_client_archived(self, client_id: int) -> bool:
+    def is_client_archived(self, client_id: int) -> bool | None:
         for client in self.data:
             if client.id == client_id:
                 return client.is_archived
-        return False
+        return None
 
     def load(self, is_debug: bool, clients: List[Client] | None = None):
         if is_debug and clients is not None:
