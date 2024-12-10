@@ -273,15 +273,14 @@ def test_archive_CargoClient(client):
 
 
 def test_unarchive_CargoClient_no_api_key(client):
-    response = client.patch(
-        "/clients/" + str(test_CargoClient["id"]) + "/unarchive"
-    )
+    response = client.patch("/clients/" + str(test_CargoClient["id"]) + "/unarchive")
     assert response.status_code == 403
 
 
 def test_unarchive_CargoClient_invalid_api_key(client):
     response = client.patch(
-        "/clients/" + str(test_CargoClient["id"]) + "/unarchive", headers=invalid_headers
+        "/clients/" + str(test_CargoClient["id"]) + "/unarchive",
+        headers=invalid_headers,
     )
     assert response.status_code == 403
 
