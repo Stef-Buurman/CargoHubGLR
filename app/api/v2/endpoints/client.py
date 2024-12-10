@@ -109,8 +109,8 @@ def unarchive_client(
         raise HTTPException(status_code=404, detail="Client not found")
     elif is_archived is False:
         raise HTTPException(status_code=400, detail="Client is not archived")
-    data_provider_v2.fetch_client_pool().unarchive_client(client_id)
-    return {"message": "Client unarchived successfully"}
+    unarchived_client = data_provider_v2.fetch_client_pool().unarchive_client(client_id)
+    return unarchived_client
 
 
 @client_router_v2.delete("/{client_id}")
@@ -123,5 +123,5 @@ def archive_client(
         raise HTTPException(status_code=404, detail="Client not found")
     elif is_archived is True:
         raise HTTPException(status_code=400, detail="Client is already archived")
-    data_provider_v2.fetch_client_pool().archive_client(client_id)
-    return {"message": "Client deleted successfully"}
+    archived_client = data_provider_v2.fetch_client_pool().archive_client(client_id)
+    return archived_client
