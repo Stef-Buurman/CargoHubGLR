@@ -12,7 +12,7 @@ class TransferService(Base):
         self.db = DB
         self.load(is_debug, transfers)
 
-    def get_transfers(self) -> List[Transfer]:
+    def get_all_transfers(self) -> List[Transfer]:
         query = f"""
         SELECT t.*, ti.item_uid, ti.amount
         FROM {Transfer.table_name()} t
@@ -43,9 +43,18 @@ class TransferService(Base):
                     )
         return list(transfers_dict.values())
 
+    def get_transfers(self) -> List[Transfer]:
+        transfers = []
+        for transfer in self.data:
+            if not transfer.is_archived:
+                transfers.append(transfer)
+        return transfers
+
     def get_transfer(self, transfer_id: int) -> Transfer | None:
         for transfer in self.data:
             if transfer.id == transfer_id:
+                if transfer.is_archived:
+                    return None
                 return transfer
         query = f"SELECT * FROM {Transfer.table_name()} WHERE id = {transfer_id}"
         with self.db.get_connection() as conn:
@@ -78,6 +87,8 @@ class TransferService(Base):
     def get_items_in_transfer(self, transfer_id: int) -> List[ItemInObject]:
         for transfer in self.data:
             if transfer.id == transfer_id:
+                if transfer.is_archived:
+                    return None
                 return transfer.items
         return None
 
@@ -123,6 +134,9 @@ class TransferService(Base):
     def update_transfer(
         self, transfer_id: int, transfer: Transfer, closeConnection: bool = True
     ) -> Transfer:
+        if transfer.is_archived:
+            return None
+
         table_name = transfer.table_name()
 
         transfer.updated_at = self.get_timestamp()
@@ -162,6 +176,9 @@ class TransferService(Base):
         return transfer
 
     def commit_transfer(self, transfer: Transfer):
+        if transfer.is_archived:
+            return None
+
         transfer_items = self.get_items_in_transfer(transfer.id)
 
         for item in transfer_items:
@@ -182,11 +199,70 @@ class TransferService(Base):
         transfer.transfer_status = "Processed"
         return transfer
 
-    def remove_transfer(self, transfer_id: int, closeConnection: bool = True):
-        return self.db.delete(Transfer, transfer_id, closeConnection)
+    def archive_transfer(self, transfer_id: int, closeConnection: bool = True) -> bool:
+        for i in range(len(self.data)):
+            if self.data[i].id == transfer_id:
+                self.data[i].updated_at = self.get_timestamp()
+                self.data[i].is_archived = True
+
+                fields = {}
+                for key, value in vars(self.data[i]).items():
+                    if key != "id" and key != "items":
+                        fields[key] = value
+
+                columns = ", ".join(f"{key} = ?" for key in fields)
+                values = tuple(fields.values())
+
+                update_sql = (
+                    f"UPDATE {self.data[i].table_name()} SET {columns} WHERE id = ?"
+                )
+                values += (transfer_id,)
+
+                with self.db.get_connection_without_close() as conn:
+                    conn.execute(update_sql, values)
+
+                if closeConnection:
+                    self.db.commit_and_close()
+                return True
+        return False
+
+    def unarchive_transfer(
+        self, transfer_id: int, closeConnection: bool = True
+    ) -> bool:
+        for i in range(len(self.data)):
+            if self.data[i].id == transfer_id:
+                self.data[i].updated_at = self.get_timestamp()
+                self.data[i].is_archived = False
+
+                fields = {}
+                for key, value in vars(self.data[i]).items():
+                    if key != "id" and key != "items":
+                        fields[key] = value
+
+                columns = ", ".join(f"{key} = ?" for key in fields)
+                values = tuple(fields.values())
+
+                update_sql = (
+                    f"UPDATE {self.data[i].table_name()} SET {columns} WHERE id = ?"
+                )
+                values += (transfer_id,)
+
+                with self.db.get_connection_without_close() as conn:
+                    conn.execute(update_sql, values)
+
+                if closeConnection:
+                    self.db.commit_and_close()
+                return True
+        return False
 
     def load(self, is_debug: bool, transfers: List[Transfer] | None = None):
         if is_debug and transfers is not None:
             self.data = transfers
         else:
-            self.data = self.get_transfers()
+            self.data = self.get_all_transfers()
+
+    def is_transfer_archived(self, transfer_id: int) -> bool:
+        for transfer in self.data:
+            if transfer.id == transfer_id:
+                return transfer.is_archived
+        return None

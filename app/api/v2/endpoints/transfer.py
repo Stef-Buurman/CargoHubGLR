@@ -64,9 +64,13 @@ def update_transfer(
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
-    existing_transfer = data_provider_v2.fetch_transfer_pool().get_transfer(transfer_id)
+    existing_transfer = data_provider_v2.fetch_transfer_pool().is_transfer_archived(
+        transfer_id
+    )
     if existing_transfer is None:
         raise HTTPException(status_code=404, detail="Transfer not found")
+    elif existing_transfer:
+        raise HTTPException(status_code=400, detail="Transfer is archived")
     updated_transfer = data_provider_v2.fetch_transfer_pool().update_transfer(
         transfer_id, transfer
     )
@@ -80,9 +84,15 @@ def partial_update_transfer(
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
-    existing_transfer = data_provider_v2.fetch_transfer_pool().get_transfer(transfer_id)
+    existing_transfer = data_provider_v2.fetch_transfer_pool().is_transfer_archived(
+        transfer_id
+    )
     if existing_transfer is None:
         raise HTTPException(status_code=404, detail="Transfer not found")
+    elif existing_transfer:
+        raise HTTPException(status_code=400, detail="Transfer is archived")
+
+    existing_transfer = data_provider_v2.fetch_transfer_pool().get_transfer(transfer_id)
 
     valid_keys = Transfer.model_fields.keys()
     update_data = {key: value for key, value in transfer.items() if key in valid_keys}
@@ -101,9 +111,16 @@ def commit_transfer(
     transfer_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
-    transfer = data_provider_v2.fetch_transfer_pool().get_transfer(transfer_id)
+
+    transfer = data_provider_v2.fetch_transfer_pool().is_transfer_archived(transfer_id)
+
     if transfer is None:
         raise HTTPException(status_code=404, detail="Transfer not found")
+    elif transfer:
+        raise HTTPException(status_code=400, detail="Transfer is archived")
+
+    transfer = data_provider_v2.fetch_transfer_pool().get_transfer(transfer_id)
+
     committed_transfer = data_provider_v2.fetch_transfer_pool().commit_transfer(
         transfer
     )
@@ -114,12 +131,28 @@ def commit_transfer(
 
 
 @transfer_router_v2.delete("/{transfer_id}")
-def delete_transfer(
+def archive_transfer(
     transfer_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
-    transfer = data_provider_v2.fetch_transfer_pool().get_transfer(transfer_id)
+    transfer = data_provider_v2.fetch_transfer_pool().is_transfer_archived(transfer_id)
     if transfer is None:
         raise HTTPException(status_code=404, detail="Transfer not found")
-    data_provider_v2.fetch_transfer_pool().remove_transfer(transfer_id)
-    return {"message": "Transfer deleted successfully"}
+    elif transfer:
+        raise HTTPException(status_code=400, detail="Transfer is already archived")
+    data_provider_v2.fetch_transfer_pool().archive_transfer(transfer_id)
+    return {"message": "Transfer archived successfully"}
+
+
+@transfer_router_v2.patch("/{transfer_id}/unarchive")
+def unarchive_transfer(
+    transfer_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
+):
+    data_provider_v2.init()
+    transfer = data_provider_v2.fetch_transfer_pool().is_transfer_archived(transfer_id)
+    if transfer is None:
+        raise HTTPException(status_code=404, detail="Transfer not found")
+    elif not transfer:
+        raise HTTPException(status_code=400, detail="Transfer is not archived")
+    data_provider_v2.fetch_transfer_pool().unarchive_transfer(transfer_id)
+    return {"message": "Transfer unarchived successfully"}
