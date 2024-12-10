@@ -61,9 +61,11 @@ def update_client(
     client_id: int, client: Client, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
-    existing_client = data_provider_v2.fetch_client_pool().get_client(client_id)
-    if existing_client is None:
+    is_archived = data_provider_v2.fetch_client_pool().is_client_archived(client_id)
+    if is_archived is None:
         raise HTTPException(status_code=404, detail="Client not found")
+    elif is_archived is True:
+        raise HTTPException(status_code=400, detail="Client is archived")
     updated_client = data_provider_v2.fetch_client_pool().update_client(
         client_id, client
     )
@@ -77,9 +79,13 @@ def partial_update_client(
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
-    existing_client = data_provider_v2.fetch_client_pool().get_client(client_id)
-    if existing_client is None:
+    is_archived = data_provider_v2.fetch_client_pool().is_client_archived(client_id)
+    if is_archived is None:
         raise HTTPException(status_code=404, detail="Client not found")
+    elif is_archived is True:
+        raise HTTPException(status_code=400, detail="Client is archived")
+
+    existing_client = data_provider_v2.fetch_client_pool().get_client(client_id)
 
     valid_keys = Client.model_fields.keys()
     update_data = {key: value for key, value in client.items() if key in valid_keys}
@@ -98,9 +104,11 @@ def unarchive_client(
     client_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
-    client = data_provider_v2.fetch_client_pool().get_client(client_id)
-    if client is None:
+    is_archived = data_provider_v2.fetch_client_pool().is_client_archived(client_id)
+    if is_archived is None:
         raise HTTPException(status_code=404, detail="Client not found")
+    elif is_archived is False:
+        raise HTTPException(status_code=400, detail="Client is not archived")
     data_provider_v2.fetch_client_pool().unarchive_client(client_id)
     return {"message": "Client unarchived successfully"}
 
@@ -110,8 +118,10 @@ def archive_client(
     client_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
-    client = data_provider_v2.fetch_client_pool().get_client(client_id)
-    if client is None:
+    is_archived = data_provider_v2.fetch_client_pool().is_client_archived(client_id)
+    if is_archived is None:
         raise HTTPException(status_code=404, detail="Client not found")
+    elif is_archived is True:
+        raise HTTPException(status_code=400, detail="Client is already archived")
     data_provider_v2.fetch_client_pool().archive_client(client_id)
     return {"message": "Client deleted successfully"}
