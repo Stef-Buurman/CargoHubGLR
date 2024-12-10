@@ -93,11 +93,25 @@ def partial_update_client(
     return partial_updated_client
 
 
-@client_router_v2.delete("/{client_id}")
-def delete_client(client_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)):
+@client_router_v2.put("/{client_id}/unarchive")
+def unarchive_client(
+    client_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
+):
     data_provider_v2.init()
     client = data_provider_v2.fetch_client_pool().get_client(client_id)
     if client is None:
         raise HTTPException(status_code=404, detail="Client not found")
-    data_provider_v2.fetch_client_pool().remove_client(client_id)
+    data_provider_v2.fetch_client_pool().unarchive_client(client_id)
+    return {"message": "Client unarchived successfully"}
+
+
+@client_router_v2.delete("/{client_id}")
+def archive_client(
+    client_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
+):
+    data_provider_v2.init()
+    client = data_provider_v2.fetch_client_pool().get_client(client_id)
+    if client is None:
+        raise HTTPException(status_code=404, detail="Client not found")
+    data_provider_v2.fetch_client_pool().archive_client(client_id)
     return {"message": "Client deleted successfully"}
