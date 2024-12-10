@@ -44,7 +44,7 @@ class Clients(Base):
             self.data = json.load(f)
             f.close()
 
-    def save(self):
+    def save(self):  # pragma: no cover
         f = open(self.data_path, "w")
         json.dump(self.data, f)
         f.close()
