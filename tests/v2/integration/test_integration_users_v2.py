@@ -410,6 +410,7 @@ def test_archive_user(user_service):
     assert user.api_key == test_user.api_key
     assert user.is_archived == True
 
+
 def test_delete_user(user_service):
     user_service.delete_user(test_user.api_key)
     user = user_service.get_user(test_user.api_key, True)

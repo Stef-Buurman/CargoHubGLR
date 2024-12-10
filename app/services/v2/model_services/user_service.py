@@ -222,7 +222,7 @@ class UserService(Base):
         added_user = self.get_user(api_key, True)
         self.data.append(added_user)
         return added_user
-    
+
     def archive_user(self, api_key: str, close_connection: bool = True) -> bool:
         for i in range(len(self.data)):
             if self.data[i].api_key == api_key:
@@ -243,7 +243,7 @@ class UserService(Base):
                     self.db.commit_and_close()
                 return True
         return False
-    
+
     def unarchive_user(self, api_key: str, close_connection: bool = True) -> bool:
         for i in range(len(self.data)):
             if self.data[i].api_key == api_key:
@@ -312,7 +312,7 @@ class UserService(Base):
                     return getattr(access, method)
             return False
 
-    def is_user_archived(self, api_key: str) ->bool|None:
+    def is_user_archived(self, api_key: str) -> bool | None:
         user = self.get_user(api_key)
         if user:
             return user.is_archived
