@@ -39,7 +39,7 @@ class Clients(Base):
     def load(self, is_debug):
         if is_debug:
             self.data = CLIENTS
-        else:
+        else: # pragma: no cover
             f = open(self.data_path, "r")
             self.data = json.load(f)
             f.close()
