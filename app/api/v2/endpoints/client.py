@@ -93,7 +93,7 @@ def partial_update_client(
     return partial_updated_client
 
 
-@client_router_v2.put("/{client_id}/unarchive")
+@client_router_v2.patch("/{client_id}/unarchive")
 def unarchive_client(
     client_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
