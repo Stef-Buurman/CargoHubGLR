@@ -250,7 +250,6 @@ def test_archive_inventory(client):
     assert response_get_inventory.json()["is_archived"] is True
 
 
-
 def test_update_archived_inventory(client):
     updated_inventory = test_inventory.copy()
     updated_inventory["total_available"] = test_inventory["total_available"] + 100
