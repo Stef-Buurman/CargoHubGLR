@@ -266,6 +266,7 @@ def test_archive_CargoClient(client):
         "/clients/" + str(test_CargoClient["id"]), headers=test_headers
     )
     assert response.status_code == 200
+    assert response.json()["is_archived"] is True
     response_get_CargoClient = client.get(
         "/clients/" + str(test_CargoClient["id"]), headers=test_headers
     )
@@ -356,6 +357,7 @@ def test_unarchive_CargoClient(client):
         "/clients/" + str(test_CargoClient["id"]) + "/unarchive", headers=test_headers
     )
     assert response.status_code == 200
+    assert response.json()["is_archived"] is False
     response_get_CargoClient = client.get(
         "/clients/" + str(test_CargoClient["id"]), headers=test_headers
     )
