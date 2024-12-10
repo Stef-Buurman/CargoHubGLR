@@ -37,6 +37,7 @@ class ClientService(Base):
     ) -> Client | None:
         if self.is_client_archived(client_id):
             return None
+
         client.updated_at = self.get_timestamp()
         for i in range(len(self.data)):
             if self.data[i].id == client_id:
