@@ -5,7 +5,7 @@ from models.v2.item_line import ItemLine
 from services.v2 import data_provider_v2, auth_provider_v2
 from utils.globals import pagination_url
 
-item_line_router_v2 = APIRouter()
+item_line_router_v2 = APIRouter(tags=["v2.Item Lines"])
 
 
 @item_line_router_v2.get("/{item_line_id}")

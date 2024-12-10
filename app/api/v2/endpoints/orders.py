@@ -6,7 +6,7 @@ from models.v2.order import Order
 from models.v2.ItemInObject import ItemInObject
 from utils.globals import pagination_url
 
-order_router_v2 = APIRouter()
+order_router_v2 = APIRouter(tags=["v2.Orders"])
 
 
 @order_router_v2.get("/{order_id}")
