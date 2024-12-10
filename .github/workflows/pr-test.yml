@@ -54,9 +54,6 @@ jobs:
         id: test_step
         run: |
           coverage run -m pytest ./tests/v2/smoke
-      - name: Run code coverage
-        run: |
-          coverage report -m --rcfile=.coveragerc --format=markdown >> $GITHUB_STEP_SUMMARY
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4
