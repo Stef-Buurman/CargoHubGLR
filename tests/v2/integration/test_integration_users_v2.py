@@ -119,7 +119,8 @@ def test_has_access_warehouses(user_service):
     assert user_service.has_access(user.api_key, "warehouses", "delete") == True
     assert user_service.has_access(user.api_key, "warehouses", "post") == False
     assert user_service.has_access(user.api_key, "warehouses", "put") == False
-    user_service.delete_user(test_user_2.api_key)
+    assert user_service.archive_user(test_user_2.api_key) == True
+    assert user_service.delete_user(test_user_2.api_key) == True
     assert user_service.get_user(test_user_2.api_key) == None
     assert user_service.get_user(test_user_2.api_key, True) == None
 
@@ -145,7 +146,8 @@ def test_has_access_locations(user_service):
     assert user_service.has_access(user.api_key, "locations", "delete") == True
     assert user_service.has_access(user.api_key, "locations", "post") == True
     assert user_service.has_access(user.api_key, "locations", "put") == True
-    user_service.delete_user(test_user_2.api_key)
+    assert user_service.archive_user(test_user_2.api_key) == True
+    assert user_service.delete_user(test_user_2.api_key) == True
     assert user_service.get_user(test_user_2.api_key) == None
     assert user_service.get_user(test_user_2.api_key, True) == None
 
@@ -171,7 +173,8 @@ def test_has_access_transfers(user_service):
     assert user_service.has_access(user.api_key, "transfers", "delete") == False
     assert user_service.has_access(user.api_key, "transfers", "post") == False
     assert user_service.has_access(user.api_key, "transfers", "put") == True
-    user_service.delete_user(test_user_2.api_key)
+    assert user_service.archive_user(test_user_2.api_key) == True
+    assert user_service.delete_user(test_user_2.api_key) == True
     assert user_service.get_user(test_user_2.api_key) == None
     assert user_service.get_user(test_user_2.api_key, True) == None
 
@@ -197,7 +200,8 @@ def test_has_access_items(user_service):
     assert user_service.has_access(user.api_key, "items", "delete") == False
     assert user_service.has_access(user.api_key, "items", "post") == False
     assert user_service.has_access(user.api_key, "items", "put") == False
-    user_service.delete_user(test_user_2.api_key)
+    assert user_service.archive_user(test_user_2.api_key) == True
+    assert user_service.delete_user(test_user_2.api_key) == True
     assert user_service.get_user(test_user_2.api_key) == None
     assert user_service.get_user(test_user_2.api_key, True) == None
 
@@ -223,7 +227,8 @@ def test_has_access_item_lines(user_service):
     assert user_service.has_access(user.api_key, "item_lines", "delete") == True
     assert user_service.has_access(user.api_key, "item_lines", "post") == True
     assert user_service.has_access(user.api_key, "item_lines", "put") == True
-    user_service.delete_user(test_user_2.api_key)
+    assert user_service.archive_user(test_user_2.api_key) == True
+    assert user_service.delete_user(test_user_2.api_key) == True
     assert user_service.get_user(test_user_2.api_key) == None
     assert user_service.get_user(test_user_2.api_key, True) == None
 
@@ -249,7 +254,8 @@ def test_has_access_item_groups(user_service):
     assert user_service.has_access(user.api_key, "item_groups", "delete") == True
     assert user_service.has_access(user.api_key, "item_groups", "post") == False
     assert user_service.has_access(user.api_key, "item_groups", "put") == True
-    user_service.delete_user(test_user_2.api_key)
+    assert user_service.archive_user(test_user_2.api_key) == True
+    assert user_service.delete_user(test_user_2.api_key) == True
     assert user_service.get_user(test_user_2.api_key) == None
     assert user_service.get_user(test_user_2.api_key, True) == None
 
@@ -275,7 +281,8 @@ def test_has_access_item_types(user_service):
     assert user_service.has_access(user.api_key, "item_types", "delete") == False
     assert user_service.has_access(user.api_key, "item_types", "post") == True
     assert user_service.has_access(user.api_key, "item_types", "put") == True
-    user_service.delete_user(test_user_2.api_key)
+    assert user_service.archive_user(test_user_2.api_key) == True
+    assert user_service.delete_user(test_user_2.api_key) == True
     assert user_service.get_user(test_user_2.api_key) == None
     assert user_service.get_user(test_user_2.api_key, True) == None
 
@@ -301,7 +308,8 @@ def test_has_access_suppliers(user_service):
     assert user_service.has_access(user.api_key, "suppliers", "delete") == True
     assert user_service.has_access(user.api_key, "suppliers", "post") == True
     assert user_service.has_access(user.api_key, "suppliers", "put") == False
-    user_service.delete_user(test_user_2.api_key)
+    assert user_service.archive_user(test_user_2.api_key) == True
+    assert user_service.delete_user(test_user_2.api_key) == True
     assert user_service.get_user(test_user_2.api_key) == None
     assert user_service.get_user(test_user_2.api_key, True) == None
 
@@ -327,7 +335,8 @@ def test_has_access_orders(user_service):
     assert user_service.has_access(user.api_key, "orders", "delete") == False
     assert user_service.has_access(user.api_key, "orders", "post") == False
     assert user_service.has_access(user.api_key, "orders", "put") == True
-    user_service.delete_user(test_user_2.api_key)
+    assert user_service.archive_user(test_user_2.api_key) == True
+    assert user_service.delete_user(test_user_2.api_key) == True
     assert user_service.get_user(test_user_2.api_key) == None
     assert user_service.get_user(test_user_2.api_key, True) == None
 
@@ -353,7 +362,8 @@ def test_has_access_clients(user_service):
     assert user_service.has_access(user.api_key, "clients", "delete") == False
     assert user_service.has_access(user.api_key, "clients", "post") == True
     assert user_service.has_access(user.api_key, "clients", "put") == False
-    user_service.delete_user(test_user_2.api_key)
+    assert user_service.archive_user(test_user_2.api_key) == True
+    assert user_service.delete_user(test_user_2.api_key) == True
     assert user_service.get_user(test_user_2.api_key) == None
     assert user_service.get_user(test_user_2.api_key, True) == None
 
@@ -379,7 +389,8 @@ def test_has_access_shipments(user_service):
     assert user_service.has_access(user.api_key, "shipments", "delete") == True
     assert user_service.has_access(user.api_key, "shipments", "post") == True
     assert user_service.has_access(user.api_key, "shipments", "put") == True
-    user_service.delete_user(test_user_2.api_key)
+    assert user_service.archive_user(test_user_2.api_key) == True
+    assert user_service.delete_user(test_user_2.api_key) == True
     assert user_service.get_user(test_user_2.api_key) == None
     assert user_service.get_user(test_user_2.api_key, True) == None
 
@@ -393,8 +404,13 @@ def test_has_all_access_shipments(user_service):
     assert user_service.has_access(user.api_key, "shipments", "put") == True
 
 
+def test_archive_user(user_service):
+    user_service.archive_user(test_user.api_key)
+    user = user_service.get_user(test_user.api_key, True)
+    assert user.api_key == test_user.api_key
+    assert user.is_archived == True
+
 def test_delete_user(user_service):
     user_service.delete_user(test_user.api_key)
-    users = user_service.get_users(True)
-    for user in users:
-        assert user.api_key != test_user.api_key
+    user = user_service.get_user(test_user.api_key, True)
+    assert user is None
