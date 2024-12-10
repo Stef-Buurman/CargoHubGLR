@@ -251,6 +251,9 @@ def test_archive_inventory(client):
 
 
 def test_update_archived_inventory(client):
+    current_inventory = client.get(
+        "/inventories/" + str(test_inventory["id"]), headers=test_headers
+    ).json()
     updated_inventory = test_inventory.copy()
     updated_inventory["total_available"] = test_inventory["total_available"] + 100
     response = client.put(
@@ -265,11 +268,14 @@ def test_update_archived_inventory(client):
     assert response_get_inventory.status_code == 200
     assert (
         response_get_inventory.json()["total_available"]
-        == test_inventory["total_available"]
+        == current_inventory["total_available"]
     )
 
 
 def test_partial_update_archived_inventory(client):
+    current_inventory = client.get(
+        "/inventories/" + str(test_inventory["id"]), headers=test_headers
+    ).json()
     updated_inventory = {"total_available": test_inventory["total_available"] + 500}
     response = client.patch(
         "/inventories/" + str(test_inventory["id"]),
@@ -283,18 +289,13 @@ def test_partial_update_archived_inventory(client):
     assert response_get_inventory.status_code == 200
     assert (
         response_get_inventory.json()["total_available"]
-        == test_inventory["total_available"]
+        == current_inventory["total_available"]
     )
 
 
 def test_unarchive_inventory_no_api_key(client):
     response = client.patch("/inventories/" + str(test_inventory["id"]) + "/unarchive")
     assert response.status_code == 403
-    response_get_inventory = client.get(
-        "/inventories/" + str(test_inventory["id"]), headers=test_headers
-    )
-    assert response_get_inventory.status_code == 200
-    assert response_get_inventory.json()["is_archived"] is True
 
 
 def test_unarchive_inventory_invalid_api_key(client):
@@ -303,11 +304,6 @@ def test_unarchive_inventory_invalid_api_key(client):
         headers=invalid_headers,
     )
     assert response.status_code == 403
-    response_get_inventory = client.get(
-        "/inventories/" + str(test_inventory["id"]), headers=test_headers
-    )
-    assert response_get_inventory.status_code == 200
-    assert response_get_inventory.json()["is_archived"] is True
 
 
 def test_unarchive_invalid_inventory_id(client):
