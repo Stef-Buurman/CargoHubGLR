@@ -1,7 +1,11 @@
 [run]
-omit = test_*
+omit = ./tests/*
 
 [report]
 omit =
     /usr/lib/python3/dist-packages/*
-    ./app/services/data_provider.py
+    ./app/models/v2/*
+    ./app/models/v1/inventories.py
+    ./app/services/v1/data_provider.py
+    ./app/services/v2/data_provider_v2.py
+    ./tests/*
