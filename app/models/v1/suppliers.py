@@ -39,7 +39,7 @@ class Suppliers(Base):
     def load(self, is_debug):
         if is_debug:
             self.data = SUPPLIERS
-        else: # pragma: no cover
+        else:  # pragma: no cover
             f = open(self.data_path, "r")
             self.data = json.load(f)
             f.close()

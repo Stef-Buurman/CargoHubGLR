@@ -67,7 +67,7 @@ class Items(Base):
     def load(self, is_debug, items):
         if is_debug:
             self.data = items
-        else: # pragma: no cover
+        else:  # pragma: no cover
             f = open(self.data_path, "r")
             self.data = json.load(f)
             f.close()

@@ -258,7 +258,7 @@ class DatabaseService:
         )
         """
 
-        with self.get_connection() as conn: # pragma: no cover
+        with self.get_connection() as conn:  # pragma: no cover
             conn.execute(query_inventory)
             conn.execute(query_locations)
 
@@ -411,7 +411,7 @@ class DatabaseService:
             FOREIGN KEY (shipment_id) REFERENCES {Shipment.table_name()}(id) ON DELETE CASCADE
         );
         """
-        with self.get_connection() as conn: # pragma: no cover
+        with self.get_connection() as conn:  # pragma: no cover
             conn.execute(query)
 
     def create_order_items_table(
@@ -463,7 +463,7 @@ class DatabaseService:
             FOREIGN KEY (order_id) REFERENCES {Order.table_name()}(id) ON DELETE CASCADE
         )
         """
-        with self.get_connection() as conn: # pragma: no cover
+        with self.get_connection() as conn:  # pragma: no cover
             conn.execute(query_shipment)
 
     def create_shipment_items_table(
@@ -510,7 +510,7 @@ class DatabaseService:
             is_archived BOOLEAN DEFAULT 0
         )
         """
-        with self.get_connection() as conn: # pragma: no cover
+        with self.get_connection() as conn:  # pragma: no cover
             conn.execute(query_supplier)
 
     def create_transfer_table(
@@ -533,7 +533,7 @@ class DatabaseService:
             FOREIGN KEY (transfer_to) REFERENCES {Location.table_name()}(id) ON DELETE CASCADE
         )
         """
-        with self.get_connection() as conn: # pragma: no cover
+        with self.get_connection() as conn:  # pragma: no cover
             conn.execute(query_transfer)
 
     def create_transfer_items_table(
@@ -579,7 +579,7 @@ class DatabaseService:
             is_archived BOOLEAN DEFAULT 0
         )
         """
-        with self.get_connection() as conn: # pragma: no cover
+        with self.get_connection() as conn:  # pragma: no cover
             conn.execute(query_warehouse)
 
     def create_users_table(
@@ -621,8 +621,8 @@ class DatabaseService:
         )
         """
 
-        with self.get_connection() as conn: # pragma: no cover
+        with self.get_connection() as conn:  # pragma: no cover
             conn.execute(query_endpoint_access)
 
 
-DB = DatabaseService() # pragma: no cover
+DB = DatabaseService()  # pragma: no cover
