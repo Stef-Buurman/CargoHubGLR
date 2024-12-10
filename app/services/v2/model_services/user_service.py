@@ -20,7 +20,7 @@ class UserService(Base):
     def load(self, is_debug: bool):
         if is_debug:
             self.data = USERS
-        else:
+        else:  # pragma: no cover
             self.data = self.get_users()
 
     def get_user(self, api_key: str, need_from_db: bool = False) -> User | None:

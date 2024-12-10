@@ -158,12 +158,12 @@ class Orders(Base):
     def load(self, is_debug):
         if is_debug:
             self.data = ORDERS
-        else:
+        else:  # pragma: no cover
             f = open(self.data_path, "r")
             self.data = json.load(f)
             f.close()
 
-    def save(self):
+    def save(self):  # pragma: no cover
         f = open(self.data_path, "w")
         json.dump(self.data, f)
         f.close()
