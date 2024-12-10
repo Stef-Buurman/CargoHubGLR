@@ -295,6 +295,9 @@ def test_update_archived_CargoClient_invalid_api_key(client):
 
 
 def test_update_archived_CargoClient(client):
+    current_CargoClient = client.get(
+        f"/clients/{test_CargoClient['id']}", headers=test_headers
+    ).json()
     updated_CargoClient = test_CargoClient.copy()
     updated_CargoClient["name"] = "Updated Inc"
     response = client.put(
@@ -307,11 +310,14 @@ def test_update_archived_CargoClient(client):
         f"/clients/{test_CargoClient['id']}", headers=test_headers
     )
     assert response_get_CargoClient.status_code == 200
-    assert response_get_CargoClient.json()["name"] == test_CargoClient["name"]
+    assert response_get_CargoClient.json()["name"] == current_CargoClient["name"]
     assert response_get_CargoClient.json()["is_archived"] is True
 
 
 def test_partial_update_archived_CargoClient(client):
+    current_CargoClient = client.get(
+        f"/clients/{test_CargoClient['id']}", headers=test_headers
+    ).json()
     updated_CargoClient = {"name": "Updated Inc 2.0"}
     response = client.patch(
         f"/clients/{test_CargoClient['id']}",
@@ -323,7 +329,7 @@ def test_partial_update_archived_CargoClient(client):
         f"/clients/{test_CargoClient['id']}", headers=test_headers
     )
     assert response_get_CargoClient.status_code == 200
-    assert response_get_CargoClient.json()["name"] == test_CargoClient["name"]
+    assert response_get_CargoClient.json()["name"] == current_CargoClient["name"]
     assert response_get_CargoClient.json()["is_archived"] is True
 
 
