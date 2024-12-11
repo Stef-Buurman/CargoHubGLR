@@ -594,7 +594,7 @@ class DatabaseService:
             api_key TEXT UNIQUE NOT NULL,
             app TEXT NOT NULL,
             full_access BOOLEAN NOT NULL,
-            is_active BOOLEAN DEFAULT 0
+            is_archived BOOLEAN DEFAULT 0
         )
         """
 
