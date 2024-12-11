@@ -41,6 +41,8 @@ def create_inventory(
 ):
     data_provider_v2.init()
     created_inventory = data_provider_v2.fetch_inventory_pool().add_inventory(inventory)
+    if created_inventory is None:
+        raise HTTPException(status_code=400, detail="Inventory has archived entries")
     return JSONResponse(
         status_code=status.HTTP_201_CREATED, content=created_inventory.model_dump()
     )
@@ -63,6 +65,10 @@ def update_inventory(
     updated_inventory = data_provider_v2.fetch_inventory_pool().update_inventory(
         inventory_id, inventory
     )
+
+    if updated_inventory is None:
+        raise HTTPException(status_code=400, detail="inventory has archived entries")
+
     return updated_inventory
 
 
