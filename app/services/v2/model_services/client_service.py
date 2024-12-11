@@ -9,8 +9,15 @@ class ClientService(Base):
         self.db = DB
         self.load(is_debug, clients)
 
-    def get_clients(self) -> List[Client]:
+    def get_all_clients(self) -> List[Client]:
         return self.db.get_all(Client)
+
+    def get_clients(self) -> List[Client]:
+        clients = []
+        for client in self.data:
+            if not client.is_archived:
+                clients.append(client)
+        return clients
 
     def get_client(self, client_id: int) -> Client | None:
         for client in self.data:
@@ -27,7 +34,10 @@ class ClientService(Base):
 
     def update_client(
         self, client_id: int, client: Client, closeConnection: bool = True
-    ):
+    ) -> Client | None:
+        if self.is_client_archived(client_id):
+            return None
+
         client.updated_at = self.get_timestamp()
         for i in range(len(self.data)):
             if self.data[i].id == client_id:
@@ -35,14 +45,34 @@ class ClientService(Base):
                 break
         return self.db.update(client, client_id, closeConnection)
 
-    def remove_client(self, client_id: int, closeConnection: bool = True):
+    def archive_client(
+        self, client_id: int, closeConnection: bool = True
+    ) -> Client | None:
+        for i in range(len(self.data)):
+            if self.data[i].id == client_id:
+                self.data[i].is_archived = True
+                self.data[i].updated_at = self.get_timestamp()
+                return self.db.update(self.data[i], client_id, closeConnection)
+        return None
+
+    def unarchive_client(
+        self, client_id: int, closeConnection: bool = True
+    ) -> Client | None:
+        for i in range(len(self.data)):
+            if self.data[i].id == client_id:
+                self.data[i].is_archived = False
+                self.data[i].updated_at = self.get_timestamp()
+                return self.db.update(self.data[i], client_id, closeConnection)
+        return None
+
+    def is_client_archived(self, client_id: int) -> bool | None:
         for client in self.data:
             if client.id == client_id:
-                if self.db.delete(Client, client_id, closeConnection):
-                    self.data.remove(client)
+                return client.is_archived
+        return None
 
     def load(self, is_debug: bool, clients: List[Client] | None = None):
         if is_debug and clients is not None:
             self.data = clients
         else:
-            self.data = self.get_clients()
+            self.data = self.get_all_clients()
