@@ -2,6 +2,7 @@ from typing import List
 from models.v2.inventory import Inventory
 from services.v2.base_service import Base
 from services.v2.database_service import DB
+from services.v2 import data_provider_v2
 from utils.globals import *
 
 
@@ -75,7 +76,10 @@ class InventoryService(Base):
 
     def add_inventory(
         self, inventory: Inventory, closeConnection: bool = True
-    ) -> Inventory:
+    ) -> Inventory | None:
+        if self.has_inventory_archived_entities(inventory, None):
+            return None
+
         table_name = inventory.table_name()
 
         inventory.created_at = self.get_timestamp()
@@ -110,8 +114,12 @@ class InventoryService(Base):
     def update_inventory(
         self, inventory_id: int, inventory: Inventory, closeConnection: bool = True
     ) -> Inventory:
-        if self.get_inventory(inventory_id) is None or self.is_inventory_archived(
-            inventory_id
+        if (
+            self.get_inventory(inventory_id) is None
+            or self.is_inventory_archived(inventory_id)
+            or self.has_inventory_archived_entities(
+                inventory, self.get_inventory(inventory_id)
+            )
         ):
             return None
         table_name = inventory.table_name()
@@ -232,6 +240,42 @@ class InventoryService(Base):
         if inventory:
             return inventory.is_archived
         return None
+
+    def has_inventory_archived_entities(
+        self, new_inventory: Inventory, old_inventory: Inventory | None
+    ) -> bool:
+        has_archived_entities = False
+        if old_inventory is None:
+            has_archived_entities = data_provider_v2.fetch_item_pool().is_item_archived(
+                new_inventory.item_id
+            )
+            for location_id in new_inventory.locations:
+                is_location_archived = (
+                    data_provider_v2.fetch_location_pool().is_location_archived(
+                        location_id
+                    )
+                )
+                if is_location_archived:
+                    has_archived_entities = True
+                    break
+        else:
+            if new_inventory.item_id != old_inventory.item_id:
+                has_archived_entities = (
+                    data_provider_v2.fetch_item_pool().is_item_archived(
+                        new_inventory.item_id
+                    )
+                )
+            for location_id in new_inventory.locations:
+                if location_id not in old_inventory.locations:
+                    is_location_archived = (
+                        data_provider_v2.fetch_location_pool().is_location_archived(
+                            location_id
+                        )
+                    )
+                    if is_location_archived:
+                        has_archived_entities = True
+                        break
+        return has_archived_entities
 
     def get_inventories_for_item(self, item_id: str) -> List[Inventory]:
         result = []
