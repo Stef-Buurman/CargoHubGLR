@@ -2,6 +2,7 @@ from typing import List
 from models.v2.inventory import Inventory
 from services.v2.base_service import Base
 from services.v2.database_service import DB
+from services.v2 import data_provider_v2
 from utils.globals import *
 
 
@@ -12,7 +13,7 @@ class InventoryService(Base):
         self.db = DB
         self.load(is_debug, inventories)
 
-    def get_inventories(self) -> List[Inventory]:
+    def get_all_inventories(self) -> List[Inventory]:
         all_inventories = []
         with self.db.get_connection() as conn:
             cursor_inventories = conn.execute(f"SELECT * FROM {Inventory.table_name()}")
@@ -41,6 +42,13 @@ class InventoryService(Base):
 
         return all_inventories
 
+    def get_inventories(self) -> List[Inventory]:
+        inventories = []
+        for inventory in self.data:
+            if not inventory.is_archived:
+                inventories.append(inventory)
+        return inventories
+
     def get_inventory(self, inventory_id: int) -> Inventory | None:
         for inventory in self.data:
             if inventory.id == inventory_id:
@@ -66,38 +74,12 @@ class InventoryService(Base):
 
         return None
 
-    def get_inventories_for_item(self, item_id: str) -> List[Inventory]:
-        result = []
-        for inventory in self.data:
-            if inventory.item_id == item_id:
-                result.append(inventory)
-        return result
-
-    def get_inventory_totals_for_item(self, item_id: str) -> dict:
-        result = {
-            "total_expected": 0,
-            "total_ordered": 0,
-            "total_allocated": 0,
-            "total_available": 0,
-        }
-        for x in self.data:
-            if x.item_id == item_id:
-                result["total_expected"] += x.total_expected
-                result["total_ordered"] += x.total_ordered
-                result["total_allocated"] += x.total_allocated
-                result["total_available"] += x.total_available
-        return result
-
-    def get_key_values_of_inventorie(self, inventory: Inventory) -> dict:
-        fields = {}
-        for key, value in vars(inventory).items():
-            if key != "id" and key != "locations":
-                fields[key] = value
-        return fields
-
     def add_inventory(
         self, inventory: Inventory, closeConnection: bool = True
-    ) -> Inventory:
+    ) -> Inventory | None:
+        if self.has_inventory_archived_entities(inventory, None):
+            return None
+
         table_name = inventory.table_name()
 
         inventory.created_at = self.get_timestamp()
@@ -132,7 +114,13 @@ class InventoryService(Base):
     def update_inventory(
         self, inventory_id: int, inventory: Inventory, closeConnection: bool = True
     ) -> Inventory:
-        if self.get_inventory(inventory_id) is None:
+        if (
+            self.get_inventory(inventory_id) is None
+            or self.is_inventory_archived(inventory_id)
+            or self.has_inventory_archived_entities(
+                inventory, self.get_inventory(inventory_id)
+            )
+        ):
             return None
         table_name = inventory.table_name()
 
@@ -145,17 +133,14 @@ class InventoryService(Base):
         update_sql = f"UPDATE {table_name} SET {columns} WHERE id = ?"
 
         with self.db.get_connection_without_close() as conn:
-            # Update inventory
             conn.execute(update_sql, values + (inventory_id,))
 
             if inventory.locations:
-                # Fetch existing locations for the inventory
                 select_sql = f"SELECT location_id FROM {inventory_locations_table} WHERE inventory_id = ?"
                 existing_locations = set()
                 for row in conn.execute(select_sql, (inventory_id,)):
                     existing_locations.add(row[0])
 
-                # Determine locations to delete and insert
                 new_locations = set(inventory.locations)
                 locations_to_delete = set()
                 locations_to_insert = set()
@@ -168,7 +153,6 @@ class InventoryService(Base):
                     if loc_id not in existing_locations:
                         locations_to_insert.add(loc_id)
 
-                # Delete obsolete locations
                 if locations_to_delete:
                     delete_sql = f"DELETE FROM {inventory_locations_table} WHERE inventory_id = ? AND location_id = ?"
                     delete_values = []
@@ -176,7 +160,6 @@ class InventoryService(Base):
                         delete_values.append((inventory_id, loc_id))
                     conn.executemany(delete_sql, delete_values)
 
-                # Insert new locations
                 if locations_to_insert:
                     insert_sql = f"""
                     INSERT INTO {inventory_locations_table} (inventory_id, location_id)
@@ -196,14 +179,129 @@ class InventoryService(Base):
                 break
         return inventory
 
-    def remove_inventory(self, inventory_id: int):
-        for inventory in self.data:
-            if inventory.id == inventory_id:
-                if self.db.delete(Inventory, inventory_id):
-                    self.data.remove(inventory)
+    def archive_inventory(
+        self, inventory_id: int, closeConnection: bool = True
+    ) -> Inventory | None:
+        for i in range(len(self.data)):
+            if self.data[i].id == inventory_id:
+                self.data[i].is_archived = True
+                table_name = self.data[i].table_name()
+
+                self.data[i].updated_at = self.get_timestamp()
+
+                fields = self.get_key_values_of_inventorie(self.data[i])
+
+                columns = ", ".join(f"{key} = ?" for key in fields.keys())
+                values = tuple(fields.values())
+                update_sql = f"UPDATE {table_name} SET {columns} WHERE id = ?"
+
+                with self.db.get_connection_without_close() as conn:
+                    conn.execute(update_sql, values + (inventory_id,))
+
+                if closeConnection:
+                    self.db.commit_and_close()
+
+                return self.data[i]
+        return None
+
+    def unarchive_inventory(
+        self, inventory_id: int, closeConnection: bool = True
+    ) -> Inventory | None:
+        for i in range(len(self.data)):
+            if self.data[i].id == inventory_id:
+                self.data[i].is_archived = False
+                table_name = self.data[i].table_name()
+
+                self.data[i].updated_at = self.get_timestamp()
+
+                fields = self.get_key_values_of_inventorie(self.data[i])
+
+                columns = ", ".join(f"{key} = ?" for key in fields.keys())
+                values = tuple(fields.values())
+                update_sql = f"UPDATE {table_name} SET {columns} WHERE id = ?"
+
+                with self.db.get_connection_without_close() as conn:
+                    conn.execute(update_sql, values + (inventory_id,))
+
+                if closeConnection:
+                    self.db.commit_and_close()
+
+                return self.data[i]
+        return False
 
     def load(self, is_debug: bool, inventories: List[Inventory] | None = None):
         if is_debug and inventories is not None:
             self.data = inventories
         else:
-            self.data = self.get_inventories()
+            self.data = self.get_all_inventories()
+
+    def is_inventory_archived(self, inventory_id: int) -> bool | None:
+        inventory = self.get_inventory(inventory_id)
+        if inventory:
+            return inventory.is_archived
+        return None
+
+    def has_inventory_archived_entities(
+        self, new_inventory: Inventory, old_inventory: Inventory | None
+    ) -> bool:
+        has_archived_entities = False
+        if old_inventory is None:
+            has_archived_entities = data_provider_v2.fetch_item_pool().is_item_archived(
+                new_inventory.item_id
+            )
+            for location_id in new_inventory.locations:
+                is_location_archived = (
+                    data_provider_v2.fetch_location_pool().is_location_archived(
+                        location_id
+                    )
+                )
+                if is_location_archived:
+                    has_archived_entities = True
+                    break
+        else:
+            if new_inventory.item_id != old_inventory.item_id:
+                has_archived_entities = (
+                    data_provider_v2.fetch_item_pool().is_item_archived(
+                        new_inventory.item_id
+                    )
+                )
+            for location_id in new_inventory.locations:
+                if location_id not in old_inventory.locations:
+                    is_location_archived = (
+                        data_provider_v2.fetch_location_pool().is_location_archived(
+                            location_id
+                        )
+                    )
+                    if is_location_archived:
+                        has_archived_entities = True
+                        break
+        return has_archived_entities
+
+    def get_inventories_for_item(self, item_id: str) -> List[Inventory]:
+        result = []
+        for inventory in self.data:
+            if inventory.item_id == item_id:
+                result.append(inventory)
+        return result
+
+    def get_inventory_totals_for_item(self, item_id: str) -> dict:
+        result = {
+            "total_expected": 0,
+            "total_ordered": 0,
+            "total_allocated": 0,
+            "total_available": 0,
+        }
+        for x in self.data:
+            if x.item_id == item_id:
+                result["total_expected"] += x.total_expected
+                result["total_ordered"] += x.total_ordered
+                result["total_allocated"] += x.total_allocated
+                result["total_available"] += x.total_available
+        return result
+
+    def get_key_values_of_inventorie(self, inventory: Inventory) -> dict:
+        fields = {}
+        for key, value in vars(inventory).items():
+            if key != "id" and key != "locations":
+                fields[key] = value
+        return fields
