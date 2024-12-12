@@ -69,7 +69,6 @@ test_items = [
 
 
 def test_generate_uid():
-
     items_service = ItemService(is_debug=True, items=test_items)
     generate_uid = items_service.generate_uid()
     assert isinstance(generate_uid, str)
