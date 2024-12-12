@@ -128,7 +128,9 @@ class OrderService(Base):
     def update_order(
         self, order_id: int, order: Order, closeConnection: bool = True
     ) -> Order | None:
-        if self.is_order_archived(order_id) or self.has_order_archived_entities(order):
+        if self.is_order_archived(order_id) or self.has_order_archived_entities(
+            order, self.get_order(order_id)
+        ):
             return None
 
         table_name = order.table_name()
@@ -188,13 +190,12 @@ class OrderService(Base):
         self, shipment_id: int, orders: List[Order]
     ) -> List[Order]:
         packed_orders = self.get_orders_in_shipment(shipment_id)
-        for x in packed_orders:
-            if x not in orders:
-                order = self.get_order(x)
-                if not order.is_archived:
-                    order.shipment_id = -1
-                    order.order_status = "Scheduled"
-                    self.update_order(order.id, order)
+        for packed_order in packed_orders:
+            if packed_order not in orders:
+                if not packed_order.is_archived:
+                    packed_order.shipment_id = -1
+                    packed_order.order_status = "Scheduled"
+                    self.update_order(packed_order.id, packed_order)
 
         for order in orders:
             if not order.is_archived:
@@ -270,30 +271,72 @@ class OrderService(Base):
                 return order.is_archived
         return None
 
-    def has_order_archived_entities(self, order: Order) -> bool:
-        if (
-            order.ship_to is not None
-            and data_provider_v2.fetch_client_pool().is_client_archived(order.ship_to)
-        ):
-            return True
-        elif (
-            order.bill_to is not None
-            and data_provider_v2.fetch_client_pool().is_client_archived(order.bill_to)
-        ):
-            return True
-        elif (
-            order.shipment_id is not None
-            and data_provider_v2.fetch_shipment_pool().is_shipment_archived(
-                order.shipment_id
-            )
-        ):
-            return True
-        elif (
-            order.warehouse_id is not None
-            and data_provider_v2.fetch_warehouse_pool().is_warehouse_archived(
-                order.warehouse_id
-            )
-        ):
-            return True
+    def has_order_archived_entities(
+        self, new_order: Order, old_order: Order | None = None
+    ) -> bool:
+        has_archived_entities = False
 
-        return False
+        if old_order is None:
+            if new_order.ship_to is not None:
+                has_archived_entities = (
+                    data_provider_v2.fetch_client_pool().is_client_archived(
+                        new_order.ship_to
+                    )
+                )
+            if not has_archived_entities and new_order.bill_to is not None:
+                has_archived_entities = (
+                    data_provider_v2.fetch_client_pool().is_client_archived(
+                        new_order.bill_to
+                    )
+                )
+            if not has_archived_entities and new_order.shipment_id is not None:
+                has_archived_entities = (
+                    data_provider_v2.fetch_shipment_pool().is_shipment_archived(
+                        new_order.shipment_id
+                    )
+                )
+            if not has_archived_entities and new_order.warehouse_id is not None:
+                has_archived_entities = (
+                    data_provider_v2.fetch_warehouse_pool().is_warehouse_archived(
+                        new_order.warehouse_id
+                    )
+                )
+        else:
+            if new_order.ship_to != old_order.ship_to and new_order.ship_to is not None:
+                has_archived_entities = (
+                    data_provider_v2.fetch_client_pool().is_client_archived(
+                        new_order.ship_to
+                    )
+                )
+            if (
+                not has_archived_entities
+                and new_order.bill_to != old_order.bill_to
+                and new_order.bill_to is not None
+            ):
+                has_archived_entities = (
+                    data_provider_v2.fetch_client_pool().is_client_archived(
+                        new_order.bill_to
+                    )
+                )
+            if (
+                not has_archived_entities
+                and new_order.shipment_id != old_order.shipment_id
+                and new_order.shipment_id is not None
+            ):
+                has_archived_entities = (
+                    data_provider_v2.fetch_shipment_pool().is_shipment_archived(
+                        new_order.shipment_id
+                    )
+                )
+            if (
+                not has_archived_entities
+                and new_order.warehouse_id != old_order.warehouse_id
+                and new_order.warehouse_id is not None
+            ):
+                has_archived_entities = (
+                    data_provider_v2.fetch_warehouse_pool().is_warehouse_archived(
+                        new_order.warehouse_id
+                    )
+                )
+
+        return has_archived_entities
