@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
+from models.v2.order import Order
 from models.v2.ItemInObject import ItemInObject
 from services.v2.pagination_service import Pagination
 from services.v2 import data_provider_v2, auth_provider_v2
@@ -104,7 +105,7 @@ def update_shipment(
 @shipment_router_v2.put("/{shipment_id}/orders")
 def update_orders_in_shipment(
     shipment_id: int,
-    updated_orders: Dict,
+    updated_orders: List[Order],
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
@@ -116,7 +117,7 @@ def update_orders_in_shipment(
             status_code=404, detail=f"Shipment with id {shipment_id} not found"
         )
     elif is_archived is True:
-        raise HTTPException(status_code=400, detail=f"Shipmentis archived")
+        raise HTTPException(status_code=400, detail=f"Shipment is archived")
     updated_order_in_shipment = (
         data_provider_v2.fetch_order_pool().update_orders_in_shipment(shipment_id, updated_orders)
     )
@@ -165,6 +166,10 @@ def commit_shipment(
     committed_shipment = data_provider_v2.fetch_shipment_pool().commit_shipment(
         shipment_id
     )
+    if committed_shipment is None:
+        raise HTTPException(
+            status_code=400, detail=f"Shipment with is already delivered"
+        )
     return committed_shipment
 
 
