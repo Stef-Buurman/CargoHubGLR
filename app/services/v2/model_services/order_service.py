@@ -64,9 +64,9 @@ class OrderService(Base):
 
     def get_orders_in_shipment(self, shipment_id: int) -> List[Order]:
         result = []
-        for x in self.data:
-            if x.shipment_id == shipment_id:
-                result.append(x.id)
+        for order in self.data:
+            if order.shipment_id == shipment_id:
+                result.append(order)
         return result
 
     def get_orders_for_shipments(self, shipment_id: int) -> List[Order]:
