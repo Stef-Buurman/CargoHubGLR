@@ -340,14 +340,16 @@ class OrderService(Base):
                 )
 
         return has_archived_entities
-    
+
     def check_if_order_delivered(self, order_id: int) -> Order | None:
         order = self.get_order(order_id)
-        shipments = data_provider_v2.fetch_shipment_pool().get_shipments_for_order(order_id)
+        shipments = data_provider_v2.fetch_shipment_pool().get_shipments_for_order(
+            order_id
+        )
         can_change_to_delivered = True
         for shipment in shipments:
             if shipment.shipment_status != "Delivered":
-                can_change_to_delivered = False 
+                can_change_to_delivered = False
                 break
         if can_change_to_delivered:
             order.order_status = "Delivered"

@@ -118,7 +118,9 @@ def update_orders_in_shipment(
     elif is_archived is True:
         raise HTTPException(status_code=400, detail=f"Shipmentis archived")
     updated_order_in_shipment = (
-        data_provider_v2.fetch_order_pool().update_orders_in_shipment(shipment_id, updated_orders)
+        data_provider_v2.fetch_order_pool().update_orders_in_shipment(
+            shipment_id, updated_orders
+        )
     )
     return updated_order_in_shipment
 
