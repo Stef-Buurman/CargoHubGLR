@@ -556,7 +556,7 @@ def test_update_orders_in_archived_shipment(client):
     )
     assert response_add.status_code is 201
     response_archive = client.delete(
-        f"/shipments/{response_add.json()["id"]}", headers=test_headers
+        f"/shipments/{response_add.json()['id']}", headers=test_headers
     )
     assert response_archive.status_code == 200
     test_shipment_2["id"] = response_add.json()["id"]
