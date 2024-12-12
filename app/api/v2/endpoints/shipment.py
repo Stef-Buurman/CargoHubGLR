@@ -88,7 +88,9 @@ def update_shipment(
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
-    is_archived = data_provider_v2.fetch_shipment_pool().is_shipment_archived(shipment_id)
+    is_archived = data_provider_v2.fetch_shipment_pool().is_shipment_archived(
+        shipment_id
+    )
     if is_archived is None:
         raise HTTPException(status_code=404, detail="Shipment not found")
     elif is_archived is True:
@@ -106,13 +108,19 @@ def update_orders_in_shipment(
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
-    is_archived = data_provider_v2.fetch_shipment_pool().is_shipment_archived(shipment_id)
+    is_archived = data_provider_v2.fetch_shipment_pool().is_shipment_archived(
+        shipment_id
+    )
     if is_archived is None:
-        raise HTTPException(status_code=404, detail=f"Shipment with id {shipment_id} not found")
+        raise HTTPException(
+            status_code=404, detail=f"Shipment with id {shipment_id} not found"
+        )
     elif is_archived is True:
         raise HTTPException(status_code=400, detail=f"Shipmentis archived")
     updated_order_in_shipment = (
-        data_provider_v2.fetch_order_pool().update_orders_in_shipment(shipment_id, updated_orders)
+        data_provider_v2.fetch_order_pool().update_orders_in_shipment(
+            shipment_id, updated_orders
+        )
     )
     return updated_order_in_shipment
 
@@ -124,9 +132,13 @@ def update_items_in_shipment(
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
-    is_archived = data_provider_v2.fetch_shipment_pool().is_shipment_archived(shipment_id)
+    is_archived = data_provider_v2.fetch_shipment_pool().is_shipment_archived(
+        shipment_id
+    )
     if is_archived is None:
-        raise HTTPException(status_code=404, detail=f"Shipment with id {shipment_id} not found")
+        raise HTTPException(
+            status_code=404, detail=f"Shipment with id {shipment_id} not found"
+        )
     elif is_archived is True:
         raise HTTPException(status_code=400, detail=f"Shipment is archived")
     updated_item_in_shipment = (
@@ -142,13 +154,19 @@ def commit_shipment(
     shipment_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
-    is_archived = data_provider_v2.fetch_shipment_pool().is_shipment_archived(shipment_id)
+    is_archived = data_provider_v2.fetch_shipment_pool().is_shipment_archived(
+        shipment_id
+    )
     if is_archived is None:
-        raise HTTPException(status_code=404, detail=f"Shipment with id {shipment_id} not found")
+        raise HTTPException(
+            status_code=404, detail=f"Shipment with id {shipment_id} not found"
+        )
     elif is_archived is True:
         raise HTTPException(status_code=400, detail=f"Shipment is archived")
-    
-    committed_shipment = data_provider_v2.fetch_shipment_pool().commit_shipment(shipment_id)
+
+    committed_shipment = data_provider_v2.fetch_shipment_pool().commit_shipment(
+        shipment_id
+    )
     return committed_shipment
 
 
@@ -159,7 +177,9 @@ def partial_update_shipment(
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
-    is_archived = data_provider_v2.fetch_shipment_pool().is_shipment_archived(shipment_id)
+    is_archived = data_provider_v2.fetch_shipment_pool().is_shipment_archived(
+        shipment_id
+    )
     if is_archived is None:
         raise HTTPException(status_code=404, detail="Shipment not found")
     elif is_archived is True:
