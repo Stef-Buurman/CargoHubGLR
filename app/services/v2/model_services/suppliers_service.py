@@ -23,8 +23,6 @@ class SupplierService(Base):
     def get_supplier(self, supplier_id: int) -> Supplier | None:
         for supplier in self.data:
             if supplier.id == supplier_id:
-                if supplier.is_archived:
-                    return None
                 return supplier
         return self.db.get(Supplier, supplier_id)
 
