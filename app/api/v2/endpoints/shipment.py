@@ -169,9 +169,7 @@ def commit_shipment(
         shipment_id
     )
     if committed_shipment is None:
-        raise HTTPException(
-            status_code=400, detail=f"Shipment is already delivered"
-        )
+        raise HTTPException(status_code=400, detail=f"Shipment is already delivered")
     return committed_shipment
 
 
