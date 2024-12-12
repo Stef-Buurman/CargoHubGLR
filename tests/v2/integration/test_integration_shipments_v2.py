@@ -53,7 +53,7 @@ test_order_1 = {
         {"item_id": "P019969", "amount": 16},
         {"item_id": "P020333", "amount": 5},
         {"item_id": "P045782", "amount": 8},
-    ]
+    ],
 }
 
 test_order_2 = {
@@ -81,10 +81,11 @@ test_order_2 = {
         {"item_id": "P019969", "amount": 16},
         {"item_id": "P020333", "amount": 5},
         {"item_id": "P045782", "amount": 8},
-    ]
+    ],
 }
 
-item_to_add= {"item_id": "P019969", "amount": 16}
+item_to_add = {"item_id": "P019969", "amount": 16}
+
 
 @pytest.fixture
 def client():
@@ -265,9 +266,7 @@ def test_partial_update_shipment(client):
 def test_add_items_to_shipment_no_api_key(client):
     items = test_shipment["items"]
     items.append(item_to_add)
-    response = client.put(
-        f"/shipments/{test_shipment['id']}/items", json=items
-    )
+    response = client.put(f"/shipments/{test_shipment['id']}/items", json=items)
     assert response.status_code == 403
 
 
@@ -329,7 +328,9 @@ def test_get_items_for_shipment_no_api_key(client):
 
 
 def test_get_items_for_shipment_invalid_api_key(client):
-    response = client.get(f"/shipments/{test_shipment['id']}/items", headers=invalid_headers)
+    response = client.get(
+        f"/shipments/{test_shipment['id']}/items", headers=invalid_headers
+    )
     assert response.status_code == 403
 
 
@@ -344,7 +345,9 @@ def test_get_items_for_non_existent_shipment(client):
 
 
 def test_get_items_for_shipment(client):
-    response = client.get(f"/shipments/{test_shipment['id']}/items", headers=test_headers)
+    response = client.get(
+        f"/shipments/{test_shipment['id']}/items", headers=test_headers
+    )
     assert response.status_code == 200
     assert isinstance(response.json()["data"], list)
     assert len(response.json()["data"]) == len(test_shipment["items"])
@@ -354,14 +357,18 @@ def test_get_items_for_shipment(client):
 
 def test_add_orders_to_shipment_no_api_key(client):
     response = client.put(
-        f"/shipments/{test_shipment['id']}/orders", json=[test_order_1], headers=test_headers
+        f"/shipments/{test_shipment['id']}/orders",
+        json=[test_order_1],
+        headers=test_headers,
     )
     assert response.status_code == 403
 
 
 def test_add_orders_to_shipment_invalid_api_key(client):
     response = client.put(
-        f"/shipments/{test_shipment['id']}/orders", json=[test_order_1], headers=invalid_headers
+        f"/shipments/{test_shipment['id']}/orders",
+        json=[test_order_1],
+        headers=invalid_headers,
     )
     assert response.status_code == 403
 
@@ -375,7 +382,9 @@ def test_add_orders_to_shipment_invalid_shipment_id(client):
 
 def test_add_orders_to_non_existent_shipment(client):
     response = client.put(
-        f"/shipments/{non_existent_id}/orders", json=[test_order_1], headers=test_headers
+        f"/shipments/{non_existent_id}/orders",
+        json=[test_order_1],
+        headers=test_headers,
     )
     assert response.status_code == 404
 
@@ -394,7 +403,9 @@ def test_add_orders_to_shipment(client):
     assert response_add_orders_2.status_code is 201
     test_order_2["id"] = response_add_orders_2.json()["id"]
     response = client.put(
-        f"/shipments/{test_shipment['id']}/orders", json=[test_order_1], headers=test_headers
+        f"/shipments/{test_shipment['id']}/orders",
+        json=[test_order_1],
+        headers=test_headers,
     )
     assert response.status_code == 200
     response_get_orders = client.get(
@@ -409,7 +420,6 @@ def test_add_orders_to_shipment(client):
     assert response_get_single_order.status_code == 200
     assert response_get_single_order.json()["shipment_id"] == -1
     assert response_get_single_order.json()["order_status"] == "Scheduled"
-    
 
 
 def test_get_orders_for_shipment_no_api_key(client):
@@ -418,7 +428,9 @@ def test_get_orders_for_shipment_no_api_key(client):
 
 
 def test_get_orders_for_shipment_invalid_api_key(client):
-    response = client.get(f"/shipments/{test_shipment['id']}/orders", headers=invalid_headers)
+    response = client.get(
+        f"/shipments/{test_shipment['id']}/orders", headers=invalid_headers
+    )
     assert response.status_code == 403
 
 
@@ -433,7 +445,9 @@ def test_get_orders_for_non_existent_shipment(client):
 
 
 def test_get_orders_for_shipment(client):
-    response = client.get(f"/shipments/{test_shipment['id']}/orders", headers=test_headers)
+    response = client.get(
+        f"/shipments/{test_shipment['id']}/orders", headers=test_headers
+    )
     assert response.status_code == 200
     assert isinstance(response.json()["data"], list)
     assert len(response.json()["data"]) == 1
@@ -463,7 +477,9 @@ def test_commit_non_existent_shipment(client):
 
 
 def test_commit_shipment_to_transit(client):
-    response = client.put(f"/shipments/{test_shipment['id']}/commit", headers=test_headers)
+    response = client.put(
+        f"/shipments/{test_shipment['id']}/commit", headers=test_headers
+    )
     assert response.status_code == 200
     assert response.json()["shipment_status"] == "Transit"
     response_get = client.get(f"/shipments/{test_shipment['id']}", headers=test_headers)
@@ -472,7 +488,9 @@ def test_commit_shipment_to_transit(client):
 
 
 def test_commit_shipment_to_delivered(client):
-    response = client.put(f"/shipments/{test_shipment['id']}/commit", headers=test_headers)
+    response = client.put(
+        f"/shipments/{test_shipment['id']}/commit", headers=test_headers
+    )
     assert response.status_code == 200
     assert response.json()["shipment_status"] == "Delivered"
     response_get = client.get(f"/shipments/{test_shipment['id']}", headers=test_headers)
@@ -481,7 +499,9 @@ def test_commit_shipment_to_delivered(client):
 
 
 def test_commit_shipment_already_delivered(client):
-    response = client.put(f"/shipments/{test_shipment['id']}/commit", headers=test_headers)
+    response = client.put(
+        f"/shipments/{test_shipment['id']}/commit", headers=test_headers
+    )
     assert response.status_code == 400
 
 
@@ -526,7 +546,9 @@ def test_update_archived_shipment(client):
 
 
 def test_commit_archived_shipment(client):
-    response = client.put(f"/shipments/{test_shipment['id']}/commit", headers=test_headers)
+    response = client.put(
+        f"/shipments/{test_shipment['id']}/commit", headers=test_headers
+    )
     assert response.status_code == 400
 
 
@@ -537,7 +559,9 @@ def test_update_items_in_archived_shipment(client):
         {"item_id": "P045782", "amount": 8},
     ]
     response = client.put(
-        f"/shipments/{test_shipment['id']}/items", json=updated_items, headers=test_headers
+        f"/shipments/{test_shipment['id']}/items",
+        json=updated_items,
+        headers=test_headers,
     )
     assert response.status_code == 400
 
@@ -561,7 +585,9 @@ def test_update_orders_in_archived_shipment(client):
     assert response_archive.status_code == 200
     test_shipment_2["id"] = response_add.json()["id"]
     response = client.put(
-        f"/shipments/{test_shipment_2['id']}/orders", json=[test_order_1], headers=test_headers
+        f"/shipments/{test_shipment_2['id']}/orders",
+        json=[test_order_1],
+        headers=test_headers,
     )
     assert response.status_code == 400
 
@@ -584,7 +610,9 @@ def test_unarchive_invalid_shipment_id(client):
 
 
 def test_unarchive_non_existent_shipment(client):
-    response = client.patch(f"/shipments/{non_existent_id}/unarchive", headers=test_headers)
+    response = client.patch(
+        f"/shipments/{non_existent_id}/unarchive", headers=test_headers
+    )
     assert response.status_code == 404
 
 
