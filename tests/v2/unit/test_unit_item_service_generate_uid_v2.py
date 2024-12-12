@@ -23,7 +23,7 @@ test_items = [
         supplier_code="SUP423",
         supplier_part_number="E-86805-uTM",
         created_at="2015-02-19 16:08:24",
-        updated_at="2015-09-26 06:37:56"
+        updated_at="2015-09-26 06:37:56",
     ),
     Item(
         uid="P000002",
@@ -43,7 +43,7 @@ test_items = [
         supplier_code="SUP312",
         supplier_part_number="j-10730-ESk",
         created_at="2020-05-31 16:00:08",
-        updated_at="2020-11-08 12:49:21"
+        updated_at="2020-11-08 12:49:21",
     ),
     Item(
         uid="P000003",
@@ -63,8 +63,8 @@ test_items = [
         supplier_code="SUP237",
         supplier_part_number="r-920-z2C",
         created_at="1994-06-02 06:38:40",
-        updated_at="1999-10-13 01:10:32"
-    )
+        updated_at="1999-10-13 01:10:32",
+    ),
 ]
 
 
@@ -77,6 +77,7 @@ def test_generate_uid():
     assert generate_uid[0] == "P"
     assert generate_uid[-1] == f"{len(test_items) + 1}"
 
+
 def test_generate_uid_empty():
     items_service = ItemService(is_debug=True, items=[])
     generate_uid = items_service.generate_uid()
@@ -85,6 +86,7 @@ def test_generate_uid_empty():
     assert generate_uid[0] == "P"
     assert generate_uid[-1] == "1"
 
+
 def test_generate_uid_single_item():
     items_service = ItemService(is_debug=True, items=[test_items[0]])
     generate_uid = items_service.generate_uid()
@@ -92,6 +94,7 @@ def test_generate_uid_single_item():
     assert generate_uid[-1].isdigit()
     assert generate_uid[0] == "P"
     assert generate_uid[-1] == "2"
+
 
 def test_generate_uid_many_items():
     all_items = []
