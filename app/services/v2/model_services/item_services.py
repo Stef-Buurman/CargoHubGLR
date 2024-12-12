@@ -87,18 +87,14 @@ class ItemService(Base):
         self.data.append(item)
         return self.db.insert(item, closeConnection)
 
-    def generate_uid(self) -> str | None:
-        self.current_id = max((int(item.uid[1:]) for item in self.data), default=0)
-        new_uid = None
+    def generate_uid(self) -> str:
+        existing_ids = (int(item.uid[1:]) for item in self.data)
+        current_id = max(existing_ids, default=0) + 1
 
-        for _ in range(len(self.data) + 1):
-            self.current_id += 1
-            new_uid = f"P{self.current_id:06d}"
+        while f"P{current_id:06d}" in existing_ids:
+            current_id += 1
 
-            if not any(item.uid == new_uid for item in self.data):
-                return new_uid
-
-        return None
+        return f"P{current_id:06d}"
 
     def update_item(
         self, item_id: int, item: Item, closeConnection: bool = True
