@@ -84,6 +84,9 @@ class OrderService(Base):
         return result
 
     def add_order(self, order: Order, closeConnection: bool = True) -> Order:
+        if self.has_order_archived_entities(order):
+            return None
+
         table_name = order.table_name()
 
         order.created_at = self.get_timestamp()
@@ -125,7 +128,7 @@ class OrderService(Base):
     def update_order(
         self, order_id: int, order: Order, closeConnection: bool = True
     ) -> Order | None:
-        if order.is_archived:
+        if self.is_order_archived(order_id) or self.has_order_archived_entities(order):
             return None
 
         table_name = order.table_name()
@@ -266,3 +269,31 @@ class OrderService(Base):
             if order.id == order_id:
                 return order.is_archived
         return None
+
+    def has_order_archived_entities(self, order: Order) -> bool:
+        if (
+            order.ship_to is not None
+            and data_provider_v2.fetch_client_pool().is_client_archived(order.ship_to)
+        ):
+            return True
+        elif (
+            order.bill_to is not None
+            and data_provider_v2.fetch_client_pool().is_client_archived(order.bill_to)
+        ):
+            return True
+        elif (
+            order.shipment_id is not None
+            and data_provider_v2.fetch_shipment_pool().is_shipment_archived(
+                order.shipment_id
+            )
+        ):
+            return True
+        elif (
+            order.warehouse_id is not None
+            and data_provider_v2.fetch_warehouse_pool().is_warehouse_archived(
+                order.warehouse_id
+            )
+        ):
+            return True
+
+        return False
