@@ -1,4 +1,4 @@
-from app.services.v2 import data_provider_v2
+from services.v2 import data_provider_v2
 from models.v2.location import Location
 from typing import List
 from services.v2.base_service import Base
