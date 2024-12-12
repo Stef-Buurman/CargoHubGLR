@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
 from services.v2.pagination_service import Pagination
 from services.v2 import data_provider_v2, auth_provider_v2
-from models.v2.warehouse import WarehouseDB
+from models.v2.warehouse import Warehouse
 from utils.globals import pagination_url
 
 warehouse_router_v2 = APIRouter(tags=["v2.Warehouses"])
@@ -57,7 +57,7 @@ def read_locations_in_warehouse(
 
 @warehouse_router_v2.post("/")
 def create_warehouse(
-    warehouse: WarehouseDB, api_key: str = Depends(auth_provider_v2.get_api_key)
+    warehouse: Warehouse, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
     created_warehouse = data_provider_v2.fetch_warehouse_pool().add_warehouse(warehouse)
@@ -70,7 +70,7 @@ def create_warehouse(
 @warehouse_router_v2.put("/{warehouse_id}")
 def update_warehouse(
     warehouse_id: int,
-    warehouse: WarehouseDB,
+    warehouse: Warehouse,
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
@@ -107,7 +107,7 @@ def partial_update_warehouse(
         warehouse_id
     )
 
-    valid_keys = WarehouseDB.model_fields.keys()
+    valid_keys = Warehouse.model_fields.keys()
     update_data = {key: value for key, value in warehouse.items() if key in valid_keys}
 
     for key, value in update_data.items():

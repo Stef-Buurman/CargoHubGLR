@@ -5,7 +5,7 @@ from pydantic import BaseModel
 from models.v2.endpoint_access import EndpointAccess
 from models.v2.user import User
 from models.v2.shipment import Shipment
-from models.v2.warehouse import WarehouseDB as Warehouse
+from models.v2.warehouse import Warehouse as Warehouse
 from models.v2.item import Item
 from models.v2.client import Client
 from models.v2.order import Order
