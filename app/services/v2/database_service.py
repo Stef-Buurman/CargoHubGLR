@@ -108,7 +108,7 @@ class DatabaseService:
 
             if primary_key_field == "id":
                 inserted_id = cursor.lastrowid
-                setattr(model, primary_key_field, inserted_id)
+                model = model.model_copy(update={primary_key_field: inserted_id})
 
         if closeConnection:
             self.commit_and_close()
