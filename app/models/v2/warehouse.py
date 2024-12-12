@@ -2,27 +2,7 @@ from pydantic import EmailStr
 from models.v2.base import Base2
 
 
-class Contact(Base2):
-    name: str
-    phone: str
-    email: EmailStr
-
-
 class Warehouse(Base2):
-    id: int | None = None
-    code: str
-    name: str
-    address: str
-    zip: str
-    city: str
-    province: str
-    country: str
-    contact: Contact
-    created_at: str | None = None
-    updated_at: str | None = None
-
-
-class WarehouseDB(Base2):
     class Config:
         table_name = "warehouses"
 

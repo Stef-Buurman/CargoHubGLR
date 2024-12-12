@@ -3,7 +3,7 @@ from services.v1 import data_provider
 from services.v2 import data_provider_v2
 from services.v2.database_service import DatabaseService
 from models.v2.shipment import Shipment
-from models.v2.warehouse import WarehouseDB as Warehouse
+from models.v2.warehouse import Warehouse as Warehouse
 from models.v2.item import Item
 from models.v2.client import Client
 from models.v2.order import Order
