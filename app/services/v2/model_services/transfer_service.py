@@ -5,6 +5,7 @@ from typing import List
 from services.v2.base_service import Base
 from utils.globals import *
 from services.v2.database_service import DB
+from services.v2 import data_provider_v2
 
 
 class TransferService(Base):
@@ -53,9 +54,8 @@ class TransferService(Base):
     def get_transfer(self, transfer_id: int) -> Transfer | None:
         for transfer in self.data:
             if transfer.id == transfer_id:
-                if transfer.is_archived:
-                    return None
                 return transfer
+
         query = f"SELECT * FROM {Transfer.table_name()} WHERE id = {transfer_id}"
         with self.db.get_connection() as conn:
             cursor = conn.execute(query)
@@ -87,14 +87,15 @@ class TransferService(Base):
     def get_items_in_transfer(self, transfer_id: int) -> List[ItemInObject]:
         for transfer in self.data:
             if transfer.id == transfer_id:
-                if transfer.is_archived:
-                    return None
                 return transfer.items
         return None
 
     def add_transfer(
         self, transfer: Transfer, closeConnection: bool = True
     ) -> Transfer:
+        if self.has_transfer_archived_entities(transfer):
+            return None
+
         table_name = transfer.table_name()
 
         transfer.created_at = self.get_timestamp()
@@ -134,7 +135,9 @@ class TransferService(Base):
     def update_transfer(
         self, transfer_id: int, transfer: Transfer, closeConnection: bool = True
     ) -> Transfer:
-        if transfer.is_archived:
+        if transfer.is_archived or self.has_transfer_archived_entities(
+            transfer, self.get_transfer(transfer_id)
+        ):
             return None
 
         table_name = transfer.table_name()
@@ -266,3 +269,42 @@ class TransferService(Base):
             if transfer.id == transfer_id:
                 return transfer.is_archived
         return None
+
+    def has_transfer_archived_entities(
+        self, new_transfer: Transfer, old_transfer: Transfer | None = None
+    ) -> bool:
+        has_archived_entities = False
+
+        if old_transfer is None:
+            has_archived_entities = (
+                data_provider_v2.fetch_warehouse_pool().is_warehouse_archived(
+                    new_transfer.transfer_from
+                )
+                or data_provider_v2.fetch_warehouse_pool().is_warehouse_archived(
+                    new_transfer.transfer_to
+                )
+            )
+            for item in new_transfer.items:
+                has_archived_entities = (
+                    has_archived_entities
+                    or data_provider_v2.fetch_item_pool().is_item_archived(item.item_id)
+                )
+        else:
+            if new_transfer.transfer_from != old_transfer.transfer_from:
+                has_archived_entities = (
+                    data_provider_v2.fetch_warehouse_pool().is_warehouse_archived(
+                        new_transfer.transfer_from
+                    )
+                )
+            if new_transfer.transfer_to != old_transfer.transfer_to:
+                has_archived_entities = (
+                    data_provider_v2.fetch_warehouse_pool().is_warehouse_archived(
+                        new_transfer.transfer_to
+                    )
+                )
+            for item in new_transfer.items:
+                has_archived_entities = (
+                    has_archived_entities
+                    or data_provider_v2.fetch_item_pool().is_item_archived(item.item_id)
+                )
+        return has_archived_entities
