@@ -40,8 +40,8 @@ test_order_1 = {
     "shipping_notes": "Buurman betalen plaats bewolkt.",
     "picking_notes": "Ademen fijn volgorde scherp aardappel op leren.",
     "warehouse_id": 18,
-    "ship_to": 4562,
-    "bill_to": 7863,
+    "ship_to": 1,
+    "bill_to": 1,
     "shipment_id": 1,
     "total_amount": 9905.13,
     "total_discount": 150.77,
@@ -359,7 +359,6 @@ def test_add_orders_to_shipment_no_api_key(client):
     response = client.put(
         f"/shipments/{test_shipment['id']}/orders",
         json=[test_order_1],
-        headers=test_headers,
     )
     assert response.status_code == 403
 
