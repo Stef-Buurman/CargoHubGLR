@@ -206,3 +206,9 @@ class ShipmentService(Base):
             self.data = shipments
         else:
             self.data = self.get_shipments()
+
+    def is_shipment_archived(self, shipment_id: str) -> bool:
+        for shipment in self.data:
+            if shipment.id == shipment_id:
+                return shipment.is_archived
+        return None

@@ -323,44 +323,145 @@ def test_partial_update_order(client):
     assert response_get_order.json()["notes"] == updated_order["notes"]
 
 
-def test_delete_order_no_api_key(client):
+def test_archive_order_no_api_key(client):
     response = client.delete("/orders/" + str(test_order["id"]))
     assert response.status_code == 403
+
     response_get_order = client.get(
         "/orders/" + str(test_order["id"]), headers=test_headers
     )
     assert response_get_order.status_code == 200
 
 
-def test_delete_order_invalid_api_key(client):
+def test_archive_order_invalid_api_key(client):
     response = client.delete(
         "/orders/" + str(test_order["id"]), headers=invalid_headers
     )
     assert response.status_code == 403
+
     response_get_order = client.get(
         "/orders/" + str(test_order["id"]), headers=test_headers
     )
     assert response_get_order.status_code == 200
 
 
-def test_delete_order_invalid_id(client):
+def test_archive_order_invalid_id(client):
     response = client.delete("/orders/invalid_id", headers=test_headers)
     assert response.status_code == 422
 
 
-def test_delete_order_non_existent_id(client):
+def test_archive_order_non_existent_id(client):
     response = client.delete("/orders/" + str(non_existent_id), headers=test_headers)
     assert response.status_code == 404
+
     response_get_order = client.get(
         "/orders/" + str(test_order["id"]), headers=test_headers
     )
     assert response_get_order.status_code == 200
 
 
-def test_delete_order(client):
+def test_archive_order(client):
     response = client.delete("/orders/" + str(test_order["id"]), headers=test_headers)
     assert response.status_code == 200
+
     response_get_order = client.get(
         "/orders/" + str(test_order["id"]), headers=test_headers
     )
-    assert response_get_order.status_code == 404
+    assert response_get_order.status_code == 200
+    assert response_get_order.json()["is_archived"] is True
+
+
+def test_archive_already_archived_order(client):
+    response = client.delete("/orders/" + str(test_order["id"]), headers=test_headers)
+    assert response.status_code == 400
+    response_get_order = client.get(
+        "/orders/" + str(test_order["id"]), headers=test_headers
+    )
+    assert response_get_order.status_code == 200
+    assert response_get_order.json()["is_archived"] is True
+
+
+def test_unarchive_order(client):
+    response = client.patch(
+        f"/orders/{str(test_order['id'])}/unarchive", headers=test_headers
+    )
+    assert response.status_code == 200
+    response_get_order = client.get(
+        f"/orders/{str(test_order['id'])}", headers=test_headers
+    )
+    assert response_get_order.status_code == 200
+    assert response_get_order.json()["is_archived"] is False
+
+
+def test_unarchive_order_no_api_key(client):
+    response = client.patch(f"/orders/{str(test_order['id'])}/unarchive")
+    assert response.status_code == 403
+
+
+def test_unarchive_order_invalid_api_key(client):
+    response = client.patch(
+        f"/orders/{str(test_order['id'])}/unarchive", headers=invalid_headers
+    )
+    assert response.status_code == 403
+
+
+def test_unarchive_order_invalid_id(client):
+    response = client.patch("/orders/invalid_id/unarchive", headers=test_headers)
+    assert response.status_code == 422
+
+
+def test_unarchive_order_non_existent_id(client):
+    response = client.patch(
+        f"/orders/{str(non_existent_id)}/unarchive", headers=test_headers
+    )
+    assert response.status_code == 404
+
+
+def test_unarchive_already_unarchived_order(client):
+    response = client.patch(
+        f"/orders/{str(test_order['id'])}/unarchive", headers=test_headers
+    )
+    assert response.status_code == 400
+    response_get_order = client.get(
+        f"/orders/{str(test_order['id'])}", headers=test_headers
+    )
+    assert response_get_order.status_code == 200
+    assert response_get_order.json()["is_archived"] is False
+
+
+def test_update_archived_order(client):
+    response_delete = client.delete(
+        "/orders/" + str(test_order["id"]), headers=test_headers
+    )
+    assert response_delete.status_code == 200
+
+    response = client.put(
+        "/orders/" + str(test_order["id"]), json=test_order, headers=test_headers
+    )
+    assert response.status_code == 400
+
+    response_get_order = client.get(
+        "/orders/" + str(test_order["id"]), headers=test_headers
+    )
+    assert response_get_order.status_code == 200
+    assert response_get_order.json()["is_archived"] is True
+
+
+def test_partial_update_archived_order(client):
+    response_delete = client.delete(
+        "/orders/" + str(test_order["id"]), headers=test_headers
+    )
+    assert response_delete.status_code == 400
+
+    response = client.patch(
+        "/orders/" + str(test_order["id"]),
+        json={"notes": "This order has been patched."},
+        headers=test_headers,
+    )
+    assert response.status_code == 400
+
+    response_get_order = client.get(
+        "/orders/" + str(test_order["id"]), headers=test_headers
+    )
+    assert response_get_order.status_code == 200
+    assert response_get_order.json()["is_archived"] is True

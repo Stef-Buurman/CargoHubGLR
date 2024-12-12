@@ -12,7 +12,7 @@ class OrderService(Base):
         self.db = DB
         self.load(is_debug, orders)
 
-    def get_orders(self) -> List[Order]:
+    def get_all_orders(self) -> List[Order]:
         all_orders = self.db.get_all(Order)
         order_ids = [order.id for order in all_orders]
 
@@ -31,6 +31,13 @@ class OrderService(Base):
             order.items = order_items_map.get(order.id, [])
 
         return all_orders
+
+    def get_orders(self) -> List[Order]:
+        orders = []
+        for order in self.data:
+            if not order.is_archived:
+                orders.append(order)
+        return orders
 
     def get_order(self, order_id: int) -> Order | None:
         for order in self.data:
@@ -77,6 +84,9 @@ class OrderService(Base):
         return result
 
     def add_order(self, order: Order, closeConnection: bool = True) -> Order:
+        if self.has_order_archived_entities(order):
+            return None
+
         table_name = order.table_name()
 
         order.created_at = self.get_timestamp()
@@ -118,6 +128,11 @@ class OrderService(Base):
     def update_order(
         self, order_id: int, order: Order, closeConnection: bool = True
     ) -> Order | None:
+        if self.is_order_archived(order_id) or self.has_order_archived_entities(
+            order, self.get_order(order_id)
+        ):
+            return None
+
         table_name = order.table_name()
 
         order.updated_at = self.get_timestamp()
@@ -162,6 +177,9 @@ class OrderService(Base):
         self, order_id: int, items: List[ItemInObject]
     ) -> Order | None:
         order = self.get_order(order_id)
+        if order.is_archived:
+            return None
+
         order.items = []
         for item in items:
             if not data_provider_v2.fetch_item_pool().is_item_archived(item.item_id):
@@ -172,37 +190,153 @@ class OrderService(Base):
         self, shipment_id: int, orders: List[Order]
     ) -> List[Order]:
         packed_orders = self.get_orders_in_shipment(shipment_id)
-        for x in packed_orders:
-            if x not in orders:
-                order = self.get_order(x)
-                order.shipment_id = -1
-                order.order_status = "Scheduled"
-                self.update_order(order.id, order)
+        for packed_order in packed_orders:
+            if packed_order not in orders:
+                if not packed_order.is_archived:
+                    packed_order.shipment_id = -1
+                    packed_order.order_status = "Scheduled"
+                    self.update_order(packed_order.id, packed_order)
 
         for order in orders:
-            order.shipment_id = shipment_id
-            order.order_status = "Packed"
-            self.update_order(order.id, order)
+            if not order.is_archived:
+                order.shipment_id = shipment_id
+                order.order_status = "Packed"
+                self.update_order(order.id, order)
 
         return orders
 
-    def remove_order(self, order_id: int, closeConnection: bool = True) -> bool:
-        for order in self.data:
-            if order.id == order_id:
-                if self.db.delete(Order, order_id, closeConnection):
-                    with self.db.get_connection_without_close() as conn:
-                        conn.execute(
-                            f"DELETE FROM {order_items_table} WHERE order_id = ?",
-                            (order_id,),
-                        )
-                    if closeConnection:
-                        self.db.commit_and_close()
-                    self.data.remove(order)
-                break
-        return True
+    def archive_order(self, order_id: int, closeConnection: bool = True) -> bool:
+        for i in range(len(self.data)):
+            if self.data[i].id == order_id:
+                self.data[i].updated_at = self.get_timestamp()
+                self.data[i].is_archived = True
+
+                fields = {}
+                for key, value in vars(self.data[i]).items():
+                    if key != "id" and key != "items":
+                        fields[key] = value
+
+                columns = ", ".join(f"{key} = ?" for key in fields)
+                values = tuple(fields.values())
+
+                update_sql = (
+                    f"UPDATE {self.data[i].table_name()} SET {columns} WHERE id = ?"
+                )
+                values += (order_id,)
+
+                with self.db.get_connection_without_close() as conn:
+                    conn.execute(update_sql, values)
+
+                if closeConnection:
+                    self.db.commit_and_close()
+                return True
+        return False
+
+    def unarchive_order(self, order_id: int, closeConnection: bool = True) -> bool:
+        for i in range(len(self.data)):
+            if self.data[i].id == order_id:
+                self.data[i].updated_at = self.get_timestamp()
+                self.data[i].is_archived = False
+
+                fields = {}
+                for key, value in vars(self.data[i]).items():
+                    if key != "id" and key != "items":
+                        fields[key] = value
+
+                columns = ", ".join(f"{key} = ?" for key in fields)
+                values = tuple(fields.values())
+
+                update_sql = (
+                    f"UPDATE {self.data[i].table_name()} SET {columns} WHERE id = ?"
+                )
+                values += (order_id,)
+
+                with self.db.get_connection_without_close() as conn:
+                    conn.execute(update_sql, values)
+
+                if closeConnection:
+                    self.db.commit_and_close()
+                return True
+        return False
 
     def load(self, is_debug: bool, orders: List[Order] | None = None):
         if is_debug and orders is not None:
             self.data = orders
         else:
-            self.data = self.get_orders()
+            self.data = self.get_all_orders()
+
+    def is_order_archived(self, order_id: int) -> bool:
+        for order in self.data:
+            if order.id == order_id:
+                return order.is_archived
+        return None
+
+    def has_order_archived_entities(
+        self, new_order: Order, old_order: Order | None = None
+    ) -> bool:
+        has_archived_entities = False
+
+        if old_order is None:
+            if new_order.ship_to is not None:
+                has_archived_entities = (
+                    data_provider_v2.fetch_client_pool().is_client_archived(
+                        new_order.ship_to
+                    )
+                )
+            if not has_archived_entities and new_order.bill_to is not None:
+                has_archived_entities = (
+                    data_provider_v2.fetch_client_pool().is_client_archived(
+                        new_order.bill_to
+                    )
+                )
+            if not has_archived_entities and new_order.shipment_id is not None:
+                has_archived_entities = (
+                    data_provider_v2.fetch_shipment_pool().is_shipment_archived(
+                        new_order.shipment_id
+                    )
+                )
+            if not has_archived_entities and new_order.warehouse_id is not None:
+                has_archived_entities = (
+                    data_provider_v2.fetch_warehouse_pool().is_warehouse_archived(
+                        new_order.warehouse_id
+                    )
+                )
+        else:
+            if new_order.ship_to != old_order.ship_to and new_order.ship_to is not None:
+                has_archived_entities = (
+                    data_provider_v2.fetch_client_pool().is_client_archived(
+                        new_order.ship_to
+                    )
+                )
+            if (
+                not has_archived_entities
+                and new_order.bill_to != old_order.bill_to
+                and new_order.bill_to is not None
+            ):
+                has_archived_entities = (
+                    data_provider_v2.fetch_client_pool().is_client_archived(
+                        new_order.bill_to
+                    )
+                )
+            if (
+                not has_archived_entities
+                and new_order.shipment_id != old_order.shipment_id
+                and new_order.shipment_id is not None
+            ):
+                has_archived_entities = (
+                    data_provider_v2.fetch_shipment_pool().is_shipment_archived(
+                        new_order.shipment_id
+                    )
+                )
+            if (
+                not has_archived_entities
+                and new_order.warehouse_id != old_order.warehouse_id
+                and new_order.warehouse_id is not None
+            ):
+                has_archived_entities = (
+                    data_provider_v2.fetch_warehouse_pool().is_warehouse_archived(
+                        new_order.warehouse_id
+                    )
+                )
+
+        return has_archived_entities
