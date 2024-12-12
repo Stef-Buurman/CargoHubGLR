@@ -370,7 +370,8 @@ def test_archive_supplier(client):
     response_get_supplier = client.get(
         "/suppliers/" + str(test_supplier["id"]), headers=test_headers
     )
-    assert response_get_supplier.status_code == 404
+    assert response_get_supplier.status_code == 200
+    assert response_get_supplier.json()["is_archived"] == True
 
 
 def test_archive_already_archived_supplier(client):
@@ -447,7 +448,7 @@ def test_update_archived_supplier(client):
     response_get_supplier = client.get(
         "/suppliers/" + str(updated_supplier["id"]), headers=test_headers
     )
-    assert response_get_supplier.status_code == 404
+    assert response_get_supplier.status_code == 200
 
 
 def test_partial_update_archived_supplier(client):
@@ -467,4 +468,4 @@ def test_partial_update_archived_supplier(client):
     response_get_supplier = client.get(
         "/suppliers/" + str(test_supplier["id"]), headers=test_headers
     )
-    assert response_get_supplier.status_code == 404
+    assert response_get_supplier.status_code == 200

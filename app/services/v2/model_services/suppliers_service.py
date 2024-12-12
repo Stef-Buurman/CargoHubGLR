@@ -23,8 +23,6 @@ class SupplierService(Base):
     def get_supplier(self, supplier_id: int) -> Supplier | None:
         for supplier in self.data:
             if supplier.id == supplier_id:
-                if supplier.is_archived:
-                    return None
                 return supplier
         return self.db.get(Supplier, supplier_id)
 
@@ -39,11 +37,13 @@ class SupplierService(Base):
     def update_supplier(
         self, supplier_id: int, supplier: Supplier, closeConnection: bool = True
     ):
-        if supplier.is_archived:
-            return None
         supplier.updated_at = self.get_timestamp()
-        if self.get_supplier(supplier_id) is not None:
-            self.data[self.data.index(self.get_supplier(supplier_id))] = supplier
+        for i in range(len(self.data)):
+            if self.data[i].id == supplier_id:
+                if self.data[i].is_archived:
+                    return None
+                self.data[i] = supplier
+                break
         return self.db.update(supplier, supplier_id, closeConnection)
 
     def archive_supplier(self, supplier_id: int, closeConnection: bool = True) -> bool:
