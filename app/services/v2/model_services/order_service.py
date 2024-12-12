@@ -42,8 +42,6 @@ class OrderService(Base):
     def get_order(self, order_id: int) -> Order | None:
         for order in self.data:
             if order.id == order_id:
-                if order.is_archived:
-                    return None
                 return order
 
         with self.db.get_connection() as conn:
@@ -61,8 +59,6 @@ class OrderService(Base):
     def get_items_in_order(self, order_id: int) -> List[ItemInObject]:
         for x in self.data:
             if x.id == order_id:
-                if x.is_archived:
-                    return None
                 return x.items
         return None
 
@@ -70,8 +66,6 @@ class OrderService(Base):
         result = []
         for x in self.data:
             if x.shipment_id == shipment_id:
-                if x.is_archived:
-                    return None
                 result.append(x.id)
         return result
 
@@ -79,16 +73,12 @@ class OrderService(Base):
         result = []
         for order in self.data:
             if order.shipment_id == shipment_id:
-                if order.is_archived:
-                    return None
                 result.append(order)
         return result
 
     def get_orders_for_client(self, client_id: str) -> List[Order]:
         result = []
         for order in self.data:
-            if order.is_archived:
-                return None
             if order.ship_to == client_id or order.bill_to == client_id:
                 result.append(order)
         return result
@@ -182,7 +172,6 @@ class OrderService(Base):
         self, order_id: int, items: List[ItemInObject]
     ) -> Order | None:
         order = self.get_order(order_id)
-
         if order.is_archived:
             return None
 
@@ -199,14 +188,16 @@ class OrderService(Base):
         for x in packed_orders:
             if x not in orders:
                 order = self.get_order(x)
-                order.shipment_id = -1
-                order.order_status = "Scheduled"
-                self.update_order(order.id, order)
+                if not order.is_archived:
+                    order.shipment_id = -1
+                    order.order_status = "Scheduled"
+                    self.update_order(order.id, order)
 
         for order in orders:
-            order.shipment_id = shipment_id
-            order.order_status = "Packed"
-            self.update_order(order.id, order)
+            if not order.is_archived:
+                order.shipment_id = shipment_id
+                order.order_status = "Packed"
+                self.update_order(order.id, order)
 
         return orders
 
