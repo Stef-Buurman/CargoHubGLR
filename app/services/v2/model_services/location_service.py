@@ -1,3 +1,4 @@
+from app.services.v2 import data_provider_v2
 from models.v2.location import Location
 from typing import List
 from services.v2.base_service import Base
@@ -22,21 +23,21 @@ class LocationService(Base):
     def get_location(self, location_id: int) -> Location | None:
         for location in self.data:
             if location.id == location_id:
-                if location.is_archived:
-                    return None
                 return location
         return self.db.get(Location, location_id)
 
     def get_locations_in_warehouse(self, warehouse_id: int) -> List[Location]:
         warehouse_locations = []
         for location in self.data:
-            if not location.is_archived and location.warehouse_id == warehouse_id:
+            if location.warehouse_id == warehouse_id:
                 warehouse_locations.append(location)
         return warehouse_locations
 
     def add_location(
         self, location: Location, closeConnection: bool = True
     ) -> Location:
+        if self.has_location_archived_entities(location):
+            return None
         location.created_at = self.get_timestamp()
         location.updated_at = self.get_timestamp()
         self.data.append(location)
@@ -45,10 +46,14 @@ class LocationService(Base):
     def update_location(
         self, location_id: int, location: Location, closeConnection: bool = True
     ) -> Location:
+        if self.has_location_archived_entities(
+            location, self.get_location(location_id)
+        ):
+            return None
         location.updated_at = self.get_timestamp()
         for i in range(len(self.data)):
             if self.data[i].id == location_id:
-                if location.is_archived:
+                if self.data[i].is_archived:
                     return None
                 self.data[i] = location
         return self.db.update(location, location_id, closeConnection)
@@ -84,3 +89,23 @@ class LocationService(Base):
             if location.id == location_id:
                 return location.is_archived
         return None
+
+    def has_location_archived_entities(
+        self, new_location: Location, old_location: Location | None = None
+    ) -> bool:
+        has_archived_entities = False
+
+        if old_location is None:
+            has_archived_entities = (
+                data_provider_v2.fetch_warehouse_pool().is_warehouse_archived(
+                    new_location.warehouse_id
+                )
+            )
+        else:
+            if new_location.warehouse_id != old_location.warehouse_id:
+                has_archived_entities = (
+                    data_provider_v2.fetch_warehouse_pool().is_warehouse_archived(
+                        new_location.warehouse_id
+                    )
+                )
+        return has_archived_entities

@@ -227,7 +227,10 @@ def test_archive_location(client):
     response_get = client.get(
         "/locations/" + str(test_location["id"]), headers=test_headers
     )
-    assert response_get.status_code == 404
+    assert response_get.status_code == 200
+    response_json = response_get.json()
+    assert response_json is not None
+    assert response_json["is_archived"] is True
 
 
 def test_unarchive_location(client):
