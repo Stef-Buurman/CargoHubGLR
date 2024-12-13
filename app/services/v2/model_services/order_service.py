@@ -64,9 +64,9 @@ class OrderService(Base):
 
     def get_orders_in_shipment(self, shipment_id: int) -> List[Order]:
         result = []
-        for x in self.data:
-            if x.shipment_id == shipment_id:
-                result.append(x.id)
+        for order in self.data:
+            if order.shipment_id == shipment_id:
+                result.append(order)
         return result
 
     def get_orders_for_shipments(self, shipment_id: int) -> List[Order]:
@@ -283,24 +283,28 @@ class OrderService(Base):
                         new_order.ship_to
                     )
                 )
+                print(has_archived_entities)
             if not has_archived_entities and new_order.bill_to is not None:
                 has_archived_entities = (
                     data_provider_v2.fetch_client_pool().is_client_archived(
                         new_order.bill_to
                     )
                 )
+                print(has_archived_entities)
             if not has_archived_entities and new_order.shipment_id is not None:
                 has_archived_entities = (
                     data_provider_v2.fetch_shipment_pool().is_shipment_archived(
                         new_order.shipment_id
                     )
                 )
+                print(has_archived_entities)
             if not has_archived_entities and new_order.warehouse_id is not None:
                 has_archived_entities = (
                     data_provider_v2.fetch_warehouse_pool().is_warehouse_archived(
                         new_order.warehouse_id
                     )
                 )
+                print(has_archived_entities)
         else:
             if new_order.ship_to != old_order.ship_to and new_order.ship_to is not None:
                 has_archived_entities = (
@@ -340,3 +344,18 @@ class OrderService(Base):
                 )
 
         return has_archived_entities
+
+    def check_if_order_delivered(self, order_id: int) -> Order | None:
+        order = self.get_order(order_id)
+        shipments = data_provider_v2.fetch_shipment_pool().get_shipments_for_order(
+            order_id
+        )
+        can_change_to_delivered = True
+        for shipment in shipments:
+            if shipment.shipment_status != "Delivered":
+                can_change_to_delivered = False
+                break
+        if can_change_to_delivered:
+            order.order_status = "Delivered"
+            return self.update_order(order_id, order)
+        return None

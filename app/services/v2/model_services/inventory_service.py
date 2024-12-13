@@ -77,7 +77,7 @@ class InventoryService(Base):
     def add_inventory(
         self, inventory: Inventory, closeConnection: bool = True
     ) -> Inventory | None:
-        if self.has_inventory_archived_entities(inventory, None):
+        if self.has_inventory_archived_entities(inventory):
             return None
 
         table_name = inventory.table_name()
@@ -242,7 +242,7 @@ class InventoryService(Base):
         return None
 
     def has_inventory_archived_entities(
-        self, new_inventory: Inventory, old_inventory: Inventory | None
+        self, new_inventory: Inventory, old_inventory: Inventory | None = None
     ) -> bool:
         has_archived_entities = False
         if old_inventory is None:

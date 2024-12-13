@@ -53,6 +53,8 @@ def read_order_items(
 def create_order(order: Order, api_key: str = Depends(auth_provider_v2.get_api_key)):
     data_provider_v2.init()
     addedOrder = data_provider_v2.fetch_order_pool().add_order(order)
+    if addedOrder is None:
+        raise HTTPException(status_code=400, detail="Order has archived entities")
     return JSONResponse(
         status_code=status.HTTP_201_CREATED, content=addedOrder.model_dump()
     )

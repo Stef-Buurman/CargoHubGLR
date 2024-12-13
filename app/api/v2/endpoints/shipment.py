@@ -1,9 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
+from models.v2.order import Order
+from models.v2.ItemInObject import ItemInObject
 from services.v2.pagination_service import Pagination
 from services.v2 import data_provider_v2, auth_provider_v2
 from models.v2.shipment import Shipment
-from typing import Dict, Union
+from typing import Dict, List
 from utils.globals import pagination_url
 
 shipment_router_v2 = APIRouter(tags=["v2.Shipments"])
@@ -87,9 +89,13 @@ def update_shipment(
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
-    existingShipment = data_provider_v2.fetch_shipment_pool().get_shipment(shipment_id)
-    if existingShipment is None:
+    is_archived = data_provider_v2.fetch_shipment_pool().is_shipment_archived(
+        shipment_id
+    )
+    if is_archived is None:
         raise HTTPException(status_code=404, detail="Shipment not found")
+    elif is_archived is True:
+        raise HTTPException(status_code=400, detail="Shipment is archived")
     updated_shipment = data_provider_v2.fetch_shipment_pool().update_shipment(
         shipment_id, shipment
     )
@@ -99,15 +105,19 @@ def update_shipment(
 @shipment_router_v2.put("/{shipment_id}/orders")
 def update_orders_in_shipment(
     shipment_id: int,
-    updated_orders: Dict,
+    updated_orders: List[Order],
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
-    shipment = data_provider_v2.fetch_shipment_pool().get_shipment(shipment_id)
-    if shipment is None:
+    is_archived = data_provider_v2.fetch_shipment_pool().is_shipment_archived(
+        shipment_id
+    )
+    if is_archived is None:
         raise HTTPException(
             status_code=404, detail=f"Shipment with id {shipment_id} not found"
         )
+    elif is_archived is True:
+        raise HTTPException(status_code=400, detail=f"Shipment is archived")
     updated_order_in_shipment = (
         data_provider_v2.fetch_order_pool().update_orders_in_shipment(
             shipment_id, updated_orders
@@ -119,18 +129,22 @@ def update_orders_in_shipment(
 @shipment_router_v2.put("/{shipment_id}/items")
 def update_items_in_shipment(
     shipment_id: int,
-    updated_item: Dict[str, Union[str, int]],
+    updated_item: List[ItemInObject],
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
-    shipment = data_provider_v2.fetch_shipment_pool().get_shipment(shipment_id)
-    if shipment is None:
+    is_archived = data_provider_v2.fetch_shipment_pool().is_shipment_archived(
+        shipment_id
+    )
+    if is_archived is None:
         raise HTTPException(
             status_code=404, detail=f"Shipment with id {shipment_id} not found"
         )
+    elif is_archived is True:
+        raise HTTPException(status_code=400, detail=f"Shipment is archived")
     updated_item_in_shipment = (
         data_provider_v2.fetch_shipment_pool().update_items_in_shipment(
-            shipment_id, [updated_item]
+            shipment_id, updated_item
         )
     )
     return updated_item_in_shipment
@@ -141,12 +155,22 @@ def commit_shipment(
     shipment_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
-    shipment = data_provider_v2.fetch_shipment_pool().get_shipment(shipment_id)
-    if shipment is None:
+    is_archived = data_provider_v2.fetch_shipment_pool().is_shipment_archived(
+        shipment_id
+    )
+    if is_archived is None:
         raise HTTPException(
             status_code=404, detail=f"Shipment with id {shipment_id} not found"
         )
-    return shipment
+    elif is_archived is True:
+        raise HTTPException(status_code=400, detail=f"Shipment is archived")
+
+    committed_shipment = data_provider_v2.fetch_shipment_pool().commit_shipment(
+        shipment_id
+    )
+    if committed_shipment is None:
+        raise HTTPException(status_code=400, detail=f"Shipment is already delivered")
+    return committed_shipment
 
 
 @shipment_router_v2.patch("/{shipment_id}")
@@ -156,9 +180,15 @@ def partial_update_shipment(
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
-    existing_shipment = data_provider_v2.fetch_shipment_pool().get_shipment(shipment_id)
-    if existing_shipment is None:
+    is_archived = data_provider_v2.fetch_shipment_pool().is_shipment_archived(
+        shipment_id
+    )
+    if is_archived is None:
         raise HTTPException(status_code=404, detail="Shipment not found")
+    elif is_archived is True:
+        raise HTTPException(status_code=400, detail="Shipment is archived")
+
+    existing_shipment = data_provider_v2.fetch_shipment_pool().get_shipment(shipment_id)
 
     valid_keys = Shipment.model_fields.keys()
     update_data = {key: value for key, value in shipment.items() if key in valid_keys}
@@ -172,14 +202,31 @@ def partial_update_shipment(
     return partial_updated_shipment
 
 
-@shipment_router_v2.delete("/{shipment_id}")
-def delete_shipment(
+@shipment_router_v2.patch("/{shipment_id}/unarchive")
+def unarchive_shipment(
     shipment_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
     shipment_pool = data_provider_v2.fetch_shipment_pool()
-    shipment = shipment_pool.get_shipment(shipment_id)
-    if shipment is None:
+    is_archived = shipment_pool.is_shipment_archived(shipment_id)
+    if is_archived is None:
         raise HTTPException(status_code=404, detail="Shipment not found")
-    shipment_pool.remove_shipment(shipment_id)
-    return {"massage": "Shipment deleted successfully"}
+    elif is_archived is False:
+        raise HTTPException(status_code=400, detail="Shipment is not archived")
+    updated_shipment = shipment_pool.unarchive_shipment(shipment_id)
+    return updated_shipment
+
+
+@shipment_router_v2.delete("/{shipment_id}")
+def archive_shipment(
+    shipment_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
+):
+    data_provider_v2.init()
+    shipment_pool = data_provider_v2.fetch_shipment_pool()
+    is_archived = shipment_pool.is_shipment_archived(shipment_id)
+    if is_archived is None:
+        raise HTTPException(status_code=404, detail="Shipment not found")
+    elif is_archived is True:
+        raise HTTPException(status_code=400, detail="Shipment is already archived")
+    updated_shipment = shipment_pool.archive_shipment(shipment_id)
+    return updated_shipment
