@@ -283,24 +283,28 @@ class OrderService(Base):
                         new_order.ship_to
                     )
                 )
+                print(has_archived_entities)
             if not has_archived_entities and new_order.bill_to is not None:
                 has_archived_entities = (
                     data_provider_v2.fetch_client_pool().is_client_archived(
                         new_order.bill_to
                     )
                 )
+                print(has_archived_entities)
             if not has_archived_entities and new_order.shipment_id is not None:
                 has_archived_entities = (
                     data_provider_v2.fetch_shipment_pool().is_shipment_archived(
                         new_order.shipment_id
                     )
                 )
+                print(has_archived_entities)
             if not has_archived_entities and new_order.warehouse_id is not None:
                 has_archived_entities = (
                     data_provider_v2.fetch_warehouse_pool().is_warehouse_archived(
                         new_order.warehouse_id
                     )
                 )
+                print(has_archived_entities)
         else:
             if new_order.ship_to != old_order.ship_to and new_order.ship_to is not None:
                 has_archived_entities = (
