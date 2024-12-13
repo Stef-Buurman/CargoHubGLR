@@ -36,41 +36,52 @@ class WarehouseService(Base):
     ) -> WarehouseDB:
         warehouse.created_at = self.get_timestamp()
         warehouse.updated_at = self.get_timestamp()
-        self.data
-        return self.db.insert(warehouse, closeConnection)
+        added_warehouse = self.db.insert(warehouse, closeConnection)
+        self.data.append(added_warehouse)
+        return added_warehouse
 
     def update_warehouse(
         self, warehouse_id: int, warehouse: WarehouseDB, closeConnection: bool = True
     ) -> WarehouseDB:
+        if self.is_warehouse_archived(warehouse_id):
+            return None
+
         warehouse.updated_at = self.get_timestamp()
         for i in range(len(self.data)):
             if self.data[i].id == warehouse_id:
-                if warehouse.is_archived:
-                    return None
-                self.data[i] = warehouse
-                break
-        return self.db.update(warehouse, warehouse_id, closeConnection)
+                updated_warehouse = self.db.update(
+                    warehouse, warehouse_id, closeConnection
+                )
+                self.data[i] = updated_warehouse
+                return updated_warehouse
+        return None
 
     def archive_warehouse(
         self, warehouse_id: int, closeConnection: bool = True
     ) -> bool:
-        for warehouse in self.data:
-            if warehouse.id == warehouse_id:
-                warehouse.updated_at = self.get_timestamp()
-                warehouse.is_archived = True
-                if self.db.update(warehouse, warehouse_id, closeConnection):
-                    return True
+        for i in range(len(self.data)):
+            if self.data[i].id == warehouse_id:
+                self.data[i].updated_at = self.get_timestamp()
+                self.data[i].is_archived = True
+                updated_warehouse = self.db.update(
+                    self.data[i], warehouse_id, closeConnection
+                )
+                self.data[i] = updated_warehouse
+                return True
         return False
 
     def unarchive_warehouse(
         self, warehouse_id: int, closeConnection: bool = True
     ) -> bool:
-        for warehouse in self.data:
-            if warehouse.id == warehouse_id:
-                warehouse.updated_at = self.get_timestamp()
-                warehouse.is_archived = False
-                if self.db.update(warehouse, warehouse_id, closeConnection):
-                    return True
+        for i in range(len(self.data)):
+            if self.data[i].id == warehouse_id:
+                self.data[i].updated_at = self.get_timestamp()
+                self.data[i].is_archived = False
+                updated_warehouse = self.db.update(
+                    self.data[i], warehouse_id, closeConnection
+                )
+                self.data[i] = updated_warehouse
+                return True
         return False
 
     def load(self, is_debug: bool, warehouses: List[WarehouseDB] | None = None):

@@ -129,12 +129,14 @@ class TransferService(Base):
 
         if closeConnection:
             self.db.commit_and_close()
+
+        self.data.append(transfer)
         return transfer
 
     def update_transfer(
         self, transfer_id: int, transfer: Transfer, closeConnection: bool = True
     ) -> Transfer:
-        if transfer.is_archived:
+        if self.is_transfer_archived(transfer_id):
             return None
 
         table_name = transfer.table_name()
@@ -173,7 +175,12 @@ class TransferService(Base):
 
         if closeConnection:
             self.db.commit_and_close()
-        return transfer
+
+        for i in range(len(self.data)):
+            if self.data[i].id == transfer_id:
+                self.data[i] = transfer
+                return transfer
+        return None
 
     def commit_transfer(self, transfer: Transfer):
         if transfer.is_archived:

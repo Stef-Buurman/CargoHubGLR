@@ -108,7 +108,7 @@ class DatabaseService:
 
             if primary_key_field == "id":
                 inserted_id = cursor.lastrowid
-                setattr(model, primary_key_field, inserted_id)
+                model = model.model_copy(update={primary_key_field: inserted_id})
 
         if closeConnection:
             self.commit_and_close()
@@ -118,6 +118,7 @@ class DatabaseService:
         self, model: T, id: int, closeConnection: bool = True
     ) -> T:  # pragma: no cover
         table_name = model.table_name()
+        primary_key_value = model.__dict__[self.get_primary_key_column(table_name)]
         fields = model.__dict__
         primary_key_field = self.get_primary_key_column(table_name)
         fields.pop(primary_key_field, None)
@@ -128,6 +129,7 @@ class DatabaseService:
             conn.execute(update_sql, values + (id,))
         if closeConnection:
             self.commit_and_close()
+        model = model.model_copy(update={primary_key_field: primary_key_value})
         return model
 
     def delete(

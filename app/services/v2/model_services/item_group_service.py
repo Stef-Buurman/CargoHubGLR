@@ -2,7 +2,6 @@ from typing import List
 from models.v2.item_group import ItemGroup
 from services.v2.base_service import Base
 from services.v2.database_service import DB
-from services.v2 import data_provider_v2
 
 
 class ItemGroupService(Base):
@@ -37,8 +36,9 @@ class ItemGroupService(Base):
     ) -> ItemGroup:
         item_group.created_at = self.get_timestamp()
         item_group.updated_at = self.get_timestamp()
-        self.data.append(item_group)
-        return self.db.insert(item_group, closeConnection)
+        added_item_group = self.db.insert(item_group, closeConnection)
+        self.data.append(added_item_group)
+        return added_item_group
 
     def update_item_group(
         self, item_group_id: int, item_group: ItemGroup, closeConnection: bool = True
@@ -49,28 +49,39 @@ class ItemGroupService(Base):
         item_group.updated_at = self.get_timestamp()
         for i in range(len(self.data)):
             if self.data[i].id == item_group_id:
-                self.data[i] = item_group
-                break
-        return self.db.update(item_group, item_group_id, closeConnection)
+                updated_item_group = self.db.update(
+                    item_group, item_group_id, closeConnection
+                )
+                self.data[i] = updated_item_group
+                return updated_item_group
+        return None
 
     def archive_item_group(
         self, item_group_id: int, closeConnection: bool = True
     ) -> ItemGroup | None:
-        for item_group in self.data:
-            if item_group.id == item_group_id:
-                item_group.is_archived = True
-                item_group.updated_at = self.get_timestamp()
-                return self.db.update(item_group, item_group_id, closeConnection)
+        for i in range(len(self.data)):
+            if self.data[i].id == item_group_id:
+                self.data[i].is_archived = True
+                self.data[i].updated_at = self.get_timestamp()
+                updated_item_group = self.db.update(
+                    self.data[i], item_group_id, closeConnection
+                )
+                self.data[i] = updated_item_group
+                return updated_item_group
         return None
 
     def unarchive_item_group(
         self, item_group_id: int, closeConnection: bool = True
     ) -> ItemGroup | None:
-        for item_group in self.data:
-            if item_group.id == item_group_id:
-                item_group.is_archived = False
-                item_group.updated_at = self.get_timestamp()
-                return self.db.update(item_group, item_group_id, closeConnection)
+        for i in range(len(self.data)):
+            if self.data[i].id == item_group_id:
+                self.data[i].is_archived = False
+                self.data[i].updated_at = self.get_timestamp()
+                updated_item_group = self.db.update(
+                    self.data[i], item_group_id, closeConnection
+                )
+                self.data[i] = updated_item_group
+                return updated_item_group
         return None
 
     def load(self, is_debug: bool, item_groups: List[ItemGroup] | None = None):

@@ -1,9 +1,4 @@
-import os
-
 DEBUG = False
-ROOT_PATH = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "data/"
-)
 
 _warehouses = None
 _locations = None
@@ -21,7 +16,6 @@ _users = None
 
 
 def init():
-    """Initialize all the data pools by loading from their respective models."""
     get_items()
     get_item_lines()
     get_item_groups()
@@ -37,172 +31,171 @@ def init():
     get_users()
 
 
-# Load data for each model
 def get_items():
     from .model_services.item_services import ItemService
 
     global _items
-    _items = ItemService(DEBUG)
+    if _items is None:
+        _items = ItemService(DEBUG)
 
 
 def get_item_lines():
     from .model_services.item_line_service import ItemLineService
 
     global _item_lines
-    _item_lines = ItemLineService(DEBUG)
+    if _item_lines is None:
+        _item_lines = ItemLineService(DEBUG)
 
 
 def get_item_groups():
     from .model_services.item_group_service import ItemGroupService
 
     global _item_groups
-    _item_groups = ItemGroupService(DEBUG)
+    if _item_groups is None:
+        _item_groups = ItemGroupService(DEBUG)
 
 
 def get_item_types():
     from .model_services.item_type_service import ItemTypeService
 
     global _item_types
-    _item_types = ItemTypeService(DEBUG)
+    if _item_types is None:
+        _item_types = ItemTypeService(DEBUG)
 
 
 def get_warehouses():
     from .model_services.warehouse_service import WarehouseService
 
     global _warehouses
-    _warehouses = WarehouseService(DEBUG)
+    if _warehouses is None:
+        _warehouses = WarehouseService(DEBUG)
 
 
 def get_locations():
     from .model_services.location_service import LocationService
 
     global _locations
-    _locations = LocationService(DEBUG)
+    if _locations is None:
+        _locations = LocationService(DEBUG)
 
 
 def get_transfers():
     from .model_services.transfer_service import TransferService
 
     global _transfers
-    _transfers = TransferService(DEBUG)
+    if _transfers is None:
+        _transfers = TransferService(DEBUG)
 
 
 def get_clients():
     from .model_services.client_service import ClientService
 
     global _clients
-    _clients = ClientService(DEBUG)
+    if _clients is None:
+        _clients = ClientService(DEBUG)
 
 
 def get_shipments():
     from .model_services.shipment_service import ShipmentService
 
     global _shipments
-    _shipments = ShipmentService(DEBUG)
+    if _shipments is None:
+        _shipments = ShipmentService(DEBUG)
 
 
 def get_suppliers():
     from .model_services.suppliers_service import SupplierService
 
     global _suppliers
-    _suppliers = SupplierService(DEBUG)
+    if _suppliers is None:
+        _suppliers = SupplierService(DEBUG)
 
 
 def get_inventories():
     from .model_services.inventory_service import InventoryService
 
     global _inventories
-    _inventories = InventoryService(DEBUG)
+    if _inventories is None:
+        _inventories = InventoryService(DEBUG)
 
 
 def get_orders():
     from .model_services.order_service import OrderService
 
     global _orders
-    _orders = OrderService(DEBUG)
+    if _orders is None:
+        _orders = OrderService(DEBUG)
 
 
 def get_users():
     from .model_services.user_service import UserService
 
     global _users
-    _users = UserService(DEBUG)
+    if _users is None:
+        _users = UserService(DEBUG)
 
 
 # Fetching pools
 def fetch_warehouse_pool():
-    if _warehouses is None:
-        get_warehouses()
+    get_warehouses()
     return _warehouses
 
 
 def fetch_location_pool():
-    if _locations is None:
-        get_locations()
+    get_locations()
     return _locations
 
 
 def fetch_transfer_pool():
-    if _transfers is None:
-        get_transfers()
+    get_transfers()
     return _transfers
 
 
 def fetch_item_pool():
-    if _items is None:
-        get_items()
+    get_items()
     return _items
 
 
 def fetch_item_line_pool():
-    if _item_lines is None:
-        get_item_lines()
+    get_item_lines()
     return _item_lines
 
 
 def fetch_item_group_pool():
-    if _item_groups is None:
-        get_item_groups()
+    get_item_groups()
     return _item_groups
 
 
 def fetch_item_type_pool():
-    if _item_types is None:
-        get_item_types()
+    get_item_types()
     return _item_types
 
 
 def fetch_inventory_pool():
-    if _inventories is None:
-        get_inventories()
+    get_inventories()
     return _inventories
 
 
 def fetch_supplier_pool():
-    if _suppliers is None:
-        get_suppliers()
+    get_suppliers()
     return _suppliers
 
 
 def fetch_order_pool():
-    if _orders is None:
-        get_orders()
+    get_orders()
     return _orders
 
 
 def fetch_client_pool():
-    if _clients is None:
-        get_clients()
+    get_clients()
     return _clients
 
 
 def fetch_shipment_pool():
-    if _shipments is None:
-        get_shipments()
+    get_shipments()
     return _shipments
 
 
 def fetch_user_pool():
-    if _users is None:
-        get_users()
+    get_users()
     return _users

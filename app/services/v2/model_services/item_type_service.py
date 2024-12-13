@@ -2,7 +2,6 @@ from typing import List
 from models.v2.item_type import ItemType
 from services.v2.base_service import Base
 from services.v2.database_service import DB
-from services.v2 import data_provider_v2
 
 
 class ItemTypeService(Base):
@@ -31,8 +30,9 @@ class ItemTypeService(Base):
     ) -> ItemType:
         item_type.created_at = self.get_timestamp()
         item_type.updated_at = self.get_timestamp()
-        self.data.append(item_type)
-        return self.db.insert(item_type, closeConnection)
+        added_item_type = self.db.insert(item_type, closeConnection)
+        self.data.append(added_item_type)
+        return added_item_type
 
     def update_item_type(
         self, item_type_id: int, item_type: ItemType, closeConnection: bool = True
@@ -43,9 +43,12 @@ class ItemTypeService(Base):
         item_type.updated_at = self.get_timestamp()
         for i in range(len(self.data)):
             if self.data[i].id == item_type_id:
-                self.data[i] = item_type
-                break
-        return self.db.update(item_type, item_type_id, closeConnection)
+                updae_item_type = self.db.update(
+                    item_type, item_type_id, closeConnection
+                )
+                self.data[i] = updae_item_type
+                return updae_item_type
+        return None
 
     def is_item_type_archived(self, item_type_id: int) -> bool:
         for item_type in self.data:
@@ -59,7 +62,12 @@ class ItemTypeService(Base):
         for i in range(len(self.data)):
             if self.data[i].id == item_type_id:
                 self.data[i].is_archived = True
-                return self.db.update(self.data[i], item_type_id, closeConnection)
+                self.data[i].updated_at = self.get_timestamp()
+                updated_item_type = self.db.update(
+                    self.data[i], item_type_id, closeConnection
+                )
+                self.data[i] = updated_item_type
+                return updated_item_type
         return None
 
     def unarchive_item_type(
@@ -68,7 +76,11 @@ class ItemTypeService(Base):
         for i in range(len(self.data)):
             if self.data[i].id == item_type_id:
                 self.data[i].is_archived = False
-                return self.db.update(self.data[i], item_type_id, closeConnection)
+                updated_item_type = self.db.update(
+                    self.data[i], item_type_id, closeConnection
+                )
+                self.data[i] = updated_item_type
+                return updated_item_type
         return None
 
     def load(self, is_debug: bool, item_types: List[ItemType] | None = None):
