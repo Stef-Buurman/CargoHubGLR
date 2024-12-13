@@ -41,9 +41,10 @@ class ClientService(Base):
         client.updated_at = self.get_timestamp()
         for i in range(len(self.data)):
             if self.data[i].id == client_id:
-                self.data[i] = client
-                break
-        return self.db.update(client, client_id, closeConnection)
+                updated_client = self.db.update(client, client_id, closeConnection)
+                self.data[i] = updated_client
+                return updated_client
+        return None
 
     def archive_client(
         self, client_id: int, closeConnection: bool = True
@@ -52,7 +53,11 @@ class ClientService(Base):
             if self.data[i].id == client_id:
                 self.data[i].is_archived = True
                 self.data[i].updated_at = self.get_timestamp()
-                return self.db.update(self.data[i], client_id, closeConnection)
+                updated_client = self.db.update(
+                    self.data[i], client_id, closeConnection
+                )
+                self.data[i] = updated_client
+                return updated_client
         return None
 
     def unarchive_client(
@@ -62,7 +67,11 @@ class ClientService(Base):
             if self.data[i].id == client_id:
                 self.data[i].is_archived = False
                 self.data[i].updated_at = self.get_timestamp()
-                return self.db.update(self.data[i], client_id, closeConnection)
+                updated_client = self.db.update(
+                    self.data[i], client_id, closeConnection
+                )
+                self.data[i] = updated_client
+                return updated_client
         return None
 
     def is_client_archived(self, client_id: int) -> bool | None:

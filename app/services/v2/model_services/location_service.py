@@ -39,27 +39,36 @@ class LocationService(Base):
     ) -> Location:
         location.created_at = self.get_timestamp()
         location.updated_at = self.get_timestamp()
-        self.data.append(location)
-        return self.db.insert(location, closeConnection)
+        added_location = self.db.insert(location, closeConnection)
+        self.data.append(added_location)
+        return added_location
 
     def update_location(
         self, location_id: int, location: Location, closeConnection: bool = True
     ) -> Location:
+        if self.is_location_archived(location_id):
+            return None
+
         location.updated_at = self.get_timestamp()
         for i in range(len(self.data)):
             if self.data[i].id == location_id:
-                if location.is_archived:
-                    return None
-                self.data[i] = location
-        return self.db.update(location, location_id, closeConnection)
+                updated_location = self.db.update(
+                    location, location_id, closeConnection
+                )
+                self.data[i] = updated_location
+                return updated_location
+        return None
 
     def archive_location(self, location_id: int, closeConnection: bool = True) -> bool:
         for i in range(len(self.data)):
             if self.data[i].id == location_id:
                 self.data[i].updated_at = self.get_timestamp()
                 self.data[i].is_archived = True
-                if self.db.update(self.data[i], location_id, closeConnection):
-                    return True
+                updated_location = self.db.update(
+                    self.data[i], location_id, closeConnection
+                )
+                self.data[i] = updated_location
+                return True
         return False
 
     def unarchive_location(
@@ -69,8 +78,11 @@ class LocationService(Base):
             if self.data[i].id == location_id:
                 self.data[i].updated_at = self.get_timestamp()
                 self.data[i].is_archived = False
-                if self.db.update(self.data[i], location_id, closeConnection):
-                    return True
+                updated_location = self.db.update(
+                    self.data[i], location_id, closeConnection
+                )
+                self.data[i] = updated_location
+                return True
         return False
 
     def load(self, is_debug: bool, locations: List[Location] | None = None):

@@ -84,8 +84,9 @@ class ItemService(Base):
         item.uid = self.generate_uid()
         item.created_at = self.get_timestamp()
         item.updated_at = self.get_timestamp()
-        self.data.append(item)
-        return self.db.insert(item, closeConnection)
+        added_item = self.db.insert(item, closeConnection)
+        self.data.append(added_item)
+        return added_item
 
     def generate_uid(self) -> str | None:
         self.current_id = max((int(item.uid[1:]) for item in self.data), default=0)
@@ -109,9 +110,10 @@ class ItemService(Base):
         item.updated_at = self.get_timestamp()
         for i in range(len(self.data)):
             if self.data[i].uid == item.uid:
-                self.data[i] = item
-                break
-        return self.db.update(item, item_id, closeConnection)
+                updated_item = self.db.update(item, item_id, closeConnection)
+                self.data[i] = updated_item
+                return updated_item
+        return None
 
     def is_item_archived(self, item_id: str) -> bool | None:
         for item in self.data:
@@ -124,7 +126,9 @@ class ItemService(Base):
             if self.data[i].uid == item_id:
                 self.data[i].is_archived = True
                 self.data[i].updated_at = self.get_timestamp()
-                return self.db.update(self.data[i], item_id, closeConnection)
+                updated_item = self.db.update(self.data[i], item_id, closeConnection)
+                self.data[i] = updated_item
+                return updated_item
         return None
 
     def unarchive_item(self, item_id: str, closeConnection: bool = True) -> Item | None:
@@ -132,7 +136,9 @@ class ItemService(Base):
             if self.data[i].uid == item_id:
                 self.data[i].is_archived = False
                 self.data[i].updated_at = self.get_timestamp()
-                return self.db.update(self.data[i], item_id, closeConnection)
+                updated_item = self.db.update(self.data[i], item_id, closeConnection)
+                self.data[i] = updated_item
+                return updated_item
         return None
 
     def load(self, is_debug: bool, item: List[Item] | None = None):

@@ -36,8 +36,9 @@ class ItemLineService(Base):
     ) -> ItemLine:
         item_line.created_at = self.get_timestamp()
         item_line.updated_at = self.get_timestamp()
-        self.data.append(item_line)
-        return self.db.insert(item_line, closeConnection)
+        added_item_line = self.db.insert(item_line, closeConnection)
+        self.data.append(added_item_line)
+        return added_item_line
 
     def update_item_line(
         self, item_line_id: int, item_line: ItemLine, closeConnection: bool = True
@@ -46,9 +47,13 @@ class ItemLineService(Base):
             return None
 
         item_line.updated_at = self.get_timestamp()
-        if self.get_item_line(item_line_id) is not None:
-            self.data[self.data.index(self.get_item_line(item_line_id))] = item_line
-        return self.db.update(item_line, item_line_id, closeConnection)
+        for i in range(len(self.data)):
+            if self.data[i].id == item_line_id:
+                updated_item_line = self.db.update(
+                    item_line, item_line_id, closeConnection
+                )
+                self.data[i] = updated_item_line
+                return updated_item_line
 
     def archive_item_line(
         self, item_line_id: int, closeConnection: bool = True
@@ -57,7 +62,11 @@ class ItemLineService(Base):
             if self.data[i].id == item_line_id:
                 self.data[i].is_archived = True
                 self.data[i].updated_at = self.get_timestamp()
-                return self.db.update(self.data[i], item_line_id, closeConnection)
+                updated_item_line = self.db.update(
+                    self.data[i], item_line_id, closeConnection
+                )
+                self.data[i] = updated_item_line
+                return updated_item_line
         return None
 
     def unarchive_item_line(
@@ -67,7 +76,11 @@ class ItemLineService(Base):
             if self.data[i].id == item_line_id:
                 self.data[i].is_archived = False
                 self.data[i].updated_at = self.get_timestamp()
-                return self.db.update(self.data[i], item_line_id, closeConnection)
+                updated_item_line = self.db.update(
+                    self.data[i], item_line_id, closeConnection
+                )
+                self.data[i] = updated_item_line
+                return updated_item_line
         return None
 
     def load(self, is_debug: bool, item_lines: List[ItemLine] | None = None):
