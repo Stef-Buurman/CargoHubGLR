@@ -571,6 +571,7 @@ def test_update_items_in_archived_shipment(client):
 def test_update_orders_in_archived_shipment(client):
     test_shipment_2 = test_shipment.copy()
     test_shipment_2["order_id"] = test_order_1["id"]
+    test_order_1["shipment_id"] = 1
     response_add_orders = client.post(
         f"/orders/", json=test_order_1, headers=test_headers
     )
@@ -581,6 +582,7 @@ def test_update_orders_in_archived_shipment(client):
         f"/shipments/", json=test_shipment_2, headers=test_headers
     )
     assert response_add.status_code is 201
+    test_order_1["shipment_id"] = response_add.json()["id"]
     response_archive = client.delete(
         f"/shipments/{response_add.json()['id']}", headers=test_headers
     )
