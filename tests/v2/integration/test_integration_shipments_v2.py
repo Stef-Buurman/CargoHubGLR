@@ -202,14 +202,17 @@ def test_update_nonexistent_shipment(client):
 
 def test_update_shipment(client):
     updated_shipment = test_shipment.copy()
-    updated_shipment["shipment_status"] = "Shipped"
+    updated_shipment["total_package_count"] = test_shipment["total_package_count"] + 10
     response = client.put(
         f"/shipments/{test_shipment['id']}", json=updated_shipment, headers=test_headers
     )
     assert response.status_code == 200
     response_get = client.get(f"/shipments/{test_shipment['id']}", headers=test_headers)
     assert response_get.status_code == 200
-    assert response_get.json()["shipment_status"] == updated_shipment["shipment_status"]
+    assert (
+        response_get.json()["total_package_count"]
+        == updated_shipment["total_package_count"]
+    )
 
 
 def test_partial_update_shipment_no_api_key(client):
