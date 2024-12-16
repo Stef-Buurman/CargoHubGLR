@@ -5,7 +5,7 @@ on:
     branches-ignore: ["Testing", "Production"]
 
 jobs:
-  format:
+  build:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
