@@ -11,7 +11,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Test SSH Connection
-        run: ssh -o "StrictHostKeyChecking=no" ${{ secrets.UPDATE_PROJECT_USER }}@${{ secrets.UPDATE_PROJECT_IP }} -p ${{ secrets.UPDATE_PROJECT_PORT }} "echo Connection Successful"
+        run: ssh ${{ secrets.UPDATE_PROJECT_USER }}@${{ secrets.UPDATE_PROJECT_IP }} -p ${{ secrets.UPDATE_PROJECT_PORT }} "echo Connection Successful"
 
       - name: Set up virtual environment
         env:
