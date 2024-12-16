@@ -1,7 +1,7 @@
-from models.v2.base import Base2
+from models.v2.base import BaseWithArchived
 
 
-class ItemType(Base2):
+class ItemType(BaseWithArchived):
     id: int | None = None
     name: str
     description: str

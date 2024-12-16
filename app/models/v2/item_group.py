@@ -1,7 +1,7 @@
-from models.v2.base import Base2
+from models.v2.base import BaseWithArchived
 
 
-class ItemGroup(Base2):
+class ItemGroup(BaseWithArchived):
     id: int | None = None
     name: str
     description: str

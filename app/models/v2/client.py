@@ -1,7 +1,7 @@
-from models.v2.base import Base2
+from models.v2.base import BaseWithArchived
 
 
-class Client(Base2):
+class Client(BaseWithArchived):
     id: int | None = None
     name: str
     address: str

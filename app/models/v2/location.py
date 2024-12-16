@@ -1,7 +1,7 @@
-from models.v2.base import Base2
+from models.v2.base import BaseWithArchived
 
 
-class Location(Base2):
+class Location(BaseWithArchived):
     id: int | None = None
     warehouse_id: int
     code: str
