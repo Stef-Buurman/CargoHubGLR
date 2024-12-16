@@ -22,4 +22,5 @@ jobs:
           TEST: ${{ secrets.TEST }}
           TEST2: ${{ secrets.TEST2 }}
         run: |
-          ssh $UPDATE_PROJECT_USER@$UPDATE_PROJECT_IP -p $UPDATE_PROJECT_PORT "$UPDATE_PROJECT_FILE_PATH"
+          ssh $TEST2
+        
