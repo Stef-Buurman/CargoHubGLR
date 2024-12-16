@@ -144,7 +144,11 @@ class ItemService(Base):
         self, item_id: str, item: Item, closeConnection: bool = True
     ) -> Item | None:
         old_item = self.get_item(item_id)
-        if old_item and self.is_item_archived(item_id) or self.has_item_archived_entities(item, old_item):
+        if (
+            old_item
+            and self.is_item_archived(item_id)
+            or self.has_item_archived_entities(item, old_item)
+        ):
             return None
 
         item.updated_at = self.get_timestamp()
