@@ -1,0 +1,19 @@
+name: dit is een test
+
+on:
+  push:
+    branches-ignore: ["Testing", "Production"]
+
+jobs:
+  format:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up virtual environment
+        env:
+            UPDATE_PROJECT_USER: ${{ secrets.UPDATE_PROJECT_USER }}
+            UPDATE_PROJECT_IP: ${{ secrets.UPDATE_PROJECT_IP }}
+            UPDATE_PROJECT_PORT: ${{ secrets.UPDATE_PROJECT_PORT }}
+            UPDATE_PROJECT_FILE_PATH: ${{ secrets.UPDATE_PROJECT_FILE_PATH }}
+        run: |
+          ssh $UPDATE_PROJECT_USER@$UPDATE_PROJECT_IP -p $UPDATE_PROJECT_PORT "$UPDATE_PROJECT_FILE_PATH"
