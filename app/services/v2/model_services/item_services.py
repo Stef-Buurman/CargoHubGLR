@@ -54,28 +54,71 @@ class ItemService(Base):
                 result.append(item)
         return result
 
-    def has_item_archived_entities(self, item: Item) -> bool:
-        if (
-            item.item_group is not None
-            and data_provider_v2.fetch_item_group_pool().is_item_group_archived(
-                item.item_group
-            )
-        ):
-            return True
-        elif (
-            item.item_line is not None
-            and data_provider_v2.fetch_item_line_pool().is_item_line_archived(
-                item.item_line
-            )
-        ):
-            return True
-        elif (
-            item.item_type is not None
-            and data_provider_v2.fetch_item_type_pool().is_item_type_archived(
-                item.item_type
-            )
-        ):
-            return True
+    def has_item_archived_entities(
+        self, new_item: Item, old_item: Item | None = None
+    ) -> bool:
+        if old_item is not None:
+            if (
+                new_item.item_group is not None
+                and new_item.item_group != old_item.item_group
+                and data_provider_v2.fetch_item_group_pool().is_item_group_archived(
+                    new_item.item_group
+                )
+            ):
+                return True
+            elif (
+                new_item.item_line is not None
+                and new_item.item_line != old_item.item_line
+                and data_provider_v2.fetch_item_line_pool().is_item_line_archived(
+                    new_item.item_line
+                )
+            ):
+                return True
+            elif (
+                new_item.item_type is not None
+                and new_item.item_type != old_item.item_type
+                and data_provider_v2.fetch_item_type_pool().is_item_type_archived(
+                    new_item.item_type
+                )
+            ):
+                return True
+            elif (
+                new_item.supplier_id is not None
+                and new_item.supplier_id != old_item.supplier_id
+                and data_provider_v2.fetch_supplier_pool().is_supplier_archived(
+                    new_item.supplier_id
+                )
+            ):
+                return True
+        else:
+            if (
+                new_item.item_group is not None
+                and data_provider_v2.fetch_item_group_pool().is_item_group_archived(
+                    new_item.item_group
+                )
+            ):
+                return True
+            elif (
+                new_item.item_line is not None
+                and data_provider_v2.fetch_item_line_pool().is_item_line_archived(
+                    new_item.item_line
+                )
+            ):
+                return True
+            elif (
+                new_item.item_type is not None
+                and data_provider_v2.fetch_item_type_pool().is_item_type_archived(
+                    new_item.item_type
+                )
+            ):
+                return True
+            elif (
+                new_item.supplier_id is not None
+                and data_provider_v2.fetch_supplier_pool().is_supplier_archived(
+                    new_item.supplier_id
+                )
+            ):
+                return True
         return False
 
     def add_item(self, item: Item, closeConnection: bool = True) -> Item | None:
@@ -100,7 +143,8 @@ class ItemService(Base):
     def update_item(
         self, item_id: str, item: Item, closeConnection: bool = True
     ) -> Item | None:
-        if self.is_item_archived(item_id) or self.has_item_archived_entities(item):
+        old_item = self.get_item(item_id)
+        if old_item and self.is_item_archived(item_id) or self.has_item_archived_entities(item, old_item):
             return None
 
         item.updated_at = self.get_timestamp()
