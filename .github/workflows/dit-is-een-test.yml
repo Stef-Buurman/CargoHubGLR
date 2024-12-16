@@ -16,4 +16,7 @@ jobs:
             UPDATE_PROJECT_PORT: ${{ secrets.UPDATE_PROJECT_PORT }}
             UPDATE_PROJECT_FILE_PATH: ${{ secrets.UPDATE_PROJECT_FILE_PATH }}
         run: |
+          # Add the remote server's SSH key to known_hosts
+          ssh-keyscan -p $UPDATE_PROJECT_PORT $UPDATE_PROJECT_IP >> ~/.ssh/known_hosts
+          # Run the update project command
           ssh $UPDATE_PROJECT_USER@$UPDATE_PROJECT_IP -p $UPDATE_PROJECT_PORT "$UPDATE_PROJECT_FILE_PATH"
