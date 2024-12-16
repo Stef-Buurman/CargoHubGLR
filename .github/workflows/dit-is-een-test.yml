@@ -11,23 +11,16 @@ jobs:
   build:
     if: ${{ github.event.pull_request.merged == true }}
     runs-on: self-hosted
+    env:
+      SSH_USER: ${{ secrets.UPDATE_PROJECT_USER }}
+      SSH_IP: ${{ secrets.UPDATE_PROJECT_IP }}
+      SSH_PORT: ${{ secrets.UPDATE_PROJECT_PORT }}
+      REMOTE_SCRIPT_PATH: ${{ secrets.UPDATE_PROJECT_FILE_PATH }}
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Test SSH Connection
-        env:
-          SSH_USER: ${{ secrets.UPDATE_PROJECT_USER }}
-          SSH_IP: ${{ secrets.UPDATE_PROJECT_IP }}
-          SSH_PORT: ${{ secrets.UPDATE_PROJECT_PORT }}
-        run: |
-          ssh -v "$SSH_USER@$SSH_IP" -p "$SSH_PORT" "echo Connection Successful"
+        run: ssh $SSH_USER@$SSH_IP -p $SSH_PORT "echo Connection Successful"
 
-      - name: Execute Update Script
-        env:
-          SSH_USER: ${{ secrets.UPDATE_PROJECT_USER }}
-          SSH_IP: ${{ secrets.UPDATE_PROJECT_IP }}
-          SSH_PORT: ${{ secrets.UPDATE_PROJECT_PORT }}
-          REMOTE_SCRIPT_PATH: ${{ secrets.UPDATE_PROJECT_FILE_PATH }}
-        run: |
-          ssh "$SSH_USER@$SSH_IP" -p "$SSH_PORT" "$REMOTE_SCRIPT_PATH"
+      - name: Set up virtual environment
+        run: ssh $SSH_USER@$SSH_IP -p $SSH_PORT $REMOTE_SCRIPT_PATH
