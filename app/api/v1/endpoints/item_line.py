@@ -1,8 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException, Response, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
-from services import data_provider, auth_provider
+from services.v1 import data_provider, auth_provider
 
-item_line_router = APIRouter()
+item_line_router = APIRouter(tags=["v1.Item Lines"])
 
 
 @item_line_router.get("/")
@@ -42,8 +42,6 @@ def read_items_for_item_line(
     items_for_item_line = data_provider.fetch_item_pool().get_items_for_item_line(
         item_line_id
     )
-    # if not items_for_item_line:
-    #     return Response(status_code=status.HTTP_204_NO_CONTENT)
     return items_for_item_line
 
 

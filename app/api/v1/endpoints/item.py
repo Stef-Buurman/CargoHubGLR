@@ -1,8 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException, Response, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
-from services import data_provider, auth_provider
+from services.v1 import data_provider, auth_provider
 
-item_router = APIRouter()
+item_router = APIRouter(tags=["v1.Items"])
 
 
 @item_router.get("/{item_id}")
@@ -34,8 +34,6 @@ def read_inventory_of_item(
     if item is None:
         raise HTTPException(status_code=404, detail="Item not found")
     inventories = data_provider.fetch_inventory_pool().get_inventories_for_item(item_id)
-    # if len(inventories) == 0:
-    #     return Response(status_code=status.HTTP_204_NO_CONTENT)
     return inventories
 
 

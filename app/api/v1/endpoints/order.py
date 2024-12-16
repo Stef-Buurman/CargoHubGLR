@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
-from services import data_provider, auth_provider
+from services.v1 import data_provider, auth_provider
 
-order_router = APIRouter()
+order_router = APIRouter(tags=["v1.Orders"])
 
 
 @order_router.get("/{order_id}")

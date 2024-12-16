@@ -1,8 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Response
+from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
-from services import data_provider, auth_provider
+from services.v1 import data_provider, auth_provider
 
-location_router = APIRouter()
+location_router = APIRouter(tags=["v1.Locations"])
 
 
 @location_router.get("/{location_id}")

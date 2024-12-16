@@ -1,10 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException, Response, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
-from services.pagination_service import Pagination
+from services.v2.pagination_service import Pagination
 from models.v2.item_group import ItemGroup
-from services import data_provider_v2, auth_provider_v2
+from services.v2 import data_provider_v2, auth_provider_v2
+from utils.globals import pagination_url
 
-item_group_router_v2 = APIRouter()
+item_group_router_v2 = APIRouter(tags=["v2.Item Groups"])
 
 
 @item_group_router_v2.get("/{item_group_id}")
@@ -21,6 +22,7 @@ def read_item_group(
 
 
 @item_group_router_v2.get("/")
+@item_group_router_v2.get(pagination_url)
 def read_item_groups(
     pagination: Pagination = Depends(),
     api_key: str = Depends(auth_provider_v2.get_api_key),
@@ -33,6 +35,7 @@ def read_item_groups(
 
 
 @item_group_router_v2.get("/{item_group_id}/items")
+@item_group_router_v2.get("/{item_group_id}/items" + pagination_url)
 def read_items_for_item_group(
     item_group_id: int,
     pagination: Pagination = Depends(),
@@ -68,11 +71,14 @@ def update_item_group(
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
-    existingitem_group = data_provider_v2.fetch_item_group_pool().get_item_group(
+    is_archived = data_provider_v2.fetch_item_group_pool().is_item_group_archived(
         item_group_id
     )
-    if existingitem_group is None:
+    if is_archived is None:
         raise HTTPException(status_code=404, detail="Item_group not found")
+    elif is_archived is True:
+        raise HTTPException(status_code=400, detail="Item_group is archived")
+
     updated_item_group = data_provider_v2.fetch_item_group_pool().update_item_group(
         item_group_id, item_group
     )
@@ -86,11 +92,17 @@ def partial_update_item_group(
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
+    is_archived = data_provider_v2.fetch_item_group_pool().is_item_group_archived(
+        item_group_id
+    )
+    if is_archived is None:
+        raise HTTPException(status_code=404, detail="Item_group not found")
+    elif is_archived is True:
+        raise HTTPException(status_code=400, detail="Item_group is archived")
+
     existing_item_group = data_provider_v2.fetch_item_group_pool().get_item_group(
         item_group_id
     )
-    if existing_item_group is None:
-        raise HTTPException(status_code=404, detail="Item_group not found")
 
     valid_keys = ItemGroup.model_fields.keys()
     update_data = {key: value for key, value in item_group.items() if key in valid_keys}
@@ -106,18 +118,37 @@ def partial_update_item_group(
     return partial_updated_item_group
 
 
+@item_group_router_v2.patch("/{item_group_id}/unarchive")
+def unarchive_item_group(
+    item_group_id: int,
+    api_key: str = Depends(auth_provider_v2.get_api_key),
+):
+    data_provider_v2.init()
+    is_archived = data_provider_v2.fetch_item_group_pool().is_item_group_archived(
+        item_group_id
+    )
+    if is_archived is None:
+        raise HTTPException(status_code=404, detail="Item_group not found")
+    elif is_archived is False:
+        raise HTTPException(status_code=400, detail="Item_group is not archived")
+
+    updated_item_group = data_provider_v2.fetch_item_group_pool().unarchive_item_group(
+        item_group_id
+    )
+    return updated_item_group
+
+
 @item_group_router_v2.delete("/{item_group_id}")
-def delete_item_group(
+def archive_item_group(
     item_group_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
     item_group_pool = data_provider_v2.fetch_item_group_pool()
-    item_group = item_group_pool.get_item_group(item_group_id)
-    if item_group is None:
+    is_archived = item_group_pool.is_item_group_archived(item_group_id)
+    if is_archived is None:
         raise HTTPException(status_code=404, detail="Item_group not found")
-    if not item_group_pool.remove_item_group(item_group_id):
-        raise HTTPException(
-            status_code=409,
-            detail="Item_group has items associated with it. Cannot delete",
-        )
-    return {"massage": "Item_group deleted successfully"}
+    elif is_archived is True:
+        raise HTTPException(status_code=400, detail="Item_group is already archived")
+
+    updated_item_group = item_group_pool.archive_item_group(item_group_id)
+    return updated_item_group

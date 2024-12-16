@@ -1,8 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException, Response, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
-from services import data_provider, auth_provider
+from services.v1 import data_provider, auth_provider
 
-item_type_router = APIRouter()
+item_type_router = APIRouter(tags=["v1.Item Types"])
 
 
 @item_type_router.get("/{item_type_id}")
@@ -38,8 +38,6 @@ def read_items_for_item_type(
             status_code=404, detail=f"Item_type with id {item_type_id} not found"
         )
     items = data_provider.fetch_item_pool().get_items_for_item_type(item_type_id)
-    # if not items:
-    #     return Response(status_code=status.HTTP_204_NO_CONTENT)
     return items
 
 

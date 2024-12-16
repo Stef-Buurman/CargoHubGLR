@@ -1,0 +1,90 @@
+from typing import List
+from models.v2.item_line import ItemLine
+from services.v2.base_service import Base
+from services.v2.database_service import DB
+
+
+class ItemLineService(Base):
+    def __init__(self, is_debug=False):
+        self.db = DB
+        self.load(is_debug)
+
+    def get_all_item_lines(self) -> List[ItemLine]:
+        return self.db.get_all(ItemLine)
+
+    def get_item_lines(self) -> List[ItemLine]:
+        item_lines = []
+        for item_line in self.data:
+            if not item_line.is_archived:
+                item_lines.append(item_line)
+        return item_lines
+
+    def get_item_line(self, item_line_id: int) -> ItemLine | None:
+        for item_line in self.data:
+            if item_line.id == item_line_id:
+                return item_line
+        return self.db.get(ItemLine, item_line_id)
+
+    def is_item_line_archived(self, item_line_id: int) -> bool:
+        for item_line in self.data:
+            if item_line.id == item_line_id:
+                return item_line.is_archived
+        return None
+
+    def add_item_line(
+        self, item_line: ItemLine, closeConnection: bool = True
+    ) -> ItemLine:
+        item_line.created_at = self.get_timestamp()
+        item_line.updated_at = self.get_timestamp()
+        added_item_line = self.db.insert(item_line, closeConnection)
+        self.data.append(added_item_line)
+        return added_item_line
+
+    def update_item_line(
+        self, item_line_id: int, item_line: ItemLine, closeConnection: bool = True
+    ) -> ItemLine:
+        if self.is_item_line_archived(item_line_id):
+            return None
+
+        item_line.updated_at = self.get_timestamp()
+        for i in range(len(self.data)):
+            if self.data[i].id == item_line_id:
+                updated_item_line = self.db.update(
+                    item_line, item_line_id, closeConnection
+                )
+                self.data[i] = updated_item_line
+                return updated_item_line
+
+    def archive_item_line(
+        self, item_line_id: int, closeConnection: bool = True
+    ) -> ItemLine | None:
+        for i in range(len(self.data)):
+            if self.data[i].id == item_line_id:
+                self.data[i].is_archived = True
+                self.data[i].updated_at = self.get_timestamp()
+                updated_item_line = self.db.update(
+                    self.data[i], item_line_id, closeConnection
+                )
+                self.data[i] = updated_item_line
+                return updated_item_line
+        return None
+
+    def unarchive_item_line(
+        self, item_line_id: int, closeConnection: bool = True
+    ) -> ItemLine | None:
+        for i in range(len(self.data)):
+            if self.data[i].id == item_line_id:
+                self.data[i].is_archived = False
+                self.data[i].updated_at = self.get_timestamp()
+                updated_item_line = self.db.update(
+                    self.data[i], item_line_id, closeConnection
+                )
+                self.data[i] = updated_item_line
+                return updated_item_line
+        return None
+
+    def load(self, is_debug: bool, item_lines: List[ItemLine] | None = None):
+        if is_debug and item_lines is not None:
+            self.data = item_lines
+        else:
+            self.data = self.get_all_item_lines()

@@ -1,8 +1,8 @@
-from models.v2.base import Base
+from models.v2.base import Base2
 from models.v2.ItemInObject import ItemInObject
 
 
-class Shipment(Base):
+class Shipment(Base2):
     id: int | None = None
     order_id: int
     source_id: int

@@ -1,7 +1,7 @@
-from models.v2.base import Base
+from models.v2.base import Base2
 
 
-class Client(Base):
+class Client(Base2):
     id: int | None = None
     name: str
     address: str

@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
-from services import data_provider, auth_provider
+from services.v1 import data_provider, auth_provider
 
-transfer_router = APIRouter()
+transfer_router = APIRouter(tags=["v1.Transfers"])
 
 
 @transfer_router.get("/{transfer_id}")

@@ -1,10 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException, Response, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
-from services.pagination_service import Pagination
-from services import data_provider_v2, auth_provider_v2
+from services.v2.pagination_service import Pagination
+from services.v2 import data_provider_v2, auth_provider_v2
 from models.v2.supplier import Supplier
+from utils.globals import pagination_url
 
-supplier_router_v2 = APIRouter()
+supplier_router_v2 = APIRouter(tags=["v2.Suppliers"])
 
 
 @supplier_router_v2.get("/{supplier_id}")
@@ -21,6 +22,7 @@ def read_supplier(
 
 
 @supplier_router_v2.get("/")
+@supplier_router_v2.get(pagination_url)
 def read_suppliers(
     pagination: Pagination = Depends(),
     api_key: str = Depends(auth_provider_v2.get_api_key),
@@ -33,6 +35,7 @@ def read_suppliers(
 
 
 @supplier_router_v2.get("/{supplier_id}/items")
+@supplier_router_v2.get("/{supplier_id}/items" + pagination_url)
 def read_items_of_supplier(
     supplier_id: int,
     pagination: Pagination = Depends(),
@@ -70,9 +73,13 @@ def update_supplier(
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
-    existingSupplier = data_provider_v2.fetch_supplier_pool().get_supplier(supplier_id)
+    existingSupplier = data_provider_v2.fetch_supplier_pool().is_supplier_archived(
+        supplier_id
+    )
     if existingSupplier is None:
         raise HTTPException(status_code=404, detail="Supplier not found")
+    elif existingSupplier:
+        raise HTTPException(status_code=400, detail="Supplier is archived")
     updated_supplier = data_provider_v2.fetch_supplier_pool().update_supplier(
         supplier_id, supplier
     )
@@ -86,9 +93,15 @@ def partial_update_supplier(
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
-    existing_supplier = data_provider_v2.fetch_supplier_pool().get_supplier(supplier_id)
+    existing_supplier = data_provider_v2.fetch_supplier_pool().is_supplier_archived(
+        supplier_id
+    )
     if existing_supplier is None:
         raise HTTPException(status_code=404, detail="Supplier not found")
+    elif existing_supplier:
+        raise HTTPException(status_code=400, detail="Supplier is archived")
+
+    existing_supplier = data_provider_v2.fetch_supplier_pool().get_supplier(supplier_id)
 
     valid_keys = Supplier.model_fields.keys()
     update_data = {key: value for key, value in supplier.items() if key in valid_keys}
@@ -103,15 +116,35 @@ def partial_update_supplier(
 
 
 @supplier_router_v2.delete("/{supplier_id}")
-def delete_supplier(
+def archive_supplier(
     supplier_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
-    supplier_pool = data_provider_v2.fetch_supplier_pool()
+    existing_supplier = data_provider_v2.fetch_supplier_pool().is_supplier_archived(
+        supplier_id
+    )
 
-    supplier = supplier_pool.get_supplier(supplier_id)
-    if supplier is None:
+    if existing_supplier is None:
         raise HTTPException(status_code=404, detail="Supplier not found")
+    elif existing_supplier:
+        raise HTTPException(status_code=400, detail="Supplier is archived")
 
-    supplier_pool.remove_supplier(supplier_id)
-    return {"message": "Supplier deleted successfully"}
+    data_provider_v2.fetch_supplier_pool().archive_supplier(supplier_id)
+    return {"message": "Supplier archived successfully"}
+
+
+@supplier_router_v2.patch("/{supplier_id}/unarchive")
+def unarchive_supplier(
+    supplier_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
+):
+    data_provider_v2.init()
+    existing_supplier = data_provider_v2.fetch_supplier_pool().is_supplier_archived(
+        supplier_id
+    )
+    if existing_supplier is None:
+        raise HTTPException(status_code=404, detail="Supplier not found")
+    elif not existing_supplier:
+        raise HTTPException(status_code=400, detail="Supplier is not archived")
+
+    data_provider_v2.fetch_supplier_pool().unarchive_supplier(supplier_id)
+    return {"message": "Supplier unarchived successfully"}

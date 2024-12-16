@@ -1,10 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Response
+from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
-from services.pagination_service import Pagination
-from services import data_provider_v2, auth_provider_v2
+from services.v2.pagination_service import Pagination
+from services.v2 import data_provider_v2, auth_provider_v2
 from models.v2.location import Location
+from utils.globals import pagination_url
 
-location_router_v2 = APIRouter()
+location_router_v2 = APIRouter(tags=["v2.Locations"])
 
 
 @location_router_v2.get("/{location_id}")
@@ -21,6 +22,7 @@ def read_location(
 
 
 @location_router_v2.get("/")
+@location_router_v2.get(pagination_url)
 def read_locations(
     pagination: Pagination = Depends(),
     api_key: str = Depends(auth_provider_v2.get_api_key),
@@ -85,14 +87,39 @@ def partial_update_location(
 
 
 @location_router_v2.delete("/{location_id}")
-def delete_location(
+def archive_location(
     location_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
-    location = data_provider_v2.fetch_location_pool().get_location(location_id)
+    location = data_provider_v2.fetch_location_pool().is_location_archived(location_id)
     if location is None:
         raise HTTPException(
             status_code=404, detail=f"Location with id {location_id} not found"
         )
-    data_provider_v2.fetch_location_pool().remove_location(location_id)
-    return {"message": "Location deleted successfully"}
+    elif location:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Location with id {location_id} is already archived",
+        )
+    data_provider_v2.fetch_location_pool().archive_location(location_id)
+    return {"message": "Location archived successfully"}
+
+
+@location_router_v2.patch("/{location_id}/unarchive")
+def unarchive_location(
+    location_id: int,
+    api_key: str = Depends(auth_provider_v2.get_api_key),
+):
+    data_provider_v2.init()
+    existing_location = data_provider_v2.fetch_location_pool().is_location_archived(
+        location_id
+    )
+    if existing_location is None:
+        raise HTTPException(status_code=404, detail="Location not found")
+    elif not existing_location:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Location with id {location_id} is not archived",
+        )
+    data_provider_v2.fetch_location_pool().unarchive_location(location_id)
+    return {"message": "Location unarchived successfully"}

@@ -1,7 +1,7 @@
-from .base import Base
+from .base import Base1
 
 
-class EndpointAccess(Base):
+class EndpointAccess(Base1):
     class Config:
         table_name = "endpoint_access"
 

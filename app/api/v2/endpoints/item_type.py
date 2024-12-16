@@ -1,10 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
-from services.pagination_service import Pagination
-from services import data_provider_v2, auth_provider_v2
+from services.v2.pagination_service import Pagination
+from services.v2 import data_provider_v2, auth_provider_v2
 from models.v2.item_type import ItemType
+from utils.globals import pagination_url
 
-item_type_router_v2 = APIRouter()
+item_type_router_v2 = APIRouter(tags=["v2.Item Types"])
 
 
 @item_type_router_v2.get("/{item_type_id}")
@@ -21,6 +22,7 @@ def read_item_type(
 
 
 @item_type_router_v2.get("/")
+@item_type_router_v2.get(pagination_url)
 def read_item_types(
     pagination: Pagination = Depends(),
     api_key: str = Depends(auth_provider_v2.get_api_key),
@@ -33,6 +35,7 @@ def read_item_types(
 
 
 @item_type_router_v2.get("/{item_type_id}/items")
+@item_type_router_v2.get("/{item_type_id}/items" + pagination_url)
 def read_items_for_item_type(
     item_type_id: int,
     pagination: Pagination = Depends(),
@@ -66,11 +69,14 @@ def update_item_type(
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
-    existingitem_type = data_provider_v2.fetch_item_type_pool().get_item_type(
+    is_archvied = data_provider_v2.fetch_item_type_pool().is_item_type_archived(
         item_type_id
     )
-    if existingitem_type is None:
-        raise HTTPException(status_code=404, detail="Item_type not found")
+    if is_archvied is None:
+        raise HTTPException(status_code=404, detail="item_type not found")
+    elif is_archvied is True:
+        raise HTTPException(status_code=400, detail="item_type is archived")
+
     updated_item_type = data_provider_v2.fetch_item_type_pool().update_item_type(
         item_type_id, item_type
     )
@@ -84,11 +90,17 @@ def partial_update_item_type(
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
+    is_archvied = data_provider_v2.fetch_item_type_pool().is_item_type_archived(
+        item_type_id
+    )
+    if is_archvied is None:
+        raise HTTPException(status_code=404, detail="item_type not found")
+    elif is_archvied is True:
+        raise HTTPException(status_code=400, detail="item_type is archived")
+
     existing_item_type = data_provider_v2.fetch_item_type_pool().get_item_type(
         item_type_id
     )
-    if existing_item_type is None:
-        raise HTTPException(status_code=404, detail="item_type not found")
 
     valid_keys = ItemType.model_fields.keys()
     update_data = {key: value for key, value in item_type.items() if key in valid_keys}
@@ -104,18 +116,34 @@ def partial_update_item_type(
     return partial_updated_item_type
 
 
+@item_type_router_v2.patch("/{item_type_id}/unarchive")
+def unarchive_item_type(
+    item_type_id: int,
+    api_key: str = Depends(auth_provider_v2.get_api_key),
+):
+    data_provider_v2.init()
+    item_type_pool = data_provider_v2.fetch_item_type_pool()
+    is_archived = item_type_pool.is_item_type_archived(item_type_id)
+    if is_archived is None:
+        raise HTTPException(status_code=404, detail="Item_type not found")
+    elif is_archived is False:
+        raise HTTPException(status_code=400, detail="Item_type is not archived")
+
+    update_item_type = item_type_pool.unarchive_item_type(item_type_id)
+    return update_item_type
+
+
 @item_type_router_v2.delete("/{item_type_id}")
-def delete_item_type(
+def archive_item_type(
     item_type_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
     item_type_pool = data_provider_v2.fetch_item_type_pool()
-    item_type = item_type_pool.get_item_type(item_type_id)
-    if item_type is None:
+    is_archived = item_type_pool.is_item_type_archived(item_type_id)
+    if is_archived is None:
         raise HTTPException(status_code=404, detail="Item_type not found")
-    if not item_type_pool.remove_item_type(item_type_id):
-        raise HTTPException(
-            status_code=409,
-            detail="Item_type is in use and cannot be deleted",
-        )
-    return {"message": "Item_type deleted successfully"}
+    elif is_archived is True:
+        raise HTTPException(status_code=400, detail="Item_type is already archived")
+
+    update_item_type = item_type_pool.archive_item_type(item_type_id)
+    return update_item_type

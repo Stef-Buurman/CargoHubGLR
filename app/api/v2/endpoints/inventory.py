@@ -1,10 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
-from services.pagination_service import Pagination
+from services.v2.pagination_service import Pagination
 from models.v2.inventory import Inventory
-from services import data_provider_v2, auth_provider_v2
+from services.v2 import data_provider_v2, auth_provider_v2
+from utils.globals import pagination_url
 
-inventory_router_v2 = APIRouter()
+inventory_router_v2 = APIRouter(tags=["v2.Inventories"])
 
 
 @inventory_router_v2.get("/{inventory_id}")
@@ -22,6 +23,7 @@ def read_inventory(
 
 
 @inventory_router_v2.get("/")
+@inventory_router_v2.get(pagination_url)
 def read_inventories(
     pagination: Pagination = Depends(),
     api_key: str = Depends(auth_provider_v2.get_api_key),
@@ -38,12 +40,9 @@ def create_inventory(
     inventory: Inventory, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
-    existingInventory = data_provider_v2.fetch_inventory_pool().get_inventory(
-        inventory.id
-    )
-    if existingInventory is not None:
-        raise HTTPException(status_code=409, detail="inventory already exists")
     created_inventory = data_provider_v2.fetch_inventory_pool().add_inventory(inventory)
+    if created_inventory is None:
+        raise HTTPException(status_code=400, detail="Inventory has archived entries")
     return JSONResponse(
         status_code=status.HTTP_201_CREATED, content=created_inventory.model_dump()
     )
@@ -56,14 +55,20 @@ def update_inventory(
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
-    inventory_exists = data_provider_v2.fetch_inventory_pool().get_inventory(
+    is_archived = data_provider_v2.fetch_inventory_pool().is_inventory_archived(
         inventory_id
     )
-    if inventory_exists is None:
+    if is_archived is None:
         raise HTTPException(status_code=404, detail="inventory not found")
+    elif is_archived is True:
+        raise HTTPException(status_code=400, detail="inventory is archived")
     updated_inventory = data_provider_v2.fetch_inventory_pool().update_inventory(
         inventory_id, inventory
     )
+
+    if updated_inventory is None:
+        raise HTTPException(status_code=400, detail="inventory has archived entries")
+
     return updated_inventory
 
 
@@ -74,11 +79,17 @@ def partial_update_inventory(
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
     data_provider_v2.init()
+    is_archived = data_provider_v2.fetch_inventory_pool().is_inventory_archived(
+        inventory_id
+    )
+    if is_archived is None:
+        raise HTTPException(status_code=404, detail="Inventory not found")
+    elif is_archived is True:
+        raise HTTPException(status_code=400, detail="Inventory is archived")
+
     existing_inventory = data_provider_v2.fetch_inventory_pool().get_inventory(
         inventory_id
     )
-    if existing_inventory is None:
-        raise HTTPException(status_code=404, detail="Inventory not found")
 
     valid_keys = Inventory.model_fields.keys()
     update_data = {key: value for key, value in inventory.items() if key in valid_keys}
@@ -94,16 +105,35 @@ def partial_update_inventory(
     return partial_updated_inventory
 
 
-@inventory_router_v2.delete("/{inventory_id}")
-def delete_inventory(
+@inventory_router_v2.patch("/{inventory_id}/unarchive")
+def unarchive_inventory(
     inventory_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
     data_provider_v2.init()
     inventory_pool = data_provider_v2.fetch_inventory_pool()
 
-    inventory = inventory_pool.get_inventory(inventory_id)
-    if inventory is None:
+    is_archived = inventory_pool.is_inventory_archived(inventory_id)
+    if is_archived is None:
         raise HTTPException(status_code=404, detail="inventory not found")
+    elif is_archived is False:
+        raise HTTPException(status_code=400, detail="inventory is not archived")
 
-    inventory_pool.remove_inventory(inventory_id)
-    return {"message": "inventory deleted successfully"}
+    unarchived_inventory = inventory_pool.unarchive_inventory(inventory_id)
+    return unarchived_inventory
+
+
+@inventory_router_v2.delete("/{inventory_id}")
+def archive_inventory(
+    inventory_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
+):
+    data_provider_v2.init()
+    inventory_pool = data_provider_v2.fetch_inventory_pool()
+
+    is_archived = inventory_pool.is_inventory_archived(inventory_id)
+    if is_archived is None:
+        raise HTTPException(status_code=404, detail="inventory not found")
+    elif is_archived is True:
+        raise HTTPException(status_code=400, detail="inventory is already archived")
+
+    archived_inventory = inventory_pool.archive_inventory(inventory_id)
+    return archived_inventory
