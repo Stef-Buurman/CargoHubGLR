@@ -73,7 +73,7 @@ class UserService(Base):
                 )
 
         return users_list
-    
+
     def get_users(self) -> List[User]:
         users = []
         for user in self.data:
