@@ -10,8 +10,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Test SSH Connection
-        run: ssh ${{ secrets.UPDATE_PROJECT_USER }}@${{ secrets.UPDATE_PROJECT_IP }} -p ${{ secrets.UPDATE_PROJECT_PORT }} "echo Connection Successful"
+    #   - name: Test SSH Connection
+    #     run: ssh ${{ secrets.UPDATE_PROJECT_USER }}@${{ secrets.UPDATE_PROJECT_IP }} -p ${{ secrets.UPDATE_PROJECT_PORT }} "echo Connection Successful"
 
       - name: Set up virtual environment
         env:
@@ -19,5 +19,9 @@ jobs:
           UPDATE_PROJECT_IP: ${{ secrets.UPDATE_PROJECT_IP }}
           UPDATE_PROJECT_PORT: ${{ secrets.UPDATE_PROJECT_PORT }}
           UPDATE_PROJECT_FILE_PATH: ${{ secrets.UPDATE_PROJECT_FILE_PATH }}
+          TEST: ${{ secrets.TEST }}
+          TEST2: ${{ secrets.TEST2 }}
         run: |
-          ssh $UPDATE_PROJECT_USER@$UPDATE_PROJECT_IP -p $UPDATE_PROJECT_PORT "$UPDATE_PROJECT_FILE_PATH"
+          ssh $TEST2
+        
+        #   ssh $UPDATE_PROJECT_USER@$UPDATE_PROJECT_IP -p $UPDATE_PROJECT_PORT "$UPDATE_PROJECT_FILE_PATH"
