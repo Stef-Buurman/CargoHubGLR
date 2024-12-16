@@ -17,70 +17,69 @@ class UserService(Base):
         self.data = []
         self.load(is_debug)
 
-    def get_users(self, need_from_db: bool = False) -> List[User]:
-        if (
-            need_from_db
-            or self.last_updated
-            < datetime.now() - timedelta(minutes=cache_time_minutes)
-            or not self.data
-        ):
-            with self.db.get_connection() as conn:
-                cursor = conn.cursor()
+    def get_all_users(self) -> List[User]:
+        with self.db.get_connection() as conn:
+            cursor = conn.cursor()
 
+            cursor.execute(
+                """
+                SELECT *
+                FROM users
+            """
+            )
+            users = cursor.fetchall()
+
+            users_list = []
+            for user_id, api_key, app, full_access, is_archived in users:
                 cursor.execute(
                     """
-                    SELECT *
-                    FROM users
-                """
+                    SELECT endpoint, full, can_get, can_post, can_put, can_delete
+                    FROM endpoint_access
+                    WHERE user_id = ?
+                """,
+                    (user_id,),
                 )
-                users = cursor.fetchall()
+                endpoints = cursor.fetchall()
 
-                users_list = []
-                for user_id, api_key, app, full_access, is_archived in users:
-                    cursor.execute(
-                        """
-                        SELECT endpoint, full, can_get, can_post, can_put, can_delete
-                        FROM endpoint_access
-                        WHERE user_id = ?
-                    """,
-                        (user_id,),
-                    )
-                    endpoints = cursor.fetchall()
-
-                    endpoint_access = []
-                    for (
-                        endpoint,
-                        full,
-                        can_get,
-                        can_post,
-                        can_put,
-                        can_delete,
-                    ) in endpoints:
-                        endpoint_access.append(
-                            EndpointAccess(
-                                endpoint=endpoint,
-                                full=full,
-                                get=bool(can_get),
-                                post=bool(can_post),
-                                put=bool(can_put),
-                                delete=bool(can_delete),
-                            )
-                        )
-
-                    users_list.append(
-                        User(
-                            id=user_id,
-                            api_key=api_key,
-                            app=app,
-                            full=full_access,
-                            endpoint_access=endpoint_access,
-                            is_archived=is_archived,
+                endpoint_access = []
+                for (
+                    endpoint,
+                    full,
+                    can_get,
+                    can_post,
+                    can_put,
+                    can_delete,
+                ) in endpoints:
+                    endpoint_access.append(
+                        EndpointAccess(
+                            endpoint=endpoint,
+                            full=full,
+                            get=bool(can_get),
+                            post=bool(can_post),
+                            put=bool(can_put),
+                            delete=bool(can_delete),
                         )
                     )
 
-            return users_list
-        else:
-            return self.data
+                users_list.append(
+                    User(
+                        id=user_id,
+                        api_key=api_key,
+                        app=app,
+                        full=full_access,
+                        endpoint_access=endpoint_access,
+                        is_archived=is_archived,
+                    )
+                )
+
+        return users_list
+
+    def get_users(self) -> List[User]:
+        users = []
+        for user in self.data:
+            if not user.is_archived:
+                users.append(user)
+        return users
 
     def get_user(self, api_key: str, need_from_db: bool = False) -> User | None:
         if (
@@ -296,7 +295,7 @@ class UserService(Base):
         if is_debug:
             self.data = USERS
         else:  # pragma: no cover
-            self.data = self.get_users()
+            self.data = self.get_all_users()
 
     def has_access(self, api_key: str, path: str, method: str) -> bool:
         user = self.get_user(api_key)
