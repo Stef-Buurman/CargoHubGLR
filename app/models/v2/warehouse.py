@@ -1,8 +1,8 @@
 from pydantic import EmailStr
-from models.v2.base import Base2
+from models.v2.base import BaseWithArchived
 
 
-class Warehouse(Base2):
+class Warehouse(BaseWithArchived):
     class Config:
         table_name = "warehouses"
 

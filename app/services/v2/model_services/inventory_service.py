@@ -85,7 +85,7 @@ class InventoryService(Base):
         inventory.created_at = self.get_timestamp()
         inventory.updated_at = self.get_timestamp()
 
-        fields = self.get_key_values_of_inventorie(inventory)
+        fields = self.get_key_values_of_inventory(inventory)
 
         columns = ", ".join(fields.keys())
         placeholders = ", ".join("?" for _ in fields)
@@ -126,7 +126,7 @@ class InventoryService(Base):
 
         inventory.updated_at = self.get_timestamp()
 
-        fields = self.get_key_values_of_inventorie(inventory)
+        fields = self.get_key_values_of_inventory(inventory)
 
         columns = ", ".join(f"{key} = ?" for key in fields.keys())
         values = tuple(fields.values())
@@ -189,7 +189,7 @@ class InventoryService(Base):
 
                 self.data[i].updated_at = self.get_timestamp()
 
-                fields = self.get_key_values_of_inventorie(self.data[i])
+                fields = self.get_key_values_of_inventory(self.data[i])
 
                 columns = ", ".join(f"{key} = ?" for key in fields.keys())
                 values = tuple(fields.values())
@@ -214,7 +214,7 @@ class InventoryService(Base):
 
                 self.data[i].updated_at = self.get_timestamp()
 
-                fields = self.get_key_values_of_inventorie(self.data[i])
+                fields = self.get_key_values_of_inventory(self.data[i])
 
                 columns = ", ".join(f"{key} = ?" for key in fields.keys())
                 values = tuple(fields.values())
@@ -299,7 +299,7 @@ class InventoryService(Base):
                 result["total_available"] += x.total_available
         return result
 
-    def get_key_values_of_inventorie(self, inventory: Inventory) -> dict:
+    def get_key_values_of_inventory(self, inventory: Inventory) -> dict:
         fields = {}
         for key, value in vars(inventory).items():
             if key != "id" and key != "locations":
