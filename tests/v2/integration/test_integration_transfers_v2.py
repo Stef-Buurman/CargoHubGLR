@@ -256,7 +256,10 @@ def test_archive_transfer(client):
     response_get = client.get(
         "transfers/" + str(test_transfer["id"]), headers=test_headers
     )
-    assert response_get.status_code == 404
+    assert response_get.status_code == 200
+    response_json = response_get.json()
+    assert response_json is not None
+    assert response_json["is_archived"] is True
 
 
 def test_archive_transfer_no_api_key(client):
