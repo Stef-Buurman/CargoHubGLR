@@ -1,10 +1,11 @@
 name: Update Project on Server
 
 on:
-  push:
-    branches-ignore:
-      - Testing
+  pull_request:
+    branches:
       - Production
+    types:
+      - closed
 
 jobs:
   build:
