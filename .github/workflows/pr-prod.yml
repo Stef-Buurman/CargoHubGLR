@@ -94,11 +94,11 @@ jobs:
 
           if [[ "${{ needs.test.result }}" == "cancelled" ]]; then
             echo "status=cancelled" >> $GITHUB_ENV
-          elif [[ "${{ needs.smoke.result }} == "cancelled" ]]; then
+          elif [[ "${{ needs.smoke.result }}" == "cancelled" ]]; then
             echo "status=cancelled" >> $GITHUB_ENV
           elif [[ "${{ needs.test.result }}" == "failure" ]]; then
             echo "status=failure" >> $GITHUB_ENV
-          elif [[ "${{ needs.smoke.result}}" == "failure" ]]; then
+          elif [[ "${{ needs.smoke.result }}" == "failure" ]]; then
             echo "status=failure" >> $GITHUB_ENV
           else
             echo "status=success" >> $GITHUB_ENV
