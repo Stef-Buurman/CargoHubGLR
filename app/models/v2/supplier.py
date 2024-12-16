@@ -1,7 +1,7 @@
-from models.v2.base import Base2
+from models.v2.base import BaseWithArchived
 
 
-class Supplier(Base2):
+class Supplier(BaseWithArchived):
     id: int | None = None
     code: str
     name: str

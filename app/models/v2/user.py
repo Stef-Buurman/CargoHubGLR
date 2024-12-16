@@ -1,9 +1,9 @@
 from typing import List
-from .base import Base2
+from .base import BaseWithArchived
 from .endpoint_access import EndpointAccess
 
 
-class User(Base2):
+class User(BaseWithArchived):
     id: int | None = None
     api_key: str
     app: str
