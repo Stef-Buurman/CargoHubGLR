@@ -1,33 +1,25 @@
 name: Update Project on Server
 
 on:
-  pull_request:
-    branches:
-      - Production
-    types:
-      - closed
+  push:
+    branches-ignore: ["Testing", "Production"]
 
 jobs:
   build:
-    if: ${{ github.event.pull_request.merged == true }}
     runs-on: self-hosted
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Test SSH Connection
-        env:
-          SSH_USER: ${{ secrets.UPDATE_PROJECT_USER }}
-          SSH_IP: ${{ secrets.UPDATE_PROJECT_IP }}
-          SSH_PORT: ${{ secrets.UPDATE_PROJECT_PORT }}
-        run: |
-          ssh -v "$SSH_USER@$SSH_IP" -p "$SSH_PORT" "echo Connection Successful"
+        run: ssh -v ${{ secrets.UPDATE_PROJECT_USER }}@${{ secrets.UPDATE_PROJECT_IP }} -p ${{ secrets.UPDATE_PROJECT_PORT }} "echo Connection Successful"
 
-      - name: Execute Update Script
+      - name: Set up virtual environment
         env:
-          SSH_USER: ${{ secrets.UPDATE_PROJECT_USER }}
-          SSH_IP: ${{ secrets.UPDATE_PROJECT_IP }}
-          SSH_PORT: ${{ secrets.UPDATE_PROJECT_PORT }}
-          REMOTE_SCRIPT_PATH: ${{ secrets.UPDATE_PROJECT_FILE_PATH }}
+          UPDATE_PROJECT_USER: ${{ secrets.UPDATE_PROJECT_USER }}
+          UPDATE_PROJECT_IP: ${{ secrets.UPDATE_PROJECT_IP }}
+          UPDATE_PROJECT_PORT: ${{ secrets.UPDATE_PROJECT_PORT }}
+          UPDATE_PROJECT_FILE_PATH: ${{ secrets.UPDATE_PROJECT_FILE_PATH }}
+          TEST: ${{ secrets.TEST }}
+          TEST2: ${{ secrets.TEST2 }}
         run: |
-          ssh "$SSH_USER@$SSH_IP" -p "$SSH_PORT" "$REMOTE_SCRIPT_PATH"
+          ssh $UPDATE_PROJECT_USER@$UPDATE_PROJECT_IP -p $UPDATE_PROJECT_PORT "$UPDATE_PROJECT_FILE_PATH"
