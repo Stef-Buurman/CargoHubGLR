@@ -128,7 +128,9 @@ def archive_supplier(
     elif existing_supplier:
         raise HTTPException(status_code=400, detail="Supplier is archived")
 
-    updated_supplier = data_provider_v2.fetch_supplier_pool().archive_supplier(supplier_id)
+    updated_supplier = data_provider_v2.fetch_supplier_pool().archive_supplier(
+        supplier_id
+    )
     return updated_supplier
 
 
@@ -145,5 +147,7 @@ def unarchive_supplier(
     elif not existing_supplier:
         raise HTTPException(status_code=400, detail="Supplier is not archived")
 
-    updated_supplier = data_provider_v2.fetch_supplier_pool().unarchive_supplier(supplier_id)
+    updated_supplier = data_provider_v2.fetch_supplier_pool().unarchive_supplier(
+        supplier_id
+    )
     return updated_supplier

@@ -60,7 +60,9 @@ class SupplierService(Base):
                 return updated_supplier
         return None
 
-    def archive_supplier(self, supplier_id: int, closeConnection: bool = True) -> Supplier | None:
+    def archive_supplier(
+        self, supplier_id: int, closeConnection: bool = True
+    ) -> Supplier | None:
         for i in range(len(self.data)):
             if self.data[i].id == supplier_id:
                 self.data[i].updated_at = self.get_timestamp()
@@ -74,7 +76,7 @@ class SupplierService(Base):
 
     def unarchive_supplier(
         self, supplier_id: int, closeConnection: bool = True
-    ) -> Supplier | None:	
+    ) -> Supplier | None:
         for i in range(len(self.data)):
             if self.data[i].id == supplier_id:
                 self.data[i].updated_at = self.get_timestamp()

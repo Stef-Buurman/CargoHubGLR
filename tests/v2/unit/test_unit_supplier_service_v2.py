@@ -32,7 +32,7 @@ def supplier_service(mock_db_service):
                 reference="LPaJ-SUP0001",
                 created_at="1971-10-20 18:06:17",
                 updated_at="1985-06-08 00:13:46",
-                is_archived=False
+                is_archived=False,
             ),
             Supplier(
                 id=2,
@@ -49,7 +49,7 @@ def supplier_service(mock_db_service):
                 reference="H-SUP0002",
                 created_at="1995-12-18 03:05:46",
                 updated_at="2019-11-10 22:11:12",
-                is_archived=False
+                is_archived=False,
             ),
             Supplier(
                 id=3,
@@ -66,8 +66,8 @@ def supplier_service(mock_db_service):
                 reference="WaS-SUP0003",
                 created_at="2010-06-14 02:32:58",
                 updated_at="2019-06-16 19:29:49",
-                is_archived=True
-            )
+                is_archived=True,
+            ),
         ],
         mock_db_service,
     )
@@ -100,22 +100,22 @@ def test_get_supplier(supplier_service, mock_db_service):
 
 def test_get_supplier_from_db(supplier_service, mock_db_service):
     mock_db_service.get.return_value = Supplier(
-                id=4,
-                code="SUP0004",
-                name="Holden-Quinn",
-                address="576 Christopher Roads",
-                address_extra="Suite 072",
-                city="Amberbury",
-                zip_code="16105",
-                province="Illinois",
-                country="Saint Martin",
-                contact_name="Kathleen Vincent",
-                phonenumber="001-733-291-8848x3542",
-                reference="H-SUP0002",
-                created_at="1995-12-18 03:05:46",
-                updated_at="2019-11-10 22:11:12",
-                is_archived=False
-            )
+        id=4,
+        code="SUP0004",
+        name="Holden-Quinn",
+        address="576 Christopher Roads",
+        address_extra="Suite 072",
+        city="Amberbury",
+        zip_code="16105",
+        province="Illinois",
+        country="Saint Martin",
+        contact_name="Kathleen Vincent",
+        phonenumber="001-733-291-8848x3542",
+        reference="H-SUP0002",
+        created_at="1995-12-18 03:05:46",
+        updated_at="2019-11-10 22:11:12",
+        is_archived=False,
+    )
     supplier = supplier_service.get_supplier(4)
 
     assert supplier.id == 4
@@ -124,21 +124,21 @@ def test_get_supplier_from_db(supplier_service, mock_db_service):
 
 def test_add_supplier(supplier_service, mock_db_service):
     new_supplier = Supplier(
-                code="SUP0010",
-                name="Holden-Quinn019912u3912y7egawjhdb ahs bcasnhf sjdhbsdh fcdhy",
-                address="576 Christopher Roads",
-                address_extra="Suite 072",
-                city="Amberbury",
-                zip_code="16105",
-                province="Illinois",
-                country="Saint Martin",
-                contact_name="Kathleen Vincent",
-                phonenumber="001-733-291-8848x3542",
-                reference="H-SUP0002",
-                created_at="1995-12-18 03:05:46",
-                updated_at="2019-11-10 22:11:12",
-                is_archived=False
-            )
+        code="SUP0010",
+        name="Holden-Quinn019912u3912y7egawjhdb ahs bcasnhf sjdhbsdh fcdhy",
+        address="576 Christopher Roads",
+        address_extra="Suite 072",
+        city="Amberbury",
+        zip_code="16105",
+        province="Illinois",
+        country="Saint Martin",
+        contact_name="Kathleen Vincent",
+        phonenumber="001-733-291-8848x3542",
+        reference="H-SUP0002",
+        created_at="1995-12-18 03:05:46",
+        updated_at="2019-11-10 22:11:12",
+        is_archived=False,
+    )
     mock_db_service.insert.return_value = new_supplier
 
     result = supplier_service.add_supplier(new_supplier)
