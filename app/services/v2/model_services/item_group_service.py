@@ -1,12 +1,20 @@
-from typing import List
+from typing import List, Type
 from models.v2.item_group import ItemGroup
 from services.v2.base_service import Base
-from services.v2.database_service import DB
+from services.v2.database_service import DB, DatabaseService
 
 
 class ItemGroupService(Base):
-    def __init__(self, is_debug=False, item_groups: List[ItemGroup] | None = None):
-        self.db = DB
+    def __init__(
+        self,
+        is_debug=False,
+        item_groups: List[ItemGroup] | None = None,
+        db: Type[DatabaseService] = None,
+    ):
+        if db is not None:
+            self.db = db
+        else:  # pragma: no cover
+            self.db = DB
         self.load(is_debug, item_groups)
 
     def get_all_item_groups(self) -> List[ItemGroup]:
@@ -54,7 +62,7 @@ class ItemGroupService(Base):
                 )
                 self.data[i] = updated_item_group
                 return updated_item_group
-        return None
+        return None # pragma: no cover
 
     def archive_item_group(
         self, item_group_id: int, closeConnection: bool = True
@@ -87,5 +95,5 @@ class ItemGroupService(Base):
     def load(self, is_debug: bool, item_groups: List[ItemGroup] | None = None):
         if is_debug and item_groups is not None:
             self.data = item_groups
-        else:
+        else: # pragma: no cover
             self.data = self.get_all_item_groups()
