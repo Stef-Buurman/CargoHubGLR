@@ -107,8 +107,10 @@ def archive_supplier(supplier_id: int):
     elif existing_supplier:
         raise HTTPException(status_code=400, detail="Supplier is archived")
 
-    data_provider_v2.fetch_supplier_pool().archive_supplier(supplier_id)
-    return {"message": "Supplier archived successfully"}
+    updated_supplier = data_provider_v2.fetch_supplier_pool().archive_supplier(
+        supplier_id
+    )
+    return updated_supplier
 
 
 @supplier_router_v2.patch("/{supplier_id}/unarchive")
@@ -122,5 +124,7 @@ def unarchive_supplier(supplier_id: int):
     elif not existing_supplier:
         raise HTTPException(status_code=400, detail="Supplier is not archived")
 
-    data_provider_v2.fetch_supplier_pool().unarchive_supplier(supplier_id)
-    return {"message": "Supplier unarchived successfully"}
+    updated_supplier = data_provider_v2.fetch_supplier_pool().unarchive_supplier(
+        supplier_id
+    )
+    return updated_supplier
