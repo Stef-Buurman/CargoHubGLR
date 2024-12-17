@@ -359,3 +359,42 @@ def test_unarchive_item_not_found(item_service, mock_db_service):
 
     assert mock_db_service.update.call_count == 0
     assert result is None
+
+
+def test_generate_uid(item_service):
+    generate_uid = item_service.generate_uid()
+    assert isinstance(generate_uid, str)
+    assert generate_uid[-1].isdigit()
+    assert generate_uid[0] == "P"
+    assert generate_uid[-1] == f"{len(item_service.data) + 1}"
+
+
+def test_generate_uid_empty(item_service):
+    item_service.data = []
+    generate_uid = item_service.generate_uid()
+    assert isinstance(generate_uid, str)
+    assert generate_uid[-1].isdigit()
+    assert generate_uid[0] == "P"
+    assert generate_uid[-1] == "1"
+
+
+def test_generate_uid_single_item(item_service):
+    item_service.data = [item_service.data[0]]
+    generate_uid = item_service.generate_uid()
+    assert isinstance(generate_uid, str)
+    assert generate_uid[-1].isdigit()
+    assert generate_uid[0] == "P"
+    assert generate_uid[-1] == "2"
+
+
+def test_generate_uid_many_items(item_service):
+    all_items = []
+    for i in range(1, 99998):
+        test_item_to_add = item_service.data[0].copy()
+        test_item_to_add.uid = f"p{i:06d}"
+        all_items.append(test_item_to_add)
+    item_service.data = all_items
+    generate_uid = item_service.generate_uid()
+    assert isinstance(generate_uid, str)
+    assert generate_uid[0] == "P"
+    assert generate_uid[1:] == "099998"
