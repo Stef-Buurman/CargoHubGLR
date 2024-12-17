@@ -93,7 +93,7 @@ class InventoryService(Base):
 
         insert_sql = f"INSERT INTO {table_name} ({columns}) VALUES ({placeholders})"
 
-        with self.db.get_connection_without_close() as conn:
+        with self.db.get_connection() as conn:
             cursor_inventory = conn.execute(insert_sql, values)
             inventory.id = cursor_inventory.lastrowid
 
@@ -105,8 +105,8 @@ class InventoryService(Base):
                     """
                     conn.execute(location_insert_sql, (inventory.id, location_id))
 
-        if closeConnection:
-            self.db.commit_and_close()
+        # if closeConnection:
+        #     self.db.commit_and_close()
 
         self.data.append(inventory)
         return inventory
@@ -132,7 +132,7 @@ class InventoryService(Base):
         values = tuple(fields.values())
         update_sql = f"UPDATE {table_name} SET {columns} WHERE id = ?"
 
-        with self.db.get_connection_without_close() as conn:
+        with self.db.get_connection() as conn:
             conn.execute(update_sql, values + (inventory_id,))
 
             if inventory.locations:
@@ -170,8 +170,8 @@ class InventoryService(Base):
                         insert_values.append((inventory_id, loc_id))
                     conn.executemany(insert_sql, insert_values)
 
-        if closeConnection:
-            self.db.commit_and_close()
+        # if closeConnection:
+        #     self.db.commit_and_close()
 
         for i in range(len(self.data)):
             if self.data[i].id == inventory_id:
@@ -195,11 +195,11 @@ class InventoryService(Base):
                 values = tuple(fields.values())
                 update_sql = f"UPDATE {table_name} SET {columns} WHERE id = ?"
 
-                with self.db.get_connection_without_close() as conn:
+                with self.db.get_connection() as conn:
                     conn.execute(update_sql, values + (inventory_id,))
 
-                if closeConnection:
-                    self.db.commit_and_close()
+                # if closeConnection:
+                #     self.db.commit_and_close()
 
                 return self.data[i]
         return None
@@ -220,11 +220,11 @@ class InventoryService(Base):
                 values = tuple(fields.values())
                 update_sql = f"UPDATE {table_name} SET {columns} WHERE id = ?"
 
-                with self.db.get_connection_without_close() as conn:
+                with self.db.get_connection() as conn:
                     conn.execute(update_sql, values + (inventory_id,))
 
-                if closeConnection:
-                    self.db.commit_and_close()
+                # if closeConnection:
+                #     self.db.commit_and_close()
 
                 return self.data[i]
         return False

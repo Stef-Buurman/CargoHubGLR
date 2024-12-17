@@ -5,12 +5,12 @@ from services.v2 import data_provider_v2, auth_provider_v2
 from models.v2.client import Client
 from utils.globals import pagination_url
 
-client_router_v2 = APIRouter(tags=["v2.Clients"])
+client_router_v2 = APIRouter(tags=["v2.Clients"], prefix="/clients")
 
 
 @client_router_v2.get("/{client_id}")
 def read_client(client_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)):
-    data_provider_v2.init()
+
     client = data_provider_v2.fetch_client_pool().get_client(client_id)
     if client is None:
         raise HTTPException(status_code=404, detail="Client not found")
@@ -23,7 +23,7 @@ def read_clients(
     pagination: Pagination = Depends(),
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
-    data_provider_v2.init()
+
     clients = data_provider_v2.fetch_client_pool().get_clients()
     if clients is None:
         raise HTTPException(status_code=404, detail="No clients found")
@@ -37,7 +37,7 @@ def read_client_orders(
     pagination: Pagination = Depends(),
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
-    data_provider_v2.init()
+
     client = data_provider_v2.fetch_client_pool().get_client(client_id)
     if client is None:
         raise HTTPException(status_code=404, detail="Client not found")
@@ -49,7 +49,7 @@ def read_client_orders(
 
 @client_router_v2.post("/")
 def create_client(client: Client, api_key: str = Depends(auth_provider_v2.get_api_key)):
-    data_provider_v2.init()
+
     created_client = data_provider_v2.fetch_client_pool().add_client(client)
     return JSONResponse(
         status_code=status.HTTP_201_CREATED, content=created_client.model_dump()
@@ -60,7 +60,7 @@ def create_client(client: Client, api_key: str = Depends(auth_provider_v2.get_ap
 def update_client(
     client_id: int, client: Client, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
-    data_provider_v2.init()
+
     is_archived = data_provider_v2.fetch_client_pool().is_client_archived(client_id)
     if is_archived is None:
         raise HTTPException(status_code=404, detail="Client not found")
@@ -78,7 +78,7 @@ def partial_update_client(
     client: dict,
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
-    data_provider_v2.init()
+
     is_archived = data_provider_v2.fetch_client_pool().is_client_archived(client_id)
     if is_archived is None:
         raise HTTPException(status_code=404, detail="Client not found")
@@ -103,7 +103,7 @@ def partial_update_client(
 def unarchive_client(
     client_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
-    data_provider_v2.init()
+
     is_archived = data_provider_v2.fetch_client_pool().is_client_archived(client_id)
     if is_archived is None:
         raise HTTPException(status_code=404, detail="Client not found")
@@ -117,7 +117,7 @@ def unarchive_client(
 def archive_client(
     client_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
-    data_provider_v2.init()
+
     is_archived = data_provider_v2.fetch_client_pool().is_client_archived(client_id)
     if is_archived is None:
         raise HTTPException(status_code=404, detail="Client not found")

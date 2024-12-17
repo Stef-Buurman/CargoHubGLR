@@ -4,14 +4,14 @@ from services.v2 import data_provider_v2, auth_provider_v2
 from models.v2.transfer import Transfer
 from utils.globals import pagination_url
 
-transfer_router_v2 = APIRouter(tags=["v2.Transfers"])
+transfer_router_v2 = APIRouter(tags=["v2.Transfers"], prefix="/transfers")
 
 
 @transfer_router_v2.get("/{transfer_id}")
 def read_transfer(
     transfer_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
-    data_provider_v2.init()
+
     transfer = data_provider_v2.fetch_transfer_pool().get_transfer(transfer_id)
     if transfer is None:
         raise HTTPException(status_code=404, detail="Transfer not found")
@@ -24,7 +24,7 @@ def read_transfers(
     pagination: Pagination = Depends(),
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
-    data_provider_v2.init()
+
     transfers = data_provider_v2.fetch_transfer_pool().get_transfers()
     if transfers is None:
         raise HTTPException(status_code=404, detail="No transfers found")
@@ -38,7 +38,7 @@ def read_transfer_items(
     pagination: Pagination = Depends(),
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
-    data_provider_v2.init()
+
     transfer = data_provider_v2.fetch_transfer_pool().get_transfer(transfer_id)
     if transfer is None:
         raise HTTPException(status_code=404, detail="Transfer not found")
@@ -52,7 +52,7 @@ def read_transfer_items(
 def create_transfer(
     transfer: Transfer, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
-    data_provider_v2.init()
+
     created_transfer = data_provider_v2.fetch_transfer_pool().add_transfer(transfer)
     return created_transfer
 
@@ -63,7 +63,7 @@ def update_transfer(
     transfer: Transfer,
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
-    data_provider_v2.init()
+
     existing_transfer = data_provider_v2.fetch_transfer_pool().is_transfer_archived(
         transfer_id
     )
@@ -83,7 +83,7 @@ def partial_update_transfer(
     transfer: dict,
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
-    data_provider_v2.init()
+
     existing_transfer = data_provider_v2.fetch_transfer_pool().is_transfer_archived(
         transfer_id
     )
@@ -110,7 +110,6 @@ def partial_update_transfer(
 def commit_transfer(
     transfer_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
-    data_provider_v2.init()
 
     transfer = data_provider_v2.fetch_transfer_pool().is_transfer_archived(transfer_id)
 
@@ -134,7 +133,7 @@ def commit_transfer(
 def archive_transfer(
     transfer_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
-    data_provider_v2.init()
+
     transfer = data_provider_v2.fetch_transfer_pool().is_transfer_archived(transfer_id)
     if transfer is None:
         raise HTTPException(status_code=404, detail="Transfer not found")
@@ -148,7 +147,7 @@ def archive_transfer(
 def unarchive_transfer(
     transfer_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
-    data_provider_v2.init()
+
     transfer = data_provider_v2.fetch_transfer_pool().is_transfer_archived(transfer_id)
     if transfer is None:
         raise HTTPException(status_code=404, detail="Transfer not found")

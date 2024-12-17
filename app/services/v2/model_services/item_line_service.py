@@ -1,13 +1,21 @@
-from typing import List
+from typing import List, Type
 from models.v2.item_line import ItemLine
 from services.v2.base_service import Base
-from services.v2.database_service import DB
+from services.v2.database_service import DB, DatabaseService
 
 
 class ItemLineService(Base):
-    def __init__(self, is_debug=False):
-        self.db = DB
-        self.load(is_debug)
+    def __init__(
+        self,
+        is_debug=False,
+        item_lines: List[ItemLine] | None = None,
+        db: Type[DatabaseService] = None,
+    ):
+        if db is not None:
+            self.db = db
+        else:  # pragma: no cover
+            self.db = DB
+        self.load(is_debug, item_lines)
 
     def get_all_item_lines(self) -> List[ItemLine]:
         return self.db.get_all(ItemLine)
@@ -54,6 +62,7 @@ class ItemLineService(Base):
                 )
                 self.data[i] = updated_item_line
                 return updated_item_line
+        return None  # pragma: no cover
 
     def archive_item_line(
         self, item_line_id: int, closeConnection: bool = True
@@ -86,5 +95,5 @@ class ItemLineService(Base):
     def load(self, is_debug: bool, item_lines: List[ItemLine] | None = None):
         if is_debug and item_lines is not None:
             self.data = item_lines
-        else:
+        else:  # pragma: no cover
             self.data = self.get_all_item_lines()

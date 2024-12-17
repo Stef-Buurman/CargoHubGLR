@@ -226,7 +226,7 @@ class UserService(Base):
         for i in range(len(self.data)):
             if self.data[i].api_key == api_key:
                 self.data[i].is_archived = True
-                with self.db.get_connection_without_close() as conn:
+                with self.db.get_connection() as conn:
                     cursor = conn.cursor()
 
                     cursor.execute(
@@ -237,8 +237,8 @@ class UserService(Base):
                     """,
                         (api_key,),
                     )
-                if close_connection:
-                    self.db.commit_and_close()
+                # if close_connection:
+                #     self.db.commit_and_close()
                 return True
         return False
 
@@ -246,7 +246,7 @@ class UserService(Base):
         for i in range(len(self.data)):
             if self.data[i].api_key == api_key:
                 self.data[i].is_archived = False
-                with self.db.get_connection_without_close() as conn:
+                with self.db.get_connection() as conn:
                     cursor = conn.cursor()
 
                     cursor.execute(
@@ -257,8 +257,8 @@ class UserService(Base):
                     """,
                         (api_key,),
                     )
-                if close_connection:
-                    self.db.commit_and_close()
+                # if close_connection:
+                #     self.db.commit_and_close()
                 return True
         return False
 

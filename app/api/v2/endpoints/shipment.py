@@ -8,14 +8,14 @@ from models.v2.shipment import Shipment
 from typing import Dict, List
 from utils.globals import pagination_url
 
-shipment_router_v2 = APIRouter(tags=["v2.Shipments"])
+shipment_router_v2 = APIRouter(tags=["v2.Shipments"], prefix="/shipments")
 
 
 @shipment_router_v2.get("/{shipment_id}")
 def read_shipment(
     shipment_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
-    data_provider_v2.init()
+
     shipment = data_provider_v2.fetch_shipment_pool().get_shipment(shipment_id)
     if shipment is None:
         raise HTTPException(
@@ -30,7 +30,7 @@ def read_shipments(
     pagination: Pagination = Depends(),
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
-    data_provider_v2.init()
+
     shipments = data_provider_v2.fetch_shipment_pool().get_shipments()
     if shipments is None:
         raise HTTPException(status_code=404, detail="No shipments found")
@@ -44,7 +44,7 @@ def read_orders_for_shipment(
     pagination: Pagination = Depends(),
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
-    data_provider_v2.init()
+
     shipment = data_provider_v2.fetch_shipment_pool().get_shipment(shipment_id)
     if shipment is None:
         raise HTTPException(
@@ -61,7 +61,7 @@ def read_items_for_shipment(
     pagination: Pagination = Depends(),
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
-    data_provider_v2.init()
+
     shipment = data_provider_v2.fetch_shipment_pool().get_shipment(shipment_id)
     if shipment is None:
         raise HTTPException(
@@ -75,7 +75,7 @@ def read_items_for_shipment(
 def create_shipment(
     shipment: Shipment, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
-    data_provider_v2.init()
+
     created_shipment = data_provider_v2.fetch_shipment_pool().add_shipment(shipment)
     return JSONResponse(
         status_code=status.HTTP_201_CREATED, content=created_shipment.model_dump()
@@ -88,7 +88,7 @@ def update_shipment(
     shipment: Shipment,
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
-    data_provider_v2.init()
+
     is_archived = data_provider_v2.fetch_shipment_pool().is_shipment_archived(
         shipment_id
     )
@@ -108,7 +108,7 @@ def update_orders_in_shipment(
     updated_orders: List[Order],
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
-    data_provider_v2.init()
+
     is_archived = data_provider_v2.fetch_shipment_pool().is_shipment_archived(
         shipment_id
     )
@@ -132,7 +132,7 @@ def update_items_in_shipment(
     updated_item: List[ItemInObject],
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
-    data_provider_v2.init()
+
     is_archived = data_provider_v2.fetch_shipment_pool().is_shipment_archived(
         shipment_id
     )
@@ -154,7 +154,7 @@ def update_items_in_shipment(
 def commit_shipment(
     shipment_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
-    data_provider_v2.init()
+
     is_archived = data_provider_v2.fetch_shipment_pool().is_shipment_archived(
         shipment_id
     )
@@ -179,7 +179,7 @@ def partial_update_shipment(
     shipment: dict,
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
-    data_provider_v2.init()
+
     is_archived = data_provider_v2.fetch_shipment_pool().is_shipment_archived(
         shipment_id
     )
@@ -206,7 +206,7 @@ def partial_update_shipment(
 def unarchive_shipment(
     shipment_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
-    data_provider_v2.init()
+
     shipment_pool = data_provider_v2.fetch_shipment_pool()
     is_archived = shipment_pool.is_shipment_archived(shipment_id)
     if is_archived is None:
@@ -221,7 +221,7 @@ def unarchive_shipment(
 def archive_shipment(
     shipment_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
-    data_provider_v2.init()
+
     shipment_pool = data_provider_v2.fetch_shipment_pool()
     is_archived = shipment_pool.is_shipment_archived(shipment_id)
     if is_archived is None:

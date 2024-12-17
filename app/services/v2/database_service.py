@@ -103,15 +103,15 @@ class DatabaseService:
 
         insert_sql = f"INSERT INTO {table_name} ({columns}) VALUES ({placeholders})"
 
-        with self.get_connection_without_close() as conn:
+        with self.get_connection() as conn:
             cursor = conn.execute(insert_sql, values)
 
             if primary_key_field == "id":
                 inserted_id = cursor.lastrowid
                 model = model.model_copy(update={primary_key_field: inserted_id})
 
-        if closeConnection:
-            self.commit_and_close()
+        # if closeConnection:
+        #     self.commit_and_close()
         return model
 
     def update(
@@ -125,10 +125,10 @@ class DatabaseService:
         columns = ", ".join(f"{key} = ?" for key in fields.keys())
         values = tuple(fields.values())
         update_sql = f"UPDATE {table_name} SET {columns} WHERE {primary_key_field} = ?"
-        with self.get_connection_without_close() as conn:
+        with self.get_connection() as conn:
             conn.execute(update_sql, values + (id,))
-        if closeConnection:
-            self.commit_and_close()
+        # if closeConnection:
+        #     self.commit_and_close()
         model = model.model_copy(update={primary_key_field: primary_key_value})
         return model
 
@@ -138,15 +138,15 @@ class DatabaseService:
         table_name = model.table_name()
         primary_key_field = self.get_primary_key_column(table_name)
         delete_sql = f"DELETE FROM {table_name} WHERE {primary_key_field} = ?"
-        with self.get_connection_without_close() as conn:
+        with self.get_connection() as conn:
             conn.execute(delete_sql, (id,))
-        if closeConnection:
-            self.commit_and_close()
+        # if closeConnection:
+        #     self.commit_and_close()
         return True
 
     def get_primary_key_column(self, table_name: str) -> str:  # pragma: no cover
         query = f"PRAGMA table_info({table_name})"
-        with self.get_connection_without_close() as conn:
+        with self.get_connection() as conn:
             cursor = conn.execute(query)
             columns = cursor.fetchall()
 

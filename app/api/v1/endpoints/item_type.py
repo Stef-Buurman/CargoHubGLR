@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
 from services.v1 import data_provider, auth_provider
 
-item_type_router = APIRouter(tags=["v1.Item Types"])
+item_type_router = APIRouter(tags=["v1.Item Types"], prefix="/item_types")
 
 
 @item_type_router.get("/{item_type_id}")

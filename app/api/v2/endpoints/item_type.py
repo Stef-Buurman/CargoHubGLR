@@ -5,14 +5,14 @@ from services.v2 import data_provider_v2, auth_provider_v2
 from models.v2.item_type import ItemType
 from utils.globals import pagination_url
 
-item_type_router_v2 = APIRouter(tags=["v2.Item Types"])
+item_type_router_v2 = APIRouter(tags=["v2.Item Types"], prefix="/item_types")
 
 
 @item_type_router_v2.get("/{item_type_id}")
 def read_item_type(
     item_type_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
-    data_provider_v2.init()
+
     item_type = data_provider_v2.fetch_item_type_pool().get_item_type(item_type_id)
     if item_type is None:
         raise HTTPException(
@@ -27,7 +27,7 @@ def read_item_types(
     pagination: Pagination = Depends(),
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
-    data_provider_v2.init()
+
     item_types = data_provider_v2.fetch_item_type_pool().get_item_types()
     if item_types is None:
         raise HTTPException(status_code=404, detail="No item_types found")
@@ -41,7 +41,7 @@ def read_items_for_item_type(
     pagination: Pagination = Depends(),
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
-    data_provider_v2.init()
+
     item_type = data_provider_v2.fetch_item_type_pool().get_item_type(item_type_id)
     if item_type is None:
         raise HTTPException(
@@ -55,7 +55,7 @@ def read_items_for_item_type(
 def create_item_type(
     item_type: ItemType, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
-    data_provider_v2.init()
+
     added_item_type = data_provider_v2.fetch_item_type_pool().add_item_type(item_type)
     return JSONResponse(
         status_code=status.HTTP_201_CREATED, content=added_item_type.model_dump()
@@ -68,7 +68,7 @@ def update_item_type(
     item_type: ItemType,
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
-    data_provider_v2.init()
+
     is_archvied = data_provider_v2.fetch_item_type_pool().is_item_type_archived(
         item_type_id
     )
@@ -89,7 +89,7 @@ def partial_update_item_type(
     item_type: dict,
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
-    data_provider_v2.init()
+
     is_archvied = data_provider_v2.fetch_item_type_pool().is_item_type_archived(
         item_type_id
     )
@@ -121,7 +121,7 @@ def unarchive_item_type(
     item_type_id: int,
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
-    data_provider_v2.init()
+
     item_type_pool = data_provider_v2.fetch_item_type_pool()
     is_archived = item_type_pool.is_item_type_archived(item_type_id)
     if is_archived is None:
@@ -137,7 +137,7 @@ def unarchive_item_type(
 def archive_item_type(
     item_type_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
-    data_provider_v2.init()
+
     item_type_pool = data_provider_v2.fetch_item_type_pool()
     is_archived = item_type_pool.is_item_type_archived(item_type_id)
     if is_archived is None:

@@ -5,12 +5,12 @@ from services.v2 import data_provider_v2, auth_provider_v2
 from models.v2.item import Item
 from utils.globals import pagination_url
 
-item_router_v2 = APIRouter(tags=["v2.Items"])
+item_router_v2 = APIRouter(tags=["v2.Items"], prefix="/items")
 
 
 @item_router_v2.get("/{item_id}")
 def read_item(item_id: str, api_key: str = Depends(auth_provider_v2.get_api_key)):
-    data_provider_v2.init()
+
     items = data_provider_v2.fetch_item_pool().get_item(item_id)
     if items is None:
         raise HTTPException(
@@ -25,7 +25,7 @@ def read_items(
     pagination: Pagination = Depends(),
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
-    data_provider_v2.init()
+
     items = data_provider_v2.fetch_item_pool().get_items()
     if items is None:
         raise HTTPException(status_code=404, detail="Items not found")
@@ -39,7 +39,7 @@ def read_inventory_of_item(
     pagination: Pagination = Depends(),
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
-    data_provider_v2.init()
+
     item = data_provider_v2.fetch_item_pool().get_item(item_id)
     if item is None:
         raise HTTPException(status_code=404, detail="Item not found")
@@ -53,7 +53,7 @@ def read_inventory_of_item(
 def read_inventory_totals_of_item(
     item_id: str, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
-    data_provider_v2.init()
+
     item = data_provider_v2.fetch_item_pool().get_item(item_id)
     if item is None:
         raise HTTPException(status_code=404, detail="Item not found")
@@ -65,7 +65,7 @@ def read_inventory_totals_of_item(
 
 @item_router_v2.post("/")
 def create_item(item: Item, api_key: str = Depends(auth_provider_v2.get_api_key)):
-    data_provider_v2.init()
+
     addedItem = data_provider_v2.fetch_item_pool().add_item(item)
     if addedItem is None:
         raise HTTPException(
@@ -81,7 +81,7 @@ def create_item(item: Item, api_key: str = Depends(auth_provider_v2.get_api_key)
 def update_item(
     item_id: str, item: Item, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
-    data_provider_v2.init()
+
     existing_item = data_provider_v2.fetch_item_pool().is_item_archived(item_id)
     if existing_item is None:
         raise HTTPException(status_code=404, detail="Item not found")
@@ -97,7 +97,7 @@ def partial_update_item(
     item: dict,
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
-    data_provider_v2.init()
+
     is_archived = data_provider_v2.fetch_item_pool().is_item_archived(item_id)
     if is_archived is None:
         raise HTTPException(status_code=404, detail="Item not found")
@@ -123,7 +123,7 @@ def unarchive_item(
     item_id: str,
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
-    data_provider_v2.init()
+
     item_pool = data_provider_v2.fetch_item_pool()
 
     is_archived = item_pool.is_item_archived(item_id)
@@ -138,7 +138,7 @@ def unarchive_item(
 
 @item_router_v2.delete("/{item_id}")
 def archive_item(item_id: str, api_key: str = Depends(auth_provider_v2.get_api_key)):
-    data_provider_v2.init()
+
     item_pool = data_provider_v2.fetch_item_pool()
 
     is_archived = item_pool.is_item_archived(item_id)
