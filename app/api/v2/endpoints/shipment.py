@@ -8,7 +8,7 @@ from models.v2.shipment import Shipment
 from typing import Dict, List
 from utils.globals import pagination_url
 
-shipment_router_v2 = APIRouter(tags=["v2.Shipments"])
+shipment_router_v2 = APIRouter(tags=["v2.Shipments"], prefix="/shipments")
 
 
 @shipment_router_v2.get("/{shipment_id}")

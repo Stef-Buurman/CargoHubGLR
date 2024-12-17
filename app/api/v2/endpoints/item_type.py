@@ -5,7 +5,7 @@ from services.v2 import data_provider_v2, auth_provider_v2
 from models.v2.item_type import ItemType
 from utils.globals import pagination_url
 
-item_type_router_v2 = APIRouter(tags=["v2.Item Types"])
+item_type_router_v2 = APIRouter(tags=["v2.Item Types"], prefix="/item_types")
 
 
 @item_type_router_v2.get("/{item_type_id}")

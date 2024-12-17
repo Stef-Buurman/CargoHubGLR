@@ -5,7 +5,7 @@ from services.v2 import data_provider_v2, auth_provider_v2
 from models.v2.client import Client
 from utils.globals import pagination_url
 
-client_router_v2 = APIRouter(tags=["v2.Clients"])
+client_router_v2 = APIRouter(tags=["v2.Clients"], prefix="/clients")
 
 
 @client_router_v2.get("/{client_id}")

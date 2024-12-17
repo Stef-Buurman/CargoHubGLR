@@ -5,7 +5,7 @@ from services.v2 import data_provider_v2, auth_provider_v2
 from models.v2.warehouse import Warehouse
 from utils.globals import pagination_url
 
-warehouse_router_v2 = APIRouter(tags=["v2.Warehouses"])
+warehouse_router_v2 = APIRouter(tags=["v2.Warehouses"], prefix="/warehouses")
 
 
 @warehouse_router_v2.get("/{warehouse_id}")

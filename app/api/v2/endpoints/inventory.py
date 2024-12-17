@@ -5,7 +5,7 @@ from models.v2.inventory import Inventory
 from services.v2 import data_provider_v2, auth_provider_v2
 from utils.globals import pagination_url
 
-inventory_router_v2 = APIRouter(tags=["v2.Inventories"])
+inventory_router_v2 = APIRouter(tags=["v2.Inventories"], prefix="/inventories")
 
 
 @inventory_router_v2.get("/{inventory_id}")
