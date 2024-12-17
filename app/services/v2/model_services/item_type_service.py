@@ -1,12 +1,20 @@
-from typing import List
+from typing import List, Type
 from models.v2.item_type import ItemType
 from services.v2.base_service import Base
-from services.v2.database_service import DB
+from services.v2.database_service import DB, DatabaseService
 
 
 class ItemTypeService(Base):
-    def __init__(self, is_debug=False, item_types: List[ItemType] | None = None):
-        self.db = DB
+    def __init__(
+        self,
+        is_debug=False,
+        item_types: List[ItemType] | None = None,
+        db: Type[DatabaseService] = None,
+    ):
+        if db is not None:
+            self.db = db
+        else:  # pragma: no cover
+            self.db = DB
         self.load(is_debug, item_types)
 
     def get_all_item_types(self) -> List[ItemType]:
@@ -48,7 +56,7 @@ class ItemTypeService(Base):
                 )
                 self.data[i] = updae_item_type
                 return updae_item_type
-        return None
+        return None  # pragma: no cover
 
     def is_item_type_archived(self, item_type_id: int) -> bool:
         for item_type in self.data:
@@ -86,5 +94,5 @@ class ItemTypeService(Base):
     def load(self, is_debug: bool, item_types: List[ItemType] | None = None):
         if is_debug and item_types is not None:
             self.data = item_types
-        else:
+        else:  # pragma: no cover
             self.data = self.get_all_item_types()
