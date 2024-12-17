@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
 from services.v2.pagination_service import Pagination
-from services.v2 import data_provider_v2, auth_provider_v2
+from services.v2 import data_provider_v2
 from models.v2.order import Order
 from models.v2.ItemInObject import ItemInObject
 from utils.globals import pagination_url
@@ -10,7 +10,7 @@ order_router_v2 = APIRouter(tags=["v2.Orders"], prefix="/orders")
 
 
 @order_router_v2.get("/{order_id}")
-def read_order(order_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)):
+def read_order(order_id: int):
 
     order = data_provider_v2.fetch_order_pool().get_order(order_id)
     if order is None:
@@ -22,10 +22,7 @@ def read_order(order_id: int, api_key: str = Depends(auth_provider_v2.get_api_ke
 
 @order_router_v2.get("/")
 @order_router_v2.get(pagination_url)
-def read_orders(
-    pagination: Pagination = Depends(),
-    api_key: str = Depends(auth_provider_v2.get_api_key),
-):
+def read_orders(pagination: Pagination = Depends()):
 
     orders = data_provider_v2.fetch_order_pool().get_orders()
     if orders is None:
@@ -35,11 +32,7 @@ def read_orders(
 
 @order_router_v2.get("/{order_id}/items")
 @order_router_v2.get("/{order_id}/items" + pagination_url)
-def read_order_items(
-    order_id: int,
-    pagination: Pagination = Depends(),
-    api_key: str = Depends(auth_provider_v2.get_api_key),
-):
+def read_order_items(order_id: int, pagination: Pagination = Depends()):
 
     items = data_provider_v2.fetch_order_pool().get_items_in_order(order_id)
     if items is None:
@@ -50,7 +43,7 @@ def read_order_items(
 
 
 @order_router_v2.post("/")
-def create_order(order: Order, api_key: str = Depends(auth_provider_v2.get_api_key)):
+def create_order(order: Order):
 
     addedOrder = data_provider_v2.fetch_order_pool().add_order(order)
     if addedOrder is None:
@@ -61,9 +54,7 @@ def create_order(order: Order, api_key: str = Depends(auth_provider_v2.get_api_k
 
 
 @order_router_v2.put("/{order_id}")
-def update_order(
-    order_id: int, order: Order, api_key: str = Depends(auth_provider_v2.get_api_key)
-):
+def update_order(order_id: int, order: Order):
 
     existingOrder = data_provider_v2.fetch_order_pool().is_order_archived(order_id)
     if existingOrder is None:
@@ -76,11 +67,7 @@ def update_order(
 
 
 @order_router_v2.put("/{order_id}/items")
-def add_items_to_order(
-    order_id: int,
-    items: list[ItemInObject],
-    api_key: str = Depends(auth_provider_v2.get_api_key),
-):
+def add_items_to_order(order_id: int, items: list[ItemInObject]):
 
     existingOrder = data_provider_v2.fetch_order_pool().is_order_archived(order_id)
     if existingOrder is None:
@@ -93,11 +80,7 @@ def add_items_to_order(
 
 
 @order_router_v2.patch("/{order_id}")
-def partial_update_order(
-    order_id: int,
-    order: dict,
-    api_key: str = Depends(auth_provider_v2.get_api_key),
-):
+def partial_update_order(order_id: int, order: dict):
 
     existing_order = data_provider_v2.fetch_order_pool().is_order_archived(order_id)
     if existing_order is None:
@@ -120,7 +103,7 @@ def partial_update_order(
 
 
 @order_router_v2.delete("/{order_id}")
-def archive_order(order_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)):
+def archive_order(order_id: int):
 
     order = data_provider_v2.fetch_order_pool().is_order_archived(order_id)
 
@@ -134,9 +117,7 @@ def archive_order(order_id: int, api_key: str = Depends(auth_provider_v2.get_api
 
 
 @order_router_v2.patch("/{order_id}/unarchive")
-def unarchive_order(
-    order_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
-):
+def unarchive_order(order_id: int):
 
     order = data_provider_v2.fetch_order_pool().is_order_archived(order_id)
 

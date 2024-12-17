@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
 from services.v2.pagination_service import Pagination
-from services.v2 import data_provider_v2, auth_provider_v2
+from services.v2 import data_provider_v2
 from models.v2.supplier import Supplier
 from utils.globals import pagination_url
 
@@ -9,9 +9,7 @@ supplier_router_v2 = APIRouter(tags=["v2.Suppliers"], prefix="/suppliers")
 
 
 @supplier_router_v2.get("/{supplier_id}")
-def read_supplier(
-    supplier_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
-):
+def read_supplier(supplier_id: int):
 
     supplier = data_provider_v2.fetch_supplier_pool().get_supplier(supplier_id)
     if supplier is None:
@@ -23,10 +21,7 @@ def read_supplier(
 
 @supplier_router_v2.get("/")
 @supplier_router_v2.get(pagination_url)
-def read_suppliers(
-    pagination: Pagination = Depends(),
-    api_key: str = Depends(auth_provider_v2.get_api_key),
-):
+def read_suppliers(pagination: Pagination = Depends()):
 
     suppliers = data_provider_v2.fetch_supplier_pool().get_suppliers()
     if suppliers is None:
@@ -36,11 +31,7 @@ def read_suppliers(
 
 @supplier_router_v2.get("/{supplier_id}/items")
 @supplier_router_v2.get("/{supplier_id}/items" + pagination_url)
-def read_items_of_supplier(
-    supplier_id: int,
-    pagination: Pagination = Depends(),
-    api_key: str = Depends(auth_provider_v2.get_api_key),
-):
+def read_items_of_supplier(supplier_id: int, pagination: Pagination = Depends()):
 
     supplier = data_provider_v2.fetch_supplier_pool().get_supplier(supplier_id)
     if supplier is None:
@@ -55,9 +46,7 @@ def read_items_of_supplier(
 
 
 @supplier_router_v2.post("/")
-def create_supplier(
-    supplier: Supplier, api_key: str = Depends(auth_provider_v2.get_api_key)
-):
+def create_supplier(supplier: Supplier):
 
     created_supplier = data_provider_v2.fetch_supplier_pool().add_supplier(supplier)
     return JSONResponse(
@@ -66,11 +55,7 @@ def create_supplier(
 
 
 @supplier_router_v2.put("/{supplier_id}")
-def update_supplier(
-    supplier_id: int,
-    supplier: Supplier,
-    api_key: str = Depends(auth_provider_v2.get_api_key),
-):
+def update_supplier(supplier_id: int, supplier: Supplier):
 
     existingSupplier = data_provider_v2.fetch_supplier_pool().is_supplier_archived(
         supplier_id
@@ -86,11 +71,7 @@ def update_supplier(
 
 
 @supplier_router_v2.patch("/{supplier_id}")
-def partial_update_supplier(
-    supplier_id: int,
-    supplier: dict,
-    api_key: str = Depends(auth_provider_v2.get_api_key),
-):
+def partial_update_supplier(supplier_id: int, supplier: dict):
 
     existing_supplier = data_provider_v2.fetch_supplier_pool().is_supplier_archived(
         supplier_id
@@ -115,9 +96,7 @@ def partial_update_supplier(
 
 
 @supplier_router_v2.delete("/{supplier_id}")
-def archive_supplier(
-    supplier_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
-):
+def archive_supplier(supplier_id: int):
 
     existing_supplier = data_provider_v2.fetch_supplier_pool().is_supplier_archived(
         supplier_id
@@ -133,9 +112,7 @@ def archive_supplier(
 
 
 @supplier_router_v2.patch("/{supplier_id}/unarchive")
-def unarchive_supplier(
-    supplier_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
-):
+def unarchive_supplier(supplier_id: int):
 
     existing_supplier = data_provider_v2.fetch_supplier_pool().is_supplier_archived(
         supplier_id
