@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
 from services.v2.pagination_service import Pagination
-from services.v2 import data_provider_v2, auth_provider_v2
+from services.v2 import data_provider_v2
 from models.v2.item_type import ItemType
 from utils.globals import pagination_url
 
@@ -9,9 +9,7 @@ item_type_router_v2 = APIRouter(tags=["v2.Item Types"], prefix="/item_types")
 
 
 @item_type_router_v2.get("/{item_type_id}")
-def read_item_type(
-    item_type_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
-):
+def read_item_type(item_type_id: int):
 
     item_type = data_provider_v2.fetch_item_type_pool().get_item_type(item_type_id)
     if item_type is None:
@@ -23,10 +21,7 @@ def read_item_type(
 
 @item_type_router_v2.get("/")
 @item_type_router_v2.get(pagination_url)
-def read_item_types(
-    pagination: Pagination = Depends(),
-    api_key: str = Depends(auth_provider_v2.get_api_key),
-):
+def read_item_types(pagination: Pagination = Depends()):
 
     item_types = data_provider_v2.fetch_item_type_pool().get_item_types()
     if item_types is None:
@@ -36,11 +31,7 @@ def read_item_types(
 
 @item_type_router_v2.get("/{item_type_id}/items")
 @item_type_router_v2.get("/{item_type_id}/items" + pagination_url)
-def read_items_for_item_type(
-    item_type_id: int,
-    pagination: Pagination = Depends(),
-    api_key: str = Depends(auth_provider_v2.get_api_key),
-):
+def read_items_for_item_type(item_type_id: int, pagination: Pagination = Depends()):
 
     item_type = data_provider_v2.fetch_item_type_pool().get_item_type(item_type_id)
     if item_type is None:
@@ -52,9 +43,7 @@ def read_items_for_item_type(
 
 
 @item_type_router_v2.post("/")
-def create_item_type(
-    item_type: ItemType, api_key: str = Depends(auth_provider_v2.get_api_key)
-):
+def create_item_type(item_type: ItemType):
 
     added_item_type = data_provider_v2.fetch_item_type_pool().add_item_type(item_type)
     return JSONResponse(
@@ -63,11 +52,7 @@ def create_item_type(
 
 
 @item_type_router_v2.put("/{item_type_id}")
-def update_item_type(
-    item_type_id: int,
-    item_type: ItemType,
-    api_key: str = Depends(auth_provider_v2.get_api_key),
-):
+def update_item_type(item_type_id: int, item_type: ItemType):
 
     is_archvied = data_provider_v2.fetch_item_type_pool().is_item_type_archived(
         item_type_id
@@ -84,11 +69,7 @@ def update_item_type(
 
 
 @item_type_router_v2.patch("/{item_type_id}")
-def partial_update_item_type(
-    item_type_id: int,
-    item_type: dict,
-    api_key: str = Depends(auth_provider_v2.get_api_key),
-):
+def partial_update_item_type(item_type_id: int, item_type: dict):
 
     is_archvied = data_provider_v2.fetch_item_type_pool().is_item_type_archived(
         item_type_id
@@ -117,10 +98,7 @@ def partial_update_item_type(
 
 
 @item_type_router_v2.patch("/{item_type_id}/unarchive")
-def unarchive_item_type(
-    item_type_id: int,
-    api_key: str = Depends(auth_provider_v2.get_api_key),
-):
+def unarchive_item_type(item_type_id: int):
 
     item_type_pool = data_provider_v2.fetch_item_type_pool()
     is_archived = item_type_pool.is_item_type_archived(item_type_id)
@@ -134,9 +112,7 @@ def unarchive_item_type(
 
 
 @item_type_router_v2.delete("/{item_type_id}")
-def archive_item_type(
-    item_type_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
-):
+def archive_item_type(item_type_id: int):
 
     item_type_pool = data_provider_v2.fetch_item_type_pool()
     is_archived = item_type_pool.is_item_type_archived(item_type_id)

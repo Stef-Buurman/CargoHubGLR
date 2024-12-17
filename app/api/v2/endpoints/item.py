@@ -9,7 +9,7 @@ item_router_v2 = APIRouter(tags=["v2.Items"], prefix="/items")
 
 
 @item_router_v2.get("/{item_id}")
-def read_item(item_id: str, api_key: str = Depends(auth_provider_v2.get_api_key)):
+def read_item(item_id: str):
 
     items = data_provider_v2.fetch_item_pool().get_item(item_id)
     if items is None:
@@ -21,10 +21,7 @@ def read_item(item_id: str, api_key: str = Depends(auth_provider_v2.get_api_key)
 
 @item_router_v2.get("/")
 @item_router_v2.get(pagination_url)
-def read_items(
-    pagination: Pagination = Depends(),
-    api_key: str = Depends(auth_provider_v2.get_api_key),
-):
+def read_items(pagination: Pagination = Depends()):
 
     items = data_provider_v2.fetch_item_pool().get_items()
     if items is None:
@@ -34,11 +31,7 @@ def read_items(
 
 @item_router_v2.get("/{item_id}/inventory")
 @item_router_v2.get("/{item_id}/inventory" + pagination_url)
-def read_inventory_of_item(
-    item_id: str,
-    pagination: Pagination = Depends(),
-    api_key: str = Depends(auth_provider_v2.get_api_key),
-):
+def read_inventory_of_item(item_id: str, pagination: Pagination = Depends()):
 
     item = data_provider_v2.fetch_item_pool().get_item(item_id)
     if item is None:
@@ -50,9 +43,7 @@ def read_inventory_of_item(
 
 
 @item_router_v2.get("/{item_id}/inventory/totals")
-def read_inventory_totals_of_item(
-    item_id: str, api_key: str = Depends(auth_provider_v2.get_api_key)
-):
+def read_inventory_totals_of_item(item_id: str):
 
     item = data_provider_v2.fetch_item_pool().get_item(item_id)
     if item is None:
@@ -64,7 +55,7 @@ def read_inventory_totals_of_item(
 
 
 @item_router_v2.post("/")
-def create_item(item: Item, api_key: str = Depends(auth_provider_v2.get_api_key)):
+def create_item(item: Item):
 
     addedItem = data_provider_v2.fetch_item_pool().add_item(item)
     if addedItem is None:
@@ -78,9 +69,7 @@ def create_item(item: Item, api_key: str = Depends(auth_provider_v2.get_api_key)
 
 
 @item_router_v2.put("/{item_id}")
-def update_item(
-    item_id: str, item: Item, api_key: str = Depends(auth_provider_v2.get_api_key)
-):
+def update_item(item_id: str, item: Item):
 
     existing_item = data_provider_v2.fetch_item_pool().is_item_archived(item_id)
     if existing_item is None:
@@ -92,11 +81,7 @@ def update_item(
 
 
 @item_router_v2.patch("/{item_id}")
-def partial_update_item(
-    item_id: str,
-    item: dict,
-    api_key: str = Depends(auth_provider_v2.get_api_key),
-):
+def partial_update_item(item_id: str, item: dict):
 
     is_archived = data_provider_v2.fetch_item_pool().is_item_archived(item_id)
     if is_archived is None:
@@ -119,10 +104,7 @@ def partial_update_item(
 
 
 @item_router_v2.patch("/{item_id}/unarchive")
-def unarchive_item(
-    item_id: str,
-    api_key: str = Depends(auth_provider_v2.get_api_key),
-):
+def unarchive_item(item_id: str):
 
     item_pool = data_provider_v2.fetch_item_pool()
 
@@ -137,7 +119,7 @@ def unarchive_item(
 
 
 @item_router_v2.delete("/{item_id}")
-def archive_item(item_id: str, api_key: str = Depends(auth_provider_v2.get_api_key)):
+def archive_item(item_id: str):
 
     item_pool = data_provider_v2.fetch_item_pool()
 

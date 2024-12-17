@@ -3,18 +3,16 @@ from fastapi.responses import JSONResponse
 from models.v2.order import Order
 from models.v2.ItemInObject import ItemInObject
 from services.v2.pagination_service import Pagination
-from services.v2 import data_provider_v2, auth_provider_v2
+from services.v2 import data_provider_v2
 from models.v2.shipment import Shipment
-from typing import Dict, List
+from typing import List
 from utils.globals import pagination_url
 
 shipment_router_v2 = APIRouter(tags=["v2.Shipments"], prefix="/shipments")
 
 
 @shipment_router_v2.get("/{shipment_id}")
-def read_shipment(
-    shipment_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
-):
+def read_shipment(shipment_id: int):
 
     shipment = data_provider_v2.fetch_shipment_pool().get_shipment(shipment_id)
     if shipment is None:
@@ -26,10 +24,7 @@ def read_shipment(
 
 @shipment_router_v2.get("/")
 @shipment_router_v2.get(pagination_url)
-def read_shipments(
-    pagination: Pagination = Depends(),
-    api_key: str = Depends(auth_provider_v2.get_api_key),
-):
+def read_shipments(pagination: Pagination = Depends()):
 
     shipments = data_provider_v2.fetch_shipment_pool().get_shipments()
     if shipments is None:
@@ -39,11 +34,7 @@ def read_shipments(
 
 @shipment_router_v2.get("/{shipment_id}/orders")
 @shipment_router_v2.get("/{shipment_id}/orders" + pagination_url)
-def read_orders_for_shipment(
-    shipment_id: int,
-    pagination: Pagination = Depends(),
-    api_key: str = Depends(auth_provider_v2.get_api_key),
-):
+def read_orders_for_shipment(shipment_id: int, pagination: Pagination = Depends()):
 
     shipment = data_provider_v2.fetch_shipment_pool().get_shipment(shipment_id)
     if shipment is None:
@@ -56,11 +47,7 @@ def read_orders_for_shipment(
 
 @shipment_router_v2.get("/{shipment_id}/items")
 @shipment_router_v2.get("/{shipment_id}/items" + pagination_url)
-def read_items_for_shipment(
-    shipment_id: int,
-    pagination: Pagination = Depends(),
-    api_key: str = Depends(auth_provider_v2.get_api_key),
-):
+def read_items_for_shipment(shipment_id: int, pagination: Pagination = Depends()):
 
     shipment = data_provider_v2.fetch_shipment_pool().get_shipment(shipment_id)
     if shipment is None:
@@ -72,9 +59,7 @@ def read_items_for_shipment(
 
 
 @shipment_router_v2.post("/")
-def create_shipment(
-    shipment: Shipment, api_key: str = Depends(auth_provider_v2.get_api_key)
-):
+def create_shipment(shipment: Shipment):
 
     created_shipment = data_provider_v2.fetch_shipment_pool().add_shipment(shipment)
     return JSONResponse(
@@ -83,11 +68,7 @@ def create_shipment(
 
 
 @shipment_router_v2.put("/{shipment_id}")
-def update_shipment(
-    shipment_id: int,
-    shipment: Shipment,
-    api_key: str = Depends(auth_provider_v2.get_api_key),
-):
+def update_shipment(shipment_id: int, shipment: Shipment):
 
     is_archived = data_provider_v2.fetch_shipment_pool().is_shipment_archived(
         shipment_id
@@ -103,11 +84,7 @@ def update_shipment(
 
 
 @shipment_router_v2.put("/{shipment_id}/orders")
-def update_orders_in_shipment(
-    shipment_id: int,
-    updated_orders: List[Order],
-    api_key: str = Depends(auth_provider_v2.get_api_key),
-):
+def update_orders_in_shipment(shipment_id: int, updated_orders: List[Order]):
 
     is_archived = data_provider_v2.fetch_shipment_pool().is_shipment_archived(
         shipment_id
@@ -127,11 +104,7 @@ def update_orders_in_shipment(
 
 
 @shipment_router_v2.put("/{shipment_id}/items")
-def update_items_in_shipment(
-    shipment_id: int,
-    updated_item: List[ItemInObject],
-    api_key: str = Depends(auth_provider_v2.get_api_key),
-):
+def update_items_in_shipment(shipment_id: int, updated_item: List[ItemInObject]):
 
     is_archived = data_provider_v2.fetch_shipment_pool().is_shipment_archived(
         shipment_id
@@ -151,9 +124,7 @@ def update_items_in_shipment(
 
 
 @shipment_router_v2.put("/{shipment_id}/commit")
-def commit_shipment(
-    shipment_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
-):
+def commit_shipment(shipment_id: int):
 
     is_archived = data_provider_v2.fetch_shipment_pool().is_shipment_archived(
         shipment_id
@@ -174,11 +145,7 @@ def commit_shipment(
 
 
 @shipment_router_v2.patch("/{shipment_id}")
-def partial_update_shipment(
-    shipment_id: int,
-    shipment: dict,
-    api_key: str = Depends(auth_provider_v2.get_api_key),
-):
+def partial_update_shipment(shipment_id: int, shipment: dict):
 
     is_archived = data_provider_v2.fetch_shipment_pool().is_shipment_archived(
         shipment_id
@@ -203,9 +170,7 @@ def partial_update_shipment(
 
 
 @shipment_router_v2.patch("/{shipment_id}/unarchive")
-def unarchive_shipment(
-    shipment_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
-):
+def unarchive_shipment(shipment_id: int):
 
     shipment_pool = data_provider_v2.fetch_shipment_pool()
     is_archived = shipment_pool.is_shipment_archived(shipment_id)
@@ -218,9 +183,7 @@ def unarchive_shipment(
 
 
 @shipment_router_v2.delete("/{shipment_id}")
-def archive_shipment(
-    shipment_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
-):
+def archive_shipment(shipment_id: int):
 
     shipment_pool = data_provider_v2.fetch_shipment_pool()
     is_archived = shipment_pool.is_shipment_archived(shipment_id)
