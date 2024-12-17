@@ -113,8 +113,10 @@ def archive_warehouse(warehouse_id: int):
     elif warehouse:
         raise HTTPException(status_code=400, detail="Warehouse already archived")
 
-    data_provider_v2.fetch_warehouse_pool().archive_warehouse(warehouse_id)
-    return {"message": "Warehouse archived successfully"}
+    updated_warehouse = data_provider_v2.fetch_warehouse_pool().archive_warehouse(
+        warehouse_id
+    )
+    return updated_warehouse
 
 
 @warehouse_router_v2.patch("/{warehouse_id}/unarchive")
@@ -128,5 +130,7 @@ def unarchive_warehouse(warehouse_id: int):
     elif not warehouse:
         raise HTTPException(status_code=400, detail="Warehouse already unarchived")
 
-    data_provider_v2.fetch_warehouse_pool().unarchive_warehouse(warehouse_id)
-    return {"message": "Warehouse unarchived successfully"}
+    updated_warehouse = data_provider_v2.fetch_warehouse_pool().unarchive_warehouse(
+        warehouse_id
+    )
+    return updated_warehouse
