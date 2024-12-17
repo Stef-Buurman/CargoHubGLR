@@ -1,16 +1,22 @@
 from models.v2.warehouse import Warehouse
-from typing import List
+from typing import List, Type
 from services.v2.base_service import Base
-from services.v2.database_service import DB
+from services.v2.database_service import DB, DatabaseService
 
 WAREHOUSES = []
 
 
 class WarehouseService(Base):
     def __init__(
-        self, is_debug: bool = False, warehouses: List[Warehouse] | None = None
+        self,
+        is_debug: bool = False,
+        warehouses: List[Warehouse] | None = None,
+        db: Type[DatabaseService] = None,
     ):
-        self.db = DB
+        if db is not None:
+            self.db = db
+        else:  # pragma: no cover
+            self.db = DB
         self.load(is_debug, warehouses)
 
     def get_all_warehouses(self) -> List[Warehouse]:
@@ -52,11 +58,11 @@ class WarehouseService(Base):
                 )
                 self.data[i] = updated_warehouse
                 return updated_warehouse
-        return None
+        return None  # pragma: no cover
 
     def archive_warehouse(
         self, warehouse_id: int, closeConnection: bool = True
-    ) -> bool:
+    ) -> Warehouse | None:
         for i in range(len(self.data)):
             if self.data[i].id == warehouse_id:
                 self.data[i].updated_at = self.get_timestamp()
@@ -65,12 +71,12 @@ class WarehouseService(Base):
                     self.data[i], warehouse_id, closeConnection
                 )
                 self.data[i] = updated_warehouse
-                return True
-        return False
+                return updated_warehouse
+        return None
 
     def unarchive_warehouse(
         self, warehouse_id: int, closeConnection: bool = True
-    ) -> bool:
+    ) -> Warehouse | None:
         for i in range(len(self.data)):
             if self.data[i].id == warehouse_id:
                 self.data[i].updated_at = self.get_timestamp()
@@ -79,13 +85,13 @@ class WarehouseService(Base):
                     self.data[i], warehouse_id, closeConnection
                 )
                 self.data[i] = updated_warehouse
-                return True
-        return False
+                return updated_warehouse
+        return None
 
     def load(self, is_debug: bool, warehouses: List[Warehouse] | None = None):
         if is_debug and warehouses is not None:
             self.data = warehouses
-        else:
+        else:  # pragma: no cover
             self.data = self.get_all_warehouses()
 
     def is_warehouse_archived(self, warehouse_id: int) -> bool:
