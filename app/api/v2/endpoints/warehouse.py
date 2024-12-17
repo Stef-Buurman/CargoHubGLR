@@ -5,14 +5,14 @@ from services.v2 import data_provider_v2, auth_provider_v2
 from models.v2.warehouse import Warehouse
 from utils.globals import pagination_url
 
-warehouse_router_v2 = APIRouter(tags=["v2.Warehouses"])
+warehouse_router_v2 = APIRouter(tags=["v2.Warehouses"], prefix="/warehouses")
 
 
 @warehouse_router_v2.get("/{warehouse_id}")
 def read_warehouse(
     warehouse_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
-    data_provider_v2.init()
+
     warehouse = data_provider_v2.fetch_warehouse_pool().get_warehouse(warehouse_id)
     if warehouse is None:
         raise HTTPException(status_code=404, detail="Warehouse not found")
@@ -25,7 +25,7 @@ def read_warehouses(
     pagination: Pagination = Depends(),
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
-    data_provider_v2.init()
+
     warehouses = data_provider_v2.fetch_warehouse_pool().get_warehouses()
     if warehouses is None:
         raise HTTPException(status_code=404, detail="No warehouses found")
@@ -39,7 +39,7 @@ def read_locations_in_warehouse(
     pagination: Pagination = Depends(),
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
-    data_provider_v2.init()
+
     warehouse = data_provider_v2.fetch_warehouse_pool().get_warehouse(warehouse_id)
     if warehouse is None:
         raise HTTPException(
@@ -59,7 +59,7 @@ def read_locations_in_warehouse(
 def create_warehouse(
     warehouse: Warehouse, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
-    data_provider_v2.init()
+
     created_warehouse = data_provider_v2.fetch_warehouse_pool().add_warehouse(warehouse)
 
     return JSONResponse(
@@ -73,7 +73,7 @@ def update_warehouse(
     warehouse: Warehouse,
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
-    data_provider_v2.init()
+
     existing_warehouse = data_provider_v2.fetch_warehouse_pool().is_warehouse_archived(
         warehouse_id
     )
@@ -94,7 +94,7 @@ def partial_update_warehouse(
     warehouse: dict,
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
-    data_provider_v2.init()
+
     existing_warehouse = data_provider_v2.fetch_warehouse_pool().is_warehouse_archived(
         warehouse_id
     )
@@ -125,7 +125,7 @@ def partial_update_warehouse(
 def archive_warehouse(
     warehouse_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
-    data_provider_v2.init()
+
     warehouse = data_provider_v2.fetch_warehouse_pool().is_warehouse_archived(
         warehouse_id
     )
@@ -143,7 +143,7 @@ def unarchive_warehouse(
     warehouse_id: int,
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
-    data_provider_v2.init()
+
     warehouse = data_provider_v2.fetch_warehouse_pool().is_warehouse_archived(
         warehouse_id
     )

@@ -19,7 +19,7 @@ class ShipmentService(Base):
         FROM shipments s
         LEFT JOIN shipment_items i ON s.id = i.shipment_id
         """
-        with self.db.get_connection_without_close() as conn:
+        with self.db.get_connection() as conn:
             cursor = conn.execute(query)
             rows = cursor.fetchall()
             columns = [column[0] for column in cursor.description]
@@ -99,7 +99,7 @@ class ShipmentService(Base):
 
         insert_sql = f"INSERT INTO {table_name} ({columns}) VALUES ({placeholders})"
 
-        with self.db.get_connection_without_close() as conn:
+        with self.db.get_connection() as conn:
             cursor = conn.execute(insert_sql, values)
             shipment_id = cursor.lastrowid
             shipment.id = shipment_id
@@ -115,8 +115,8 @@ class ShipmentService(Base):
                         (shipment_id, shipment_items.item_id, shipment_items.amount),
                     )
 
-        if closeConnection:
-            self.db.commit_and_close()
+        # if closeConnection:
+        #     self.db.commit_and_close()
         self.data.append(shipment)
         return shipment
 
@@ -141,7 +141,7 @@ class ShipmentService(Base):
         values = tuple(fields.values())
 
         update_sql = f"UPDATE {table_name} SET {columns} WHERE id = ?"
-        with self.db.get_connection_without_close() as conn:
+        with self.db.get_connection() as conn:
             conn.execute(update_sql, values + (shipment_id,))
 
             if shipment.items:
@@ -169,8 +169,8 @@ class ShipmentService(Base):
                             f"DELETE FROM {shipment_items_table} WHERE shipment_id = ? AND item_uid = ?",
                             (shipment_id, current_item_id),
                         )
-        if closeConnection:
-            self.db.commit_and_close()
+        # if closeConnection:
+        #     self.db.commit_and_close()
 
         for i in range(len(self.data)):
             if self.data[i].id == shipment_id:
@@ -253,11 +253,11 @@ class ShipmentService(Base):
                 values = tuple(fields.values())
 
                 update_sql = f"UPDATE {table_name} SET {columns} WHERE id = ?"
-                with self.db.get_connection_without_close() as conn:
+                with self.db.get_connection() as conn:
                     conn.execute(update_sql, values + (shipment_id,))
 
-                if closeConnection:
-                    self.db.commit_and_close()
+                # if closeConnection:
+                #     self.db.commit_and_close()
                 return self.data[i]
         return None
 
@@ -279,11 +279,11 @@ class ShipmentService(Base):
                 values = tuple(fields.values())
 
                 update_sql = f"UPDATE {table_name} SET {columns} WHERE id = ?"
-                with self.db.get_connection_without_close() as conn:
+                with self.db.get_connection() as conn:
                     conn.execute(update_sql, values + (shipment_id,))
 
-                if closeConnection:
-                    self.db.commit_and_close()
+                # if closeConnection:
+                #     self.db.commit_and_close()
                 return self.data[i]
         return None
 

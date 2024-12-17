@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
 from services.v1 import data_provider, auth_provider
 
-warehouse_router = APIRouter(tags=["v1.Warehouses"])
+warehouse_router = APIRouter(tags=["v1.Warehouses"], prefix="/warehouses")
 
 
 @warehouse_router.get("/{warehouse_id}")

@@ -104,7 +104,7 @@ class OrderService(Base):
         insert_sql = f"""INSERT INTO {
             table_name} ({columns}) VALUES ({placeholders})"""
 
-        with self.db.get_connection_without_close() as conn:
+        with self.db.get_connection() as conn:
             cursor = conn.execute(insert_sql, values)
             order_id = cursor.lastrowid
             order.id = order_id
@@ -120,8 +120,8 @@ class OrderService(Base):
                         (order_id, order_items.item_id, order_items.amount),
                     )
 
-        if closeConnection:
-            self.db.commit_and_close()
+        # if closeConnection:
+        #     self.db.commit_and_close()
         self.data.append(order)
         return order
 
@@ -147,7 +147,7 @@ class OrderService(Base):
 
         update_sql = f"UPDATE {table_name} SET {set_clause} WHERE id = ?"
 
-        with self.db.get_connection_without_close() as conn:
+        with self.db.get_connection() as conn:
             conn.execute(update_sql, values)
 
             if order.items:
@@ -165,8 +165,8 @@ class OrderService(Base):
                         (order.id, order_items.item_id, order_items.amount),
                     )
 
-        if closeConnection:
-            self.db.commit_and_close()
+        # if closeConnection:
+        #     self.db.commit_and_close()
 
         for i in range(len(self.data)):
             if self.data[i].id == order_id:
@@ -224,11 +224,11 @@ class OrderService(Base):
                 )
                 values += (order_id,)
 
-                with self.db.get_connection_without_close() as conn:
+                with self.db.get_connection() as conn:
                     conn.execute(update_sql, values)
 
-                if closeConnection:
-                    self.db.commit_and_close()
+                # if closeConnection:
+                #     self.db.commit_and_close()
                 return True
         return False
 
@@ -251,11 +251,11 @@ class OrderService(Base):
                 )
                 values += (order_id,)
 
-                with self.db.get_connection_without_close() as conn:
+                with self.db.get_connection() as conn:
                     conn.execute(update_sql, values)
 
-                if closeConnection:
-                    self.db.commit_and_close()
+                # if closeConnection:
+                #     self.db.commit_and_close()
                 return True
         return False
 

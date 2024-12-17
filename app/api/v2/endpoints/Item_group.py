@@ -5,14 +5,14 @@ from models.v2.item_group import ItemGroup
 from services.v2 import data_provider_v2, auth_provider_v2
 from utils.globals import pagination_url
 
-item_group_router_v2 = APIRouter(tags=["v2.Item Groups"])
+item_group_router_v2 = APIRouter(tags=["v2.Item Groups"], prefix="/item_groups")
 
 
 @item_group_router_v2.get("/{item_group_id}")
 def read_item_group(
     item_group_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
-    data_provider_v2.init()
+
     item_group = data_provider_v2.fetch_item_group_pool().get_item_group(item_group_id)
     if item_group is None:
         raise HTTPException(
@@ -27,7 +27,7 @@ def read_item_groups(
     pagination: Pagination = Depends(),
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
-    data_provider_v2.init()
+
     item_groups = data_provider_v2.fetch_item_group_pool().get_item_groups()
     if item_groups is None:
         raise HTTPException(status_code=404, detail="No item_groups found")
@@ -41,7 +41,7 @@ def read_items_for_item_group(
     pagination: Pagination = Depends(),
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
-    data_provider_v2.init()
+
     item_group = data_provider_v2.fetch_item_group_pool().get_item_group(item_group_id)
     if item_group is None:
         raise HTTPException(
@@ -55,7 +55,7 @@ def read_items_for_item_group(
 def create_item_group(
     item_group: ItemGroup, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
-    data_provider_v2.init()
+
     added_item_group = data_provider_v2.fetch_item_group_pool().add_item_group(
         item_group
     )
@@ -70,7 +70,7 @@ def update_item_group(
     item_group: ItemGroup,
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
-    data_provider_v2.init()
+
     is_archived = data_provider_v2.fetch_item_group_pool().is_item_group_archived(
         item_group_id
     )
@@ -91,7 +91,7 @@ def partial_update_item_group(
     item_group: dict,
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
-    data_provider_v2.init()
+
     is_archived = data_provider_v2.fetch_item_group_pool().is_item_group_archived(
         item_group_id
     )
@@ -123,7 +123,7 @@ def unarchive_item_group(
     item_group_id: int,
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
-    data_provider_v2.init()
+
     is_archived = data_provider_v2.fetch_item_group_pool().is_item_group_archived(
         item_group_id
     )
@@ -142,7 +142,7 @@ def unarchive_item_group(
 def archive_item_group(
     item_group_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
-    data_provider_v2.init()
+
     item_group_pool = data_provider_v2.fetch_item_group_pool()
     is_archived = item_group_pool.is_item_group_archived(item_group_id)
     if is_archived is None:

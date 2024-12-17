@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 from services.v1 import data_provider, auth_provider
 from typing import Dict, Union
 
-shipment_router = APIRouter(tags=["v1.Shipments"])
+shipment_router = APIRouter(tags=["v1.Shipments"], prefix="/shipments")
 
 
 @shipment_router.get("/{shipment_id}")

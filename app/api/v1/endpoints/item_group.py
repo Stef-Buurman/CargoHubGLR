@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
 from services.v1 import data_provider, auth_provider
 
-item_group_router = APIRouter(tags=["v1.Item Groups"])
+item_group_router = APIRouter(tags=["v1.Item Groups"], prefix="/item_groups")
 
 
 @item_group_router.get("/{item_group_id}")
