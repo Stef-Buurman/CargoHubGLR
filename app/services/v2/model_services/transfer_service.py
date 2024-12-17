@@ -112,7 +112,7 @@ class TransferService(Base):
 
         insert_sql = f"INSERT INTO {table_name} ({columns}) VALUES ({placeholders})"
 
-        with self.db.get_connection_without_close() as conn:
+        with self.db.get_connection() as conn:
             cursor = conn.execute(insert_sql, values)
             transfer_id = cursor.lastrowid
             transfer.id = transfer_id
@@ -128,8 +128,8 @@ class TransferService(Base):
                         (transfer_id, transfer_items.item_id, transfer_items.amount),
                     )
 
-        if closeConnection:
-            self.db.commit_and_close()
+        # if closeConnection:
+        #     self.db.commit_and_close()
 
         self.data.append(transfer)
         return transfer
@@ -159,7 +159,7 @@ class TransferService(Base):
         update_sql = f"UPDATE {table_name} SET {columns} WHERE id = ?"
         values += (transfer_id,)
 
-        with self.db.get_connection_without_close() as conn:
+        with self.db.get_connection() as conn:
             conn.execute(update_sql, values)
 
             if transfer.items:
@@ -178,8 +178,8 @@ class TransferService(Base):
                         (transfer_id, transfer_items.item_id, transfer_items.amount),
                     )
 
-        if closeConnection:
-            self.db.commit_and_close()
+        # if closeConnection:
+        #     self.db.commit_and_close()
 
         for i in range(len(self.data)):
             if self.data[i].id == transfer_id:
@@ -230,11 +230,11 @@ class TransferService(Base):
                 )
                 values += (transfer_id,)
 
-                with self.db.get_connection_without_close() as conn:
+                with self.db.get_connection() as conn:
                     conn.execute(update_sql, values)
 
-                if closeConnection:
-                    self.db.commit_and_close()
+                # if closeConnection:
+                #     self.db.commit_and_close()
                 return True
         return False
 
@@ -259,11 +259,11 @@ class TransferService(Base):
                 )
                 values += (transfer_id,)
 
-                with self.db.get_connection_without_close() as conn:
+                with self.db.get_connection() as conn:
                     conn.execute(update_sql, values)
 
-                if closeConnection:
-                    self.db.commit_and_close()
+                # if closeConnection:
+                #     self.db.commit_and_close()
                 return True
         return False
 
