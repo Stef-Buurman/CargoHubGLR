@@ -62,7 +62,7 @@ class ItemLineService(Base):
                 )
                 self.data[i] = updated_item_line
                 return updated_item_line
-        return None # pragma: no cover
+        return None  # pragma: no cover
 
     def archive_item_line(
         self, item_line_id: int, closeConnection: bool = True
@@ -95,5 +95,5 @@ class ItemLineService(Base):
     def load(self, is_debug: bool, item_lines: List[ItemLine] | None = None):
         if is_debug and item_lines is not None:
             self.data = item_lines
-        else: # pragma: no cover
+        else:  # pragma: no cover
             self.data = self.get_all_item_lines()
