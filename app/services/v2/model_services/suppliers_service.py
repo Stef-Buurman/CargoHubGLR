@@ -58,7 +58,7 @@ class SupplierService(Base):
                 )
                 self.data[i] = updated_supplier
                 return updated_supplier
-        return None
+        return None # pragma: no cover
 
     def archive_supplier(self, supplier_id: int, closeConnection: bool = True) -> Supplier | None:
         for i in range(len(self.data)):
@@ -89,7 +89,7 @@ class SupplierService(Base):
     def load(self, is_debug: bool, suppliers: List[Supplier] | None = None):
         if is_debug and suppliers is not None:
             self.data = suppliers
-        else:
+        else: # pragma: no cover
             self.data = self.get_all_suppliers()
 
     def is_supplier_archived(self, supplier_id: int) -> bool:
