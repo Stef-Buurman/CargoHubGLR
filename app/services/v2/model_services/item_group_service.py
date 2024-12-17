@@ -62,7 +62,7 @@ class ItemGroupService(Base):
                 )
                 self.data[i] = updated_item_group
                 return updated_item_group
-        return None # pragma: no cover
+        return None  # pragma: no cover
 
     def archive_item_group(
         self, item_group_id: int, closeConnection: bool = True
@@ -95,5 +95,5 @@ class ItemGroupService(Base):
     def load(self, is_debug: bool, item_groups: List[ItemGroup] | None = None):
         if is_debug and item_groups is not None:
             self.data = item_groups
-        else: # pragma: no cover
+        else:  # pragma: no cover
             self.data = self.get_all_item_groups()
