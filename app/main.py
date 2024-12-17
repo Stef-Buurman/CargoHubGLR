@@ -1,8 +1,8 @@
 import os
 import uvicorn
 from fastapi import FastAPI
-from app.api.v2.api_key_middleware import ApiKeyProviderMiddleware
-from app.api.v2.data_middleware import DataProviderMiddleware
+from api.v2.api_key_middleware import ApiKeyProviderMiddleware
+from api.v2.data_middleware import DataProviderMiddleware
 from api.v1.routes import routers as v1_routers
 from api.v2.routes import routers as v2_routers
 
