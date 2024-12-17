@@ -15,7 +15,6 @@ class ItemGroupService(Base):
             self.db = db
         else:  # pragma: no cover
             self.db = DB
-
         self.load(is_debug, item_groups)
 
     def get_all_item_groups(self) -> List[ItemGroup]:
