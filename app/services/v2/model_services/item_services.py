@@ -1,13 +1,21 @@
-from typing import List
+from typing import List, Type
 from models.v2.item import Item
 from services.v2.base_service import Base
-from services.v2.database_service import DB
+from services.v2.database_service import DB, DatabaseService
 from services.v2 import data_provider_v2
 
 
 class ItemService(Base):
-    def __init__(self, is_debug=bool, items: List[Item] | None = None):
-        self.db = DB
+    def __init__(
+        self,
+        is_debug: bool = False,
+        items: List[Item] | None = None,
+        db: Type[DatabaseService] = None,
+    ):
+        if db is not None:
+            self.db = db
+        else:  # pragma: no cover
+            self.db = DB
         self.load(is_debug, items)
 
     def get_all_items(self) -> List[Item]:
@@ -188,5 +196,5 @@ class ItemService(Base):
     def load(self, is_debug: bool, item: List[Item] | None = None):
         if is_debug and item is not None:
             self.data = item
-        else:
+        else:  # pragma: no cover
             self.data = self.get_all_items()
