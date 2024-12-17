@@ -12,7 +12,7 @@ supplier_router_v2 = APIRouter(tags=["v2.Suppliers"])
 def read_supplier(
     supplier_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
-    data_provider_v2.init()
+
     supplier = data_provider_v2.fetch_supplier_pool().get_supplier(supplier_id)
     if supplier is None:
         raise HTTPException(
@@ -27,7 +27,7 @@ def read_suppliers(
     pagination: Pagination = Depends(),
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
-    data_provider_v2.init()
+
     suppliers = data_provider_v2.fetch_supplier_pool().get_suppliers()
     if suppliers is None:
         raise HTTPException(status_code=404, detail="Suppliers not found")
@@ -41,7 +41,6 @@ def read_items_of_supplier(
     pagination: Pagination = Depends(),
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
-    data_provider_v2.init()
 
     supplier = data_provider_v2.fetch_supplier_pool().get_supplier(supplier_id)
     if supplier is None:
@@ -59,7 +58,7 @@ def read_items_of_supplier(
 def create_supplier(
     supplier: Supplier, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
-    data_provider_v2.init()
+
     created_supplier = data_provider_v2.fetch_supplier_pool().add_supplier(supplier)
     return JSONResponse(
         status_code=status.HTTP_201_CREATED, content=created_supplier.model_dump()
@@ -72,7 +71,7 @@ def update_supplier(
     supplier: Supplier,
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
-    data_provider_v2.init()
+
     existingSupplier = data_provider_v2.fetch_supplier_pool().is_supplier_archived(
         supplier_id
     )
@@ -92,7 +91,7 @@ def partial_update_supplier(
     supplier: dict,
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
-    data_provider_v2.init()
+
     existing_supplier = data_provider_v2.fetch_supplier_pool().is_supplier_archived(
         supplier_id
     )
@@ -119,7 +118,7 @@ def partial_update_supplier(
 def archive_supplier(
     supplier_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
-    data_provider_v2.init()
+
     existing_supplier = data_provider_v2.fetch_supplier_pool().is_supplier_archived(
         supplier_id
     )
@@ -137,7 +136,7 @@ def archive_supplier(
 def unarchive_supplier(
     supplier_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
-    data_provider_v2.init()
+
     existing_supplier = data_provider_v2.fetch_supplier_pool().is_supplier_archived(
         supplier_id
     )

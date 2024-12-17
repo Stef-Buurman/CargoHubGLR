@@ -12,7 +12,7 @@ location_router_v2 = APIRouter(tags=["v2.Locations"])
 def read_location(
     location_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
-    data_provider_v2.init()
+
     location = data_provider_v2.fetch_location_pool().get_location(location_id)
     if location is None:
         raise HTTPException(
@@ -27,7 +27,7 @@ def read_locations(
     pagination: Pagination = Depends(),
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
-    data_provider_v2.init()
+
     locations = data_provider_v2.fetch_location_pool().get_locations()
     if locations is None:
         raise HTTPException(status_code=404, detail="No locations found")
@@ -38,7 +38,7 @@ def read_locations(
 def create_location(
     location: Location, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
-    data_provider_v2.init()
+
     created_location = data_provider_v2.fetch_location_pool().add_location(location)
     return JSONResponse(
         status_code=status.HTTP_201_CREATED, content=created_location.model_dump()
@@ -51,7 +51,7 @@ def update_location(
     location: Location,
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
-    data_provider_v2.init()
+
     existing_location = data_provider_v2.fetch_location_pool().get_location(location_id)
     if existing_location is None:
         raise HTTPException(
@@ -69,7 +69,7 @@ def partial_update_location(
     location: dict,
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
-    data_provider_v2.init()
+
     existing_location = data_provider_v2.fetch_location_pool().get_location(location_id)
     if existing_location is None:
         raise HTTPException(status_code=404, detail="Location not found")
@@ -90,7 +90,7 @@ def partial_update_location(
 def archive_location(
     location_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
-    data_provider_v2.init()
+
     location = data_provider_v2.fetch_location_pool().is_location_archived(location_id)
     if location is None:
         raise HTTPException(
@@ -110,7 +110,7 @@ def unarchive_location(
     location_id: int,
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
-    data_provider_v2.init()
+
     existing_location = data_provider_v2.fetch_location_pool().is_location_archived(
         location_id
     )

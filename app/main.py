@@ -26,11 +26,13 @@ from api.v2.endpoints.shipment import shipment_router_v2
 from api.v2.endpoints.client import client_router_v2
 from api.v2.endpoints.supplier import supplier_router_v2
 from api.v2.endpoints.orders import order_router_v2
-
+from api.v2.endpoints.data_middleware import DataProviderMiddleware
 
 import uvicorn
 
 app = FastAPI()
+
+app.add_middleware(DataProviderMiddleware)
 
 v1_url = "/api/v1"
 v2_url = "/api/v2"

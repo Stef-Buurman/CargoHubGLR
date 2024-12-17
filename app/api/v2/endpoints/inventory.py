@@ -12,7 +12,7 @@ inventory_router_v2 = APIRouter(tags=["v2.Inventories"])
 def read_inventory(
     inventory_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
-    data_provider_v2.init()
+
     inventory = data_provider_v2.fetch_inventory_pool().get_inventory(inventory_id)
     if inventory is None:
         raise HTTPException(
@@ -28,7 +28,7 @@ def read_inventories(
     pagination: Pagination = Depends(),
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
-    data_provider_v2.init()
+
     inventories = data_provider_v2.fetch_inventory_pool().get_inventories()
     if not inventories:
         raise HTTPException(status_code=404, detail="No inventories found")
@@ -39,7 +39,7 @@ def read_inventories(
 def create_inventory(
     inventory: Inventory, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
-    data_provider_v2.init()
+
     created_inventory = data_provider_v2.fetch_inventory_pool().add_inventory(inventory)
     if created_inventory is None:
         raise HTTPException(status_code=400, detail="Inventory has archived entries")
@@ -54,7 +54,7 @@ def update_inventory(
     inventory: Inventory,
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
-    data_provider_v2.init()
+
     is_archived = data_provider_v2.fetch_inventory_pool().is_inventory_archived(
         inventory_id
     )
@@ -78,7 +78,7 @@ def partial_update_inventory(
     inventory: dict,
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
-    data_provider_v2.init()
+
     is_archived = data_provider_v2.fetch_inventory_pool().is_inventory_archived(
         inventory_id
     )
@@ -109,7 +109,7 @@ def partial_update_inventory(
 def unarchive_inventory(
     inventory_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
-    data_provider_v2.init()
+
     inventory_pool = data_provider_v2.fetch_inventory_pool()
 
     is_archived = inventory_pool.is_inventory_archived(inventory_id)
@@ -126,7 +126,7 @@ def unarchive_inventory(
 def archive_inventory(
     inventory_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
-    data_provider_v2.init()
+
     inventory_pool = data_provider_v2.fetch_inventory_pool()
 
     is_archived = inventory_pool.is_inventory_archived(inventory_id)

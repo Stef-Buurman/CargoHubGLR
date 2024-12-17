@@ -11,7 +11,7 @@ order_router_v2 = APIRouter(tags=["v2.Orders"])
 
 @order_router_v2.get("/{order_id}")
 def read_order(order_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)):
-    data_provider_v2.init()
+
     order = data_provider_v2.fetch_order_pool().get_order(order_id)
     if order is None:
         raise HTTPException(
@@ -26,7 +26,7 @@ def read_orders(
     pagination: Pagination = Depends(),
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
-    data_provider_v2.init()
+
     orders = data_provider_v2.fetch_order_pool().get_orders()
     if orders is None:
         raise HTTPException(status_code=404, detail="Orders not found")
@@ -40,7 +40,7 @@ def read_order_items(
     pagination: Pagination = Depends(),
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
-    data_provider_v2.init()
+
     items = data_provider_v2.fetch_order_pool().get_items_in_order(order_id)
     if items is None:
         raise HTTPException(
@@ -51,7 +51,7 @@ def read_order_items(
 
 @order_router_v2.post("/")
 def create_order(order: Order, api_key: str = Depends(auth_provider_v2.get_api_key)):
-    data_provider_v2.init()
+
     addedOrder = data_provider_v2.fetch_order_pool().add_order(order)
     if addedOrder is None:
         raise HTTPException(status_code=400, detail="Order has archived entities")
@@ -64,7 +64,7 @@ def create_order(order: Order, api_key: str = Depends(auth_provider_v2.get_api_k
 def update_order(
     order_id: int, order: Order, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
-    data_provider_v2.init()
+
     existingOrder = data_provider_v2.fetch_order_pool().is_order_archived(order_id)
     if existingOrder is None:
         raise HTTPException(status_code=404, detail="Order not found")
@@ -81,7 +81,7 @@ def add_items_to_order(
     items: list[ItemInObject],
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
-    data_provider_v2.init()
+
     existingOrder = data_provider_v2.fetch_order_pool().is_order_archived(order_id)
     if existingOrder is None:
         raise HTTPException(status_code=404, detail="Order not found")
@@ -98,7 +98,7 @@ def partial_update_order(
     order: dict,
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
-    data_provider_v2.init()
+
     existing_order = data_provider_v2.fetch_order_pool().is_order_archived(order_id)
     if existing_order is None:
         raise HTTPException(status_code=404, detail="Order not found")
@@ -121,7 +121,7 @@ def partial_update_order(
 
 @order_router_v2.delete("/{order_id}")
 def archive_order(order_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)):
-    data_provider_v2.init()
+
     order = data_provider_v2.fetch_order_pool().is_order_archived(order_id)
 
     if order is None:
@@ -137,7 +137,7 @@ def archive_order(order_id: int, api_key: str = Depends(auth_provider_v2.get_api
 def unarchive_order(
     order_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
-    data_provider_v2.init()
+
     order = data_provider_v2.fetch_order_pool().is_order_archived(order_id)
 
     if order is None:

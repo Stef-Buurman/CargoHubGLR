@@ -12,7 +12,7 @@ item_line_router_v2 = APIRouter(tags=["v2.Item Lines"])
 def read_item_line(
     item_line_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
-    data_provider_v2.init()
+
     item_line = data_provider_v2.fetch_item_line_pool().get_item_line(item_line_id)
     if item_line is None:
         raise HTTPException(
@@ -27,7 +27,7 @@ def read_item_lines(
     pagination: Pagination = Depends(),
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
-    data_provider_v2.init()
+
     item_lines = data_provider_v2.fetch_item_line_pool().get_item_lines()
     if item_lines is None:
         raise HTTPException(status_code=404, detail="Item lines not found")
@@ -41,7 +41,6 @@ def read_items_for_item_line(
     pagination: Pagination = Depends(),
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
-    data_provider_v2.init()
 
     item_line = data_provider_v2.fetch_item_line_pool().get_item_line(item_line_id)
     if item_line is None:
@@ -59,7 +58,7 @@ def read_items_for_item_line(
 def create_item(
     item_line: ItemLine, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
-    data_provider_v2.init()
+
     added_item_line = data_provider_v2.fetch_item_line_pool().add_item_line(item_line)
     return JSONResponse(
         status_code=status.HTTP_201_CREATED, content=added_item_line.model_dump()
@@ -72,7 +71,7 @@ def update_item(
     item_line: ItemLine,
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
-    data_provider_v2.init()
+
     is_archived = data_provider_v2.fetch_item_line_pool().is_item_line_archived(
         item_line_id
     )
@@ -95,7 +94,7 @@ def partial_update_item_line(
     item_line: dict,
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
-    data_provider_v2.init()
+
     is_archived = data_provider_v2.fetch_item_line_pool().is_item_line_archived(
         item_line_id
     )
@@ -129,7 +128,7 @@ def unarchive_item_line(
     item_line_id: int,
     api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
-    data_provider_v2.init()
+
     is_archived = data_provider_v2.fetch_item_line_pool().is_item_line_archived(
         item_line_id
     )
@@ -150,7 +149,7 @@ def unarchive_item_line(
 def archive_item_line(
     item_line_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
 ):
-    data_provider_v2.init()
+
     item_line_pool = data_provider_v2.fetch_item_line_pool()
 
     is_archived = item_line_pool.is_item_line_archived(item_line_id)
