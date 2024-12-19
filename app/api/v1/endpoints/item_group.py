@@ -18,7 +18,7 @@ def read_item_group(
     return item_group
 
 
-@item_group_router.get("/")
+@item_group_router.get("")
 def read_item_groups(api_key: str = Depends(auth_provider.get_api_key)):
     data_provider.init()
     item_groups = data_provider.fetch_item_group_pool().get_item_groups()
@@ -41,7 +41,7 @@ def read_items_for_item_group(
     return items
 
 
-@item_group_router.post("/")
+@item_group_router.post("")
 def create_item_group(
     item_group: dict, api_key: str = Depends(auth_provider.get_api_key)
 ):

@@ -16,7 +16,7 @@ def read_supplier(supplier_id: int, api_key: str = Depends(auth_provider.get_api
     return supplier
 
 
-@supplier_router.get("/")
+@supplier_router.get("")
 def read_suppliers(api_key: str = Depends(auth_provider.get_api_key)):
     data_provider.init()
     suppliers = data_provider.fetch_supplier_pool().get_suppliers()
@@ -43,7 +43,7 @@ def read_items_of_supplier(
     return items_for_supplier
 
 
-@supplier_router.post("/")
+@supplier_router.post("")
 def create_supplier(supplier: dict, api_key: str = Depends(auth_provider.get_api_key)):
     data_provider.init()
     existingSupplier = data_provider.fetch_supplier_pool().get_supplier(supplier["id"])

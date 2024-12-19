@@ -14,7 +14,7 @@ def read_client(client_id: int, api_key: str = Depends(auth_provider.get_api_key
     return client
 
 
-@client_router.get("/")
+@client_router.get("")
 def read_clients(api_key: str = Depends(auth_provider.get_api_key)):
     data_provider.init()
     clients = data_provider.fetch_client_pool().get_clients()
@@ -37,7 +37,7 @@ def read_client_orders(
     return orders
 
 
-@client_router.post("/")
+@client_router.post("")
 def create_client(client: dict, api_key: str = Depends(auth_provider.get_api_key)):
     data_provider.init()
     existing_client = data_provider.fetch_client_pool().get_client(client["id"])
