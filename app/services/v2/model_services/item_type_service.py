@@ -7,15 +7,13 @@ from services.v2.database_service import DB, DatabaseService
 class ItemTypeService(Base):
     def __init__(
         self,
-        is_debug=False,
-        item_types: List[ItemType] | None = None,
-        db: Type[DatabaseService] = None,
+        db: Type[DatabaseService] = None
     ):
         if db is not None:
             self.db = db
         else:  # pragma: no cover
             self.db = DB
-        self.load(is_debug, item_types)
+        self.load()
 
     def get_all_item_types(self) -> List[ItemType]:
         return self.db.get_all(ItemType)
@@ -91,8 +89,5 @@ class ItemTypeService(Base):
                 return updated_item_type
         return None
 
-    def load(self, is_debug: bool, item_types: List[ItemType] | None = None):
-        if is_debug and item_types is not None:
-            self.data = item_types
-        else:  # pragma: no cover
-            self.data = self.get_all_item_types()
+    def load(self):
+        self.data = self.get_all_item_types()
