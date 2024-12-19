@@ -34,14 +34,12 @@ def read_transfer_items(transfer_id: int, request: Request):
 
 @transfer_router_v2.post("/")
 def create_transfer(transfer: Transfer):
-
     created_transfer = data_provider_v2.fetch_transfer_pool().add_transfer(transfer)
     return created_transfer
 
 
 @transfer_router_v2.put("/{transfer_id}")
 def update_transfer(transfer_id: int, transfer: Transfer):
-
     existing_transfer = data_provider_v2.fetch_transfer_pool().is_transfer_archived(
         transfer_id
     )
@@ -57,7 +55,6 @@ def update_transfer(transfer_id: int, transfer: Transfer):
 
 @transfer_router_v2.patch("/{transfer_id}")
 def partial_update_transfer(transfer_id: int, transfer: dict):
-
     existing_transfer = data_provider_v2.fetch_transfer_pool().is_transfer_archived(
         transfer_id
     )
@@ -65,7 +62,6 @@ def partial_update_transfer(transfer_id: int, transfer: dict):
         raise HTTPException(status_code=404, detail="Transfer not found")
     elif existing_transfer:
         raise HTTPException(status_code=400, detail="Transfer is archived")
-
     existing_transfer = data_provider_v2.fetch_transfer_pool().get_transfer(transfer_id)
 
     valid_keys = Transfer.model_fields.keys()
@@ -82,14 +78,11 @@ def partial_update_transfer(transfer_id: int, transfer: dict):
 
 @transfer_router_v2.put("/{transfer_id}/commit")
 def commit_transfer(transfer_id: int):
-
     transfer = data_provider_v2.fetch_transfer_pool().is_transfer_archived(transfer_id)
-
     if transfer is None:
         raise HTTPException(status_code=404, detail="Transfer not found")
     elif transfer:
         raise HTTPException(status_code=400, detail="Transfer is archived")
-
     transfer = data_provider_v2.fetch_transfer_pool().get_transfer(transfer_id)
 
     committed_transfer = data_provider_v2.fetch_transfer_pool().commit_transfer(
@@ -103,7 +96,6 @@ def commit_transfer(transfer_id: int):
 
 @transfer_router_v2.delete("/{transfer_id}")
 def archive_transfer(transfer_id: int):
-
     transfer = data_provider_v2.fetch_transfer_pool().is_transfer_archived(transfer_id)
     if transfer is None:
         raise HTTPException(status_code=404, detail="Transfer not found")
@@ -115,7 +107,6 @@ def archive_transfer(transfer_id: int):
 
 @transfer_router_v2.patch("/{transfer_id}/unarchive")
 def unarchive_transfer(transfer_id: int):
-
     transfer = data_provider_v2.fetch_transfer_pool().is_transfer_archived(transfer_id)
     if transfer is None:
         raise HTTPException(status_code=404, detail="Transfer not found")
