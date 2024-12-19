@@ -2,16 +2,14 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
 from services.v2.pagination_service import Pagination
 from models.v2.item_group import ItemGroup
-from services.v2 import data_provider_v2, auth_provider_v2
+from services.v2 import data_provider_v2
 from utils.globals import pagination_url
 
 item_group_router_v2 = APIRouter(tags=["v2.Item Groups"], prefix="/item_groups")
 
 
 @item_group_router_v2.get("/{item_group_id}")
-def read_item_group(
-    item_group_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
-):
+def read_item_group(item_group_id: int):
 
     item_group = data_provider_v2.fetch_item_group_pool().get_item_group(item_group_id)
     if item_group is None:
@@ -23,10 +21,7 @@ def read_item_group(
 
 @item_group_router_v2.get("/")
 @item_group_router_v2.get(pagination_url)
-def read_item_groups(
-    pagination: Pagination = Depends(),
-    api_key: str = Depends(auth_provider_v2.get_api_key),
-):
+def read_item_groups(pagination: Pagination = Depends()):
 
     item_groups = data_provider_v2.fetch_item_group_pool().get_item_groups()
     if item_groups is None:
@@ -36,11 +31,7 @@ def read_item_groups(
 
 @item_group_router_v2.get("/{item_group_id}/items")
 @item_group_router_v2.get("/{item_group_id}/items" + pagination_url)
-def read_items_for_item_group(
-    item_group_id: int,
-    pagination: Pagination = Depends(),
-    api_key: str = Depends(auth_provider_v2.get_api_key),
-):
+def read_items_for_item_group(item_group_id: int, pagination: Pagination = Depends()):
 
     item_group = data_provider_v2.fetch_item_group_pool().get_item_group(item_group_id)
     if item_group is None:
@@ -52,9 +43,7 @@ def read_items_for_item_group(
 
 
 @item_group_router_v2.post("/")
-def create_item_group(
-    item_group: ItemGroup, api_key: str = Depends(auth_provider_v2.get_api_key)
-):
+def create_item_group(item_group: ItemGroup):
 
     added_item_group = data_provider_v2.fetch_item_group_pool().add_item_group(
         item_group
@@ -65,11 +54,7 @@ def create_item_group(
 
 
 @item_group_router_v2.put("/{item_group_id}")
-def update_item_group(
-    item_group_id: int,
-    item_group: ItemGroup,
-    api_key: str = Depends(auth_provider_v2.get_api_key),
-):
+def update_item_group(item_group_id: int, item_group: ItemGroup):
 
     is_archived = data_provider_v2.fetch_item_group_pool().is_item_group_archived(
         item_group_id
@@ -86,11 +71,7 @@ def update_item_group(
 
 
 @item_group_router_v2.patch("/{item_group_id}")
-def partial_update_item_group(
-    item_group_id: int,
-    item_group: dict,
-    api_key: str = Depends(auth_provider_v2.get_api_key),
-):
+def partial_update_item_group(item_group_id: int, item_group: dict):
 
     is_archived = data_provider_v2.fetch_item_group_pool().is_item_group_archived(
         item_group_id
@@ -119,10 +100,7 @@ def partial_update_item_group(
 
 
 @item_group_router_v2.patch("/{item_group_id}/unarchive")
-def unarchive_item_group(
-    item_group_id: int,
-    api_key: str = Depends(auth_provider_v2.get_api_key),
-):
+def unarchive_item_group(item_group_id: int):
 
     is_archived = data_provider_v2.fetch_item_group_pool().is_item_group_archived(
         item_group_id
@@ -139,9 +117,7 @@ def unarchive_item_group(
 
 
 @item_group_router_v2.delete("/{item_group_id}")
-def archive_item_group(
-    item_group_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
-):
+def archive_item_group(item_group_id: int):
 
     item_group_pool = data_provider_v2.fetch_item_group_pool()
     is_archived = item_group_pool.is_item_group_archived(item_group_id)

@@ -2,16 +2,14 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
 from services.v2.pagination_service import Pagination
 from models.v2.inventory import Inventory
-from services.v2 import data_provider_v2, auth_provider_v2
+from services.v2 import data_provider_v2
 from utils.globals import pagination_url
 
 inventory_router_v2 = APIRouter(tags=["v2.Inventories"], prefix="/inventories")
 
 
 @inventory_router_v2.get("/{inventory_id}")
-def read_inventory(
-    inventory_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
-):
+def read_inventory(inventory_id: int):
 
     inventory = data_provider_v2.fetch_inventory_pool().get_inventory(inventory_id)
     if inventory is None:
@@ -24,10 +22,7 @@ def read_inventory(
 
 @inventory_router_v2.get("/")
 @inventory_router_v2.get(pagination_url)
-def read_inventories(
-    pagination: Pagination = Depends(),
-    api_key: str = Depends(auth_provider_v2.get_api_key),
-):
+def read_inventories(pagination: Pagination = Depends()):
 
     inventories = data_provider_v2.fetch_inventory_pool().get_inventories()
     if not inventories:
@@ -36,9 +31,7 @@ def read_inventories(
 
 
 @inventory_router_v2.post("/")
-def create_inventory(
-    inventory: Inventory, api_key: str = Depends(auth_provider_v2.get_api_key)
-):
+def create_inventory(inventory: Inventory):
 
     created_inventory = data_provider_v2.fetch_inventory_pool().add_inventory(inventory)
     if created_inventory is None:
@@ -52,7 +45,6 @@ def create_inventory(
 def update_inventory(
     inventory_id: int,
     inventory: Inventory,
-    api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
 
     is_archived = data_provider_v2.fetch_inventory_pool().is_inventory_archived(
@@ -76,7 +68,6 @@ def update_inventory(
 def partial_update_inventory(
     inventory_id: int,
     inventory: dict,
-    api_key: str = Depends(auth_provider_v2.get_api_key),
 ):
 
     is_archived = data_provider_v2.fetch_inventory_pool().is_inventory_archived(
@@ -106,9 +97,7 @@ def partial_update_inventory(
 
 
 @inventory_router_v2.patch("/{inventory_id}/unarchive")
-def unarchive_inventory(
-    inventory_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
-):
+def unarchive_inventory(inventory_id: int):
 
     inventory_pool = data_provider_v2.fetch_inventory_pool()
 
@@ -123,9 +112,7 @@ def unarchive_inventory(
 
 
 @inventory_router_v2.delete("/{inventory_id}")
-def archive_inventory(
-    inventory_id: int, api_key: str = Depends(auth_provider_v2.get_api_key)
-):
+def archive_inventory(inventory_id: int):
 
     inventory_pool = data_provider_v2.fetch_inventory_pool()
 

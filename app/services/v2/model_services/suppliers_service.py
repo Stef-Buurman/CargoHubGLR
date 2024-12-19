@@ -1,13 +1,21 @@
 from models.v2.supplier import Supplier
-from typing import List
+from typing import List, Type
 from services.v2.base_service import Base
-from services.v2.database_service import DB
+from services.v2.database_service import DB, DatabaseService
 from services.v2 import data_provider_v2
 
 
 class SupplierService(Base):
-    def __init__(self, is_debug: bool = False, suppliers: List[Supplier] | None = None):
-        self.db = DB
+    def __init__(
+        self,
+        is_debug: bool = False,
+        suppliers: List[Supplier] | None = None,
+        db: Type[DatabaseService] = None,
+    ):
+        if db is not None:
+            self.db = db
+        else:  # pragma: no cover
+            self.db = DB
         self.load(is_debug, suppliers)
 
     def get_all_suppliers(self) -> List[Supplier]:
@@ -50,14 +58,11 @@ class SupplierService(Base):
                 )
                 self.data[i] = updated_supplier
                 return updated_supplier
-        return None
+        return None  # pragma: no cover
 
-    def archive_supplier(self, supplier_id: int, closeConnection: bool = True) -> bool:
-        if (
-            len(data_provider_v2.fetch_item_pool().get_items_for_supplier(supplier_id))
-            > 0
-        ):
-            return False
+    def archive_supplier(
+        self, supplier_id: int, closeConnection: bool = True
+    ) -> Supplier | None:
         for i in range(len(self.data)):
             if self.data[i].id == supplier_id:
                 self.data[i].updated_at = self.get_timestamp()
@@ -66,12 +71,12 @@ class SupplierService(Base):
                     self.data[i], supplier_id, closeConnection
                 )
                 self.data[i] = updated_supplier
-                return True
-        return False
+                return updated_supplier
+        return None
 
     def unarchive_supplier(
         self, supplier_id: int, closeConnection: bool = True
-    ) -> bool:
+    ) -> Supplier | None:
         for i in range(len(self.data)):
             if self.data[i].id == supplier_id:
                 self.data[i].updated_at = self.get_timestamp()
@@ -80,13 +85,13 @@ class SupplierService(Base):
                     self.data[i], supplier_id, closeConnection
                 )
                 self.data[i] = updated_supplier
-                return True
-        return False
+                return updated_supplier
+        return None
 
     def load(self, is_debug: bool, suppliers: List[Supplier] | None = None):
         if is_debug and suppliers is not None:
             self.data = suppliers
-        else:
+        else:  # pragma: no cover
             self.data = self.get_all_suppliers()
 
     def is_supplier_archived(self, supplier_id: int) -> bool:
