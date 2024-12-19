@@ -67,7 +67,8 @@ def test_get_all_shipments_page_too_high(client):
     response_shipments = client.get("/shipments", headers=test_headers)
     assert response_shipments.status_code == 200
     response = client.get(
-        f"/shipments{pagination_url_base}" + str(response_shipments.json()["pagination"]["pages"] + 1),
+        f"/shipments{pagination_url_base}"
+        + str(response_shipments.json()["pagination"]["pages"] + 1),
         headers=test_headers,
     )
     assert response.status_code == 200
