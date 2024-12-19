@@ -5,18 +5,7 @@ from app.services.v2.model_services.item_group_service import ItemGroupService
 from tests.test_globals import *
 
 
-@pytest.fixture
-def mock_db_service():
-    """Fixture to create a mocked DatabaseService."""
-    return Mock()
-
-
-@pytest.fixture
-def item_group_service(mock_db_service):
-    """Fixture to create an ItemGroupService instance with the mocked DatabaseService."""
-    service = ItemGroupService(
-        True,
-        [
+TEST_ITEM_GROUPS = [
             ItemGroup(
                 id=1,
                 name="Type A",
@@ -41,19 +30,29 @@ def item_group_service(mock_db_service):
                 updated_at="2022-05-12 08:54:35",
                 is_archived=True,
             ),
-        ],
-        mock_db_service,
-    )
+        ]
+
+
+@pytest.fixture
+def mock_db_service():
+    """Fixture to create a mocked DatabaseService."""
+    return Mock()
+
+
+@pytest.fixture
+def item_group_service(mock_db_service):
+    """Fixture to create an ItemGroupService instance with the mocked DatabaseService."""
+    mock_db_service.get_all.return_value = TEST_ITEM_GROUPS
+    service = ItemGroupService(mock_db_service)
     return service
 
 
 def test_get_all_item_groups(item_group_service, mock_db_service):
-    mock_db_service.get_all.return_value = item_group_service.data
     item_groups = item_group_service.get_all_item_groups()
 
     assert len(item_groups) == len(item_group_service.data)
     assert item_groups[0].name == "Type A"
-    assert mock_db_service.get_all.call_count == 1
+    assert mock_db_service.get_all.call_count == 2
 
 
 def test_get_item_groups(item_group_service):
