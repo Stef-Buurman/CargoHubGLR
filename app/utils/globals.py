@@ -4,3 +4,4 @@ shipment_items_table = "shipment_items"
 order_items_table = "order_items"
 cache_time_minutes = 15
 pagination_url = "/page/{page}"
+open_url_points = ["/", "/docs", "/redoc", "/openapi.json"]
