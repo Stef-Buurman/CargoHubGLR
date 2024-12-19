@@ -5,18 +5,7 @@ from app.services.v2.model_services.item_type_service import ItemTypeService
 from tests.test_globals import *
 
 
-@pytest.fixture
-def mock_db_service():
-    """Fixture to create a mocked DatabaseService."""
-    return Mock()
-
-
-@pytest.fixture
-def item_type_service(mock_db_service):
-    """Fixture to create an ItemTypeService instance with the mocked DatabaseService."""
-    service = ItemTypeService(
-        True,
-        [
+TEST_ITEM_TYPES = [
             ItemType(
                 id=1,
                 name="Type A",
@@ -41,19 +30,29 @@ def item_type_service(mock_db_service):
                 updated_at="2022-05-12 08:54:35",
                 is_archived=True,
             ),
-        ],
-        mock_db_service,
-    )
+        ]
+
+
+@pytest.fixture
+def mock_db_service():
+    """Fixture to create a mocked DatabaseService."""
+    return Mock()
+
+
+@pytest.fixture
+def item_type_service(mock_db_service):
+    """Fixture to create an ItemTypeService instance with the mocked DatabaseService."""
+    mock_db_service.get_all.return_value = TEST_ITEM_TYPES
+    service = ItemTypeService(mock_db_service)
     return service
 
 
 def test_get_all_item_types(item_type_service, mock_db_service):
-    mock_db_service.get_all.return_value = item_type_service.data
     item_types = item_type_service.get_all_item_types()
 
     assert len(item_types) == len(item_type_service.data)
     assert item_types[0].name == "Type A"
-    assert mock_db_service.get_all.call_count == 1
+    assert mock_db_service.get_all.call_count == 2
 
 
 def test_get_item_types(item_type_service):
