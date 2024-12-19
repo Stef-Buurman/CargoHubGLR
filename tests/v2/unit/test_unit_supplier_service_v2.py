@@ -5,18 +5,7 @@ from app.services.v2.model_services.suppliers_service import SupplierService
 from tests.test_globals import *
 
 
-@pytest.fixture
-def mock_db_service():
-    """Fixture to create a mocked DatabaseService."""
-    return Mock()
-
-
-@pytest.fixture
-def supplier_service(mock_db_service):
-    """Fixture to create an SupplierService instance with the mocked DatabaseService."""
-    service = SupplierService(
-        True,
-        [
+TEST_SUPPLIERS = [
             Supplier(
                 id=1,
                 code="SUP0001",
@@ -68,19 +57,29 @@ def supplier_service(mock_db_service):
                 updated_at="2019-06-16 19:29:49",
                 is_archived=True,
             ),
-        ],
-        mock_db_service,
-    )
+        ]
+
+
+@pytest.fixture
+def mock_db_service():
+    """Fixture to create a mocked DatabaseService."""
+    return Mock()
+
+
+@pytest.fixture
+def supplier_service(mock_db_service):
+    """Fixture to create an SupplierService instance with the mocked DatabaseService."""
+    mock_db_service.get_all.return_value = TEST_SUPPLIERS
+    service = SupplierService(mock_db_service)
     return service
 
 
 def test_get_all_suppliers(supplier_service, mock_db_service):
-    mock_db_service.get_all.return_value = supplier_service.data
     suppliers = supplier_service.get_all_suppliers()
 
     assert len(suppliers) == len(supplier_service.data)
     assert suppliers[0].name == "Lee, Parks and Johnson"
-    assert mock_db_service.get_all.call_count == 1
+    assert mock_db_service.get_all.call_count == 2
 
 
 def test_get_suppliers(supplier_service):
