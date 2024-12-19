@@ -4,19 +4,7 @@ from tests.test_globals import *
 from app.models.v2.warehouse import Warehouse
 from app.services.v2.model_services.warehouse_service import WarehouseService
 
-
-@pytest.fixture
-def mock_db_service():
-    """Fixture to create a mocked DatabaseService."""
-    return Mock()
-
-
-@pytest.fixture
-def warehouse_service(mock_db_service):
-    """Fixture to create a WarehouseService instance with the mocked DatabaseService."""
-    service = WarehouseService(
-        True,
-        [
+TEST_WAREHOUSES = [
             Warehouse(
                 id=1,
                 code="YQZZNL56",
@@ -65,19 +53,29 @@ def warehouse_service(mock_db_service):
                 updated_at="2017-12-19 14:32:38",
                 is_archived=True,
             ),
-        ],
-        mock_db_service,
-    )
+        ]
+
+
+@pytest.fixture
+def mock_db_service():
+    """Fixture to create a mocked DatabaseService."""
+    return Mock()
+
+
+@pytest.fixture
+def warehouse_service(mock_db_service):
+    """Fixture to create a WarehouseService instance with the mocked DatabaseService."""
+    mock_db_service.get_all.return_value = TEST_WAREHOUSES
+    service = WarehouseService(mock_db_service)
     return service
 
 
 def test_get_all_warehouses(warehouse_service, mock_db_service):
-    mock_db_service.get_all.return_value = warehouse_service.data
     warehouses = warehouse_service.get_all_warehouses()
 
     assert len(warehouses) == len(warehouse_service.data)
     assert warehouses[0].name == "Heemskerk cargo hub"
-    assert mock_db_service.get_all.call_count == 1
+    assert mock_db_service.get_all.call_count == 2
 
 
 def test_get_warehouses(warehouse_service):
