@@ -1,13 +1,18 @@
-from typing import List
+from typing import List, Type
 from models.v2.client import Client
 from services.v2.base_service import Base
-from services.v2.database_service import DB
+from services.v2.database_service import DB, DatabaseService
 
 
 class ClientService(Base):
-    def __init__(self, is_debug=False, clients: List[Client] | None = None):
-        self.db = DB
-        self.load(is_debug, clients)
+    def __init__(self,
+        db: Type[DatabaseService] = None,
+    ):
+        if db is not None:
+            self.db = db
+        else:  # pragma: no cover
+            self.db = DB
+        self.load()
 
     def get_all_clients(self) -> List[Client]:
         return self.db.get_all(Client)
@@ -80,8 +85,5 @@ class ClientService(Base):
                 return client.is_archived
         return None
 
-    def load(self, is_debug: bool, clients: List[Client] | None = None):
-        if is_debug and clients is not None:
-            self.data = clients
-        else:
-            self.data = self.get_all_clients()
+    def load(self):
+        self.data = self.get_all_clients()
