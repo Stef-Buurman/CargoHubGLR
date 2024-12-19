@@ -70,9 +70,7 @@ def test_get_all_item_lines_wrong_page_number(client):
 
 
 def test_get_all_item_lines_items_page_1(client):
-    response_add = client.post(
-        "/item_lines", headers=test_headers, json=test_item_line
-    )
+    response_add = client.post("/item_lines", headers=test_headers, json=test_item_line)
     assert response_add.status_code in [200, 201]
     test_item_line["id"] = response_add.json()["id"]
 
