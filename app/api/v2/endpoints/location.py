@@ -1,16 +1,13 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Request, HTTPException, status
 from fastapi.responses import JSONResponse
-from services.v2.pagination_service import Pagination
 from services.v2 import data_provider_v2
 from models.v2.location import Location
-from utils.globals import pagination_url
 
 location_router_v2 = APIRouter(tags=["v2.Locations"], prefix="/locations")
 
 
 @location_router_v2.get("/{location_id}")
 def read_location(location_id: int):
-
     location = data_provider_v2.fetch_location_pool().get_location(location_id)
     if location is None:
         raise HTTPException(
@@ -20,18 +17,15 @@ def read_location(location_id: int):
 
 
 @location_router_v2.get("/")
-@location_router_v2.get(pagination_url)
-def read_locations(pagination: Pagination = Depends()):
-
+def read_locations(request: Request):
     locations = data_provider_v2.fetch_location_pool().get_locations()
     if locations is None:
         raise HTTPException(status_code=404, detail="No locations found")
-    return pagination.apply(locations)
+    return request.state.pagination.apply(locations)
 
 
 @location_router_v2.post("/")
 def create_location(location: Location):
-
     created_location = data_provider_v2.fetch_location_pool().add_location(location)
     return JSONResponse(
         status_code=status.HTTP_201_CREATED, content=created_location.model_dump()
@@ -40,7 +34,6 @@ def create_location(location: Location):
 
 @location_router_v2.put("/{location_id}")
 def update_location(location_id: int, location: Location):
-
     existing_location = data_provider_v2.fetch_location_pool().get_location(location_id)
     if existing_location is None:
         raise HTTPException(
@@ -54,7 +47,6 @@ def update_location(location_id: int, location: Location):
 
 @location_router_v2.patch("/{location_id}")
 def partial_update_location(location_id: int, location: dict):
-
     existing_location = data_provider_v2.fetch_location_pool().get_location(location_id)
     if existing_location is None:
         raise HTTPException(status_code=404, detail="Location not found")
@@ -73,7 +65,6 @@ def partial_update_location(location_id: int, location: dict):
 
 @location_router_v2.delete("/{location_id}")
 def archive_location(location_id: int):
-
     location = data_provider_v2.fetch_location_pool().is_location_archived(location_id)
     if location is None:
         raise HTTPException(
@@ -90,7 +81,6 @@ def archive_location(location_id: int):
 
 @location_router_v2.patch("/{location_id}/unarchive")
 def unarchive_location(location_id: int):
-
     existing_location = data_provider_v2.fetch_location_pool().is_location_archived(
         location_id
     )
