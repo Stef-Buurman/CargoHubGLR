@@ -57,8 +57,7 @@ def test_get_all_warehouses_page_too_high(client):
     response_warehouses = client.get("/warehouses", headers=test_headers)
     assert response_warehouses.status_code == 200
     response = client.get(
-        "/warehouses/page"
-        + str(response_warehouses.json()["pagination"]["pages"] + 1),
+        "/warehouses/page" + str(response_warehouses.json()["pagination"]["pages"] + 1),
         headers=test_headers,
     )
     assert response.status_code == 200
@@ -78,9 +77,7 @@ def test_get_all_warehouses_wrong_page_number(client):
 
 
 def test_get_all_warehouse_locations_page_1(client):
-    add_response = client.post(
-        "/warehouses", headers=test_headers, json=test_warehouse
-    )
+    add_response = client.post("/warehouses", headers=test_headers, json=test_warehouse)
     assert add_response.status_code in [200, 201]
     test_warehouse["id"] = add_response.json()["id"]
     response = client.get(
