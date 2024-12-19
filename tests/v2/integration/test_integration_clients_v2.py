@@ -25,48 +25,48 @@ def client():
 
 
 def test_get_all_CargoClients(client):
-    response = client.get("/clients/", headers=test_headers)
+    response = client.get("/clients", headers=test_headers)
     assert response.status_code == 200
     assert isinstance(response.json()["data"], list)
 
 
 def test_get_all_CargoClients_no_api_key(client):
-    response = client.get("/clients/")
+    response = client.get("/clients")
     assert response.status_code == 403
 
 
 def test_get_all_CargoClients_invalid_api_key(client):
-    response = client.get("/clients/", headers=invalid_headers)
+    response = client.get("/clients", headers=invalid_headers)
     assert response.status_code == 403
 
 
 def test_add_CargoClient_no_api_key(client):
-    response = client.post("/clients/", json=test_CargoClient)
+    response = client.post("/clients", json=test_CargoClient)
     assert response.status_code == 403
     responseGet = client.get(
-        "/clients/" + str(test_CargoClient["id"]), headers=test_headers
+        "/clients" + str(test_CargoClient["id"]), headers=test_headers
     )
     assert responseGet.status_code == 404
 
 
 def test_add_CargoClient_invalid_api_key(client):
-    response = client.post("/clients/", json=test_CargoClient, headers=invalid_headers)
+    response = client.post("/clients", json=test_CargoClient, headers=invalid_headers)
     assert response.status_code == 403
     responseGet = client.get(
-        "/clients/" + str(test_CargoClient["id"]), headers=test_headers
+        "/clients" + str(test_CargoClient["id"]), headers=test_headers
     )
     assert responseGet.status_code == 404
 
 
 def test_add_CargoClient(client):
-    response = client.post("/clients/", json=test_CargoClient, headers=test_headers)
+    response = client.post("/clients", json=test_CargoClient, headers=test_headers)
     assert response.status_code == 201 or response.status_code == 200
     test_CargoClient["id"] = response.json()["id"]
 
 
 def test_get_CargoClient_by_id(client):
     response = client.get(
-        "/clients/" + str(test_CargoClient["id"]), headers=test_headers
+        "/clients" + str(test_CargoClient["id"]), headers=test_headers
     )
     assert response.status_code == 200
     assert response.json() is not None
@@ -75,13 +75,13 @@ def test_get_CargoClient_by_id(client):
 
 
 def test_get_CargoClient_no_api_key(client):
-    response = client.get("/clients/" + str(test_CargoClient["id"]))
+    response = client.get("/clients" + str(test_CargoClient["id"]))
     assert response.status_code == 403
 
 
 def test_get_CargoClient_invalid_api_key(client):
     response = client.get(
-        "/clients/" + str(test_CargoClient["id"]), headers=invalid_headers
+        "/clients" + str(test_CargoClient["id"]), headers=invalid_headers
     )
     assert response.status_code == 403
 
@@ -92,7 +92,7 @@ def test_get_invalid_CargoClient_id(client):
 
 
 def test_get_nonexistent_CargoClient(client):
-    response = client.get("/clients/" + str(non_existent_id), headers=test_headers)
+    response = client.get("/clients" + str(non_existent_id), headers=test_headers)
     assert response.status_code == 404
 
 
@@ -193,7 +193,7 @@ def test_update_CargoClient(client):
 def test_partial_update_CargoClient_no_api_key(client):
     updated_client = {"name": "Updated client"}
     response = client.patch(
-        "/clients/" + str(test_CargoClient["id"]), json=updated_client
+        "/clients" + str(test_CargoClient["id"]), json=updated_client
     )
     assert response.status_code == 403
 
@@ -201,7 +201,7 @@ def test_partial_update_CargoClient_no_api_key(client):
 def test_partial_update_CargoClient_invalid_api_key(client):
     updated_client = {"name": "Updated client"}
     response = client.patch(
-        "/clients/" + str(test_CargoClient["id"]),
+        "/clients" + str(test_CargoClient["id"]),
         json=updated_client,
         headers=invalid_headers,
     )
@@ -240,13 +240,13 @@ def test_partial_update_CargoClient(client):
 
 
 def test_archive_CargoClient_no_api_key(client):
-    response = client.delete("/clients/" + str(test_CargoClient["id"]))
+    response = client.delete("/clients" + str(test_CargoClient["id"]))
     assert response.status_code == 403
 
 
 def test_archive_CargoClient_invalid_api_key(client):
     response = client.delete(
-        "/clients/" + str(test_CargoClient["id"]), headers=invalid_headers
+        "/clients" + str(test_CargoClient["id"]), headers=invalid_headers
     )
     assert response.status_code == 403
 
@@ -257,18 +257,18 @@ def test_archive_invalid_CargoClient_id(client):
 
 
 def test_archive_nonexistent_CargoClient(client):
-    response = client.delete("/clients/" + str(non_existent_id), headers=test_headers)
+    response = client.delete("/clients" + str(non_existent_id), headers=test_headers)
     assert response.status_code == 404
 
 
 def test_archive_CargoClient(client):
     response = client.delete(
-        "/clients/" + str(test_CargoClient["id"]), headers=test_headers
+        "/clients" + str(test_CargoClient["id"]), headers=test_headers
     )
     assert response.status_code == 200
     assert response.json()["is_archived"] is True
     response_get_CargoClient = client.get(
-        "/clients/" + str(test_CargoClient["id"]), headers=test_headers
+        "/clients" + str(test_CargoClient["id"]), headers=test_headers
     )
     assert response_get_CargoClient.status_code == 200
     assert response_get_CargoClient.json()["is_archived"] is True
@@ -334,13 +334,13 @@ def test_partial_update_archived_CargoClient(client):
 
 
 def test_unarchive_CargoClient_no_api_key(client):
-    response = client.patch("/clients/" + str(test_CargoClient["id"]) + "/unarchive")
+    response = client.patch("/clients" + str(test_CargoClient["id"]) + "/unarchive")
     assert response.status_code == 403
 
 
 def test_unarchive_CargoClient_invalid_api_key(client):
     response = client.patch(
-        "/clients/" + str(test_CargoClient["id"]) + "/unarchive",
+        "/clients" + str(test_CargoClient["id"]) + "/unarchive",
         headers=invalid_headers,
     )
     assert response.status_code == 403
@@ -353,19 +353,19 @@ def test_unarchive_invalid_CargoClient_id(client):
 
 def test_unarchive_nonexistent_CargoClient(client):
     response = client.patch(
-        "/clients/" + str(non_existent_id) + "/unarchive", headers=test_headers
+        "/clients" + str(non_existent_id) + "/unarchive", headers=test_headers
     )
     assert response.status_code == 404
 
 
 def test_unarchive_CargoClient(client):
     response = client.patch(
-        "/clients/" + str(test_CargoClient["id"]) + "/unarchive", headers=test_headers
+        "/clients" + str(test_CargoClient["id"]) + "/unarchive", headers=test_headers
     )
     assert response.status_code == 200
     assert response.json()["is_archived"] is False
     response_get_CargoClient = client.get(
-        "/clients/" + str(test_CargoClient["id"]), headers=test_headers
+        "/clients" + str(test_CargoClient["id"]), headers=test_headers
     )
     assert response_get_CargoClient.status_code == 200
     assert response_get_CargoClient.json()["is_archived"] is False

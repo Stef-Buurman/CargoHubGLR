@@ -35,28 +35,28 @@ def client():
 
 
 def test_get_all_warehouses(client):
-    response = client.get("/warehouses/", headers=test_headers)
+    response = client.get("/warehouses", headers=test_headers)
     assert response.status_code == 200
     assert isinstance(response.json()["data"], list)
 
 
 def test_get_all_warehouses_no_api_key(client):
-    response = client.get("/warehouses/")
+    response = client.get("/warehouses")
     assert response.status_code == 403
 
 
 def test_get_all_warehouses_invalid_api_key(client):
-    response = client.get("/warehouses/", headers=invalid_headers)
+    response = client.get("/warehouses", headers=invalid_headers)
     assert response.status_code == 403
 
 
 def test_get_locations_by_warehouse_id(client):
-    response = client.post("/warehouses/", json=test_warehouse, headers=test_headers)
+    response = client.post("/warehouses", json=test_warehouse, headers=test_headers)
     assert response.status_code == 201 or response.status_code == 200
     test_warehouse["id"] = response.json()["id"]
     assert response.json()["id"] == test_warehouse["id"]
 
-    response = client.post("/locations/", json=test_location, headers=test_headers)
+    response = client.post("/locations", json=test_location, headers=test_headers)
     assert response.status_code == 201 or response.status_code == 200
     test_location["id"] = response.json()["id"]
     assert response.json()["id"] == test_location["id"]
@@ -108,30 +108,30 @@ def test_get_locations_by_invalid_warehouse_id(client):
 
 
 def test_add_warehouse(client):
-    response = client.post("/warehouses/", json=test_warehouse, headers=test_headers)
+    response = client.post("/warehouses", json=test_warehouse, headers=test_headers)
     assert response.status_code == 201 or response.status_code == 200
     test_warehouse["id"] = response.json()["id"]
     assert response.json()["id"] == test_warehouse["id"]
 
 
 def test_add_warehouse_no_api_key(client):
-    response = client.post("/warehouses/", json=test_warehouse)
+    response = client.post("/warehouses", json=test_warehouse)
     assert response.status_code == 403
 
 
 def test_add_warehouse_invalid_api_key(client):
-    response = client.post("/warehouses/", json=test_warehouse, headers=invalid_headers)
+    response = client.post("/warehouses", json=test_warehouse, headers=invalid_headers)
     assert response.status_code == 403
 
 
 # def test_add_existing_warehouse(client):
-#     response = client.post("/warehouses/", json=test_warehouse, headers=test_headers)
+#     response = client.post("/warehouses", json=test_warehouse, headers=test_headers)
 #     assert response.status_code == 409
 
 
 def test_get_warehouse_by_id(client):
     response = client.get(
-        "/warehouses/" + str(test_warehouse["id"]), headers=test_headers
+        "/warehouses" + str(test_warehouse["id"]), headers=test_headers
     )
     assert response.status_code == 200
     response_json = response.json()
@@ -140,13 +140,13 @@ def test_get_warehouse_by_id(client):
 
 
 def test_get_warehouse_no_api_key(client):
-    response = client.get("/warehouses/" + str(test_warehouse["id"]))
+    response = client.get("/warehouses" + str(test_warehouse["id"]))
     assert response.status_code == 403
 
 
 def test_get_warehouse_invalid_api_key(client):
     response = client.get(
-        "/warehouses/" + str(test_warehouse["id"]), headers=invalid_headers
+        "/warehouses" + str(test_warehouse["id"]), headers=invalid_headers
     )
     assert response.status_code == 403
 
@@ -165,13 +165,13 @@ def test_update_warehouse(client):
     updated_warehouse = test_warehouse
     updated_warehouse["name"] = "Updated Warehouse"
     response = client.put(
-        "/warehouses/" + str(test_warehouse["id"]),
+        "/warehouses" + str(test_warehouse["id"]),
         json=updated_warehouse,
         headers=test_headers,
     )
     assert response.status_code == 200
     response_get = client.get(
-        "/warehouses/" + str(test_warehouse["id"]), headers=test_headers
+        "/warehouses" + str(test_warehouse["id"]), headers=test_headers
     )
     assert response_get.status_code == 200
     response_json = response_get.json()
@@ -183,7 +183,7 @@ def test_update_warehouse_no_api_key(client):
     updated_warehouse = test_warehouse
     updated_warehouse["name"] = "Updated Warehouse"
     response = client.put(
-        "/warehouses/" + str(test_warehouse["id"]), json=updated_warehouse
+        "/warehouses" + str(test_warehouse["id"]), json=updated_warehouse
     )
     assert response.status_code == 403
 
@@ -192,7 +192,7 @@ def test_update_warehouse_invalid_api_key(client):
     updated_warehouse = test_warehouse
     updated_warehouse["name"] = "Updated Warehouse"
     response = client.put(
-        "/warehouses/" + str(test_warehouse["id"]),
+        "/warehouses" + str(test_warehouse["id"]),
         json=updated_warehouse,
         headers=invalid_headers,
     )
@@ -203,7 +203,7 @@ def test_update_nonexistent_warehouse(client):
     updated_warehouse = test_warehouse
     updated_warehouse["name"] = "Updated Warehouse"
     response = client.put(
-        "/warehouses/" + str(non_existent_id),
+        "/warehouses" + str(non_existent_id),
         json=updated_warehouse,
         headers=test_headers,
     )
@@ -222,13 +222,13 @@ def test_update_invalid_warehouse_id(client):
 def test_partial_update_warehouse(client):
     updated_warehouse = {"name": "Updated Warehouse"}
     response = client.patch(
-        "/warehouses/" + str(test_warehouse["id"]),
+        "/warehouses" + str(test_warehouse["id"]),
         json=updated_warehouse,
         headers=test_headers,
     )
     assert response.status_code == 200
     response_get = client.get(
-        "/warehouses/" + str(test_warehouse["id"]), headers=test_headers
+        "/warehouses" + str(test_warehouse["id"]), headers=test_headers
     )
     assert response_get.status_code == 200
     response_json = response_get.json()
@@ -239,7 +239,7 @@ def test_partial_update_warehouse(client):
 def test_partial_update_warehouse_no_api_key(client):
     updated_warehouse = {"name": "Updated Warehouse"}
     response = client.patch(
-        "/warehouses/" + str(test_warehouse["id"]), json=updated_warehouse
+        "/warehouses" + str(test_warehouse["id"]), json=updated_warehouse
     )
     assert response.status_code == 403
 
@@ -247,7 +247,7 @@ def test_partial_update_warehouse_no_api_key(client):
 def test_partial_update_warehouse_invalid_api_key(client):
     updated_warehouse = {"name": "Updated Warehouse"}
     response = client.patch(
-        "/warehouses/" + str(test_warehouse["id"]),
+        "/warehouses" + str(test_warehouse["id"]),
         json=updated_warehouse,
         headers=invalid_headers,
     )
@@ -257,7 +257,7 @@ def test_partial_update_warehouse_invalid_api_key(client):
 def test_partial_update_nonexistent_warehouse(client):
     updated_warehouse = {"name": "Updated Warehouse"}
     response = client.patch(
-        "/warehouses/" + str(non_existent_id),
+        "/warehouses" + str(non_existent_id),
         json=updated_warehouse,
         headers=test_headers,
     )
@@ -274,11 +274,11 @@ def test_partial_update_invalid_warehouse_id(client):
 
 def test_archive_warehouse(client):
     response = client.delete(
-        "/warehouses/" + str(test_warehouse["id"]), headers=test_headers
+        "/warehouses" + str(test_warehouse["id"]), headers=test_headers
     )
     assert response.status_code == 200
     response_get = client.get(
-        "/warehouses/" + str(test_warehouse["id"]), headers=test_headers
+        "/warehouses" + str(test_warehouse["id"]), headers=test_headers
     )
     assert response_get.status_code == 200
     response_json = response_get.json()
@@ -287,24 +287,24 @@ def test_archive_warehouse(client):
 
 
 def test_archive_warehouse_no_api_key(client):
-    response = client.delete("/warehouses/" + str(test_warehouse["id"]))
+    response = client.delete("/warehouses" + str(test_warehouse["id"]))
     assert response.status_code == 403
 
 
 def test_archive_warehouse_invalid_api_key(client):
     response = client.delete(
-        "/warehouses/" + str(test_warehouse["id"]), headers=invalid_headers
+        "/warehouses" + str(test_warehouse["id"]), headers=invalid_headers
     )
     assert response.status_code == 403
 
 
 def test_unarchive_warehouse(client):
     response = client.patch(
-        "/warehouses/" + str(test_warehouse["id"]) + "/unarchive", headers=test_headers
+        "/warehouses" + str(test_warehouse["id"]) + "/unarchive", headers=test_headers
     )
     assert response.status_code == 200
     response_get = client.get(
-        "/warehouses/" + str(test_warehouse["id"]), headers=test_headers
+        "/warehouses" + str(test_warehouse["id"]), headers=test_headers
     )
     assert response_get.status_code == 200
     response_json = response_get.json()
@@ -313,13 +313,13 @@ def test_unarchive_warehouse(client):
 
 
 def test_unarchive_warehouse_no_api_key(client):
-    response = client.patch("/warehouses/" + str(test_warehouse["id"]) + "/unarchive")
+    response = client.patch("/warehouses" + str(test_warehouse["id"]) + "/unarchive")
     assert response.status_code == 403
 
 
 def test_unarchive_warehouse_invalid_api_key(client):
     response = client.patch(
-        "/warehouses/" + str(test_warehouse["id"]) + "/unarchive",
+        "/warehouses" + str(test_warehouse["id"]) + "/unarchive",
         headers=invalid_headers,
     )
     assert response.status_code == 403
@@ -327,7 +327,7 @@ def test_unarchive_warehouse_invalid_api_key(client):
 
 def test_unarchive_nonexistent_warehouse(client):
     response = client.patch(
-        "/warehouses/" + str(non_existent_id) + "/unarchive", headers=test_headers
+        "/warehouses" + str(non_existent_id) + "/unarchive", headers=test_headers
     )
     assert response.status_code == 404
 
@@ -339,18 +339,18 @@ def test_unarchive_invalid_warehouse_id(client):
 
 def test_already_unarchived_warehouse(client):
     response = client.patch(
-        "/warehouses/" + str(test_warehouse["id"]) + "/unarchive", headers=test_headers
+        "/warehouses" + str(test_warehouse["id"]) + "/unarchive", headers=test_headers
     )
     assert response.status_code == 400
 
 
 def test_already_archived_warehouse(client):
     response = client.delete(
-        "/warehouses/" + str(test_warehouse["id"]), headers=test_headers
+        "/warehouses" + str(test_warehouse["id"]), headers=test_headers
     )
     assert response.status_code == 200
     response = client.delete(
-        "/warehouses/" + str(test_warehouse["id"]), headers=test_headers
+        "/warehouses" + str(test_warehouse["id"]), headers=test_headers
     )
     assert response.status_code == 400
 
@@ -359,7 +359,7 @@ def test_update_archived_warehouse(client):
     updated_warehouse = test_warehouse
     updated_warehouse["name"] = "Updated Warehouse"
     response = client.put(
-        "/warehouses/" + str(test_warehouse["id"]),
+        "/warehouses" + str(test_warehouse["id"]),
         json=updated_warehouse,
         headers=test_headers,
     )
@@ -369,7 +369,7 @@ def test_update_archived_warehouse(client):
 def test_partial_update_archived_warehouse(client):
     updated_warehouse = {"name": "Updated Warehouse"}
     response = client.patch(
-        "/warehouses/" + str(test_warehouse["id"]),
+        "/warehouses" + str(test_warehouse["id"]),
         json=updated_warehouse,
         headers=test_headers,
     )

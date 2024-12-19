@@ -94,37 +94,37 @@ def client():
 
 
 def test_get_all_shipments(client):
-    response = client.get("/shipments/", headers=test_headers)
+    response = client.get("/shipments", headers=test_headers)
     assert response.status_code == 200
     assert isinstance(response.json()["data"], list)
 
 
 def test_get_all_shipments_no_api_key(client):
-    response = client.get("/shipments/")
+    response = client.get("/shipments")
     assert response.status_code == 403
 
 
 def test_get_all_shipments_invalid_api_key(client):
-    response = client.get("/shipments/", headers=invalid_headers)
+    response = client.get("/shipments", headers=invalid_headers)
     assert response.status_code == 403
 
 
 def test_add_shipment_no_api_key(client):
-    response = client.post("/shipments/", json=test_shipment)
+    response = client.post("/shipments", json=test_shipment)
     assert response.status_code == 403
     response_get = client.get(f"/shipments/{test_shipment['id']}", headers=test_headers)
     assert response_get.status_code == 404
 
 
 def test_add_shipment_invalid_api_key(client):
-    response = client.post("/shipments/", json=test_shipment, headers=invalid_headers)
+    response = client.post("/shipments", json=test_shipment, headers=invalid_headers)
     assert response.status_code == 403
     response_get = client.get(f"/shipments/{test_shipment['id']}", headers=test_headers)
     assert response_get.status_code == 404
 
 
 def test_add_shipment(client):
-    response = client.post("/shipments/", json=test_shipment, headers=test_headers)
+    response = client.post("/shipments", json=test_shipment, headers=test_headers)
     assert response.status_code in [200, 201]
     test_shipment["id"] = response.json()["id"]
     assert response.json()["id"] == test_shipment["id"]
@@ -218,7 +218,7 @@ def test_update_shipment(client):
 def test_partial_update_shipment_no_api_key(client):
     updated_shipment = {"notes": "Super coole nieuwe note voor de test shipment"}
     response = client.patch(
-        "/shipments/" + str(test_shipment["id"]), json=updated_shipment
+        "/shipments" + str(test_shipment["id"]), json=updated_shipment
     )
     assert response.status_code == 403
 
@@ -226,7 +226,7 @@ def test_partial_update_shipment_no_api_key(client):
 def test_partial_update_shipment_invalid_api_key(client):
     updated_shipment = {"notes": "Super coole nieuwe note voor de test shipment"}
     response = client.patch(
-        "/shipments/" + str(test_shipment["id"]),
+        "/shipments" + str(test_shipment["id"]),
         json=updated_shipment,
         headers=invalid_headers,
     )
@@ -244,7 +244,7 @@ def test_partial_update_shipment_invalid_id(client):
 def test_partial_update_shipment_non_existent_id(client):
     updated_shipment = {"notes": "Super coole nieuwe note voor de test shipment"}
     response = client.patch(
-        "/shipments/" + str(non_existent_id),
+        "/shipments" + str(non_existent_id),
         json=updated_shipment,
         headers=test_headers,
     )
@@ -254,13 +254,13 @@ def test_partial_update_shipment_non_existent_id(client):
 def test_partial_update_shipment(client):
     updated_shipment = {"notes": "Super coole nieuwe note voor de test shipment"}
     response = client.patch(
-        "/shipments/" + str(test_shipment["id"]),
+        "/shipments" + str(test_shipment["id"]),
         json=updated_shipment,
         headers=test_headers,
     )
     assert response.status_code == 200
     response_get_shipment = client.get(
-        "/shipments/" + str(test_shipment["id"]), headers=test_headers
+        "/shipments" + str(test_shipment["id"]), headers=test_headers
     )
     assert response_get_shipment.status_code == 200
     assert response_get_shipment.json()["notes"] == updated_shipment["notes"]
@@ -395,12 +395,12 @@ def test_add_orders_to_shipment(client):
     test_order_1["shipment_id"] = test_shipment["id"]
     test_order_2["shipment_id"] = test_shipment["id"]
     response_add_orders_1 = client.post(
-        f"/orders/", json=test_order_1, headers=test_headers
+        f"/orders", json=test_order_1, headers=test_headers
     )
     assert response_add_orders_1.status_code is 201
     test_order_1["id"] = response_add_orders_1.json()["id"]
     response_add_orders_2 = client.post(
-        f"/orders/", json=test_order_2, headers=test_headers
+        f"/orders", json=test_order_2, headers=test_headers
     )
     assert response_add_orders_2.status_code is 201
     test_order_2["id"] = response_add_orders_2.json()["id"]
@@ -573,13 +573,13 @@ def test_update_orders_in_archived_shipment(client):
     test_shipment_2["order_id"] = test_order_1["id"]
     test_order_1["shipment_id"] = 1
     response_add_orders = client.post(
-        f"/orders/", json=test_order_1, headers=test_headers
+        f"/orders", json=test_order_1, headers=test_headers
     )
     assert response_add_orders.status_code is 201
     test_shipment["order_id"] = response_add_orders.json()["id"]
     test_order_1["id"] = response_add_orders.json()["id"]
     response_add = client.post(
-        f"/shipments/", json=test_shipment_2, headers=test_headers
+        f"/shipments", json=test_shipment_2, headers=test_headers
     )
     assert response_add.status_code is 201
     test_order_1["shipment_id"] = response_add.json()["id"]

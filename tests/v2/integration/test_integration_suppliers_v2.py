@@ -63,55 +63,53 @@ def client():
 
 
 def test_get_all_suppliers(client):
-    response = client.get("/suppliers/", headers=test_headers)
+    response = client.get("/suppliers", headers=test_headers)
     assert response.status_code == 200
     assert isinstance(response.json()["data"], list)
 
 
 def test_get_all_suppliers_no_api_key(client):
-    response = client.get("/suppliers/")
+    response = client.get("/suppliers")
     assert response.status_code == 403
 
 
 def test_get_all_suppliers_invalid_api_key(client):
-    response = client.get("/suppliers/", headers=invalid_headers)
+    response = client.get("/suppliers", headers=invalid_headers)
     assert response.status_code == 403
 
 
 def test_add_supplier_no_api_key(client):
-    response = client.post("/suppliers/", json=test_supplier)
+    response = client.post("/suppliers", json=test_supplier)
     assert response.status_code == 403
     responseGet = client.get(
-        "/suppliers/" + str(test_supplier["id"]), headers=test_headers
+        "/suppliers" + str(test_supplier["id"]), headers=test_headers
     )
     assert responseGet.status_code == 404
 
 
 def test_add_supplier_invalid_api_key(client):
-    response = client.post("/suppliers/", json=test_supplier, headers=invalid_headers)
+    response = client.post("/suppliers", json=test_supplier, headers=invalid_headers)
     assert response.status_code == 403
     responseGet = client.get(
-        "/suppliers/" + str(test_supplier["id"]), headers=test_headers
+        "/suppliers" + str(test_supplier["id"]), headers=test_headers
     )
     assert responseGet.status_code == 404
 
 
 def test_add_supplier(client):
-    response = client.post("/suppliers/", json=test_supplier, headers=test_headers)
+    response = client.post("/suppliers", json=test_supplier, headers=test_headers)
     assert response.status_code == 201 or response.status_code == 200
     test_supplier["id"] = response.json()["id"]
     assert response.json()["id"] == test_supplier["id"]
 
 
 # def test_add_existing_supplier(client):
-#     response = client.post("/suppliers/", json=test_supplier, headers=test_headers)
+#     response = client.post("/suppliers", json=test_supplier, headers=test_headers)
 #     assert response.status_code == 409
 
 
 def test_get_supplier_by_id(client):
-    response = client.get(
-        "/suppliers/" + str(test_supplier["id"]), headers=test_headers
-    )
+    response = client.get("/suppliers" + str(test_supplier["id"]), headers=test_headers)
     assert response.status_code == 200
     assert response.json() is not None
     assert isinstance(response.json(), dict)
@@ -124,18 +122,18 @@ def test_get_supplier_by_invalid_id(client):
 
 
 def test_get_supplier_non_existent_id(client):
-    response = client.get("/suppliers/" + str(non_existent_id), headers=test_headers)
+    response = client.get("/suppliers" + str(non_existent_id), headers=test_headers)
     assert response.status_code == 404
 
 
 def test_get_supplier_no_api_key(client):
-    response = client.get("/suppliers/" + str(test_supplier["id"]))
+    response = client.get("/suppliers" + str(test_supplier["id"]))
     assert response.status_code == 403
 
 
 def test_get_supplier_invalid_api_key(client):
     response = client.get(
-        "/suppliers/" + str(test_supplier["id"]), headers=invalid_headers
+        "/suppliers" + str(test_supplier["id"]), headers=invalid_headers
     )
     assert response.status_code == 403
 
@@ -172,11 +170,11 @@ def test_get_supplier_items_non_existent_id(client):
 def test_get_supplier_items(client):
     test_item_1["supplier_id"] = test_supplier["id"]
     response_post_fake_item_1 = client.post(
-        "/items/", json=test_item_1, headers=test_headers
+        "/items", json=test_item_1, headers=test_headers
     )
     test_item_2["supplier_id"] = test_supplier["id"]
     response_post_fake_item_2 = client.post(
-        "/items/", json=test_item_2, headers=test_headers
+        "/items", json=test_item_2, headers=test_headers
     )
     assert (
         response_post_fake_item_1.status_code == 201
@@ -202,11 +200,11 @@ def test_get_supplier_items(client):
         assert item["supplier_id"] == test_supplier["id"]
 
     response_delete_item_1 = client.delete(
-        "/items/" + response_items[0]["uid"], headers=test_headers
+        "/items" + response_items[0]["uid"], headers=test_headers
     )
     assert response_delete_item_1.status_code == 200
     response_delete_item_2 = client.delete(
-        "/items/" + response_items[1]["uid"], headers=test_headers
+        "/items" + response_items[1]["uid"], headers=test_headers
     )
     assert response_delete_item_2.status_code == 200
 
@@ -215,11 +213,11 @@ def test_update_supplier_no_api_key(client):
     updated_supplier = test_supplier.copy()
     updated_supplier["name"] = "Super coole nieuwe naam voor de test supplier"
     response = client.put(
-        "/suppliers/" + str(updated_supplier["id"]), json=updated_supplier
+        "/suppliers" + str(updated_supplier["id"]), json=updated_supplier
     )
     assert response.status_code == 403
     response_get_supplier = client.get(
-        "/suppliers/" + str(updated_supplier["id"]), headers=test_headers
+        "/suppliers" + str(updated_supplier["id"]), headers=test_headers
     )
     assert response_get_supplier.status_code == 200
     assert response_get_supplier.json()["name"] == test_supplier["name"]
@@ -229,13 +227,13 @@ def test_update_supplier_invalid_api_key(client):
     updated_supplier = test_supplier.copy()
     updated_supplier["name"] = "Super coole nieuwe naam voor de test supplier"
     response = client.put(
-        "/suppliers/" + str(updated_supplier["id"]),
+        "/suppliers" + str(updated_supplier["id"]),
         json=updated_supplier,
         headers=invalid_headers,
     )
     assert response.status_code == 403
     response_get_supplier = client.get(
-        "/suppliers/" + str(updated_supplier["id"]), headers=test_headers
+        "/suppliers" + str(updated_supplier["id"]), headers=test_headers
     )
     assert response_get_supplier.status_code == 200
     assert response_get_supplier.json()["name"] == test_supplier["name"]
@@ -254,7 +252,7 @@ def test_update_supplier_non_existent_id(client):
     updated_supplier = test_supplier.copy()
     updated_supplier["name"] = "Super coole nieuwe naam voor de test supplier"
     response = client.put(
-        "/suppliers/" + str(non_existent_id),
+        "/suppliers" + str(non_existent_id),
         json=updated_supplier,
         headers=test_headers,
     )
@@ -265,13 +263,13 @@ def test_update_supplier(client):
     updated_supplier = test_supplier.copy()
     updated_supplier["name"] = "Super coole nieuwe naam voor de test supplier"
     response = client.put(
-        "/suppliers/" + str(updated_supplier["id"]),
+        "/suppliers" + str(updated_supplier["id"]),
         json=updated_supplier,
         headers=test_headers,
     )
     assert response.status_code == 200
     response_get_supplier = client.get(
-        "/suppliers/" + str(updated_supplier["id"]), headers=test_headers
+        "/suppliers" + str(updated_supplier["id"]), headers=test_headers
     )
     assert response_get_supplier.status_code == 200
     assert response_get_supplier.json()["name"] == updated_supplier["name"]
@@ -280,7 +278,7 @@ def test_update_supplier(client):
 def test_partial_update_supplier_no_api_key(client):
     updated_supplier = {"name": "Super coole nieuwe naam voor de test supplier"}
     response = client.patch(
-        "/suppliers/" + str(test_supplier["id"]), json=updated_supplier
+        "/suppliers" + str(test_supplier["id"]), json=updated_supplier
     )
     assert response.status_code == 403
 
@@ -288,7 +286,7 @@ def test_partial_update_supplier_no_api_key(client):
 def test_partial_update_supplier_invalid_api_key(client):
     updated_supplier = {"name": "Super coole nieuwe naam voor de test supplier"}
     response = client.patch(
-        "/suppliers/" + str(test_supplier["id"]),
+        "/suppliers" + str(test_supplier["id"]),
         json=updated_supplier,
         headers=invalid_headers,
     )
@@ -306,7 +304,7 @@ def test_partial_update_supplier_invalid_id(client):
 def test_partial_update_supplier_non_existent_id(client):
     updated_supplier = {"name": "Super coole nieuwe naam voor de test supplier"}
     response = client.patch(
-        "/suppliers/" + str(non_existent_id),
+        "/suppliers" + str(non_existent_id),
         json=updated_supplier,
         headers=test_headers,
     )
@@ -316,34 +314,34 @@ def test_partial_update_supplier_non_existent_id(client):
 def test_partial_update_supplier(client):
     updated_supplier = {"name": "Super coole nieuwe naam voor de test supplier"}
     response = client.patch(
-        "/suppliers/" + str(test_supplier["id"]),
+        "/suppliers" + str(test_supplier["id"]),
         json=updated_supplier,
         headers=test_headers,
     )
     assert response.status_code == 200
     response_get_supplier = client.get(
-        "/suppliers/" + str(test_supplier["id"]), headers=test_headers
+        "/suppliers" + str(test_supplier["id"]), headers=test_headers
     )
     assert response_get_supplier.status_code == 200
     assert response_get_supplier.json()["name"] == updated_supplier["name"]
 
 
 def test_archive_supplier_no_api_key(client):
-    response = client.delete("/suppliers/" + str(test_supplier["id"]))
+    response = client.delete("/suppliers" + str(test_supplier["id"]))
     assert response.status_code == 403
     response_get_supplier = client.get(
-        "/suppliers/" + str(test_supplier["id"]), headers=test_headers
+        "/suppliers" + str(test_supplier["id"]), headers=test_headers
     )
     assert response_get_supplier.status_code == 200
 
 
 def test_archive_supplier_invalid_api_key(client):
     response = client.delete(
-        "/suppliers/" + str(test_supplier["id"]), headers=invalid_headers
+        "/suppliers" + str(test_supplier["id"]), headers=invalid_headers
     )
     assert response.status_code == 403
     response_get_supplier = client.get(
-        "/suppliers/" + str(test_supplier["id"]), headers=test_headers
+        "/suppliers" + str(test_supplier["id"]), headers=test_headers
     )
     assert response_get_supplier.status_code == 200
 
@@ -354,21 +352,21 @@ def test_archive_supplier_invalid_id(client):
 
 
 def test_archive_supplier_non_existent_id(client):
-    response = client.delete("/suppliers/" + str(non_existent_id), headers=test_headers)
+    response = client.delete("/suppliers" + str(non_existent_id), headers=test_headers)
     assert response.status_code == 404
     response_get_supplier = client.get(
-        "/suppliers/" + str(test_supplier["id"]), headers=test_headers
+        "/suppliers" + str(test_supplier["id"]), headers=test_headers
     )
     assert response_get_supplier.status_code == 200
 
 
 def test_archive_supplier(client):
     response = client.delete(
-        "/suppliers/" + str(test_supplier["id"]), headers=test_headers
+        "/suppliers" + str(test_supplier["id"]), headers=test_headers
     )
     assert response.status_code == 200
     response_get_supplier = client.get(
-        "/suppliers/" + str(test_supplier["id"]), headers=test_headers
+        "/suppliers" + str(test_supplier["id"]), headers=test_headers
     )
     assert response_get_supplier.status_code == 200
     assert response_get_supplier.json()["is_archived"] == True
@@ -376,32 +374,32 @@ def test_archive_supplier(client):
 
 def test_archive_already_archived_supplier(client):
     reponse = client.delete(
-        "/suppliers/" + str(test_supplier["id"]), headers=test_headers
+        "/suppliers" + str(test_supplier["id"]), headers=test_headers
     )
     assert reponse.status_code == 400
 
 
 def test_unarchive_supplier(client):
     response = client.patch(
-        "/suppliers/" + str(test_supplier["id"]) + "/unarchive",
+        "/suppliers" + str(test_supplier["id"]) + "/unarchive",
         json=test_supplier,
         headers=test_headers,
     )
     assert response.status_code == 200
     response_get_supplier = client.get(
-        "/suppliers/" + str(test_supplier["id"]), headers=test_headers
+        "/suppliers" + str(test_supplier["id"]), headers=test_headers
     )
     assert response_get_supplier.status_code == 200
 
 
 def test_unarchive_supplier_no_api_key(client):
-    response = client.patch("/suppliers/" + str(test_supplier["id"]) + "/unarchive")
+    response = client.patch("/suppliers" + str(test_supplier["id"]) + "/unarchive")
     assert response.status_code == 403
 
 
 def test_unarchive_supplier_invalid_api_key(client):
     response = client.patch(
-        "/suppliers/" + str(test_supplier["id"]) + "/unarchive", headers=invalid_headers
+        "/suppliers" + str(test_supplier["id"]) + "/unarchive", headers=invalid_headers
     )
     assert response.status_code == 403
 
@@ -413,18 +411,18 @@ def test_unarchive_supplier_invalid_id(client):
 
 def test_unarchive_supplier_non_existent_id(client):
     response = client.patch(
-        "/suppliers/" + str(non_existent_id) + "/unarchive", headers=test_headers
+        "/suppliers" + str(non_existent_id) + "/unarchive", headers=test_headers
     )
     assert response.status_code == 404
 
 
 def test_unarchive_supplier_already_unarchived(client):
     response = client.patch(
-        "/suppliers/" + str(test_supplier["id"]) + "/unarchive", headers=test_headers
+        "/suppliers" + str(test_supplier["id"]) + "/unarchive", headers=test_headers
     )
     assert response.status_code == 400
     response_get_supplier = client.get(
-        "/suppliers/" + str(test_supplier["id"]), headers=test_headers
+        "/suppliers" + str(test_supplier["id"]), headers=test_headers
     )
     assert response_get_supplier.status_code == 200
     assert response_get_supplier.json()["is_archived"] == False
@@ -432,40 +430,40 @@ def test_unarchive_supplier_already_unarchived(client):
 
 def test_update_archived_supplier(client):
     response_archive = client.delete(
-        "/suppliers/" + str(test_supplier["id"]), headers=test_headers
+        "/suppliers" + str(test_supplier["id"]), headers=test_headers
     )
     assert response_archive.status_code == 200
 
     updated_supplier = test_supplier
     updated_supplier["name"] = "Super coole nieuwe naam voor de test supplier"
     response = client.put(
-        "/suppliers/" + str(updated_supplier["id"]),
+        "/suppliers" + str(updated_supplier["id"]),
         json=updated_supplier,
         headers=test_headers,
     )
     assert response.status_code == 400
 
     response_get_supplier = client.get(
-        "/suppliers/" + str(updated_supplier["id"]), headers=test_headers
+        "/suppliers" + str(updated_supplier["id"]), headers=test_headers
     )
     assert response_get_supplier.status_code == 200
 
 
 def test_partial_update_archived_supplier(client):
     response_archive = client.delete(
-        "/suppliers/" + str(test_supplier["id"]), headers=test_headers
+        "/suppliers" + str(test_supplier["id"]), headers=test_headers
     )
     assert response_archive.status_code == 400
 
     updated_supplier = {"name": "Super coole nieuwe naam voor de test supplier"}
     response = client.patch(
-        "/suppliers/" + str(test_supplier["id"]),
+        "/suppliers" + str(test_supplier["id"]),
         json=updated_supplier,
         headers=test_headers,
     )
     assert response.status_code == 400
 
     response_get_supplier = client.get(
-        "/suppliers/" + str(test_supplier["id"]), headers=test_headers
+        "/suppliers" + str(test_supplier["id"]), headers=test_headers
     )
     assert response_get_supplier.status_code == 200
