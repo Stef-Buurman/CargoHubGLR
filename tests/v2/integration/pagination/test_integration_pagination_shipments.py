@@ -64,10 +64,11 @@ def test_get_all_shipments_page_negative(client):
 
 
 def test_get_all_shipments_page_too_high(client):
-    response_shipments = client.get("/shipments/", headers=test_headers)
+    response_shipments = client.get("/shipments", headers=test_headers)
     assert response_shipments.status_code == 200
     response = client.get(
-        "/shipments/page/" + str(response_shipments.json()["pagination"]["pages"] + 1),
+        f"/shipments{pagination_url_base}"
+        + str(response_shipments.json()["pagination"]["pages"] + 1),
         headers=test_headers,
     )
     assert response.status_code == 200
@@ -87,7 +88,7 @@ def test_get_all_shipments_wrong_page_number(client):
 
 
 def test_get_all_shipment_orders_page_1(client):
-    add_response = client.post("/shipments/", json=test_shipment, headers=test_headers)
+    add_response = client.post("/shipments", json=test_shipment, headers=test_headers)
     assert add_response.status_code in [200, 201]
     test_shipment["id"] = add_response.json()["id"]
     response = client.get(
@@ -125,7 +126,7 @@ def test_get_all_shipment_orders_page_too_high(client):
     )
     assert response_orders.status_code == 200
     response = client.get(
-        f"/shipments/{test_shipment['id']}/orders/page/"
+        f"/shipments/{test_shipment['id']}/orders{pagination_url_base}"
         + str(response_orders.json()["pagination"]["pages"] + 1),
         headers=test_headers,
     )
@@ -154,7 +155,7 @@ def test_get_all_shipment_orders_wrong_page_number(client):
 
 
 def test_get_all_shipment_items_page_1(client):
-    add_response = client.post("/shipments/", json=test_shipment, headers=test_headers)
+    add_response = client.post("/shipments", json=test_shipment, headers=test_headers)
     assert add_response.status_code in [200, 201]
     test_shipment["id"] = add_response.json()["id"]
     response = client.get(
@@ -192,7 +193,7 @@ def test_get_all_shipment_items_page_too_high(client):
     )
     assert response_items.status_code == 200
     response = client.get(
-        f"/shipments/{test_shipment['id']}/items/page/"
+        f"/shipments/{test_shipment['id']}/items{pagination_url_base}"
         + str(response_items.json()["pagination"]["pages"] + 1),
         headers=test_headers,
     )

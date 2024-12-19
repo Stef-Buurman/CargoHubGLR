@@ -35,28 +35,28 @@ def client():
 
 
 def test_get_all_warehouses(client):
-    response = client.get("/warehouses/", headers=test_headers)
+    response = client.get("/warehouses", headers=test_headers)
     assert response.status_code == 200
     assert isinstance(response.json()["data"], list)
 
 
 def test_get_all_warehouses_no_api_key(client):
-    response = client.get("/warehouses/")
+    response = client.get("/warehouses")
     assert response.status_code == 403
 
 
 def test_get_all_warehouses_invalid_api_key(client):
-    response = client.get("/warehouses/", headers=invalid_headers)
+    response = client.get("/warehouses", headers=invalid_headers)
     assert response.status_code == 403
 
 
 def test_get_locations_by_warehouse_id(client):
-    response = client.post("/warehouses/", json=test_warehouse, headers=test_headers)
+    response = client.post("/warehouses", json=test_warehouse, headers=test_headers)
     assert response.status_code == 201 or response.status_code == 200
     test_warehouse["id"] = response.json()["id"]
     assert response.json()["id"] == test_warehouse["id"]
 
-    response = client.post("/locations/", json=test_location, headers=test_headers)
+    response = client.post("/locations", json=test_location, headers=test_headers)
     assert response.status_code == 201 or response.status_code == 200
     test_location["id"] = response.json()["id"]
     assert response.json()["id"] == test_location["id"]
@@ -108,24 +108,24 @@ def test_get_locations_by_invalid_warehouse_id(client):
 
 
 def test_add_warehouse(client):
-    response = client.post("/warehouses/", json=test_warehouse, headers=test_headers)
+    response = client.post("/warehouses", json=test_warehouse, headers=test_headers)
     assert response.status_code == 201 or response.status_code == 200
     test_warehouse["id"] = response.json()["id"]
     assert response.json()["id"] == test_warehouse["id"]
 
 
 def test_add_warehouse_no_api_key(client):
-    response = client.post("/warehouses/", json=test_warehouse)
+    response = client.post("/warehouses", json=test_warehouse)
     assert response.status_code == 403
 
 
 def test_add_warehouse_invalid_api_key(client):
-    response = client.post("/warehouses/", json=test_warehouse, headers=invalid_headers)
+    response = client.post("/warehouses", json=test_warehouse, headers=invalid_headers)
     assert response.status_code == 403
 
 
 # def test_add_existing_warehouse(client):
-#     response = client.post("/warehouses/", json=test_warehouse, headers=test_headers)
+#     response = client.post("/warehouses", json=test_warehouse, headers=test_headers)
 #     assert response.status_code == 409
 
 

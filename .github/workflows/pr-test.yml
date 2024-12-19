@@ -88,7 +88,7 @@ jobs:
       - name: Test with pytest
         id: test_step
         run: |
-          coverage run -m pytest ./tests/v2 --ignore=./tests/v2/integration/pagination
+          coverage run -m pytest ./tests/v2
       - name: Run code coverage
         run: |
           coverage report -m --rcfile=.coveragerc --format=markdown >> $GITHUB_STEP_SUMMARY

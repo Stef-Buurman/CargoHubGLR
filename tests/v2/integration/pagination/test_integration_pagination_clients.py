@@ -54,10 +54,11 @@ def test_get_all_clients_page_negative(client):
 
 
 def test_get_all_clients_page_too_high(client):
-    response_clients = client.get("/clients/", headers=test_headers)
+    response_clients = client.get("/clients", headers=test_headers)
     assert response_clients.status_code == 200
     response = client.get(
-        "/clients/page/" + str(response_clients.json()["pagination"]["pages"] + 1),
+        f"/clients{pagination_url_base}"
+        + str(response_clients.json()["pagination"]["pages"] + 1),
         headers=test_headers,
     )
     assert response.status_code == 200
@@ -77,7 +78,7 @@ def test_get_all_clients_wrong_page_number(client):
 
 
 def test_get_all_client_orders_page_1(client):
-    add_response = client.post("/clients/", json=test_CargoClient, headers=test_headers)
+    add_response = client.post("/clients", json=test_CargoClient, headers=test_headers)
     assert add_response.status_code in [200, 201]
     test_CargoClient["id"] = add_response.json()["id"]
     response = client.get(
@@ -115,7 +116,7 @@ def test_get_all_client_orders_page_too_high(client):
     )
     assert response_orders.status_code == 200
     response = client.get(
-        f"/clients/{test_CargoClient['id']}/orders/page/{response_orders.json()['pagination']['pages'] + 1}",
+        f"/clients/{test_CargoClient['id']}/orders{pagination_url_base}{response_orders.json()['pagination']['pages'] + 1}",
         headers=test_headers,
     )
     assert response.status_code == 200

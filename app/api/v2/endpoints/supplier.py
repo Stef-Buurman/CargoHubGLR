@@ -1,16 +1,13 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Request, HTTPException, status
 from fastapi.responses import JSONResponse
-from services.v2.pagination_service import Pagination
 from services.v2 import data_provider_v2
 from models.v2.supplier import Supplier
-from utils.globals import pagination_url
 
 supplier_router_v2 = APIRouter(tags=["v2.Suppliers"], prefix="/suppliers")
 
 
 @supplier_router_v2.get("/{supplier_id}")
 def read_supplier(supplier_id: int):
-
     supplier = data_provider_v2.fetch_supplier_pool().get_supplier(supplier_id)
     if supplier is None:
         raise HTTPException(
@@ -19,20 +16,16 @@ def read_supplier(supplier_id: int):
     return supplier
 
 
-@supplier_router_v2.get("/")
-@supplier_router_v2.get(pagination_url)
-def read_suppliers(pagination: Pagination = Depends()):
-
+@supplier_router_v2.get("")
+def read_suppliers(request: Request):
     suppliers = data_provider_v2.fetch_supplier_pool().get_suppliers()
     if suppliers is None:
         raise HTTPException(status_code=404, detail="Suppliers not found")
-    return pagination.apply(suppliers)
+    return request.state.pagination.apply(suppliers)
 
 
 @supplier_router_v2.get("/{supplier_id}/items")
-@supplier_router_v2.get("/{supplier_id}/items" + pagination_url)
-def read_items_of_supplier(supplier_id: int, pagination: Pagination = Depends()):
-
+def read_items_of_supplier(supplier_id: int, request: Request):
     supplier = data_provider_v2.fetch_supplier_pool().get_supplier(supplier_id)
     if supplier is None:
         raise HTTPException(
@@ -42,12 +35,11 @@ def read_items_of_supplier(supplier_id: int, pagination: Pagination = Depends())
     items_for_supplier = data_provider_v2.fetch_item_pool().get_items_for_supplier(
         supplier_id
     )
-    return pagination.apply(items_for_supplier)
+    return request.state.pagination.apply(items_for_supplier)
 
 
-@supplier_router_v2.post("/")
+@supplier_router_v2.post("")
 def create_supplier(supplier: Supplier):
-
     created_supplier = data_provider_v2.fetch_supplier_pool().add_supplier(supplier)
     return JSONResponse(
         status_code=status.HTTP_201_CREATED, content=created_supplier.model_dump()
@@ -56,7 +48,6 @@ def create_supplier(supplier: Supplier):
 
 @supplier_router_v2.put("/{supplier_id}")
 def update_supplier(supplier_id: int, supplier: Supplier):
-
     existingSupplier = data_provider_v2.fetch_supplier_pool().is_supplier_archived(
         supplier_id
     )
@@ -72,7 +63,6 @@ def update_supplier(supplier_id: int, supplier: Supplier):
 
 @supplier_router_v2.patch("/{supplier_id}")
 def partial_update_supplier(supplier_id: int, supplier: dict):
-
     existing_supplier = data_provider_v2.fetch_supplier_pool().is_supplier_archived(
         supplier_id
     )
@@ -80,7 +70,6 @@ def partial_update_supplier(supplier_id: int, supplier: dict):
         raise HTTPException(status_code=404, detail="Supplier not found")
     elif existing_supplier:
         raise HTTPException(status_code=400, detail="Supplier is archived")
-
     existing_supplier = data_provider_v2.fetch_supplier_pool().get_supplier(supplier_id)
 
     valid_keys = Supplier.model_fields.keys()
@@ -97,11 +86,9 @@ def partial_update_supplier(supplier_id: int, supplier: dict):
 
 @supplier_router_v2.delete("/{supplier_id}")
 def archive_supplier(supplier_id: int):
-
     existing_supplier = data_provider_v2.fetch_supplier_pool().is_supplier_archived(
         supplier_id
     )
-
     if existing_supplier is None:
         raise HTTPException(status_code=404, detail="Supplier not found")
     elif existing_supplier:
@@ -115,7 +102,6 @@ def archive_supplier(supplier_id: int):
 
 @supplier_router_v2.patch("/{supplier_id}/unarchive")
 def unarchive_supplier(supplier_id: int):
-
     existing_supplier = data_provider_v2.fetch_supplier_pool().is_supplier_archived(
         supplier_id
     )
