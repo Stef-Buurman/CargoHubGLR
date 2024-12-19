@@ -75,7 +75,6 @@ def update_item(
     return item
 
 
-
 @item_router.delete("/{item_id}")
 def delete_item(item_id: str, api_key: str = Depends(auth_provider.get_api_key)):
     data_provider.init()
