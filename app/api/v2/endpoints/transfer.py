@@ -15,23 +15,21 @@ def read_transfer(transfer_id: int):
 
 @transfer_router_v2.get("/")
 def read_transfers(request: Request):
-    pagination = request.state.pagination
     transfers = data_provider_v2.fetch_transfer_pool().get_transfers()
     if transfers is None:
         raise HTTPException(status_code=404, detail="No transfers found")
-    return pagination.apply(transfers)
+    return request.state.pagination.apply(transfers)
 
 
 @transfer_router_v2.get("/{transfer_id}/items")
 def read_transfer_items(transfer_id: int, request: Request):
-    pagination = request.state.pagination
     transfer = data_provider_v2.fetch_transfer_pool().get_transfer(transfer_id)
     if transfer is None:
         raise HTTPException(status_code=404, detail="Transfer not found")
     items = data_provider_v2.fetch_transfer_pool().get_items_in_transfer(transfer_id)
     if items is None:
         raise HTTPException(status_code=404, detail="No items found in transfer")
-    return pagination.apply(items)
+    return request.state.pagination.apply(items)
 
 
 @transfer_router_v2.post("/")
