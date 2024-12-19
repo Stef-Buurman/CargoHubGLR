@@ -50,9 +50,7 @@ def test_add_inventory_no_api_key(client):
 
 
 def test_add_inventory_invalid_api_key(client):
-    response = client.post(
-        "/inventories", json=test_inventory, headers=invalid_headers
-    )
+    response = client.post("/inventories", json=test_inventory, headers=invalid_headers)
     assert response.status_code == 403
     responseGet = client.get(
         "/inventories/" + str(test_inventory["id"]), headers=test_headers
