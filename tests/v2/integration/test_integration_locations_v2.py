@@ -38,7 +38,7 @@ def test_add_location_no_api_key(client):
     response = client.post("/locations", json=test_location)
     assert response.status_code == 403
     responseGet = client.get(
-        "/locations" + str(test_location["id"]), headers=test_headers
+        "/locations/" + str(test_location["id"]), headers=test_headers
     )
     assert responseGet.status_code == 404
 
@@ -47,7 +47,7 @@ def test_add_location_invalid_api_key(client):
     response = client.post("/locations", json=test_location, headers=invalid_headers)
     assert response.status_code == 403
     responseGet = client.get(
-        "/locations" + str(test_location["id"]), headers=test_headers
+        "/locations/" + str(test_location["id"]), headers=test_headers
     )
     assert responseGet.status_code == 404
 
@@ -65,7 +65,9 @@ def test_add_location(client):
 
 
 def test_get_location_by_id(client):
-    response = client.get("/locations" + str(test_location["id"]), headers=test_headers)
+    response = client.get(
+        "/locations/" + str(test_location["id"]), headers=test_headers
+    )
     assert response.status_code == 200
     assert response.json() is not None
     assert isinstance(response.json(), dict)
@@ -73,19 +75,19 @@ def test_get_location_by_id(client):
 
 
 def test_get_location_no_api_key(client):
-    response = client.get("/locations" + str(test_location["id"]))
+    response = client.get("/locations/" + str(test_location["id"]))
     assert response.status_code == 403
 
 
 def test_get_location_invalid_api_key(client):
     response = client.get(
-        "/locations" + str(test_location["id"]), headers=invalid_headers
+        "/locations/" + str(test_location["id"]), headers=invalid_headers
     )
     assert response.status_code == 403
 
 
 def test_get_non_existing_location_id(client):
-    response = client.get("/locations" + str(non_existent_id), headers=test_headers)
+    response = client.get("/locations/" + str(non_existent_id), headers=test_headers)
     assert response.status_code == 404
 
 
@@ -95,13 +97,13 @@ def test_get_location_by_invalid_id(client):
 
 
 def test_update_location_no_api_key(client):
-    response = client.put("/locations" + str(test_location["id"]), json=test_location)
+    response = client.put("/locations/" + str(test_location["id"]), json=test_location)
     assert response.status_code == 403
 
 
 def test_update_location_invalid_api_key(client):
     response = client.put(
-        "/locations" + str(test_location["id"]),
+        "/locations/" + str(test_location["id"]),
         json=test_location,
         headers=invalid_headers,
     )
@@ -110,7 +112,7 @@ def test_update_location_invalid_api_key(client):
 
 def test_update_non_existent_location(client):
     response = client.put(
-        "/locations" + str(non_existent_id), json=test_location, headers=test_headers
+        "/locations/" + str(non_existent_id), json=test_location, headers=test_headers
     )
     assert response.status_code == 404
 
@@ -126,7 +128,7 @@ def test_update_location(client):
     test_location_copy = test_location.copy()
     test_location_copy["name"] = "Row: kip, Rack: 1290, Shelf: 3467"
     response = client.put(
-        "/locations" + str(test_location_copy["id"]),
+        "/locations/" + str(test_location_copy["id"]),
         json=test_location_copy,
         headers=test_headers,
     )
@@ -134,20 +136,22 @@ def test_update_location(client):
     assert response.json() is not None
     assert isinstance(response.json(), dict)
     responseGet = client.get(
-        "/locations" + str(test_location_copy["id"]), headers=test_headers
+        "/locations/" + str(test_location_copy["id"]), headers=test_headers
     )
     assert responseGet.status_code == 200
     assert responseGet.json()["name"] == test_location_copy["name"]
 
 
 def test_partial_update_location_no_api_key(client):
-    response = client.patch("/locations" + str(test_location["id"]), json=test_location)
+    response = client.patch(
+        "/locations/" + str(test_location["id"]), json=test_location
+    )
     assert response.status_code == 403
 
 
 def test_partial_update_location_invalid_api_key(client):
     response = client.patch(
-        "/locations" + str(test_location["id"]),
+        "/locations/" + str(test_location["id"]),
         json=test_location,
         headers=invalid_headers,
     )
@@ -156,7 +160,7 @@ def test_partial_update_location_invalid_api_key(client):
 
 def test_partial_update_non_existent_location(client):
     response = client.patch(
-        "/locations" + str(non_existent_id), json=test_location, headers=test_headers
+        "/locations/" + str(non_existent_id), json=test_location, headers=test_headers
     )
     assert response.status_code == 404
 
@@ -171,7 +175,7 @@ def test_partial_update_invalid_location_id(client):
 def test_partial_update_location(client):
     new_name = "Row: kip, Rack: 1290, Shelf: 3467"
     response = client.patch(
-        "/locations" + str(test_location["id"]),
+        "/locations/" + str(test_location["id"]),
         json={"name": new_name},
         headers=test_headers,
     )
@@ -179,34 +183,34 @@ def test_partial_update_location(client):
     assert response.json() is not None
     assert isinstance(response.json(), dict)
     responseGet = client.get(
-        "/locations" + str(test_location["id"]), headers=test_headers
+        "/locations/" + str(test_location["id"]), headers=test_headers
     )
     assert responseGet.status_code == 200
     assert responseGet.json()["name"] == new_name
 
 
 def test_archive_location_no_api_key(client):
-    response = client.delete("/locations" + str(test_location["id"]))
+    response = client.delete("/locations/" + str(test_location["id"]))
     assert response.status_code == 403
     responseGet = client.get(
-        "/locations" + str(test_location["id"]), headers=test_headers
+        "/locations/" + str(test_location["id"]), headers=test_headers
     )
     assert responseGet.status_code == 200
 
 
 def test_archive_location_invalid_api_key(client):
     response = client.delete(
-        "/locations" + str(test_location["id"]), headers=invalid_headers
+        "/locations/" + str(test_location["id"]), headers=invalid_headers
     )
     assert response.status_code == 403
     responseGet = client.get(
-        "/locations" + str(test_location["id"]), headers=test_headers
+        "/locations/" + str(test_location["id"]), headers=test_headers
     )
     assert responseGet.status_code == 200
 
 
 def test_archive_non_existent_location(client):
-    response = client.delete("/locations" + str(non_existent_id), headers=test_headers)
+    response = client.delete("/locations/" + str(non_existent_id), headers=test_headers)
     assert response.status_code == 404
 
 
@@ -217,11 +221,11 @@ def test_archive_invalid_location_id(client):
 
 def test_archive_location(client):
     response = client.delete(
-        "/locations" + str(test_location["id"]), headers=test_headers
+        "/locations/" + str(test_location["id"]), headers=test_headers
     )
     assert response.status_code == 200
     response_get = client.get(
-        "/locations" + str(test_location["id"]), headers=test_headers
+        "/locations/" + str(test_location["id"]), headers=test_headers
     )
     assert response_get.status_code == 200
     response_json = response_get.json()
@@ -231,11 +235,11 @@ def test_archive_location(client):
 
 def test_unarchive_location(client):
     response = client.patch(
-        "/locations" + str(test_location["id"]) + "/unarchive", headers=test_headers
+        "/locations/" + str(test_location["id"]) + "/unarchive", headers=test_headers
     )
     assert response.status_code == 200
     response_get = client.get(
-        "/locations" + str(test_location["id"]), headers=test_headers
+        "/locations/" + str(test_location["id"]), headers=test_headers
     )
     assert response_get.status_code == 200
     response_json = response_get.json()
@@ -244,20 +248,20 @@ def test_unarchive_location(client):
 
 
 def test_unarchive_location_no_api_key(client):
-    response = client.patch("/locations" + str(test_location["id"]) + "/unarchive")
+    response = client.patch("/locations/" + str(test_location["id"]) + "/unarchive")
     assert response.status_code == 403
 
 
 def test_unarchive_location_invalid_api_key(client):
     response = client.patch(
-        "/locations" + str(test_location["id"]) + "/unarchive", headers=invalid_headers
+        "/locations/" + str(test_location["id"]) + "/unarchive", headers=invalid_headers
     )
     assert response.status_code == 403
 
 
 def test_unarchive_non_existent_location(client):
     response = client.patch(
-        "/locations" + str(non_existent_id) + "/unarchive", headers=test_headers
+        "/locations/" + str(non_existent_id) + "/unarchive", headers=test_headers
     )
     assert response.status_code == 404
 
@@ -269,17 +273,17 @@ def test_unarchive_invalid_location_id(client):
 
 def test_unarchive_already_unarchived_location(client):
     response = client.patch(
-        "/locations" + str(test_location["id"]) + "/unarchive", headers=test_headers
+        "/locations/" + str(test_location["id"]) + "/unarchive", headers=test_headers
     )
     assert response.status_code == 400
 
 
 def test_archive_already_archived_location(client):
     respone = client.delete(
-        "/locations" + str(test_location["id"]), headers=test_headers
+        "/locations/" + str(test_location["id"]), headers=test_headers
     )
     assert respone.status_code == 200
     response = client.delete(
-        "/locations" + str(test_location["id"]), headers=test_headers
+        "/locations/" + str(test_location["id"]), headers=test_headers
     )
     assert response.status_code == 400

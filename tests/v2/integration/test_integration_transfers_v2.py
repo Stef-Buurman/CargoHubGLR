@@ -59,7 +59,9 @@ def test_add_transfer_invalid_api_key(client):
 
 
 def test_get_transfer_by_id(client):
-    response = client.get("/transfers" + str(test_transfer["id"]), headers=test_headers)
+    response = client.get(
+        "/transfers/" + str(test_transfer["id"]), headers=test_headers
+    )
     assert response.status_code == 200
     response_json = response.json()
     assert response_json is not None
@@ -67,7 +69,7 @@ def test_get_transfer_by_id(client):
 
 
 def test_get_transfer_by_non_existent_id(client):
-    response = client.get("/transfers" + str(non_existent_id), headers=test_headers)
+    response = client.get("/transfers/" + str(non_existent_id), headers=test_headers)
     assert response.status_code == 404
     response_json = response.json()
     assert response_json is not None
@@ -80,13 +82,13 @@ def test_get_transfer_by_invalid_id(client):
 
 
 def test_get_transfer_no_api_key(client):
-    response = client.get("/transfers" + str(test_transfer["id"]))
+    response = client.get("/transfers/" + str(test_transfer["id"]))
     assert response.status_code == 403
 
 
 def test_get_transfer_invalid_api_key(client):
     response = client.get(
-        "/transfers" + str(test_transfer["id"]), headers=invalid_headers
+        "/transfers/" + str(test_transfer["id"]), headers=invalid_headers
     )
     assert response.status_code == 403
 
@@ -115,7 +117,7 @@ def test_update_transfer(client):
     updated_item_group = test_transfer.copy()
     updated_item_group["reference"] = "TR00002"
     response = client.put(
-        "/transfers" + str(test_transfer["id"]),
+        "/transfers/" + str(test_transfer["id"]),
         json=updated_item_group,
         headers=test_headers,
     )
@@ -128,7 +130,7 @@ def test_update_transfer_no_api_key(client):
     updated_item_group = test_transfer.copy()
     updated_item_group["reference"] = "TR00002"
     response = client.put(
-        "/transfers" + str(test_transfer["id"]), json=updated_item_group
+        "/transfers/" + str(test_transfer["id"]), json=updated_item_group
     )
     assert response.status_code == 403
 
@@ -137,7 +139,7 @@ def test_update_transfer_invalid_api_key(client):
     updated_item_group = test_transfer.copy()
     updated_item_group["reference"] = "TR00002"
     response = client.put(
-        "/transfers" + str(test_transfer["id"]),
+        "/transfers/" + str(test_transfer["id"]),
         json=updated_item_group,
         headers=invalid_headers,
     )
@@ -148,7 +150,7 @@ def test_update_non_existent_transfer(client):
     updated_item_group = test_transfer.copy()
     updated_item_group["reference"] = "TR00002"
     response = client.put(
-        "/transfers" + str(non_existent_id),
+        "/transfers/" + str(non_existent_id),
         json=updated_item_group,
         headers=test_headers,
     )
@@ -169,7 +171,7 @@ def test_update_invalid_transfer_id(client):
 
 def test_partial_update_transfer(client):
     response = client.patch(
-        "/transfers" + str(test_transfer["id"]),
+        "/transfers/" + str(test_transfer["id"]),
         json={"reference": "TR00002"},
         headers=test_headers,
     )
@@ -179,14 +181,14 @@ def test_partial_update_transfer(client):
 
 def test_partial_update_transfer_no_api_key(client):
     response = client.patch(
-        "/transfers" + str(test_transfer["id"]), json={"reference": "TR00002"}
+        "/transfers/" + str(test_transfer["id"]), json={"reference": "TR00002"}
     )
     assert response.status_code == 403
 
 
 def test_partial_update_transfer_invalid_api_key(client):
     response = client.patch(
-        "/transfers" + str(test_transfer["id"]),
+        "/transfers/" + str(test_transfer["id"]),
         json={"reference": "TR00002"},
         headers=invalid_headers,
     )
@@ -195,7 +197,7 @@ def test_partial_update_transfer_invalid_api_key(client):
 
 def test_partial_update_non_existent_transfer(client):
     response = client.patch(
-        "/transfers" + str(non_existent_id),
+        "/transfers/" + str(non_existent_id),
         json={"reference": "TR00002"},
         headers=test_headers,
     )
@@ -214,26 +216,26 @@ def test_partial_update_invalid_transfer_id(client):
 
 def test_commit_transfer(client):
     response = client.put(
-        "/transfers" + str(test_transfer["id"]) + "/commit", headers=test_headers
+        "/transfers/" + str(test_transfer["id"]) + "/commit", headers=test_headers
     )
     assert response.status_code == 200
 
 
 def test_commit_transfer_no_api_key(client):
-    response = client.put("/transfers" + str(test_transfer["id"]) + "/commit")
+    response = client.put("/transfers/" + str(test_transfer["id"]) + "/commit")
     assert response.status_code == 403
 
 
 def test_commit_transfer_invalid_api_key(client):
     response = client.put(
-        "/transfers" + str(test_transfer["id"]) + "/commit", headers=invalid_headers
+        "/transfers/" + str(test_transfer["id"]) + "/commit", headers=invalid_headers
     )
     assert response.status_code == 403
 
 
 def test_commit_non_existent_transfer(client):
     response = client.put(
-        "/transfers" + str(non_existent_id) + "/commit", headers=test_headers
+        "/transfers/" + str(non_existent_id) + "/commit", headers=test_headers
     )
     assert response.status_code == 404
     response_json = response.json()
@@ -248,11 +250,11 @@ def test_commit_invalid_transfer_id(client):
 
 def test_archive_transfer(client):
     response = client.delete(
-        "/transfers" + str(test_transfer["id"]), headers=test_headers
+        "/transfers/" + str(test_transfer["id"]), headers=test_headers
     )
     assert response.status_code == 200
     response_get = client.get(
-        "transfers" + str(test_transfer["id"]), headers=test_headers
+        "transfers/" + str(test_transfer["id"]), headers=test_headers
     )
     assert response_get.status_code == 200
     response_json = response_get.json()
@@ -261,19 +263,19 @@ def test_archive_transfer(client):
 
 
 def test_archive_transfer_no_api_key(client):
-    response = client.delete("/transfers" + str(test_transfer["id"]))
+    response = client.delete("/transfers/" + str(test_transfer["id"]))
     assert response.status_code == 403
 
 
 def test_archive_transfer_invalid_api_key(client):
     response = client.delete(
-        "/transfers" + str(test_transfer["id"]), headers=invalid_headers
+        "/transfers/" + str(test_transfer["id"]), headers=invalid_headers
     )
     assert response.status_code == 403
 
 
 def test_archive_non_existent_transfer(client):
-    response = client.delete("/transfers" + str(non_existent_id), headers=test_headers)
+    response = client.delete("/transfers/" + str(non_existent_id), headers=test_headers)
     assert response.status_code == 404
     response_json = response.json()
     assert response_json is not None
@@ -287,11 +289,11 @@ def test_archive_invalid_transfer_id(client):
 
 def test_unarchive_transfer(client):
     response = client.patch(
-        "/transfers" + str(test_transfer["id"]) + "/unarchive", headers=test_headers
+        "/transfers/" + str(test_transfer["id"]) + "/unarchive", headers=test_headers
     )
     assert response.status_code == 200
     response_get = client.get(
-        "transfers" + str(test_transfer["id"]), headers=test_headers
+        "transfers/" + str(test_transfer["id"]), headers=test_headers
     )
     assert response_get.status_code == 200
     response_json = response_get.json()
@@ -300,20 +302,20 @@ def test_unarchive_transfer(client):
 
 
 def test_unarchive_transfer_no_api_key(client):
-    response = client.patch("/transfers" + str(test_transfer["id"]) + "/unarchive")
+    response = client.patch("/transfers/" + str(test_transfer["id"]) + "/unarchive")
     assert response.status_code == 403
 
 
 def test_unarchive_transfer_invalid_api_key(client):
     response = client.patch(
-        "/transfers" + str(test_transfer["id"]) + "/unarchive", headers=invalid_headers
+        "/transfers/" + str(test_transfer["id"]) + "/unarchive", headers=invalid_headers
     )
     assert response.status_code == 403
 
 
 def test_unarchive_non_existent_transfer(client):
     response = client.patch(
-        "/transfers" + str(non_existent_id) + "/unarchive", headers=test_headers
+        "/transfers/" + str(non_existent_id) + "/unarchive", headers=test_headers
     )
     assert response.status_code == 404
     response_json = response.json()
@@ -328,7 +330,7 @@ def test_unarchive_invalid_transfer_id(client):
 
 def test_already_unarchived_transfer(client):
     response = client.patch(
-        "/transfers" + str(test_transfer["id"]) + "/unarchive", headers=test_headers
+        "/transfers/" + str(test_transfer["id"]) + "/unarchive", headers=test_headers
     )
     assert response.status_code == 400
     response_json = response.json()
@@ -338,11 +340,11 @@ def test_already_unarchived_transfer(client):
 
 def test_already_archived_transfer(client):
     response = client.delete(
-        "/transfers" + str(test_transfer["id"]), headers=test_headers
+        "/transfers/" + str(test_transfer["id"]), headers=test_headers
     )
     assert response.status_code == 200
     response = client.delete(
-        "/transfers" + str(test_transfer["id"]), headers=test_headers
+        "/transfers/" + str(test_transfer["id"]), headers=test_headers
     )
     assert response.status_code == 400
 
@@ -351,7 +353,7 @@ def test_update_archived_transfer(client):
     updated_transfer = test_transfer
     updated_transfer["reference"] = "TR00002"
     response = client.put(
-        "/transfers" + str(test_transfer["id"]),
+        "/transfers/" + str(test_transfer["id"]),
         json=updated_transfer,
         headers=test_headers,
     )
@@ -361,7 +363,7 @@ def test_update_archived_transfer(client):
 def test_partial_update_archived_transfer(client):
     updated_transfer = {"reference": "TR00002"}
     response = client.patch(
-        "/transfers" + str(test_transfer["id"]),
+        "/transfers/" + str(test_transfer["id"]),
         json=updated_transfer,
         headers=test_headers,
     )

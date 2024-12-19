@@ -54,7 +54,7 @@ def test_add_item_group_no_api_key(client):
     response = client.post("/item_groups", json=test_item_group)
     assert response.status_code == 403
     responseGet = client.get(
-        "/item_groups" + str(test_item_group["id"]), headers=test_headers
+        "/item_groups/" + str(test_item_group["id"]), headers=test_headers
     )
     assert responseGet.status_code == 404
 
@@ -65,7 +65,7 @@ def test_add_item_group_invalid_api_key(client):
     )
     assert response.status_code == 403
     responseGet = client.get(
-        "/item_groups" + str(test_item_group["id"]), headers=test_headers
+        "/item_groups/" + str(test_item_group["id"]), headers=test_headers
     )
     assert responseGet.status_code == 404
 
@@ -79,7 +79,7 @@ def test_add_item_group(client):
 
 def test_get_item_group_by_id(client):
     response = client.get(
-        "/item_groups" + str(test_item_group["id"]), headers=test_headers
+        "/item_groups/" + str(test_item_group["id"]), headers=test_headers
     )
     assert response.status_code == 200
     assert response.json() is not None
@@ -88,13 +88,13 @@ def test_get_item_group_by_id(client):
 
 
 def test_get_item_group_no_api_key(client):
-    response = client.get("/item_groups" + str(test_item_group["id"]))
+    response = client.get("/item_groups/" + str(test_item_group["id"]))
     assert response.status_code == 403
 
 
 def test_get_item_group_invalid_api_key(client):
     response = client.get(
-        "/item_groups" + str(test_item_group["id"]), headers=invalid_headers
+        "/item_groups/" + str(test_item_group["id"]), headers=invalid_headers
     )
     assert response.status_code == 403
 
@@ -105,7 +105,7 @@ def test_get_invalid_item_group_id(client):
 
 
 def test_get_nonexistent_item_group(client):
-    response = client.get("/item_groups" + str(non_existent_id), headers=test_headers)
+    response = client.get("/item_groups/" + str(non_existent_id), headers=test_headers)
     assert response.status_code == 404
 
 
@@ -128,7 +128,7 @@ def test_get_items_for_item_group_invalid_api_key(client):
 
 def test_get_items_for_item_group_non_existing_id(client):
     response = client.get(
-        "/item_groups" + str(non_existent_id) + "/items", headers=test_headers
+        "/item_groups/" + str(non_existent_id) + "/items", headers=test_headers
     )
     assert response.status_code == 404
 
@@ -137,14 +137,14 @@ def test_get_items_for_item_group(client):
     responseAddItem = client.post("/items", json=test_item, headers=test_headers)
     assert responseAddItem.status_code == 201 or responseAddItem.status_code == 200
     response = client.get(
-        "/item_groups" + str(test_item_group["id"]) + "/items", headers=test_headers
+        "/item_groups/" + str(test_item_group["id"]) + "/items", headers=test_headers
     )
     response_items = response.json()["data"]
     assert response.status_code == 200
     assert isinstance(response_items, list)
     assert response_items[0]["uid"] == responseAddItem.json()["uid"]
     responseDeleteItem = client.delete(
-        "/items" + response_items[0]["uid"], headers=test_headers
+        "/items/" + response_items[0]["uid"], headers=test_headers
     )
     assert responseDeleteItem.status_code == 200
 
@@ -263,21 +263,21 @@ def test_partial_update_item_group(client):
 
 
 def test_archive_item_group_no_api_key(client):
-    response = client.delete("/item_groups" + str(test_item_group["id"]))
+    response = client.delete("/item_groups/" + str(test_item_group["id"]))
     assert response.status_code == 403
     response_get_item_group = client.get(
-        "/item_groups" + str(test_item_group["id"]), headers=test_headers
+        "/item_groups/" + str(test_item_group["id"]), headers=test_headers
     )
     assert response_get_item_group.status_code == 200
 
 
 def test_archive_item_group_invalid_api_key(client):
     response = client.delete(
-        "/item_groups" + str(test_item_group["id"]), headers=invalid_headers
+        "/item_groups/" + str(test_item_group["id"]), headers=invalid_headers
     )
     assert response.status_code == 403
     response_get_item_group = client.get(
-        "/item_groups" + str(test_item_group["id"]), headers=test_headers
+        "/item_groups/" + str(test_item_group["id"]), headers=test_headers
     )
     assert response_get_item_group.status_code == 200
 
@@ -289,18 +289,18 @@ def test_archive_item_group_invalid_id(client):
 
 def test_archive_nonexistent_item_group(client):
     response = client.delete(
-        "/item_groups" + str(non_existent_id), headers=test_headers
+        "/item_groups/" + str(non_existent_id), headers=test_headers
     )
     assert response.status_code == 404
 
 
 def test_archive_item_group(client):
     response = client.delete(
-        "/item_groups" + str(test_item_group["id"]), headers=test_headers
+        "/item_groups/" + str(test_item_group["id"]), headers=test_headers
     )
     assert response.status_code == 200
     response_get_item_group = client.get(
-        "/item_groups" + str(test_item_group["id"]), headers=test_headers
+        "/item_groups/" + str(test_item_group["id"]), headers=test_headers
     )
     assert response_get_item_group.status_code == 200
     assert response_get_item_group.json()["is_archived"] is True
@@ -308,7 +308,7 @@ def test_archive_item_group(client):
 
 def test_archive_item_group_already_archived(client):
     response = client.delete(
-        "/item_groups" + str(test_item_group["id"]), headers=test_headers
+        "/item_groups/" + str(test_item_group["id"]), headers=test_headers
     )
     assert response.status_code == 400
 
@@ -358,7 +358,7 @@ def test_unarchive_item_group_not_archived(client):
 
 def test_update_archived_item_group(client):
     response = client.delete(
-        "/item_groups" + str(test_item_group["id"]), headers=test_headers
+        "/item_groups/" + str(test_item_group["id"]), headers=test_headers
     )
     assert response.status_code == 200
     updated_item_group = test_item_group.copy()
@@ -377,7 +377,7 @@ def test_update_archived_item_group(client):
 
 def test_partial_update_archived_item_group(client):
     response = client.delete(
-        "/item_groups" + str(test_item_group["id"]), headers=test_headers
+        "/item_groups/" + str(test_item_group["id"]), headers=test_headers
     )
     assert response.status_code == 200
     updated_item_group = {"name": "Updated Inc"}

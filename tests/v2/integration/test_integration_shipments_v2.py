@@ -218,7 +218,7 @@ def test_update_shipment(client):
 def test_partial_update_shipment_no_api_key(client):
     updated_shipment = {"notes": "Super coole nieuwe note voor de test shipment"}
     response = client.patch(
-        "/shipments" + str(test_shipment["id"]), json=updated_shipment
+        "/shipments/" + str(test_shipment["id"]), json=updated_shipment
     )
     assert response.status_code == 403
 
@@ -226,7 +226,7 @@ def test_partial_update_shipment_no_api_key(client):
 def test_partial_update_shipment_invalid_api_key(client):
     updated_shipment = {"notes": "Super coole nieuwe note voor de test shipment"}
     response = client.patch(
-        "/shipments" + str(test_shipment["id"]),
+        "/shipments/" + str(test_shipment["id"]),
         json=updated_shipment,
         headers=invalid_headers,
     )
@@ -244,7 +244,7 @@ def test_partial_update_shipment_invalid_id(client):
 def test_partial_update_shipment_non_existent_id(client):
     updated_shipment = {"notes": "Super coole nieuwe note voor de test shipment"}
     response = client.patch(
-        "/shipments" + str(non_existent_id),
+        "/shipments/" + str(non_existent_id),
         json=updated_shipment,
         headers=test_headers,
     )
@@ -254,13 +254,13 @@ def test_partial_update_shipment_non_existent_id(client):
 def test_partial_update_shipment(client):
     updated_shipment = {"notes": "Super coole nieuwe note voor de test shipment"}
     response = client.patch(
-        "/shipments" + str(test_shipment["id"]),
+        "/shipments/" + str(test_shipment["id"]),
         json=updated_shipment,
         headers=test_headers,
     )
     assert response.status_code == 200
     response_get_shipment = client.get(
-        "/shipments" + str(test_shipment["id"]), headers=test_headers
+        "/shipments/" + str(test_shipment["id"]), headers=test_headers
     )
     assert response_get_shipment.status_code == 200
     assert response_get_shipment.json()["notes"] == updated_shipment["notes"]

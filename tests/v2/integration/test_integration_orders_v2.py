@@ -56,14 +56,14 @@ def test_get_all_orders_invalid_api_key(client):
 def test_add_order_no_api_key(client):
     response = client.post("/orders", json=test_order)
     assert response.status_code == 403
-    responseGet = client.get("/orders" + str(test_order["id"]), headers=test_headers)
+    responseGet = client.get("/orders/" + str(test_order["id"]), headers=test_headers)
     assert responseGet.status_code == 404
 
 
 def test_add_order_invalid_api_key(client):
     response = client.post("/orders", json=test_order, headers=invalid_headers)
     assert response.status_code == 403
-    responseGet = client.get("/orders" + str(test_order["id"]), headers=test_headers)
+    responseGet = client.get("/orders/" + str(test_order["id"]), headers=test_headers)
     assert responseGet.status_code == 404
 
 
@@ -79,7 +79,7 @@ def test_add_order(client):
 
 
 def test_get_order_by_id(client):
-    response = client.get("/orders" + str(test_order["id"]), headers=test_headers)
+    response = client.get("/orders/" + str(test_order["id"]), headers=test_headers)
     assert response.status_code == 200
     assert response.json() is not None
     assert isinstance(response.json(), dict)
@@ -92,17 +92,17 @@ def test_get_order_by_invalid_id(client):
 
 
 def test_get_order_non_existent_id(client):
-    response = client.get("/orders" + str(non_existent_id), headers=test_headers)
+    response = client.get("/orders/" + str(non_existent_id), headers=test_headers)
     assert response.status_code == 404
 
 
 def test_get_order_no_api_key(client):
-    response = client.get("/orders" + str(test_order["id"]))
+    response = client.get("/orders/" + str(test_order["id"]))
     assert response.status_code == 403
 
 
 def test_get_order_invalid_api_key(client):
-    response = client.get("/orders" + str(test_order["id"]), headers=invalid_headers)
+    response = client.get("/orders/" + str(test_order["id"]), headers=invalid_headers)
     assert response.status_code == 403
 
 
@@ -139,10 +139,10 @@ def test_get_order_items_invalid_id(client):
 def test_update_order_no_api_key(client):
     updated_order = test_order.copy()
     updated_order["total_amount"] = test_order["total_amount"] + 100
-    response = client.put("/orders" + str(updated_order["id"]), json=updated_order)
+    response = client.put("/orders/" + str(updated_order["id"]), json=updated_order)
     assert response.status_code == 403
     response_get_order = client.get(
-        "/orders" + str(updated_order["id"]), headers=test_headers
+        "/orders/" + str(updated_order["id"]), headers=test_headers
     )
     assert response_get_order.status_code == 200
     assert response_get_order.json()["total_amount"] == test_order["total_amount"]
@@ -152,13 +152,13 @@ def test_update_order_invalid_api_key(client):
     updated_order = test_order.copy()
     updated_order["total_amount"] = test_order["total_amount"] + 100
     response = client.put(
-        "/orders" + str(updated_order["id"]),
+        "/orders/" + str(updated_order["id"]),
         json=updated_order,
         headers=invalid_headers,
     )
     assert response.status_code == 403
     response_get_order = client.get(
-        "/orders" + str(updated_order["id"]), headers=test_headers
+        "/orders/" + str(updated_order["id"]), headers=test_headers
     )
     assert response_get_order.status_code == 200
     assert response_get_order.json()["total_amount"] == test_order["total_amount"]
@@ -177,7 +177,7 @@ def test_update_order_non_existent_id(client):
     updated_order = test_order.copy()
     updated_order["total_amount"] = test_order["total_amount"] + 100
     response = client.put(
-        "/orders" + str(non_existent_id), json=updated_order, headers=test_headers
+        "/orders/" + str(non_existent_id), json=updated_order, headers=test_headers
     )
     assert response.status_code == 404
 
@@ -186,11 +186,11 @@ def test_update_order(client):
     updated_order = test_order.copy()
     updated_order["total_amount"] = test_order["total_amount"] + 100
     response = client.put(
-        "/orders" + str(updated_order["id"]), json=updated_order, headers=test_headers
+        "/orders/" + str(updated_order["id"]), json=updated_order, headers=test_headers
     )
     assert response.status_code == 200
     response_get_order = client.get(
-        "/orders" + str(updated_order["id"]), headers=test_headers
+        "/orders/" + str(updated_order["id"]), headers=test_headers
     )
     assert response_get_order.status_code == 200
     assert response_get_order.json()["total_amount"] == test_order["total_amount"] + 100
@@ -276,14 +276,14 @@ def test_update_order_items(client):
 
 def test_partial_update_order_no_api_key(client):
     updated_order = {"notes": "This order has been patched."}
-    response = client.patch("/orders" + str(test_order["id"]), json=updated_order)
+    response = client.patch("/orders/" + str(test_order["id"]), json=updated_order)
     assert response.status_code == 403
 
 
 def test_partial_update_order_invalid_api_key(client):
     updated_order = {"notes": "This order has been patched."}
     response = client.patch(
-        "/orders" + str(test_order["id"]),
+        "/orders/" + str(test_order["id"]),
         json=updated_order,
         headers=invalid_headers,
     )
@@ -301,7 +301,7 @@ def test_partial_update_order_invalid_id(client):
 def test_partial_update_order_non_existent_id(client):
     updated_order = {"notes": "This order has been patched."}
     response = client.patch(
-        "/orders" + str(non_existent_id),
+        "/orders/" + str(non_existent_id),
         json=updated_order,
         headers=test_headers,
     )
@@ -311,34 +311,36 @@ def test_partial_update_order_non_existent_id(client):
 def test_partial_update_order(client):
     updated_order = {"notes": "This order has been patched."}
     response = client.patch(
-        "/orders" + str(test_order["id"]),
+        "/orders/" + str(test_order["id"]),
         json=updated_order,
         headers=test_headers,
     )
     assert response.status_code == 200
     response_get_order = client.get(
-        "/orders" + str(test_order["id"]), headers=test_headers
+        "/orders/" + str(test_order["id"]), headers=test_headers
     )
     assert response_get_order.status_code == 200
     assert response_get_order.json()["notes"] == updated_order["notes"]
 
 
 def test_archive_order_no_api_key(client):
-    response = client.delete("/orders" + str(test_order["id"]))
+    response = client.delete("/orders/" + str(test_order["id"]))
     assert response.status_code == 403
 
     response_get_order = client.get(
-        "/orders" + str(test_order["id"]), headers=test_headers
+        "/orders/" + str(test_order["id"]), headers=test_headers
     )
     assert response_get_order.status_code == 200
 
 
 def test_archive_order_invalid_api_key(client):
-    response = client.delete("/orders" + str(test_order["id"]), headers=invalid_headers)
+    response = client.delete(
+        "/orders/" + str(test_order["id"]), headers=invalid_headers
+    )
     assert response.status_code == 403
 
     response_get_order = client.get(
-        "/orders" + str(test_order["id"]), headers=test_headers
+        "/orders/" + str(test_order["id"]), headers=test_headers
     )
     assert response_get_order.status_code == 200
 
@@ -349,31 +351,31 @@ def test_archive_order_invalid_id(client):
 
 
 def test_archive_order_non_existent_id(client):
-    response = client.delete("/orders" + str(non_existent_id), headers=test_headers)
+    response = client.delete("/orders/" + str(non_existent_id), headers=test_headers)
     assert response.status_code == 404
 
     response_get_order = client.get(
-        "/orders" + str(test_order["id"]), headers=test_headers
+        "/orders/" + str(test_order["id"]), headers=test_headers
     )
     assert response_get_order.status_code == 200
 
 
 def test_archive_order(client):
-    response = client.delete("/orders" + str(test_order["id"]), headers=test_headers)
+    response = client.delete("/orders/" + str(test_order["id"]), headers=test_headers)
     assert response.status_code == 200
 
     response_get_order = client.get(
-        "/orders" + str(test_order["id"]), headers=test_headers
+        "/orders/" + str(test_order["id"]), headers=test_headers
     )
     assert response_get_order.status_code == 200
     assert response_get_order.json()["is_archived"] is True
 
 
 def test_archive_already_archived_order(client):
-    response = client.delete("/orders" + str(test_order["id"]), headers=test_headers)
+    response = client.delete("/orders/" + str(test_order["id"]), headers=test_headers)
     assert response.status_code == 400
     response_get_order = client.get(
-        "/orders" + str(test_order["id"]), headers=test_headers
+        "/orders/" + str(test_order["id"]), headers=test_headers
     )
     assert response_get_order.status_code == 200
     assert response_get_order.json()["is_archived"] is True
@@ -429,17 +431,17 @@ def test_unarchive_already_unarchived_order(client):
 
 def test_update_archived_order(client):
     response_delete = client.delete(
-        "/orders" + str(test_order["id"]), headers=test_headers
+        "/orders/" + str(test_order["id"]), headers=test_headers
     )
     assert response_delete.status_code == 200
 
     response = client.put(
-        "/orders" + str(test_order["id"]), json=test_order, headers=test_headers
+        "/orders/" + str(test_order["id"]), json=test_order, headers=test_headers
     )
     assert response.status_code == 400
 
     response_get_order = client.get(
-        "/orders" + str(test_order["id"]), headers=test_headers
+        "/orders/" + str(test_order["id"]), headers=test_headers
     )
     assert response_get_order.status_code == 200
     assert response_get_order.json()["is_archived"] is True
@@ -447,19 +449,19 @@ def test_update_archived_order(client):
 
 def test_partial_update_archived_order(client):
     response_delete = client.delete(
-        "/orders" + str(test_order["id"]), headers=test_headers
+        "/orders/" + str(test_order["id"]), headers=test_headers
     )
     assert response_delete.status_code == 400
 
     response = client.patch(
-        "/orders" + str(test_order["id"]),
+        "/orders/" + str(test_order["id"]),
         json={"notes": "This order has been patched."},
         headers=test_headers,
     )
     assert response.status_code == 400
 
     response_get_order = client.get(
-        "/orders" + str(test_order["id"]), headers=test_headers
+        "/orders/" + str(test_order["id"]), headers=test_headers
     )
     assert response_get_order.status_code == 200
     assert response_get_order.json()["is_archived"] is True
