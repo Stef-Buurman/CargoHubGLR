@@ -47,37 +47,37 @@ def client():
 
 
 def test_get_all_items(client):
-    response = client.get("/items/", headers=test_headers)
+    response = client.get("/items", headers=test_headers)
     assert response.status_code == 200
     assert isinstance(response.json(), list)
 
 
 def test_get_all_items_no_api_key(client):
-    response = client.get("/items/")
+    response = client.get("/items")
     assert response.status_code == 403
 
 
 def test_get_all_items_invalid_api_key(client):
-    response = client.get("/items/", headers=invalid_headers)
+    response = client.get("/items", headers=invalid_headers)
     assert response.status_code == 403
 
 
 def test_add_item_no_api_key(client):
-    response = client.post("/items/", json=test_item)
+    response = client.post("/items", json=test_item)
     assert response.status_code == 403
     response_get_item = client.get("/items/" + test_item["uid"], headers=test_headers)
     assert response_get_item.status_code == 404
 
 
 def test_add_item_invalid_api_key(client):
-    response = client.post("/items/", json=test_item, headers=invalid_headers)
+    response = client.post("/items", json=test_item, headers=invalid_headers)
     assert response.status_code == 403
     response_get_item = client.get("/items/" + test_item["uid"], headers=test_headers)
     assert response_get_item.status_code == 404
 
 
 def test_add_item(client):
-    response = client.post("/items/", json=test_item, headers=test_headers)
+    response = client.post("/items", json=test_item, headers=test_headers)
     assert response.status_code == 201
     response_get_item = client.get("/items/" + test_item["uid"], headers=test_headers)
     assert response_get_item.status_code == 200
@@ -85,7 +85,7 @@ def test_add_item(client):
 
 
 def test_add_existing_item(client):
-    response = client.post("/items/", json=test_item, headers=test_headers)
+    response = client.post("/items", json=test_item, headers=test_headers)
     assert response.status_code == 409
 
 

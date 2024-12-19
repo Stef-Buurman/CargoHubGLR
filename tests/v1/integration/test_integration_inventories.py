@@ -25,23 +25,23 @@ def client():
 
 
 def test_get_all_inventories(client):
-    response = client.get("/inventories/", headers=test_headers)
+    response = client.get("/inventories", headers=test_headers)
     assert response.status_code == 200
     assert isinstance(response.json(), list)
 
 
 def test_get_all_inventories_no_api_key(client):
-    response = client.get("/inventories/")
+    response = client.get("/inventories")
     assert response.status_code == 403
 
 
 def test_get_all_inventories_invalid_api_key(client):
-    response = client.get("/inventories/", headers=invalid_headers)
+    response = client.get("/inventories", headers=invalid_headers)
     assert response.status_code == 403
 
 
 def test_add_inventory_no_api_key(client):
-    response = client.post("/inventories/", json=test_inventory)
+    response = client.post("/inventories", json=test_inventory)
     assert response.status_code == 403
     responseGet = client.get(
         "/inventories/" + str(test_inventory["id"]), headers=test_headers
@@ -51,7 +51,7 @@ def test_add_inventory_no_api_key(client):
 
 def test_add_inventory_invalid_api_key(client):
     response = client.post(
-        "/inventories/", json=test_inventory, headers=invalid_headers
+        "/inventories", json=test_inventory, headers=invalid_headers
     )
     assert response.status_code == 403
     responseGet = client.get(
@@ -61,13 +61,13 @@ def test_add_inventory_invalid_api_key(client):
 
 
 def test_add_inventory(client):
-    response = client.post("/inventories/", json=test_inventory, headers=test_headers)
+    response = client.post("/inventories", json=test_inventory, headers=test_headers)
     assert response.status_code == 201 or response.status_code == 200
     assert response.json()["id"] == test_inventory["id"]
 
 
 def test_add_existing_inventory(client):
-    response = client.post("/inventories/", json=test_inventory, headers=test_headers)
+    response = client.post("/inventories", json=test_inventory, headers=test_headers)
     assert response.status_code == 409
 
 
