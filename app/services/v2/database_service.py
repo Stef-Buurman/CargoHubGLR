@@ -25,7 +25,7 @@ T = TypeVar("T", bound=BaseModel)
 
 
 class DatabaseService:
-    def __init__(self, db_path: str = APP_PATH+"/database/database.db"):
+    def __init__(self, db_path: str = APP_PATH + "/database/database.db"):
         self.db_path = db_path
         self.conn = None
         self._initialize_database()
