@@ -143,9 +143,7 @@ class TransferService(Base):
         old_transfer = self.get_transfer(transfer_id)
         if self.is_transfer_archived(
             transfer_id
-        ) is not False or self.has_transfer_archived_entities(
-            transfer, old_transfer
-        ):
+        ) is not False or self.has_transfer_archived_entities(transfer, old_transfer):
             return None
 
         table_name = transfer.table_name()

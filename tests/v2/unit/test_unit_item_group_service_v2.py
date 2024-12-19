@@ -6,31 +6,31 @@ from tests.test_globals import *
 
 
 TEST_ITEM_GROUPS = [
-            ItemGroup(
-                id=1,
-                name="Type A",
-                description="",
-                created_at="1993-07-28 13:43:32",
-                updated_at="2022-05-12 08:54:35",
-                is_archived=False,
-            ),
-            ItemGroup(
-                id=2,
-                name="Type B",
-                description="",
-                created_at="1993-07-28 13:43:32",
-                updated_at="2022-05-12 08:54:35",
-                is_archived=False,
-            ),
-            ItemGroup(
-                id=3,
-                name="Type C",
-                description="",
-                created_at="1993-07-28 13:43:32",
-                updated_at="2022-05-12 08:54:35",
-                is_archived=True,
-            ),
-        ]
+    ItemGroup(
+        id=1,
+        name="Type A",
+        description="",
+        created_at="1993-07-28 13:43:32",
+        updated_at="2022-05-12 08:54:35",
+        is_archived=False,
+    ),
+    ItemGroup(
+        id=2,
+        name="Type B",
+        description="",
+        created_at="1993-07-28 13:43:32",
+        updated_at="2022-05-12 08:54:35",
+        is_archived=False,
+    ),
+    ItemGroup(
+        id=3,
+        name="Type C",
+        description="",
+        created_at="1993-07-28 13:43:32",
+        updated_at="2022-05-12 08:54:35",
+        is_archived=True,
+    ),
+]
 
 
 @pytest.fixture

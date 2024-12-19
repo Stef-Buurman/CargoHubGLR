@@ -131,7 +131,9 @@ class OrderService(Base):
     def update_order(
         self, order_id: int, order: Order, closeConnection: bool = True
     ) -> Order | None:
-        if self.is_order_archived(order_id) is not False or self.has_order_archived_entities(
+        if self.is_order_archived(
+            order_id
+        ) is not False or self.has_order_archived_entities(
             order, self.get_order(order_id)
         ):
             return None
