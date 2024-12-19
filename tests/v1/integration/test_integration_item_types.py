@@ -109,11 +109,6 @@ def test_get_item_type_invalid_api_key(client):
     assert response.status_code == 403
 
 
-# def test_get_items_for_item_type_without_items(client):
-#     response = client.get('/item_types/' + str(test_item_type['id']) + '/items', headers=test_headers)
-#     assert response.status_code == 204
-
-
 def test_get_items_for_item_type_non_existing_id(client):
     response = client.get(
         "/item_types/" + str(non_existent_id) + "/items", headers=test_headers
@@ -134,7 +129,7 @@ def test_get_items_for_item_type_invalid_api_key(client):
 
 
 def test_get_items_for_item_type(client):
-    responseAddItem = client.post("/items/", json=test_item, headers=test_headers)
+    responseAddItem = client.post("/items", json=test_item, headers=test_headers)
     assert responseAddItem.status_code == 201 or responseAddItem.status_code == 200
     response = client.get(
         "/item_types/" + str(test_item_type["id"]) + "/items", headers=test_headers

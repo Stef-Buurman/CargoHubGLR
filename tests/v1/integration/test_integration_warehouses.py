@@ -108,23 +108,23 @@ def test_get_locations_by_warehouse_id_no_locations(client):
 
 
 def test_add_warehouse(client):
-    response = client.post("/warehouses/", json=test_warehouse, headers=test_headers)
+    response = client.post("/warehouses", json=test_warehouse, headers=test_headers)
     assert response.status_code == 201 or response.status_code == 200
     assert response.json()["id"] == test_warehouse["id"]
 
 
 def test_add_warehouse_no_api_key(client):
-    response = client.post("/warehouses/", json=test_warehouse)
+    response = client.post("/warehouses", json=test_warehouse)
     assert response.status_code == 403
 
 
 def test_add_warehouse_invalid_api_key(client):
-    response = client.post("/warehouses/", json=test_warehouse, headers=invalid_headers)
+    response = client.post("/warehouses", json=test_warehouse, headers=invalid_headers)
     assert response.status_code == 403
 
 
 def test_add_existing_warehouse(client):
-    response = client.post("/warehouses/", json=test_warehouse, headers=test_headers)
+    response = client.post("/warehouses", json=test_warehouse, headers=test_headers)
     assert response.status_code == 409
 
 

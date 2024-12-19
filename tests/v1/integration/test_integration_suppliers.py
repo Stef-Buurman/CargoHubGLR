@@ -103,7 +103,7 @@ def test_add_supplier(client):
 
 
 def test_add_existing_supplier(client):
-    response = client.post("/suppliers/", json=test_supplier, headers=test_headers)
+    response = client.post("/suppliers", json=test_supplier, headers=test_headers)
     assert response.status_code == 409
 
 
@@ -139,11 +139,6 @@ def test_get_supplier_invalid_api_key(client):
     assert response.status_code == 403
 
 
-# def test_get_supplier_items_no_items(client):
-#     response = client.get(f'/suppliers/{str(test_supplier["id"])}/items', headers=test_headers)
-#     assert response.status_code == 204
-
-
 def test_get_supplier_items_no_api_key(client):
     response = client.get(f'/suppliers/{str(test_supplier["id"])}/items')
     assert response.status_code == 403
@@ -163,10 +158,10 @@ def test_get_supplier_items_invalid_id(client):
 
 def test_get_supplier_items(client):
     response_post_fake_item_1 = client.post(
-        "/items/", json=test_item_1, headers=test_headers
+        "/items", json=test_item_1, headers=test_headers
     )
     response_post_fake_item_2 = client.post(
-        "/items/", json=test_item_2, headers=test_headers
+        "/items", json=test_item_2, headers=test_headers
     )
     assert (
         response_post_fake_item_1.status_code == 201

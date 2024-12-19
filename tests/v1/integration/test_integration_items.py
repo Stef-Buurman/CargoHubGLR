@@ -132,7 +132,7 @@ def test_get_inventory_of_nonexistent_item(client):
 
 def test_get_inventory_of_item(client):
     responseAddInventory = client.post(
-        "/inventories/", json=test_inventory, headers=test_headers
+        "/inventories", json=test_inventory, headers=test_headers
     )
     assert (
         responseAddInventory.status_code == 201
