@@ -1,17 +1,20 @@
 from services.v2.data_provider_v2 import fetch_inventory_pool
 from models.v2.transfer import Transfer
 from models.v2.ItemInObject import ItemInObject
-from typing import List
+from typing import List, Type
 from services.v2.base_service import Base
 from utils.globals import *
-from services.v2.database_service import DB
+from services.v2.database_service import DB, DatabaseService
 from services.v2 import data_provider_v2
 
 
 class TransferService(Base):
-    def __init__(self, is_debug: bool = False, transfers: List[Transfer] | None = None):
-        self.db = DB
-        self.load(is_debug, transfers)
+    def __init__(self, db: Type[DatabaseService] = None):
+        if db is not None:
+            self.db = db
+        else:  # pragma: no cover
+            self.db = DB
+        self.load()
 
     def get_all_transfers(self) -> List[Transfer]:
         query = f"""
@@ -137,11 +140,10 @@ class TransferService(Base):
     def update_transfer(
         self, transfer_id: int, transfer: Transfer, closeConnection: bool = True
     ) -> Transfer:
+        old_transfer = self.get_transfer(transfer_id)
         if self.is_transfer_archived(
             transfer_id
-        ) or self.has_transfer_archived_entities(
-            transfer, self.get_transfer(transfer_id)
-        ):
+        ) is not False or self.has_transfer_archived_entities(transfer, old_transfer):
             return None
 
         table_name = transfer.table_name()
@@ -267,11 +269,8 @@ class TransferService(Base):
                 return True
         return False
 
-    def load(self, is_debug: bool, transfers: List[Transfer] | None = None):
-        if is_debug and transfers is not None:
-            self.data = transfers
-        else:
-            self.data = self.get_all_transfers()
+    def load(self):
+        self.data = self.get_all_transfers()
 
     def is_transfer_archived(self, transfer_id: int) -> bool:
         for transfer in self.data:

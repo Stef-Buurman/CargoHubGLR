@@ -2,21 +2,15 @@ from models.v2.supplier import Supplier
 from typing import List, Type
 from services.v2.base_service import Base
 from services.v2.database_service import DB, DatabaseService
-from services.v2 import data_provider_v2
 
 
 class SupplierService(Base):
-    def __init__(
-        self,
-        is_debug: bool = False,
-        suppliers: List[Supplier] | None = None,
-        db: Type[DatabaseService] = None,
-    ):
+    def __init__(self, db: Type[DatabaseService] = None):
         if db is not None:
             self.db = db
         else:  # pragma: no cover
             self.db = DB
-        self.load(is_debug, suppliers)
+        self.load()
 
     def get_all_suppliers(self) -> List[Supplier]:
         return self.db.get_all(Supplier)
@@ -88,11 +82,8 @@ class SupplierService(Base):
                 return updated_supplier
         return None
 
-    def load(self, is_debug: bool, suppliers: List[Supplier] | None = None):
-        if is_debug and suppliers is not None:
-            self.data = suppliers
-        else:  # pragma: no cover
-            self.data = self.get_all_suppliers()
+    def load(self):
+        self.data = self.get_all_suppliers()
 
     def is_supplier_archived(self, supplier_id: int) -> bool:
         for supplier in self.data:

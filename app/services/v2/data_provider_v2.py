@@ -1,5 +1,3 @@
-DEBUG = False
-
 _warehouses = None
 _locations = None
 _transfers = None
@@ -36,7 +34,7 @@ def get_items():
 
     global _items
     if _items is None:
-        _items = ItemService(DEBUG)
+        _items = ItemService()
 
 
 def get_item_lines():
@@ -44,7 +42,7 @@ def get_item_lines():
 
     global _item_lines
     if _item_lines is None:
-        _item_lines = ItemLineService(DEBUG)
+        _item_lines = ItemLineService()
 
 
 def get_item_groups():
@@ -52,7 +50,7 @@ def get_item_groups():
 
     global _item_groups
     if _item_groups is None:
-        _item_groups = ItemGroupService(DEBUG)
+        _item_groups = ItemGroupService()
 
 
 def get_item_types():
@@ -60,7 +58,7 @@ def get_item_types():
 
     global _item_types
     if _item_types is None:
-        _item_types = ItemTypeService(DEBUG)
+        _item_types = ItemTypeService()
 
 
 def get_warehouses():
@@ -68,7 +66,7 @@ def get_warehouses():
 
     global _warehouses
     if _warehouses is None:
-        _warehouses = WarehouseService(DEBUG)
+        _warehouses = WarehouseService()
 
 
 def get_locations():
@@ -76,7 +74,7 @@ def get_locations():
 
     global _locations
     if _locations is None:
-        _locations = LocationService(DEBUG)
+        _locations = LocationService()
 
 
 def get_transfers():
@@ -84,7 +82,7 @@ def get_transfers():
 
     global _transfers
     if _transfers is None:
-        _transfers = TransferService(DEBUG)
+        _transfers = TransferService()
 
 
 def get_clients():
@@ -92,7 +90,7 @@ def get_clients():
 
     global _clients
     if _clients is None:
-        _clients = ClientService(DEBUG)
+        _clients = ClientService()
 
 
 def get_shipments():
@@ -100,7 +98,7 @@ def get_shipments():
 
     global _shipments
     if _shipments is None:
-        _shipments = ShipmentService(DEBUG)
+        _shipments = ShipmentService()
 
 
 def get_suppliers():
@@ -108,7 +106,7 @@ def get_suppliers():
 
     global _suppliers
     if _suppliers is None:
-        _suppliers = SupplierService(DEBUG)
+        _suppliers = SupplierService()
 
 
 def get_inventories():
@@ -116,7 +114,7 @@ def get_inventories():
 
     global _inventories
     if _inventories is None:
-        _inventories = InventoryService(DEBUG)
+        _inventories = InventoryService()
 
 
 def get_orders():
@@ -124,7 +122,7 @@ def get_orders():
 
     global _orders
     if _orders is None:
-        _orders = OrderService(DEBUG)
+        _orders = OrderService()
 
 
 def get_users():
@@ -132,7 +130,7 @@ def get_users():
 
     global _users
     if _users is None:
-        _users = UserService(DEBUG)
+        _users = UserService()
 
 
 # Fetching pools

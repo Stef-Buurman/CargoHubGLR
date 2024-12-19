@@ -5,6 +5,61 @@ from app.services.v2.model_services.suppliers_service import SupplierService
 from tests.test_globals import *
 
 
+TEST_SUPPLIERS = [
+    Supplier(
+        id=1,
+        code="SUP0001",
+        name="Lee, Parks and Johnson",
+        address="5989 Sullivan Drives",
+        address_extra="Apt. 996",
+        city="Port Anitaburgh",
+        zip_code="91688",
+        province="Illinois",
+        country="Czech Republic",
+        contact_name="Toni Barnett",
+        phonenumber="363.541.7282x36825",
+        reference="LPaJ-SUP0001",
+        created_at="1971-10-20 18:06:17",
+        updated_at="1985-06-08 00:13:46",
+        is_archived=False,
+    ),
+    Supplier(
+        id=2,
+        code="SUP0002",
+        name="Holden-Quinn",
+        address="576 Christopher Roads",
+        address_extra="Suite 072",
+        city="Amberbury",
+        zip_code="16105",
+        province="Illinois",
+        country="Saint Martin",
+        contact_name="Kathleen Vincent",
+        phonenumber="001-733-291-8848x3542",
+        reference="H-SUP0002",
+        created_at="1995-12-18 03:05:46",
+        updated_at="2019-11-10 22:11:12",
+        is_archived=False,
+    ),
+    Supplier(
+        id=3,
+        code="SUP0003",
+        name="White and Sons",
+        address="1761 Shepard Valley",
+        address_extra="Suite 853",
+        city="Aguilarton",
+        zip_code="63918",
+        province="Wyoming",
+        country="Ghana",
+        contact_name="Jason Hudson",
+        phonenumber="001-910-585-6962x8307",
+        reference="WaS-SUP0003",
+        created_at="2010-06-14 02:32:58",
+        updated_at="2019-06-16 19:29:49",
+        is_archived=True,
+    ),
+]
+
+
 @pytest.fixture
 def mock_db_service():
     """Fixture to create a mocked DatabaseService."""
@@ -14,73 +69,17 @@ def mock_db_service():
 @pytest.fixture
 def supplier_service(mock_db_service):
     """Fixture to create an SupplierService instance with the mocked DatabaseService."""
-    service = SupplierService(
-        True,
-        [
-            Supplier(
-                id=1,
-                code="SUP0001",
-                name="Lee, Parks and Johnson",
-                address="5989 Sullivan Drives",
-                address_extra="Apt. 996",
-                city="Port Anitaburgh",
-                zip_code="91688",
-                province="Illinois",
-                country="Czech Republic",
-                contact_name="Toni Barnett",
-                phonenumber="363.541.7282x36825",
-                reference="LPaJ-SUP0001",
-                created_at="1971-10-20 18:06:17",
-                updated_at="1985-06-08 00:13:46",
-                is_archived=False,
-            ),
-            Supplier(
-                id=2,
-                code="SUP0002",
-                name="Holden-Quinn",
-                address="576 Christopher Roads",
-                address_extra="Suite 072",
-                city="Amberbury",
-                zip_code="16105",
-                province="Illinois",
-                country="Saint Martin",
-                contact_name="Kathleen Vincent",
-                phonenumber="001-733-291-8848x3542",
-                reference="H-SUP0002",
-                created_at="1995-12-18 03:05:46",
-                updated_at="2019-11-10 22:11:12",
-                is_archived=False,
-            ),
-            Supplier(
-                id=3,
-                code="SUP0003",
-                name="White and Sons",
-                address="1761 Shepard Valley",
-                address_extra="Suite 853",
-                city="Aguilarton",
-                zip_code="63918",
-                province="Wyoming",
-                country="Ghana",
-                contact_name="Jason Hudson",
-                phonenumber="001-910-585-6962x8307",
-                reference="WaS-SUP0003",
-                created_at="2010-06-14 02:32:58",
-                updated_at="2019-06-16 19:29:49",
-                is_archived=True,
-            ),
-        ],
-        mock_db_service,
-    )
+    mock_db_service.get_all.return_value = TEST_SUPPLIERS
+    service = SupplierService(mock_db_service)
     return service
 
 
 def test_get_all_suppliers(supplier_service, mock_db_service):
-    mock_db_service.get_all.return_value = supplier_service.data
     suppliers = supplier_service.get_all_suppliers()
 
     assert len(suppliers) == len(supplier_service.data)
     assert suppliers[0].name == "Lee, Parks and Johnson"
-    assert mock_db_service.get_all.call_count == 1
+    assert mock_db_service.get_all.call_count == 2
 
 
 def test_get_suppliers(supplier_service):

@@ -5,6 +5,34 @@ from app.services.v2.model_services.item_type_service import ItemTypeService
 from tests.test_globals import *
 
 
+TEST_ITEM_TYPES = [
+    ItemType(
+        id=1,
+        name="Type A",
+        description="",
+        created_at="1993-07-28 13:43:32",
+        updated_at="2022-05-12 08:54:35",
+        is_archived=False,
+    ),
+    ItemType(
+        id=2,
+        name="Type B",
+        description="",
+        created_at="1993-07-28 13:43:32",
+        updated_at="2022-05-12 08:54:35",
+        is_archived=False,
+    ),
+    ItemType(
+        id=3,
+        name="Type C",
+        description="",
+        created_at="1993-07-28 13:43:32",
+        updated_at="2022-05-12 08:54:35",
+        is_archived=True,
+    ),
+]
+
+
 @pytest.fixture
 def mock_db_service():
     """Fixture to create a mocked DatabaseService."""
@@ -14,46 +42,17 @@ def mock_db_service():
 @pytest.fixture
 def item_type_service(mock_db_service):
     """Fixture to create an ItemTypeService instance with the mocked DatabaseService."""
-    service = ItemTypeService(
-        True,
-        [
-            ItemType(
-                id=1,
-                name="Type A",
-                description="",
-                created_at="1993-07-28 13:43:32",
-                updated_at="2022-05-12 08:54:35",
-                is_archived=False,
-            ),
-            ItemType(
-                id=2,
-                name="Type B",
-                description="",
-                created_at="1993-07-28 13:43:32",
-                updated_at="2022-05-12 08:54:35",
-                is_archived=False,
-            ),
-            ItemType(
-                id=3,
-                name="Type C",
-                description="",
-                created_at="1993-07-28 13:43:32",
-                updated_at="2022-05-12 08:54:35",
-                is_archived=True,
-            ),
-        ],
-        mock_db_service,
-    )
+    mock_db_service.get_all.return_value = TEST_ITEM_TYPES
+    service = ItemTypeService(mock_db_service)
     return service
 
 
 def test_get_all_item_types(item_type_service, mock_db_service):
-    mock_db_service.get_all.return_value = item_type_service.data
     item_types = item_type_service.get_all_item_types()
 
     assert len(item_types) == len(item_type_service.data)
     assert item_types[0].name == "Type A"
-    assert mock_db_service.get_all.call_count == 1
+    assert mock_db_service.get_all.call_count == 2
 
 
 def test_get_item_types(item_type_service):

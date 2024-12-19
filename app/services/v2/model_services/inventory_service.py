@@ -1,17 +1,18 @@
-from typing import List
+from typing import List, Type
 from models.v2.inventory import Inventory
 from services.v2.base_service import Base
-from services.v2.database_service import DB
+from services.v2.database_service import DB, DatabaseService
 from services.v2 import data_provider_v2
 from utils.globals import *
 
 
 class InventoryService(Base):
-    def __init__(
-        self, is_debug: bool = False, inventories: List[Inventory] | None = None
-    ):
-        self.db = DB
-        self.load(is_debug, inventories)
+    def __init__(self, db: Type[DatabaseService] = None):
+        if db is not None:
+            self.db = db
+        else:  # pragma: no cover
+            self.db = DB
+        self.load()
 
     def get_all_inventories(self) -> List[Inventory]:
         all_inventories = []
@@ -229,11 +230,8 @@ class InventoryService(Base):
                 return self.data[i]
         return False
 
-    def load(self, is_debug: bool, inventories: List[Inventory] | None = None):
-        if is_debug and inventories is not None:
-            self.data = inventories
-        else:
-            self.data = self.get_all_inventories()
+    def load(self):
+        self.data = self.get_all_inventories()
 
     def is_inventory_archived(self, inventory_id: int) -> bool | None:
         inventory = self.get_inventory(inventory_id)

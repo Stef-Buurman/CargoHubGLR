@@ -3,21 +3,14 @@ from typing import List, Type
 from services.v2.base_service import Base
 from services.v2.database_service import DB, DatabaseService
 
-WAREHOUSES = []
-
 
 class WarehouseService(Base):
-    def __init__(
-        self,
-        is_debug: bool = False,
-        warehouses: List[Warehouse] | None = None,
-        db: Type[DatabaseService] = None,
-    ):
+    def __init__(self, db: Type[DatabaseService] = None):
         if db is not None:
             self.db = db
         else:  # pragma: no cover
             self.db = DB
-        self.load(is_debug, warehouses)
+        self.load()
 
     def get_all_warehouses(self) -> List[Warehouse]:
         return self.db.get_all(Warehouse)
@@ -88,11 +81,8 @@ class WarehouseService(Base):
                 return updated_warehouse
         return None
 
-    def load(self, is_debug: bool, warehouses: List[Warehouse] | None = None):
-        if is_debug and warehouses is not None:
-            self.data = warehouses
-        else:  # pragma: no cover
-            self.data = self.get_all_warehouses()
+    def load(self):
+        self.data = self.get_all_warehouses()
 
     def is_warehouse_archived(self, warehouse_id: int) -> bool:
         for warehouse in self.data:

@@ -1,16 +1,19 @@
-from typing import List
+from typing import List, Type
 from services.v2 import data_provider_v2
 from models.v2.order import Order
 from services.v2.base_service import Base
 from models.v2.ItemInObject import ItemInObject
 from utils.globals import *
-from services.v2.database_service import DB
+from services.v2.database_service import DB, DatabaseService
 
 
 class OrderService(Base):
-    def __init__(self, is_debug: bool = False, orders: List[Order] = None):
-        self.db = DB
-        self.load(is_debug, orders)
+    def __init__(self, db: Type[DatabaseService] = None):
+        if db is not None:
+            self.db = db
+        else:  # pragma: no cover
+            self.db = DB
+        self.load()
 
     def get_all_orders(self) -> List[Order]:
         all_orders = self.db.get_all(Order)
@@ -128,7 +131,9 @@ class OrderService(Base):
     def update_order(
         self, order_id: int, order: Order, closeConnection: bool = True
     ) -> Order | None:
-        if self.is_order_archived(order_id) or self.has_order_archived_entities(
+        if self.is_order_archived(
+            order_id
+        ) is not False or self.has_order_archived_entities(
             order, self.get_order(order_id)
         ):
             return None
@@ -259,11 +264,8 @@ class OrderService(Base):
                 return True
         return False
 
-    def load(self, is_debug: bool, orders: List[Order] | None = None):
-        if is_debug and orders is not None:
-            self.data = orders
-        else:
-            self.data = self.get_all_orders()
+    def load(self):
+        self.data = self.get_all_orders()
 
     def is_order_archived(self, order_id: int) -> bool:
         for order in self.data:
