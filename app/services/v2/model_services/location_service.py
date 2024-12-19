@@ -1,14 +1,19 @@
 from services.v2 import data_provider_v2
 from models.v2.location import Location
-from typing import List
+from typing import List, Type
 from services.v2.base_service import Base
-from services.v2.database_service import DB
+from services.v2.database_service import DB, DatabaseService
 
 
 class LocationService(Base):
-    def __init__(self, is_debug=False, locations: List[Location] | None = None):
-        self.db = DB
-        self.load(is_debug, locations)
+    def __init__(self,
+        db: Type[DatabaseService] = None
+    ):
+        if db is not None:
+            self.db = db
+        else:  # pragma: no cover
+            self.db = DB
+        self.load()
 
     def get_all_locations(self) -> List[Location]:
         return self.db.get_all(Location)
@@ -90,11 +95,8 @@ class LocationService(Base):
                 return True
         return False
 
-    def load(self, is_debug: bool, locations: List[Location] | None = None):
-        if is_debug and locations is not None:
-            self.data = locations
-        else:
-            self.data = self.get_all_locations()
+    def load(self):
+        self.data = self.get_all_locations()
 
     def is_location_archived(self, location_id: int) -> bool:
         for location in self.data:
