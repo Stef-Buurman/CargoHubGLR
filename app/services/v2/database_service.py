@@ -17,12 +17,15 @@ from models.v2.location import Location
 from models.v2.supplier import Supplier
 from models.v2.transfer import Transfer
 from utils.globals import *
+import os
+
+APP_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../app"))
 
 T = TypeVar("T", bound=BaseModel)
 
 
 class DatabaseService:
-    def __init__(self, db_path: str = "app/database/database.db"):
+    def __init__(self, db_path: str = APP_PATH+"/database/database.db"):
         self.db_path = db_path
         self.conn = None
         self._initialize_database()
