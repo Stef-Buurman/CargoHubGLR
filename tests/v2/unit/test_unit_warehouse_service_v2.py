@@ -126,7 +126,6 @@ def test_get_warehouse_from_db(warehouse_service, mock_db_service):
     assert warehouse == warehouse_from_db
 
 
-
 def test_add_warehouse(warehouse_service, mock_db_service):
     warehouse = Warehouse(
         id=3,
@@ -148,7 +147,7 @@ def test_add_warehouse(warehouse_service, mock_db_service):
 
     assert result.id == 4
     assert mock_db_service.insert.call_count == 1
-    
+
 
 def test_update_warehouse(warehouse_service, mock_db_service):
     warehouse = Warehouse(
@@ -250,4 +249,3 @@ def test_unarchive_warehouse_not_found(warehouse_service, mock_db_service):
 
     assert result is None
     assert mock_db_service.update.call_count == 0
-    
