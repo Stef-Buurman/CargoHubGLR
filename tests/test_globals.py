@@ -15,6 +15,7 @@ invalid_headers = {"Authorization": "invalid_key"}
 
 timeout = httpx.Timeout(connect=10.0, read=30.0, write=30.0, pool=30.0)
 
+pagination_url_base = "?page="
 pagination_url_negative = "?page=-1"
 pagination_url_0 = "?page=0"
 pagination_url_1 = "?page=1"

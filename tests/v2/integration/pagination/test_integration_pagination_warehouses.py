@@ -57,7 +57,7 @@ def test_get_all_warehouses_page_too_high(client):
     response_warehouses = client.get("/warehouses", headers=test_headers)
     assert response_warehouses.status_code == 200
     response = client.get(
-        "/warehouses/page"
+        f"/warehouses{pagination_url_base}"
         + str(response_warehouses.json()["pagination"]["pages"] + 1),
         headers=test_headers,
     )
@@ -118,7 +118,7 @@ def test_get_all_warehouse_locations_page_too_high(client):
     )
     assert response_warehouse_locations.status_code == 200
     response = client.get(
-        f"/warehouses/{test_warehouse['id']}/locations/page"
+        f"/warehouses/{test_warehouse['id']}/locations{pagination_url_base}"
         + str(response_warehouse_locations.json()["pagination"]["pages"] + 1),
         headers=test_headers,
     )

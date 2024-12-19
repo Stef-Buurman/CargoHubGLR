@@ -49,7 +49,7 @@ def test_get_all_item_types_page_too_high(client):
     response_item_types = client.get("/item_types", headers=test_headers)
     assert response_item_types.status_code == 200
     response = client.get(
-        "/item_types/page"
+        f"/item_types{pagination_url_base}"
         + str(response_item_types.json()["pagination"]["pages"] + 1),
         headers=test_headers,
     )
@@ -110,7 +110,7 @@ def test_get_all_item_types_items_page_too_high(client):
     )
     assert response_item_types.status_code == 200
     response = client.get(
-        f"/item_types/{test_item_type['id']}/items/page"
+        f"/item_types/{test_item_type['id']}/items{pagination_url_base}"
         + str(response_item_types.json()["pagination"]["pages"] + 1),
         headers=test_headers,
     )

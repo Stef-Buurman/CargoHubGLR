@@ -56,7 +56,7 @@ def test_get_all_suppliers_page_too_high(client):
     response_suppliers = client.get("/suppliers", headers=test_headers)
     assert response_suppliers.status_code == 200
     response = client.get(
-        "/suppliers/page" + str(response_suppliers.json()["pagination"]["pages"] + 1),
+        f"/suppliers{pagination_url_base}" + str(response_suppliers.json()["pagination"]["pages"] + 1),
         headers=test_headers,
     )
     assert response.status_code == 200
@@ -116,7 +116,7 @@ def test_get_all_supplier_items_page_too_high(client):
     )
     assert response_supplier_items.status_code == 200
     response = client.get(
-        f"/suppliers/{test_supplier['id']}/items/page"
+        f"/suppliers/{test_supplier['id']}/items{pagination_url_base}"
         + str(response_supplier_items.json()["pagination"]["pages"] + 1),
         headers=test_headers,
     )
