@@ -1,16 +1,14 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Request, HTTPException, status
 from fastapi.responses import JSONResponse
-from services.v2.pagination_service import Pagination
 from models.v2.inventory import Inventory
 from services.v2 import data_provider_v2
-from utils.globals import pagination_url
+
 
 inventory_router_v2 = APIRouter(tags=["v2.Inventories"], prefix="/inventories")
 
 
 @inventory_router_v2.get("/{inventory_id}")
 def read_inventory(inventory_id: int):
-
     inventory = data_provider_v2.fetch_inventory_pool().get_inventory(inventory_id)
     if inventory is None:
         raise HTTPException(
@@ -20,19 +18,16 @@ def read_inventory(inventory_id: int):
     return inventory
 
 
-@inventory_router_v2.get("/")
-@inventory_router_v2.get(pagination_url)
-def read_inventories(pagination: Pagination = Depends()):
-
+@inventory_router_v2.get("")
+def read_inventories(request: Request):
     inventories = data_provider_v2.fetch_inventory_pool().get_inventories()
     if not inventories:
         raise HTTPException(status_code=404, detail="No inventories found")
-    return pagination.apply(inventories)
+    return request.state.pagination.apply(inventories)
 
 
-@inventory_router_v2.post("/")
+@inventory_router_v2.post("")
 def create_inventory(inventory: Inventory):
-
     created_inventory = data_provider_v2.fetch_inventory_pool().add_inventory(inventory)
     if created_inventory is None:
         raise HTTPException(status_code=400, detail="Inventory has archived entries")
@@ -42,11 +37,7 @@ def create_inventory(inventory: Inventory):
 
 
 @inventory_router_v2.put("/{inventory_id}")
-def update_inventory(
-    inventory_id: int,
-    inventory: Inventory,
-):
-
+def update_inventory(inventory_id: int, inventory: Inventory):
     is_archived = data_provider_v2.fetch_inventory_pool().is_inventory_archived(
         inventory_id
     )
@@ -65,11 +56,7 @@ def update_inventory(
 
 
 @inventory_router_v2.patch("/{inventory_id}")
-def partial_update_inventory(
-    inventory_id: int,
-    inventory: dict,
-):
-
+def partial_update_inventory(inventory_id: int, inventory: dict):
     is_archived = data_provider_v2.fetch_inventory_pool().is_inventory_archived(
         inventory_id
     )
@@ -98,7 +85,6 @@ def partial_update_inventory(
 
 @inventory_router_v2.patch("/{inventory_id}/unarchive")
 def unarchive_inventory(inventory_id: int):
-
     inventory_pool = data_provider_v2.fetch_inventory_pool()
 
     is_archived = inventory_pool.is_inventory_archived(inventory_id)
@@ -113,7 +99,6 @@ def unarchive_inventory(inventory_id: int):
 
 @inventory_router_v2.delete("/{inventory_id}")
 def archive_inventory(inventory_id: int):
-
     inventory_pool = data_provider_v2.fetch_inventory_pool()
 
     is_archived = inventory_pool.is_inventory_archived(inventory_id)

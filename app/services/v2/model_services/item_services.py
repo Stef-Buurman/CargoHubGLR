@@ -6,17 +6,12 @@ from services.v2 import data_provider_v2
 
 
 class ItemService(Base):
-    def __init__(
-        self,
-        is_debug: bool = False,
-        items: List[Item] | None = None,
-        db: Type[DatabaseService] = None,
-    ):
+    def __init__(self, db: Type[DatabaseService] = None):
         if db is not None:
             self.db = db
         else:  # pragma: no cover
             self.db = DB
-        self.load(is_debug, items)
+        self.load()
 
     def get_all_items(self) -> List[Item]:
         return self.db.get_all(Item)
@@ -140,7 +135,7 @@ class ItemService(Base):
         return added_item
 
     def generate_uid(self) -> str:
-        existing_ids = (int(item.uid[1:]) for item in self.data)
+        existing_ids = (int(item.uid[1:]) for item in self.data if hasattr(item, "uid"))
         current_id = max(existing_ids, default=0) + 1
 
         while f"P{current_id:06d}" in existing_ids:
@@ -152,20 +147,18 @@ class ItemService(Base):
         self, item_id: str, item: Item, closeConnection: bool = True
     ) -> Item | None:
         old_item = self.get_item(item_id)
-        if (
-            old_item
-            and self.is_item_archived(item_id)
-            or self.has_item_archived_entities(item, old_item)
-        ):
+        if self.is_item_archived(
+            item_id
+        ) is not False or self.has_item_archived_entities(item, old_item):
             return None
 
         item.updated_at = self.get_timestamp()
         for i in range(len(self.data)):
-            if self.data[i].uid == item.uid:
+            if self.data[i].uid == item_id:
                 updated_item = self.db.update(item, item_id, closeConnection)
                 self.data[i] = updated_item
                 return updated_item
-        return None
+        return "hoi"
 
     def is_item_archived(self, item_id: str) -> bool | None:
         for item in self.data:
@@ -193,8 +186,5 @@ class ItemService(Base):
                 return updated_item
         return None
 
-    def load(self, is_debug: bool, item: List[Item] | None = None):
-        if is_debug and item is not None:
-            self.data = item
-        else:  # pragma: no cover
-            self.data = self.get_all_items()
+    def load(self):
+        self.data = self.get_all_items()

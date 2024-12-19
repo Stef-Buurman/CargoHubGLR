@@ -5,17 +5,12 @@ from services.v2.database_service import DB, DatabaseService
 
 
 class ItemGroupService(Base):
-    def __init__(
-        self,
-        is_debug=False,
-        item_groups: List[ItemGroup] | None = None,
-        db: Type[DatabaseService] = None,
-    ):
+    def __init__(self, db: Type[DatabaseService] = None):
         if db is not None:
             self.db = db
         else:  # pragma: no cover
             self.db = DB
-        self.load(is_debug, item_groups)
+        self.load()
 
     def get_all_item_groups(self) -> List[ItemGroup]:
         return self.db.get_all(ItemGroup)
@@ -92,8 +87,5 @@ class ItemGroupService(Base):
                 return updated_item_group
         return None
 
-    def load(self, is_debug: bool, item_groups: List[ItemGroup] | None = None):
-        if is_debug and item_groups is not None:
-            self.data = item_groups
-        else:  # pragma: no cover
-            self.data = self.get_all_item_groups()
+    def load(self):
+        self.data = self.get_all_item_groups()

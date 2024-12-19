@@ -16,7 +16,7 @@ def read_order(order_id: int, api_key: str = Depends(auth_provider.get_api_key))
     return order
 
 
-@order_router.get("/")
+@order_router.get("")
 def read_orders(api_key: str = Depends(auth_provider.get_api_key)):
     data_provider.init()
     orders = data_provider.fetch_order_pool().get_orders()
@@ -36,7 +36,7 @@ def read_order_items(order_id: int, api_key: str = Depends(auth_provider.get_api
     return items
 
 
-@order_router.post("/")
+@order_router.post("")
 def create_order(order: dict, api_key: str = Depends(auth_provider.get_api_key)):
     data_provider.init()
     existingOrder = data_provider.fetch_order_pool().get_order(order["id"])

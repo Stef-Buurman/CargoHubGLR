@@ -40,10 +40,10 @@ def test_get_all_inventories_page_negative(client):
 
 
 def test_get_all_inventories_page_too_high(client):
-    response_inventories = client.get("/inventories/", headers=test_headers)
+    response_inventories = client.get("/inventories", headers=test_headers)
     assert response_inventories.status_code == 200
     response = client.get(
-        "/inventories/page/"
+        f"/inventories{pagination_url_base}"
         + str(response_inventories.json()["pagination"]["pages"] + 1),
         headers=test_headers,
     )

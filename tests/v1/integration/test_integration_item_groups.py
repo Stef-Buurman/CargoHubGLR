@@ -18,23 +18,23 @@ def client():
 
 
 def test_get_all_item_groups(client):
-    response = client.get("/item_groups/", headers=test_headers)
+    response = client.get("/item_groups", headers=test_headers)
     assert response.status_code == 200
     assert isinstance(response.json(), list)
 
 
 def test_get_all_item_groups_no_api_key(client):
-    response = client.get("/item_groups/")
+    response = client.get("/item_groups")
     assert response.status_code == 403
 
 
 def test_get_all_item_groups_invalid_api_key(client):
-    response = client.get("/item_groups/", headers=invalid_headers)
+    response = client.get("/item_groups", headers=invalid_headers)
     assert response.status_code == 403
 
 
 def test_add_item_group_no_api_key(client):
-    response = client.post("/item_groups/", json=test_item_group)
+    response = client.post("/item_groups", json=test_item_group)
     assert response.status_code == 403
     responseGet = client.get(
         "/item_groups/" + str(test_item_group["id"]), headers=test_headers
@@ -44,7 +44,7 @@ def test_add_item_group_no_api_key(client):
 
 def test_add_item_group_invalid_api_key(client):
     response = client.post(
-        "/item_groups/", json=test_item_group, headers=invalid_headers
+        "/item_groups", json=test_item_group, headers=invalid_headers
     )
     assert response.status_code == 403
     responseGet = client.get(
@@ -54,13 +54,13 @@ def test_add_item_group_invalid_api_key(client):
 
 
 def test_add_item_group(client):
-    response = client.post("/item_groups/", json=test_item_group, headers=test_headers)
+    response = client.post("/item_groups", json=test_item_group, headers=test_headers)
     assert response.status_code == 201 or response.status_code == 200
     assert response.json()["id"] == test_item_group["id"]
 
 
 def test_add_existing_item_group(client):
-    response = client.post("/item_groups/", json=test_item_group, headers=test_headers)
+    response = client.post("/item_groups", json=test_item_group, headers=test_headers)
     assert response.status_code == 409
 
 

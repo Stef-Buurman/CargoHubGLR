@@ -38,43 +38,43 @@ def client():
 
 
 def test_get_all_orders(client):
-    response = client.get("/orders/", headers=test_headers)
+    response = client.get("/orders", headers=test_headers)
     assert response.status_code == 200
     assert isinstance(response.json(), list)
 
 
 def test_get_all_orders_no_api_key(client):
-    response = client.get("/orders/")
+    response = client.get("/orders")
     assert response.status_code == 403
 
 
 def test_get_all_orders_invalid_api_key(client):
-    response = client.get("/orders/", headers=invalid_headers)
+    response = client.get("/orders", headers=invalid_headers)
     assert response.status_code == 403
 
 
 def test_add_order_no_api_key(client):
-    response = client.post("/orders/", json=test_order)
+    response = client.post("/orders", json=test_order)
     assert response.status_code == 403
     responseGet = client.get("/orders/" + str(test_order["id"]), headers=test_headers)
     assert responseGet.status_code == 404
 
 
 def test_add_order_invalid_api_key(client):
-    response = client.post("/orders/", json=test_order, headers=invalid_headers)
+    response = client.post("/orders", json=test_order, headers=invalid_headers)
     assert response.status_code == 403
     responseGet = client.get("/orders/" + str(test_order["id"]), headers=test_headers)
     assert responseGet.status_code == 404
 
 
 def test_add_order(client):
-    response = client.post("/orders/", json=test_order, headers=test_headers)
+    response = client.post("/orders", json=test_order, headers=test_headers)
     assert response.status_code == 201 or response.status_code == 200
     assert response.json()["id"] == test_order["id"]
 
 
 def test_add_existing_order(client):
-    response = client.post("/orders/", json=test_order, headers=test_headers)
+    response = client.post("/orders", json=test_order, headers=test_headers)
     assert response.status_code == 409
 
 

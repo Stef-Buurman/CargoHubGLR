@@ -16,7 +16,7 @@ def read_item(item_id: str, api_key: str = Depends(auth_provider.get_api_key)):
     return items
 
 
-@item_router.get("/")
+@item_router.get("")
 def read_items(api_key: str = Depends(auth_provider.get_api_key)):
     data_provider.init()
     items = data_provider.fetch_item_pool().get_items()
@@ -51,7 +51,7 @@ def read_inventory_totals_of_item(
     return inventory_totals
 
 
-@item_router.post("/")
+@item_router.post("")
 def create_item(item: dict, api_key: str = Depends(auth_provider.get_api_key)):
     data_provider.init()
     existingItem = data_provider.fetch_item_pool().get_item(item["uid"])

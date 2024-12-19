@@ -35,23 +35,23 @@ def client():
 
 
 def test_get_all_item_groups(client):
-    response = client.get("/item_groups/", headers=test_headers)
+    response = client.get("/item_groups", headers=test_headers)
     assert response.status_code == 200
     assert isinstance(response.json()["data"], list)
 
 
 def test_get_all_item_groups_no_api_key(client):
-    response = client.get("/item_groups/")
+    response = client.get("/item_groups")
     assert response.status_code == 403
 
 
 def test_get_all_item_groups_invalid_api_key(client):
-    response = client.get("/item_groups/", headers=invalid_headers)
+    response = client.get("/item_groups", headers=invalid_headers)
     assert response.status_code == 403
 
 
 def test_add_item_group_no_api_key(client):
-    response = client.post("/item_groups/", json=test_item_group)
+    response = client.post("/item_groups", json=test_item_group)
     assert response.status_code == 403
     responseGet = client.get(
         "/item_groups/" + str(test_item_group["id"]), headers=test_headers
@@ -61,7 +61,7 @@ def test_add_item_group_no_api_key(client):
 
 def test_add_item_group_invalid_api_key(client):
     response = client.post(
-        "/item_groups/", json=test_item_group, headers=invalid_headers
+        "/item_groups", json=test_item_group, headers=invalid_headers
     )
     assert response.status_code == 403
     responseGet = client.get(
@@ -71,7 +71,7 @@ def test_add_item_group_invalid_api_key(client):
 
 
 def test_add_item_group(client):
-    response = client.post("/item_groups/", json=test_item_group, headers=test_headers)
+    response = client.post("/item_groups", json=test_item_group, headers=test_headers)
     assert response.status_code == 201 or response.status_code == 200
     test_item_group["id"] = response.json()["id"]
     test_item["item_group"] = response.json()["id"]
@@ -134,7 +134,7 @@ def test_get_items_for_item_group_non_existing_id(client):
 
 
 def test_get_items_for_item_group(client):
-    responseAddItem = client.post("/items/", json=test_item, headers=test_headers)
+    responseAddItem = client.post("/items", json=test_item, headers=test_headers)
     assert responseAddItem.status_code == 201 or responseAddItem.status_code == 200
     response = client.get(
         "/item_groups/" + str(test_item_group["id"]) + "/items", headers=test_headers

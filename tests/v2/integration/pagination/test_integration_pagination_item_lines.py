@@ -46,10 +46,10 @@ def test_get_all_item_lines_page_negative(client):
 
 
 def test_get_all_item_lines_page_too_high(client):
-    response_item_lines = client.get("/item_lines/", headers=test_headers)
+    response_item_lines = client.get("/item_lines", headers=test_headers)
     assert response_item_lines.status_code == 200
     response = client.get(
-        "/item_lines/page/"
+        f"/item_lines{pagination_url_base}"
         + str(response_item_lines.json()["pagination"]["pages"] + 1),
         headers=test_headers,
     )
@@ -70,9 +70,7 @@ def test_get_all_item_lines_wrong_page_number(client):
 
 
 def test_get_all_item_lines_items_page_1(client):
-    response_add = client.post(
-        "/item_lines/", headers=test_headers, json=test_item_line
-    )
+    response_add = client.post("/item_lines", headers=test_headers, json=test_item_line)
     assert response_add.status_code in [200, 201]
     test_item_line["id"] = response_add.json()["id"]
 
@@ -111,7 +109,7 @@ def test_get_all_item_lines_items_page_too_high(client):
     )
     assert response_items.status_code == 200
     response = client.get(
-        f"/item_lines/{test_item_line['id']}/items/page/"
+        f"/item_lines/{test_item_line['id']}/items{pagination_url_base}"
         + str(response_items.json()["pagination"]["pages"] + 1),
         headers=test_headers,
     )

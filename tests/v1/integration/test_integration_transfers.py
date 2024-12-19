@@ -21,39 +21,39 @@ def client():
 
 
 def test_get_all_transfers(client):
-    response = client.get("/transfers/", headers=test_headers)
+    response = client.get("/transfers", headers=test_headers)
     assert response.status_code == 200
     assert isinstance(response.json(), list)
 
 
 def test_get_all_transfers_no_api_key(client):
-    response = client.get("/transfers/")
+    response = client.get("/transfers")
     assert response.status_code == 403
 
 
 def test_get_all_transfers_invalid_api_key(client):
-    response = client.get("/transfers/", headers=invalid_headers)
+    response = client.get("/transfers", headers=invalid_headers)
     assert response.status_code == 403
 
 
 def test_add_transfer(client):
-    response = client.post("/transfers/", json=test_transfer, headers=test_headers)
+    response = client.post("/transfers", json=test_transfer, headers=test_headers)
     assert response.status_code == 201 or response.status_code == 200
     assert response.json()["id"] == test_transfer["id"]
 
 
 def test_add_transfer_no_api_key(client):
-    response = client.post("/transfers/", json=test_transfer)
+    response = client.post("/transfers", json=test_transfer)
     assert response.status_code == 403
 
 
 def test_add_transfer_invalid_api_key(client):
-    response = client.post("/transfers/", json=test_transfer, headers=invalid_headers)
+    response = client.post("/transfers", json=test_transfer, headers=invalid_headers)
     assert response.status_code == 403
 
 
 def test_add_existing_transfer(client):
-    response = client.post("/transfers/", json=test_transfer, headers=test_headers)
+    response = client.post("/transfers", json=test_transfer, headers=test_headers)
     assert response.status_code == 409
 
 

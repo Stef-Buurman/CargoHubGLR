@@ -25,23 +25,23 @@ def client():
 
 
 def test_get_all_CargoClients(client):
-    response = client.get("/clients/", headers=test_headers)
+    response = client.get("/clients", headers=test_headers)
     assert response.status_code == 200
     assert isinstance(response.json()["data"], list)
 
 
 def test_get_all_CargoClients_no_api_key(client):
-    response = client.get("/clients/")
+    response = client.get("/clients")
     assert response.status_code == 403
 
 
 def test_get_all_CargoClients_invalid_api_key(client):
-    response = client.get("/clients/", headers=invalid_headers)
+    response = client.get("/clients", headers=invalid_headers)
     assert response.status_code == 403
 
 
 def test_add_CargoClient_no_api_key(client):
-    response = client.post("/clients/", json=test_CargoClient)
+    response = client.post("/clients", json=test_CargoClient)
     assert response.status_code == 403
     responseGet = client.get(
         "/clients/" + str(test_CargoClient["id"]), headers=test_headers
@@ -50,7 +50,7 @@ def test_add_CargoClient_no_api_key(client):
 
 
 def test_add_CargoClient_invalid_api_key(client):
-    response = client.post("/clients/", json=test_CargoClient, headers=invalid_headers)
+    response = client.post("/clients", json=test_CargoClient, headers=invalid_headers)
     assert response.status_code == 403
     responseGet = client.get(
         "/clients/" + str(test_CargoClient["id"]), headers=test_headers
@@ -59,7 +59,7 @@ def test_add_CargoClient_invalid_api_key(client):
 
 
 def test_add_CargoClient(client):
-    response = client.post("/clients/", json=test_CargoClient, headers=test_headers)
+    response = client.post("/clients", json=test_CargoClient, headers=test_headers)
     assert response.status_code == 201 or response.status_code == 200
     test_CargoClient["id"] = response.json()["id"]
 

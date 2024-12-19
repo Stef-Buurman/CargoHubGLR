@@ -16,7 +16,7 @@ def read_warehouse(
     return warehouse
 
 
-@warehouse_router.get("/")
+@warehouse_router.get("")
 def read_warehouses(api_key: str = Depends(auth_provider.get_api_key)):
     data_provider.init()
     warehouses = data_provider.fetch_warehouse_pool().get_warehouses()
@@ -41,7 +41,7 @@ def read_locations_in_warehouse(
     return locations
 
 
-@warehouse_router.post("/")
+@warehouse_router.post("")
 def create_warehouse(
     warehouse: dict, api_key: str = Depends(auth_provider.get_api_key)
 ):

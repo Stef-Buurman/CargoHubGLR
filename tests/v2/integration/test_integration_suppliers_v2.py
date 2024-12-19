@@ -63,23 +63,23 @@ def client():
 
 
 def test_get_all_suppliers(client):
-    response = client.get("/suppliers/", headers=test_headers)
+    response = client.get("/suppliers", headers=test_headers)
     assert response.status_code == 200
     assert isinstance(response.json()["data"], list)
 
 
 def test_get_all_suppliers_no_api_key(client):
-    response = client.get("/suppliers/")
+    response = client.get("/suppliers")
     assert response.status_code == 403
 
 
 def test_get_all_suppliers_invalid_api_key(client):
-    response = client.get("/suppliers/", headers=invalid_headers)
+    response = client.get("/suppliers", headers=invalid_headers)
     assert response.status_code == 403
 
 
 def test_add_supplier_no_api_key(client):
-    response = client.post("/suppliers/", json=test_supplier)
+    response = client.post("/suppliers", json=test_supplier)
     assert response.status_code == 403
     responseGet = client.get(
         "/suppliers/" + str(test_supplier["id"]), headers=test_headers
@@ -88,7 +88,7 @@ def test_add_supplier_no_api_key(client):
 
 
 def test_add_supplier_invalid_api_key(client):
-    response = client.post("/suppliers/", json=test_supplier, headers=invalid_headers)
+    response = client.post("/suppliers", json=test_supplier, headers=invalid_headers)
     assert response.status_code == 403
     responseGet = client.get(
         "/suppliers/" + str(test_supplier["id"]), headers=test_headers
@@ -97,14 +97,14 @@ def test_add_supplier_invalid_api_key(client):
 
 
 def test_add_supplier(client):
-    response = client.post("/suppliers/", json=test_supplier, headers=test_headers)
+    response = client.post("/suppliers", json=test_supplier, headers=test_headers)
     assert response.status_code == 201 or response.status_code == 200
     test_supplier["id"] = response.json()["id"]
     assert response.json()["id"] == test_supplier["id"]
 
 
 # def test_add_existing_supplier(client):
-#     response = client.post("/suppliers/", json=test_supplier, headers=test_headers)
+#     response = client.post("/suppliers", json=test_supplier, headers=test_headers)
 #     assert response.status_code == 409
 
 
@@ -172,11 +172,11 @@ def test_get_supplier_items_non_existent_id(client):
 def test_get_supplier_items(client):
     test_item_1["supplier_id"] = test_supplier["id"]
     response_post_fake_item_1 = client.post(
-        "/items/", json=test_item_1, headers=test_headers
+        "/items", json=test_item_1, headers=test_headers
     )
     test_item_2["supplier_id"] = test_supplier["id"]
     response_post_fake_item_2 = client.post(
-        "/items/", json=test_item_2, headers=test_headers
+        "/items", json=test_item_2, headers=test_headers
     )
     assert (
         response_post_fake_item_1.status_code == 201

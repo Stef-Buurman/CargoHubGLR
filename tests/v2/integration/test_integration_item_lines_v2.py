@@ -54,23 +54,23 @@ def client():
 
 
 def test_get_all_item_lines(client):
-    response = client.get("/item_lines/", headers=test_headers)
+    response = client.get("/item_lines", headers=test_headers)
     assert response.status_code == 200
     assert isinstance(response.json()["data"], list)
 
 
 def test_get_all_item_lines_no_api_key(client):
-    response = client.get("/item_lines/")
+    response = client.get("/item_lines")
     assert response.status_code == 403
 
 
 def test_get_all_item_lines_invalid_api_key(client):
-    response = client.get("/item_lines/", headers=invalid_headers)
+    response = client.get("/item_lines", headers=invalid_headers)
     assert response.status_code == 403
 
 
 def test_add_item_line_no_api_key(client):
-    response = client.post("/item_lines/", json=test_item_line)
+    response = client.post("/item_lines", json=test_item_line)
     assert response.status_code == 403
     responseGet = client.get(
         "/item_lines/" + str(test_item_line["id"]), headers=test_headers
@@ -79,7 +79,7 @@ def test_add_item_line_no_api_key(client):
 
 
 def test_add_item_line_invalid_api_key(client):
-    response = client.post("/item_lines/", json=test_item_line, headers=invalid_headers)
+    response = client.post("/item_lines", json=test_item_line, headers=invalid_headers)
     assert response.status_code == 403
     responseGet = client.get(
         "/item_lines/" + str(test_item_line["id"]), headers=test_headers
@@ -88,7 +88,7 @@ def test_add_item_line_invalid_api_key(client):
 
 
 def test_add_item_line(client):
-    response = client.post("/item_lines/", json=test_item_line, headers=test_headers)
+    response = client.post("/item_lines", json=test_item_line, headers=test_headers)
     assert response.status_code == 201 or response.status_code == 200
     test_item_line["id"] = response.json()["id"]
     assert response.json()["id"] == test_item_line["id"]
@@ -153,11 +153,11 @@ def test_get_items_for_item_line_not_found(client):
 def test_get_item_line_items(client):
     test_item_1["item_line"] = test_item_line["id"]
     response_post_fake_item_1 = client.post(
-        "/items/", json=test_item_1, headers=test_headers
+        "/items", json=test_item_1, headers=test_headers
     )
     test_item_2["item_line"] = test_item_line["id"]
     response_post_fake_item_2 = client.post(
-        "/items/", json=test_item_2, headers=test_headers
+        "/items", json=test_item_2, headers=test_headers
     )
     assert (
         response_post_fake_item_1.status_code == 201
