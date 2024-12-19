@@ -49,7 +49,7 @@ class LocationService(Base):
 
     def update_location(
         self, location_id: int, location: Location, closeConnection: bool = True
-    ) -> Location:
+    ) -> Location | None:
         if self.is_location_archived(
             location_id
         ) or self.has_location_archived_entities(
@@ -65,9 +65,9 @@ class LocationService(Base):
                 )
                 self.data[i] = updated_location
                 return updated_location
-        return None
+        return None # pragma: no cover
 
-    def archive_location(self, location_id: int, closeConnection: bool = True) -> bool:
+    def archive_location(self, location_id: int, closeConnection: bool = True) -> Location | None:
         for i in range(len(self.data)):
             if self.data[i].id == location_id:
                 self.data[i].updated_at = self.get_timestamp()
@@ -76,12 +76,12 @@ class LocationService(Base):
                     self.data[i], location_id, closeConnection
                 )
                 self.data[i] = updated_location
-                return True
-        return False
+                return updated_location
+        return None
 
     def unarchive_location(
         self, location_id: int, closeConnection: bool = True
-    ) -> bool:
+    ) -> Location| None:
         for i in range(len(self.data)):
             if self.data[i].id == location_id:
                 self.data[i].updated_at = self.get_timestamp()
@@ -90,13 +90,13 @@ class LocationService(Base):
                     self.data[i], location_id, closeConnection
                 )
                 self.data[i] = updated_location
-                return True
-        return False
+                return updated_location
+        return None
 
     def load(self):
         self.data = self.get_all_locations()
 
-    def is_location_archived(self, location_id: int) -> bool:
+    def is_location_archived(self, location_id: int) -> bool | None:
         for location in self.data:
             if location.id == location_id:
                 return location.is_archived
