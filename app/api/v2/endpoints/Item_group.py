@@ -17,7 +17,7 @@ def read_item_group(item_group_id: int):
     return item_group
 
 
-@item_group_router_v2.get("/")
+@item_group_router_v2.get("")
 def read_item_groups(request: Request):
     item_groups = data_provider_v2.fetch_item_group_pool().get_item_groups()
     if item_groups is None:
@@ -36,7 +36,7 @@ def read_items_for_item_group(item_group_id: int, request: Request):
     return request.state.pagination.apply(items)
 
 
-@item_group_router_v2.post("/")
+@item_group_router_v2.post("")
 def create_item_group(item_group: ItemGroup):
     added_item_group = data_provider_v2.fetch_item_group_pool().add_item_group(
         item_group

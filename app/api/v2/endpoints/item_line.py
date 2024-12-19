@@ -16,7 +16,7 @@ def read_item_line(item_line_id: int):
     return item_line
 
 
-@item_line_router_v2.get("/")
+@item_line_router_v2.get("")
 def read_item_lines(request: Request):
     item_lines = data_provider_v2.fetch_item_line_pool().get_item_lines()
     if item_lines is None:
@@ -38,7 +38,7 @@ def read_items_for_item_line(item_line_id: int, request: Request):
     return request.state.pagination.apply(items_for_item_line)
 
 
-@item_line_router_v2.post("/")
+@item_line_router_v2.post("")
 def create_item(item_line: ItemLine):
     added_item_line = data_provider_v2.fetch_item_line_pool().add_item_line(item_line)
     return JSONResponse(

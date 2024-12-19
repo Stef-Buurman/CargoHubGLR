@@ -18,7 +18,7 @@ def read_inventory(inventory_id: int):
     return inventory
 
 
-@inventory_router_v2.get("/")
+@inventory_router_v2.get("")
 def read_inventories(request: Request):
     inventories = data_provider_v2.fetch_inventory_pool().get_inventories()
     if not inventories:
@@ -26,7 +26,7 @@ def read_inventories(request: Request):
     return request.state.pagination.apply(inventories)
 
 
-@inventory_router_v2.post("/")
+@inventory_router_v2.post("")
 def create_inventory(inventory: Inventory):
     created_inventory = data_provider_v2.fetch_inventory_pool().add_inventory(inventory)
     if created_inventory is None:

@@ -13,7 +13,7 @@ def read_transfer(transfer_id: int):
     return transfer
 
 
-@transfer_router_v2.get("/")
+@transfer_router_v2.get("")
 def read_transfers(request: Request):
     transfers = data_provider_v2.fetch_transfer_pool().get_transfers()
     if transfers is None:
@@ -32,7 +32,7 @@ def read_transfer_items(transfer_id: int, request: Request):
     return request.state.pagination.apply(items)
 
 
-@transfer_router_v2.post("/")
+@transfer_router_v2.post("")
 def create_transfer(transfer: Transfer):
     created_transfer = data_provider_v2.fetch_transfer_pool().add_transfer(transfer)
     return created_transfer

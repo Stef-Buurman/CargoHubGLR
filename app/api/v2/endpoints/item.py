@@ -16,7 +16,7 @@ def read_item(item_id: str):
     return items
 
 
-@item_router_v2.get("/")
+@item_router_v2.get("")
 def read_items(request: Request):
     items = data_provider_v2.fetch_item_pool().get_items()
     if items is None:
@@ -46,7 +46,7 @@ def read_inventory_totals_of_item(item_id: str):
     return inventory_totals
 
 
-@item_router_v2.post("/")
+@item_router_v2.post("")
 def create_item(item: Item):
     addedItem = data_provider_v2.fetch_item_pool().add_item(item)
     if addedItem is None:

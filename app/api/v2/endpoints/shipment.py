@@ -19,7 +19,7 @@ def read_shipment(shipment_id: int):
     return shipment
 
 
-@shipment_router_v2.get("/")
+@shipment_router_v2.get("")
 def read_shipments(request: Request):
     shipments = data_provider_v2.fetch_shipment_pool().get_shipments()
     if shipments is None:
@@ -49,7 +49,7 @@ def read_items_for_shipment(shipment_id: int, request: Request):
     return request.state.pagination.apply(items)
 
 
-@shipment_router_v2.post("/")
+@shipment_router_v2.post("")
 def create_shipment(shipment: Shipment):
     created_shipment = data_provider_v2.fetch_shipment_pool().add_shipment(shipment)
     return JSONResponse(

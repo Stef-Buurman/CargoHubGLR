@@ -14,7 +14,7 @@ def read_warehouse(warehouse_id: int):
     return warehouse
 
 
-@warehouse_router_v2.get("/")
+@warehouse_router_v2.get("")
 def read_warehouses(request: Request):
     warehouses = data_provider_v2.fetch_warehouse_pool().get_warehouses()
     if warehouses is None:
@@ -39,7 +39,7 @@ def read_locations_in_warehouse(warehouse_id: int, request: Request):
     return request.state.pagination.apply(locations)
 
 
-@warehouse_router_v2.post("/")
+@warehouse_router_v2.post("")
 def create_warehouse(warehouse: Warehouse):
     created_warehouse = data_provider_v2.fetch_warehouse_pool().add_warehouse(warehouse)
     return JSONResponse(

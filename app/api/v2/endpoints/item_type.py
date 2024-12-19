@@ -17,7 +17,7 @@ def read_item_type(item_type_id: int):
     return item_type
 
 
-@item_type_router_v2.get("/")
+@item_type_router_v2.get("")
 def read_item_types(request: Request):
     item_types = data_provider_v2.fetch_item_type_pool().get_item_types()
     if item_types is None:
@@ -36,7 +36,7 @@ def read_items_for_item_type(item_type_id: int, request: Request):
     return request.state.pagination.apply(items)
 
 
-@item_type_router_v2.post("/")
+@item_type_router_v2.post("")
 def create_item_type(item_type: ItemType):
     added_item_type = data_provider_v2.fetch_item_type_pool().add_item_type(item_type)
     return JSONResponse(

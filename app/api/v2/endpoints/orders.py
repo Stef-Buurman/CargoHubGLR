@@ -17,7 +17,7 @@ def read_order(order_id: int):
     return order
 
 
-@order_router_v2.get("/")
+@order_router_v2.get("")
 def read_orders(request: Request):
     orders = data_provider_v2.fetch_order_pool().get_orders()
     if orders is None:
@@ -35,7 +35,7 @@ def read_order_items(order_id: int, request: Request):
     return request.state.pagination.apply(items)
 
 
-@order_router_v2.post("/")
+@order_router_v2.post("")
 def create_order(order: Order):
     addedOrder = data_provider_v2.fetch_order_pool().add_order(order)
     if addedOrder is None:

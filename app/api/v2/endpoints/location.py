@@ -16,7 +16,7 @@ def read_location(location_id: int):
     return location
 
 
-@location_router_v2.get("/")
+@location_router_v2.get("")
 def read_locations(request: Request):
     locations = data_provider_v2.fetch_location_pool().get_locations()
     if locations is None:
@@ -24,7 +24,7 @@ def read_locations(request: Request):
     return request.state.pagination.apply(locations)
 
 
-@location_router_v2.post("/")
+@location_router_v2.post("")
 def create_location(location: Location):
     created_location = data_provider_v2.fetch_location_pool().add_location(location)
     return JSONResponse(

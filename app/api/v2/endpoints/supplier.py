@@ -16,7 +16,7 @@ def read_supplier(supplier_id: int):
     return supplier
 
 
-@supplier_router_v2.get("/")
+@supplier_router_v2.get("")
 def read_suppliers(request: Request):
     suppliers = data_provider_v2.fetch_supplier_pool().get_suppliers()
     if suppliers is None:
@@ -38,7 +38,7 @@ def read_items_of_supplier(supplier_id: int, request: Request):
     return request.state.pagination.apply(items_for_supplier)
 
 
-@supplier_router_v2.post("/")
+@supplier_router_v2.post("")
 def create_supplier(supplier: Supplier):
     created_supplier = data_provider_v2.fetch_supplier_pool().add_supplier(supplier)
     return JSONResponse(

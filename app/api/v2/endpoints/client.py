@@ -15,7 +15,7 @@ def read_client(client_id: int):
     return client
 
 
-@client_router_v2.get("/")
+@client_router_v2.get("")
 def read_clients(request: Request):
     clients = data_provider_v2.fetch_client_pool().get_clients()
     if clients is None:
@@ -34,7 +34,7 @@ def read_client_orders(client_id: int, request: Request):
     return request.state.pagination.apply(orders)
 
 
-@client_router_v2.post("/")
+@client_router_v2.post("")
 def create_client(client: Client):
     created_client = data_provider_v2.fetch_client_pool().add_client(client)
     return JSONResponse(
