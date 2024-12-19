@@ -57,7 +57,8 @@ def test_get_all_clients_page_too_high(client):
     response_clients = client.get("/clients", headers=test_headers)
     assert response_clients.status_code == 200
     response = client.get(
-        f"/clients{pagination_url_base}" + str(response_clients.json()["pagination"]["pages"] + 1),
+        f"/clients{pagination_url_base}"
+        + str(response_clients.json()["pagination"]["pages"] + 1),
         headers=test_headers,
     )
     assert response.status_code == 200
