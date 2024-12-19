@@ -135,7 +135,7 @@ class ItemService(Base):
         return added_item
 
     def generate_uid(self) -> str:
-        existing_ids = (int(item.uid[1:]) for item in self.data)
+        existing_ids = (int(item.uid[1:]) for item in self.data if hasattr(item, 'uid'))
         current_id = max(existing_ids, default=0) + 1
 
         while f"P{current_id:06d}" in existing_ids:
@@ -148,19 +148,18 @@ class ItemService(Base):
     ) -> Item | None:
         old_item = self.get_item(item_id)
         if (
-            old_item
-            and self.is_item_archived(item_id)
+            self.is_item_archived(item_id) is not False
             or self.has_item_archived_entities(item, old_item)
         ):
             return None
 
         item.updated_at = self.get_timestamp()
         for i in range(len(self.data)):
-            if self.data[i].uid == item.uid:
+            if self.data[i].uid == item_id:
                 updated_item = self.db.update(item, item_id, closeConnection)
                 self.data[i] = updated_item
                 return updated_item
-        return None
+        return "hoi"
 
     def is_item_archived(self, item_id: str) -> bool | None:
         for item in self.data:
