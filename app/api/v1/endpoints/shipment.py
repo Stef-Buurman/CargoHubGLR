@@ -17,7 +17,7 @@ def read_shipment(shipment_id: int, api_key: str = Depends(auth_provider.get_api
     return shipment
 
 
-@shipment_router.get("/")
+@shipment_router.get("")
 def read_shipments(api_key: str = Depends(auth_provider.get_api_key)):
     data_provider.init()
     shipments = data_provider.fetch_shipment_pool().get_shipments()
@@ -54,7 +54,7 @@ def read_items_for_shipment(
     return items
 
 
-@shipment_router.post("/")
+@shipment_router.post("")
 def create_shipment(shipment: dict, api_key: str = Depends(auth_provider.get_api_key)):
     data_provider.init()
     existingShipment = data_provider.fetch_shipment_pool().get_shipment(shipment["id"])

@@ -5,7 +5,7 @@ from services.v1 import data_provider, auth_provider
 item_line_router = APIRouter(tags=["v1.Item Lines"], prefix="/item_lines")
 
 
-@item_line_router.get("/")
+@item_line_router.get("")
 def read_item_lines(api_key: str = Depends(auth_provider.get_api_key)):
     data_provider.init()
     item_lines = data_provider.fetch_item_line_pool().get_item_lines()
@@ -45,7 +45,7 @@ def read_items_for_item_line(
     return items_for_item_line
 
 
-@item_line_router.post("/")
+@item_line_router.post("")
 def create_item(item_line: dict, api_key: str = Depends(auth_provider.get_api_key)):
     data_provider.init()
     existingItem = data_provider.fetch_item_line_pool().get_item_line(item_line["id"])

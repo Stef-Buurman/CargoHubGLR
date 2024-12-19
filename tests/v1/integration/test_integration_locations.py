@@ -19,23 +19,23 @@ def client():
 
 
 def test_get_all_locations(client):
-    response = client.get("/locations/", headers=test_headers)
+    response = client.get("/locations", headers=test_headers)
     assert response.status_code == 200
     assert isinstance(response.json(), list)
 
 
 def test_get_all_locations_no_api_key(client):
-    response = client.get("/locations/")
+    response = client.get("/locations")
     assert response.status_code == 403
 
 
 def test_get_all_locations_invalid_api_key(client):
-    response = client.get("/locations/", headers=invalid_headers)
+    response = client.get("/locations", headers=invalid_headers)
     assert response.status_code == 403
 
 
 def test_add_location_no_api_key(client):
-    response = client.post("/locations/", json=test_location)
+    response = client.post("/locations", json=test_location)
     assert response.status_code == 403
     responseGet = client.get(
         "/locations/" + str(test_location["id"]), headers=test_headers
@@ -44,7 +44,7 @@ def test_add_location_no_api_key(client):
 
 
 def test_add_location_invalid_api_key(client):
-    response = client.post("/locations/", json=test_location, headers=invalid_headers)
+    response = client.post("/locations", json=test_location, headers=invalid_headers)
     assert response.status_code == 403
     responseGet = client.get(
         "/locations/" + str(test_location["id"]), headers=test_headers
@@ -53,13 +53,13 @@ def test_add_location_invalid_api_key(client):
 
 
 def test_add_location(client):
-    response = client.post("/locations/", json=test_location, headers=test_headers)
+    response = client.post("/locations", json=test_location, headers=test_headers)
     assert response.status_code == 201 or response.status_code == 200
     assert response.json()["id"] == test_location["id"]
 
 
 def test_add_existing_location(client):
-    response = client.post("/locations/", json=test_location, headers=test_headers)
+    response = client.post("/locations", json=test_location, headers=test_headers)
     assert response.status_code == 409
 
 

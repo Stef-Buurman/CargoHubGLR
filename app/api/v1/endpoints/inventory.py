@@ -19,7 +19,7 @@ def read_inventory(
     return inventory
 
 
-@inventory_router.get("/")
+@inventory_router.get("")
 def read_inventories(api_key: str = Depends(auth_provider.get_api_key)):
     data_provider.init()
     inventories = data_provider.fetch_inventory_pool().get_inventories()
@@ -28,7 +28,7 @@ def read_inventories(api_key: str = Depends(auth_provider.get_api_key)):
     return inventories
 
 
-@inventory_router.post("/")
+@inventory_router.post("")
 def create_inventory(
     inventorie: dict, api_key: str = Depends(auth_provider.get_api_key)
 ):

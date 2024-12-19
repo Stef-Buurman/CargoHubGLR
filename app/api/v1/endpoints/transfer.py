@@ -14,7 +14,7 @@ def read_transfer(transfer_id: int, api_key: str = Depends(auth_provider.get_api
     return transfer
 
 
-@transfer_router.get("/")
+@transfer_router.get("")
 def read_transfers(api_key: str = Depends(auth_provider.get_api_key)):
     data_provider.init()
     transfers = data_provider.fetch_transfer_pool().get_transfers()
@@ -37,7 +37,7 @@ def read_transfer_items(
     return items
 
 
-@transfer_router.post("/")
+@transfer_router.post("")
 def create_transfer(transfer: dict, api_key: str = Depends(auth_provider.get_api_key)):
     data_provider.init()
     existing_transfer = data_provider.fetch_transfer_pool().get_transfer(transfer["id"])

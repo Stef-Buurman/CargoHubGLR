@@ -18,7 +18,7 @@ def read_item_type(
     return item_type
 
 
-@item_type_router.get("/")
+@item_type_router.get("")
 def read_item_types(api_key: str = Depends(auth_provider.get_api_key)):
     data_provider.init()
     item_types = data_provider.fetch_item_type_pool().get_item_types()
@@ -41,7 +41,7 @@ def read_items_for_item_type(
     return items
 
 
-@item_type_router.post("/")
+@item_type_router.post("")
 def create_item_type(
     item_type: dict, api_key: str = Depends(auth_provider.get_api_key)
 ):

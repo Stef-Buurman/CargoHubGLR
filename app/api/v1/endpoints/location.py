@@ -16,7 +16,7 @@ def read_location(location_id: int, api_key: str = Depends(auth_provider.get_api
     return location
 
 
-@location_router.get("/")
+@location_router.get("")
 def read_locations(api_key: str = Depends(auth_provider.get_api_key)):
     data_provider.init()
     locations = data_provider.fetch_location_pool().get_locations()
@@ -25,7 +25,7 @@ def read_locations(api_key: str = Depends(auth_provider.get_api_key)):
     return locations
 
 
-@location_router.post("/")
+@location_router.post("")
 def create_location(location: dict, api_key: str = Depends(auth_provider.get_api_key)):
     data_provider.init()
     existing_location = data_provider.fetch_location_pool().get_location(location["id"])
