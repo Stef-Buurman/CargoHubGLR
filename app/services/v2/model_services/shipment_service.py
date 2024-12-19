@@ -1,16 +1,21 @@
-from typing import List, Optional
+from typing import List, Optional, Type
 from models.v2.shipment import Shipment
 from models.v2.ItemInObject import ItemInObject
 from services.v2.base_service import Base
-from services.v2.database_service import DB
+from services.v2.database_service import DB, DatabaseService
 from services.v2 import data_provider_v2
 from utils.globals import *
 
 
 class ShipmentService(Base):
-    def __init__(self, is_debug: bool = False):
-        self.db = DB
-        self.load(is_debug)
+    def __init__(self,
+        db: Type[DatabaseService] = None
+    ):
+        if db is not None:
+            self.db = db
+        else:  # pragma: no cover
+            self.db = DB
+        self.load()
 
     def get_all_shipments(self) -> List[Shipment]:
         shipments = []
@@ -287,11 +292,8 @@ class ShipmentService(Base):
                 return self.data[i]
         return None
 
-    def load(self, is_debug: bool, shipments: List[Shipment] | None = None):
-        if is_debug and shipments is not None:
-            self.data = shipments
-        else:
-            self.data = self.get_all_shipments()
+    def load(self, ):
+        self.data = self.get_all_shipments()
 
     def has_shipment_archived_entities(
         self, new_shipment: Shipment, old_shipment: Shipment | None = None
