@@ -5,7 +5,8 @@ from services.v2.database_service import DB, DatabaseService
 
 
 class ClientService(Base):
-    def __init__(self,
+    def __init__(
+        self,
         db: Type[DatabaseService] = None,
     ):
         if db is not None:

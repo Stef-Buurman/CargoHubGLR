@@ -8,9 +8,7 @@ from utils.globals import *
 
 
 class ShipmentService(Base):
-    def __init__(self,
-        db: Type[DatabaseService] = None
-    ):
+    def __init__(self, db: Type[DatabaseService] = None):
         if db is not None:
             self.db = db
         else:  # pragma: no cover
@@ -292,7 +290,9 @@ class ShipmentService(Base):
                 return self.data[i]
         return None
 
-    def load(self, ):
+    def load(
+        self,
+    ):
         self.data = self.get_all_shipments()
 
     def has_shipment_archived_entities(

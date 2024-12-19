@@ -6,10 +6,7 @@ from services.v2 import data_provider_v2
 
 
 class ItemService(Base):
-    def __init__(
-        self,
-        db: Type[DatabaseService] = None
-    ):
+    def __init__(self, db: Type[DatabaseService] = None):
         if db is not None:
             self.db = db
         else:  # pragma: no cover

@@ -5,10 +5,7 @@ from services.v2.database_service import DB, DatabaseService
 
 
 class SupplierService(Base):
-    def __init__(
-        self,
-        db: Type[DatabaseService] = None
-    ):
+    def __init__(self, db: Type[DatabaseService] = None):
         if db is not None:
             self.db = db
         else:  # pragma: no cover
