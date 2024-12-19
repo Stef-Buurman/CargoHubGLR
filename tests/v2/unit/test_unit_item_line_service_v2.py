@@ -5,18 +5,7 @@ from app.services.v2.model_services.item_line_service import ItemLineService
 from tests.test_globals import *
 
 
-@pytest.fixture
-def mock_db_service():
-    """Fixture to create a mocked DatabaseService."""
-    return Mock()
-
-
-@pytest.fixture
-def item_line_service(mock_db_service):
-    """Fixture to create an ItemLineService instance with the mocked DatabaseService."""
-    service = ItemLineService(
-        True,
-        [
+TEST_ITEM_LINES = [
             ItemLine(
                 id=1,
                 name="Type A",
@@ -41,19 +30,29 @@ def item_line_service(mock_db_service):
                 updated_at="2022-05-12 08:54:35",
                 is_archived=True,
             ),
-        ],
-        mock_db_service,
-    )
+        ]
+
+
+@pytest.fixture
+def mock_db_service():
+    """Fixture to create a mocked DatabaseService."""
+    return Mock()
+
+
+@pytest.fixture
+def item_line_service(mock_db_service):
+    """Fixture to create an ItemLineService instance with the mocked DatabaseService."""
+    mock_db_service.get_all.return_value = TEST_ITEM_LINES
+    service = ItemLineService(mock_db_service)
     return service
 
 
 def test_get_all_item_lines(item_line_service, mock_db_service):
-    mock_db_service.get_all.return_value = item_line_service.data
     item_lines = item_line_service.get_all_item_lines()
 
     assert len(item_lines) == len(item_line_service.data)
     assert item_lines[0].name == "Type A"
-    assert mock_db_service.get_all.call_count == 1
+    assert mock_db_service.get_all.call_count == 2
 
 
 def test_get_item_lines(item_line_service):
