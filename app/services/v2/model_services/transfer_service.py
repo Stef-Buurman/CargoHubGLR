@@ -140,10 +140,11 @@ class TransferService(Base):
     def update_transfer(
         self, transfer_id: int, transfer: Transfer, closeConnection: bool = True
     ) -> Transfer:
+        old_transfer = self.get_transfer(transfer_id)
         if self.is_transfer_archived(
             transfer_id
-        ) or self.has_transfer_archived_entities(
-            transfer, self.get_transfer(transfer_id)
+        ) is not False or self.has_transfer_archived_entities(
+            transfer, old_transfer
         ):
             return None
 

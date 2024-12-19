@@ -129,7 +129,7 @@ class ShipmentService(Base):
 
         current_shipment = self.get_shipment(shipment_id)
 
-        if self.has_shipment_archived_entities(shipment, current_shipment):
+        if self.is_shipment_archived(shipment_id) is not False or self.has_shipment_archived_entities(shipment, current_shipment):
             return None
 
         table_name = shipment.table_name()

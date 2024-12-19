@@ -3,8 +3,6 @@ from typing import List, Type
 from services.v2.base_service import Base
 from services.v2.database_service import DB, DatabaseService
 
-WAREHOUSES = []
-
 
 class WarehouseService(Base):
     def __init__(self, db: Type[DatabaseService] = None):
