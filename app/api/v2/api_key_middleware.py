@@ -2,10 +2,14 @@ from fastapi import Request, HTTPException
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import JSONResponse
 from services.v2 import auth_provider_v2
+from utils.globals import open_url_points
 
 
 class ApiKeyProviderMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
+        if request.url.path in open_url_points:
+            return await call_next(request)
+
         api_key = request.headers.get("Authorization")
 
         if not api_key:
