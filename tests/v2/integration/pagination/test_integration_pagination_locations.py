@@ -38,10 +38,10 @@ def test_get_all_locations_page_negative(client):
 
 
 def test_get_all_locations_page_too_high(client):
-    response_locations = client.get("/locations/", headers=test_headers)
+    response_locations = client.get("/locations", headers=test_headers)
     assert response_locations.status_code == 200
     response = client.get(
-        "/locations/page/" + str(response_locations.json()["pagination"]["pages"] + 1),
+        "/locations/page" + str(response_locations.json()["pagination"]["pages"] + 1),
         headers=test_headers,
     )
     assert response.status_code == 200

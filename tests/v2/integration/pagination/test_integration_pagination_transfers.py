@@ -49,10 +49,10 @@ def test_get_all_transfers_page_negative(client):
 
 
 def test_get_all_transfers_page_too_high(client):
-    response_transfers = client.get("/transfers/", headers=test_headers)
+    response_transfers = client.get("/transfers", headers=test_headers)
     assert response_transfers.status_code == 200
     response = client.get(
-        "/transfers/page/" + str(response_transfers.json()["pagination"]["pages"] + 1),
+        "/transfers/page" + str(response_transfers.json()["pagination"]["pages"] + 1),
         headers=test_headers,
     )
     assert response.status_code == 200
@@ -73,7 +73,7 @@ def test_get_all_transfers_wrong_page_number(client):
 
 def test_get_all_transfer_items_page_1(client):
     add_transfer_response = client.post(
-        "/transfers/", json=test_transfer, headers=test_headers
+        "/transfers", json=test_transfer, headers=test_headers
     )
     assert add_transfer_response.status_code in [200, 201]
     test_transfer["id"] = add_transfer_response.json()["id"]
@@ -114,7 +114,7 @@ def test_get_all_transfer_items_page_too_high(client):
     assert response_transfer_items.status_code == 200
 
     response = client.get(
-        f"/transfers/{test_transfer['id']}/items/page/"
+        f"/transfers/{test_transfer['id']}/items/page"
         + str(response_transfer_items.json()["pagination"]["pages"] + 1),
         headers=test_headers,
     )
