@@ -65,9 +65,11 @@ class LocationService(Base):
                 )
                 self.data[i] = updated_location
                 return updated_location
-        return None # pragma: no cover
+        return None  # pragma: no cover
 
-    def archive_location(self, location_id: int, closeConnection: bool = True) -> Location | None:
+    def archive_location(
+        self, location_id: int, closeConnection: bool = True
+    ) -> Location | None:
         for i in range(len(self.data)):
             if self.data[i].id == location_id:
                 self.data[i].updated_at = self.get_timestamp()
@@ -81,7 +83,7 @@ class LocationService(Base):
 
     def unarchive_location(
         self, location_id: int, closeConnection: bool = True
-    ) -> Location| None:
+    ) -> Location | None:
         for i in range(len(self.data)):
             if self.data[i].id == location_id:
                 self.data[i].updated_at = self.get_timestamp()
