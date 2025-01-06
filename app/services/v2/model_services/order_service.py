@@ -60,9 +60,9 @@ class OrderService(Base):
         return None
 
     def get_items_in_order(self, order_id: int) -> List[ItemInObject]:
-        for x in self.data:
-            if x.id == order_id:
-                return x.items
+        for order in self.data:
+            if order.id == order_id:
+                return order.items
         return None
 
     def get_orders_in_shipment(self, shipment_id: int) -> List[Order]:
