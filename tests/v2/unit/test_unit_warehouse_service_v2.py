@@ -249,3 +249,9 @@ def test_unarchive_warehouse_not_found(warehouse_service, mock_db_service):
 
     assert result is None
     assert mock_db_service.update.call_count == 0
+
+
+def test_is_warehouse_archived(warehouse_service):
+    assert warehouse_service.is_warehouse_archived(1) is False
+    assert warehouse_service.is_warehouse_archived(3) is True
+    assert warehouse_service.is_warehouse_archived(99) is None
