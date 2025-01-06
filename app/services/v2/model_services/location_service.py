@@ -57,7 +57,6 @@ class LocationService(Base):
         ):
             return None
 
-
         location.updated_at = self.get_timestamp()
         for i in range(len(self.data)):
             if self.data[i].id == location_id:
