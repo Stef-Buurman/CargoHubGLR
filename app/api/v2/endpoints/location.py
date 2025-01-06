@@ -75,7 +75,9 @@ def archive_location(location_id: int):
             status_code=400,
             detail=f"Location with id {location_id} is already archived",
         )
-    updated_location = data_provider_v2.fetch_location_pool().archive_location(location_id)
+    updated_location = data_provider_v2.fetch_location_pool().archive_location(
+        location_id
+    )
     return updated_location
 
 
@@ -91,5 +93,7 @@ def unarchive_location(location_id: int):
             status_code=400,
             detail=f"Location with id {location_id} is not archived",
         )
-    updated_location = data_provider_v2.fetch_location_pool().unarchive_location(location_id)
+    updated_location = data_provider_v2.fetch_location_pool().unarchive_location(
+        location_id
+    )
     return updated_location
