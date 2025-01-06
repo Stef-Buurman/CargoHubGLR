@@ -39,7 +39,7 @@ class WarehouseService(Base):
 
     def update_warehouse(
         self, warehouse_id: int, warehouse: Warehouse, closeConnection: bool = True
-    ) -> Warehouse:
+    ) -> Warehouse | None:
         if self.is_warehouse_archived(warehouse_id):
             return None
 
@@ -84,7 +84,7 @@ class WarehouseService(Base):
     def load(self):
         self.data = self.get_all_warehouses()
 
-    def is_warehouse_archived(self, warehouse_id: int) -> bool:
+    def is_warehouse_archived(self, warehouse_id: int) -> bool | None:
         for warehouse in self.data:
             if warehouse.id == warehouse_id:
                 return warehouse.is_archived
