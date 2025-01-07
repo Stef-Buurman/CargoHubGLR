@@ -362,7 +362,6 @@ class OrderService(Base):
             return self.update_order(order_id, order)
         return None
 
-
     def check_if_order_delivered(self, order_id: int) -> Order | None:
         order = self.get_order(order_id)
         shipments = data_provider_v2.fetch_shipment_pool().get_shipments_for_order(
