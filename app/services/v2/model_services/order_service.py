@@ -347,6 +347,21 @@ class OrderService(Base):
 
         return has_archived_entities
 
+    def check_if_order_transit(self, order_id: int) -> Order | None:
+        order = self.get_order(order_id)
+        shipments = data_provider_v2.fetch_shipment_pool().get_shipments_for_order(
+            order_id
+        )
+        can_change_to_Transit = True
+        for shipment in shipments:
+            if shipment.shipment_status != "Transit":
+                can_change_to_Transit = False
+                break
+        if can_change_to_Transit:
+            order.order_status = "Shipped"
+            return self.update_order(order_id, order)
+        return None
+
     def check_if_order_delivered(self, order_id: int) -> Order | None:
         order = self.get_order(order_id)
         shipments = data_provider_v2.fetch_shipment_pool().get_shipments_for_order(
