@@ -12,6 +12,7 @@ from api.v2.endpoints.shipment import shipment_router_v2
 from api.v2.endpoints.client import client_router_v2
 from api.v2.endpoints.supplier import supplier_router_v2
 from api.v2.endpoints.orders import order_router_v2
+from api.v2.endpoints.user import user_router_v2
 
 routers = APIRouter()
 
@@ -28,6 +29,7 @@ router_list = [
     client_router_v2,
     supplier_router_v2,
     order_router_v2,
+    user_router_v2
 ]
 
 
