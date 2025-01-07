@@ -363,6 +363,9 @@ class ShipmentService(Base):
             if self.data[i].id == shipment_id:
                 if self.data[i].shipment_status == "Pending":
                     self.data[i].shipment_status = "Transit"
+                    data_provider_v2.fetch_order_pool().check_if_order_transit(
+                        self.data[i].order_id
+                    )
                     return self.update_shipment(
                         shipment_id, self.data[i], closeConnection
                     )
