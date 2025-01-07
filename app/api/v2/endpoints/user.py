@@ -58,7 +58,9 @@ def partial_update_user(user_id: int, user: dict):
 
     for key, value in update_data.items():
         setattr(existing_user, key, value)
-    updated_user = data_provider_v2.fetch_user_pool().update_user(user_id, existing_user)
+    updated_user = data_provider_v2.fetch_user_pool().update_user(
+        user_id, existing_user
+    )
     return updated_user
 
 

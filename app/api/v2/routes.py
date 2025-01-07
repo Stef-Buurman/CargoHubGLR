@@ -29,7 +29,7 @@ router_list = [
     client_router_v2,
     supplier_router_v2,
     order_router_v2,
-    user_router_v2
+    user_router_v2,
 ]
 
 
