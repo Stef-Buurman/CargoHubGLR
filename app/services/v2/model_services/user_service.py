@@ -144,6 +144,78 @@ class UserService(Base):
                     return user
         return None
 
+    def get_user_by_id(self, id: int, need_from_db: bool = False) -> User | None:
+        if (
+            need_from_db
+            or self.last_updated
+            < datetime.now() - timedelta(minutes=cache_time_minutes)
+            or not self.data
+        ):
+            with self.db.get_connection() as conn:
+                cursor = conn.cursor()
+
+                cursor.execute(
+                    """
+                    SELECT *
+                    FROM users
+                    WHERE id = ?
+                """,
+                    (id,),
+                )
+                user_row = cursor.fetchone()
+
+                if not user_row:
+                    return None
+
+                user_id, api_key, app, full_access, is_archived = user_row
+                full_access = bool(full_access)
+
+                cursor.execute(
+                    """
+                    SELECT endpoint, full, can_get, can_post, can_put, can_delete
+                    FROM endpoint_access
+                    WHERE user_id = ?
+                """,
+                    (user_id,),
+                )
+                endpoints = cursor.fetchall()
+
+                endpoint_access = []
+                for endpoint, full, can_get, can_post, can_put, can_delete in endpoints:
+                    endpoint_access.append(
+                        EndpointAccess(
+                            endpoint=endpoint,
+                            full=full,
+                            get=bool(can_get),
+                            post=bool(can_post),
+                            put=bool(can_put),
+                            delete=bool(can_delete),
+                        )
+                    )
+
+            return User(
+                id=user_id,
+                api_key=api_key,
+                app=app,
+                full=full_access,
+                endpoint_access=endpoint_access,
+                is_archived=is_archived,
+            )
+        else:
+            for user in self.data:
+                if user.api_key == api_key:
+                    return user
+        return None
+    
+    def add_user(
+        self,
+        api_key: str,
+        app: str,
+        full_access: bool,
+        endpoint_access: List[EndpointAccess] | dict | None = None,
+    ) -> User | None:
+        return self.add_user(api_key, app, full_access, endpoint_access)
+
     def add_user(
         self,
         api_key: str,
@@ -221,6 +293,81 @@ class UserService(Base):
         added_user = self.get_user(api_key, True)
         self.data.append(added_user)
         return added_user
+
+    def update_user(self, user_id: int, user: User) -> User | None:
+        found_user = self.get_user_by_id(user_id)
+        if not found_user:
+            return None
+
+        with self.db.get_connection() as conn:
+            cursor = conn.cursor()
+
+            cursor.execute(
+                """
+                UPDATE users
+                SET api_key = ?, app = ?, full_access = ?
+                WHERE id = ?
+            """,
+                (user.api_key, user.app, user.full, user_id),
+            )
+            conn.commit()
+
+            for access in user.endpoint_access:
+                if access not in found_user.endpoint_access:
+                    if access.endpoint in [
+                        a.endpoint for a in found_user.endpoint_access
+                    ]:
+                        cursor.execute(
+                            """
+                            UPDATE endpoint_access
+                            SET full = ?, can_get = ?, can_post = ?, can_put = ?, can_delete = ?
+                            WHERE user_id = ? AND endpoint = ?
+                        """,
+                            (
+                                access.full,
+                                access.get,
+                                access.post,
+                                access.put,
+                                access.delete,
+                                user_id,
+                                access.endpoint,
+                            ),
+                        )
+                        conn.commit()
+                    else:
+                        cursor.execute(
+                            """
+                            INSERT INTO endpoint_access (user_id, endpoint, full, can_get, can_post, can_put, can_delete)
+                            VALUES (?, ?, ?, ?, ?, ?, ?)
+                        """,
+                            (
+                                user_id,
+                                access.endpoint,
+                                access.full,
+                                access.get,
+                                access.post,
+                                access.put,
+                                access.delete,
+                            ),
+                        )
+                        conn.commit()
+
+            for access in found_user.endpoint_access:
+                if access not in user.endpoint_access:
+                    cursor.execute(
+                        """
+                        DELETE FROM endpoint_access
+                        WHERE user_id = ? AND endpoint = ?
+                    """,
+                        (user_id, access.endpoint),
+                    )
+                    conn.commit()
+
+        updated_user = self.get_user(user.api_key, True)
+        for i in range(len(self.data)):
+            if self.data[i].id == user_id:
+                self.data[i] = updated_user
+        return updated_user
 
     def archive_user(self, api_key: str, close_connection: bool = True) -> bool:
         for i in range(len(self.data)):
