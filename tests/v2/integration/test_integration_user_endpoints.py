@@ -85,32 +85,32 @@ def client():
         yield client
 
 
-# def test_get_all_users(client):
-#     response = client.get("/users", headers=test_headers)
-#     assert response.status_code == 200
-#     assert isinstance(response.json()["data"], list)
+def test_get_all_users(client):
+    response = client.get("/users", headers=test_headers)
+    assert response.status_code == 200
+    assert isinstance(response.json()["data"], list)
 
 
-# def test_get_all_users_no_api_key(client):
-#     response = client.get("/users")
-#     assert response.status_code == 403
+def test_get_all_users_no_api_key(client):
+    response = client.get("/users")
+    assert response.status_code == 403
 
 
-# def test_get_all_users_invalid_api_key(client):
-#     response = client.get("/users", headers=invalid_headers)
-#     assert response.status_code == 403
+def test_get_all_users_invalid_api_key(client):
+    response = client.get("/users", headers=invalid_headers)
+    assert response.status_code == 403
 
 
-# def test_add_user_no_api_key(client):
-#     response = client.post("/users", json=test_user.model_dump())
-#     assert response.status_code == 403
+def test_add_user_no_api_key(client):
+    response = client.post("/users", json=test_user.model_dump())
+    assert response.status_code == 403
 
 
-# def test_add_user_invalid_api_key(client):
-#     response = client.post(
-#         "/users", json=test_user.model_dump(), headers=invalid_headers
-#     )
-#     assert response.status_code == 403
+def test_add_user_invalid_api_key(client):
+    response = client.post(
+        "/users", json=test_user.model_dump(), headers=invalid_headers
+    )
+    assert response.status_code == 403
 
 
 def test_add_user(client):
@@ -120,84 +120,84 @@ def test_add_user(client):
     assert response.json()["api_key"] == test_user.api_key
 
 
-# def test_add_user_duplicate(client):
-#     response = client.post(
-#         "/users", json=test_user.model_dump(), headers=test_headers
-#     )
-#     assert response.status_code == 400
+def test_add_user_duplicate(client):
+    response = client.post(
+        "/users", json=test_user.model_dump(), headers=test_headers
+    )
+    assert response.status_code == 400
 
 
-# def test_get_user(client):
-#     response = client.get(f"/users/{test_user.id}", headers=test_headers)
-#     assert response.status_code == 200
-#     assert response.json()["api_key"] == test_user.api_key
+def test_get_user(client):
+    response = client.get(f"/users/{test_user.id}", headers=test_headers)
+    assert response.status_code == 200
+    assert response.json()["api_key"] == test_user.api_key
 
 
-# def test_get_user_no_api_key(client):
-#     response = client.get(f"/users/{test_user.id}")
-#     assert response.status_code == 403
+def test_get_user_no_api_key(client):
+    response = client.get(f"/users/{test_user.id}")
+    assert response.status_code == 403
 
 
-# def test_get_user_invalid_api_key(client):
-#     response = client.get(f"/users/{test_user.id}", headers=invalid_headers)
-#     assert response.status_code == 403
+def test_get_user_invalid_api_key(client):
+    response = client.get(f"/users/{test_user.id}", headers=invalid_headers)
+    assert response.status_code == 403
 
 
-# def test_get_user_not_found(client):
-#     response = client.get(f"/users/{non_existent_id}", headers=test_headers)
-#     assert response.status_code == 404
+def test_get_user_not_found(client):
+    response = client.get(f"/users/{non_existent_id}", headers=test_headers)
+    assert response.status_code == 404
 
 
-# def test_update_user(client):
-#     new_user = test_user.model_copy()
-#     new_user.app = "Integration_Tests_Updated"
-#     response = client.put(
-#         f"/users/{test_user.id}", json=new_user.model_dump(), headers=test_headers
-#     )
-#     assert response.status_code == 200
-#     assert response.json()["app"] == new_user.app
-#     response_get = client.get(f"/users/{new_user.id}", headers=test_headers)
-#     assert response_get.json()["app"] == new_user.app
+def test_update_user(client):
+    new_user = test_user.model_copy()
+    new_user.app = "Integration_Tests_Updated"
+    response = client.put(
+        f"/users/{test_user.id}", json=new_user.model_dump(), headers=test_headers
+    )
+    assert response.status_code == 200
+    assert response.json()["app"] == new_user.app
+    response_get = client.get(f"/users/{new_user.id}", headers=test_headers)
+    assert response_get.json()["app"] == new_user.app
 
 
-# def test_update_user_no_api_key(client):
-#     new_user = test_user.model_copy()
-#     new_user.app = "Integration_Tests_Updated"
-#     response = client.put(f"/users/{test_user.id}", json=new_user.model_dump())
-#     assert response.status_code == 403
+def test_update_user_no_api_key(client):
+    new_user = test_user.model_copy()
+    new_user.app = "Integration_Tests_Updated"
+    response = client.put(f"/users/{test_user.id}", json=new_user.model_dump())
+    assert response.status_code == 403
 
 
-# def test_update_user_invalid_api_key(client):
-#     new_user = test_user.model_copy()
-#     new_user.app = "Integration_Tests_Updated"
-#     response = client.put(
-#         f"/users/{test_user.id}", json=new_user.model_dump(), headers=invalid_headers
-#     )
-#     assert response.status_code == 403
+def test_update_user_invalid_api_key(client):
+    new_user = test_user.model_copy()
+    new_user.app = "Integration_Tests_Updated"
+    response = client.put(
+        f"/users/{test_user.id}", json=new_user.model_dump(), headers=invalid_headers
+    )
+    assert response.status_code == 403
 
 
-# def test_update_user_not_found(client):
-#     new_user = test_user.model_copy()
-#     new_user.app = "Integration_Tests_Updated"
-#     response = client.put(
-#         f"/users/{non_existent_id}", json=new_user.model_dump(), headers=test_headers
-#     )
-#     assert response.status_code == 404
+def test_update_user_not_found(client):
+    new_user = test_user.model_copy()
+    new_user.app = "Integration_Tests_Updated"
+    response = client.put(
+        f"/users/{non_existent_id}", json=new_user.model_dump(), headers=test_headers
+    )
+    assert response.status_code == 404
 
 
-# def test_archive_user_no_api_key(client):
-#     response = client.delete(f"/users/{test_user.id}")
-#     assert response.status_code == 403
+def test_archive_user_no_api_key(client):
+    response = client.delete(f"/users/{test_user.id}")
+    assert response.status_code == 403
 
 
-# def test_archive_user_invalid_api_key(client):
-#     response = client.delete(f"/users/{test_user.id}", headers=invalid_headers)
-#     assert response.status_code == 403
+def test_archive_user_invalid_api_key(client):
+    response = client.delete(f"/users/{test_user.id}", headers=invalid_headers)
+    assert response.status_code == 403
 
 
-# def test_archive_user_not_found(client):
-#     response = client.delete(f"/users/{non_existent_id}", headers=test_headers)
-#     assert response.status_code == 404
+def test_archive_user_not_found(client):
+    response = client.delete(f"/users/{non_existent_id}", headers=test_headers)
+    assert response.status_code == 404
 
 
 def test_archive_user(client):
