@@ -121,9 +121,7 @@ def test_add_user(client):
 
 
 def test_add_user_duplicate(client):
-    response = client.post(
-        "/users", json=test_user.model_dump(), headers=test_headers
-    )
+    response = client.post("/users", json=test_user.model_dump(), headers=test_headers)
     assert response.status_code == 400
 
 
