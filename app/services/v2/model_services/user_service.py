@@ -206,7 +206,7 @@ class UserService(Base):
                 if user.api_key == api_key:
                     return user
         return None
-    
+
     def add_user(
         self,
         api_key: str,
