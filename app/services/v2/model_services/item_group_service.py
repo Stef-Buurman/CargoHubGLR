@@ -2,6 +2,7 @@ from typing import List, Type
 from models.v2.item_group import ItemGroup
 from services.v2.base_service import Base
 from services.v2.database_service import DB, DatabaseService
+from services.v1 import data_provider
 
 
 class ItemGroupService(Base):
@@ -41,6 +42,7 @@ class ItemGroupService(Base):
         item_group.updated_at = self.get_timestamp()
         added_item_group = self.db.insert(item_group, closeConnection)
         self.data.append(added_item_group)
+        self.safe()
         return added_item_group
 
     def update_item_group(
@@ -56,6 +58,7 @@ class ItemGroupService(Base):
                     item_group, item_group_id, closeConnection
                 )
                 self.data[i] = updated_item_group
+                self.safe()
                 return updated_item_group
         return None  # pragma: no cover
 
@@ -86,6 +89,18 @@ class ItemGroupService(Base):
                 self.data[i] = updated_item_group
                 return updated_item_group
         return None
+    
+    def delete_item_group(self, item_group_id: int, closeConnection: bool = True) -> bool:
+        for i in range(len(self.data)):
+            if self.data[i].id == item_group_id:
+                self.db.delete(ItemGroup, item_group_id, closeConnection)
+                self.data.remove(self.data[i])
+                self.safe()
+                return True
+        return False
+    
+    def safe(self):
+        data_provider.fetch_item_group_pool().save([item.model_dump() for item in self.data])
 
     def load(self):
         self.data = self.get_all_item_groups()
