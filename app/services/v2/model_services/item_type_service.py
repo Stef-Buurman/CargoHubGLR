@@ -92,18 +92,6 @@ class ItemTypeService(Base):
                 return updated_item_type
         return None
 
-    def delete_item_type(
-        self, item_type_id: int, closeConnection: bool = True
-    ) -> ItemType | None:
-        for i in range(len(self.data)):
-            if self.data[i].id == item_type_id:
-                deleted_item_type = self.db.delete(
-                    ItemType, item_type_id, closeConnection
-                )
-                self.data.remove(self.data[i])
-                return deleted_item_type
-        return None
-
     def save(self):
         if not self.is_debug:
             data_provider.fetch_item_type_pool().save(
