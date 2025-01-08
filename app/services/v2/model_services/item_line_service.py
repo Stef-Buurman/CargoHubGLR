@@ -89,17 +89,23 @@ class ItemLineService(Base):
                 self.data[i] = updated_item_line
                 return updated_item_line
         return None
-    
-    def delete_item_line(self, item_line_id: int, closeConnection: bool = True) -> ItemLine | None:
+
+    def delete_item_line(
+        self, item_line_id: int, closeConnection: bool = True
+    ) -> ItemLine | None:
         for i in range(len(self.data)):
             if self.data[i].id == item_line_id:
-                deleted_item_line = self.db.delete(ItemLine, item_line_id, closeConnection)
+                deleted_item_line = self.db.delete(
+                    ItemLine, item_line_id, closeConnection
+                )
                 self.data.remove(self.data[i])
                 return deleted_item_line
         return None
 
     def save(self):
-        data_provider.fetch_item_line_pool().save([item.model_dump() for item in self.data])
+        data_provider.fetch_item_line_pool().save(
+            [item.model_dump() for item in self.data]
+        )
 
     def load(self):
         self.data = self.get_all_item_lines()

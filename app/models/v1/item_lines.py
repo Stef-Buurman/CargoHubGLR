@@ -33,7 +33,7 @@ class ItemLines(Base):
         item_line["updated_at"] = self.get_timestamp()
         for i in range(len(self.data)):
             if self.data[i]["id"] == item_line_id:
-                item_line["id"] = item_line_id  
+                item_line["id"] = item_line_id
                 item_line["created_at"] = self.data[i]["created_at"]
                 # self.data[i] = item_line
                 data_provider_v2.fetch_item_line_pool().update_item_line(
@@ -45,9 +45,7 @@ class ItemLines(Base):
         for x in self.data:
             if x["id"] == item_line_id:
                 self.data.remove(x)
-                data_provider_v2.fetch_item_line_pool().delete_item_line(
-                    item_line_id
-                )
+                data_provider_v2.fetch_item_line_pool().delete_item_line(item_line_id)
 
     def load(self, is_debug):
         if is_debug:
