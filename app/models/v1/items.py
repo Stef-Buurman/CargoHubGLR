@@ -10,6 +10,7 @@ ITEMS = []
 class Items(Base):
     def __init__(self, root_path, is_debug=False, items=None):
         self.data_path = root_path + "items.json"
+        self.is_debug = is_debug
         self.load(is_debug, items)
 
     def get_items(self):
@@ -50,13 +51,21 @@ class Items(Base):
         return result
 
     def add_item(self, item):
-        created_item = data_provider_v2.fetch_item_pool().add_item(Item(**item))
-        return created_item.model_dump()
+        if self.is_debug:
+            item["created_at"] = self.get_timestamp()
+            item["updated_at"] = self.get_timestamp()
+            self.data.append(item)
+        else: # pragma: no cover
+            created_item = data_provider_v2.fetch_item_pool().add_item(Item(**item))
+            return created_item.model_dump()
 
     def update_item(self, item_id, item):
         item["updated_at"] = self.get_timestamp()
         for i in range(len(self.data)):
             if self.data[i]["uid"] == item_id:
+                if self.is_debug:
+                    self.data[i] = item
+                    break
                 item["uid"] = item_id
                 item["created_at"] = self.data[i]["created_at"]
                 updated_item = data_provider_v2.fetch_item_pool().update_item(
@@ -68,7 +77,8 @@ class Items(Base):
         for x in self.data:
             if x["uid"] == item_id:
                 self.data.remove(x)
-                data_provider_v2.fetch_item_pool().delete_item(item_id)
+                if not self.is_debug:
+                    data_provider_v2.fetch_item_pool().delete_item(item_id)
 
     def load(self, is_debug, items):
         if is_debug:
