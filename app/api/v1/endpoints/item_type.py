@@ -65,9 +65,8 @@ def update_item_type(
     existingitem_type = data_provider.fetch_item_type_pool().get_item_type(item_type_id)
     if existingitem_type is None:
         raise HTTPException(status_code=404, detail="Item_type not found")
-    data_provider.fetch_item_type_pool().update_item_type(item_type_id, item_type)
-    data_provider.fetch_item_type_pool().save()
-    return item_type
+    updated_item_type = data_provider.fetch_item_type_pool().update_item_type(item_type_id, item_type)
+    return updated_item_type
 
 
 @item_type_router.delete("/{item_type_id}")

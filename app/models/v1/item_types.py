@@ -44,11 +44,12 @@ class ItemTypes(Base):
                     item_type["created_at"] = self.data[i]["created_at"]
                 if self.is_debug:
                     self.data[i] = item_type
+                    return item_type
                 else:
-                    data_provider_v2.fetch_item_type_pool().update_item_type(
+                    updated_item_type = data_provider_v2.fetch_item_type_pool().update_item_type(
                         item_type_id, ItemType(**item_type)
                     )
-                break
+                    return updated_item_type.model_dump()
 
     def remove_item_type(self, item_type_id):
         for x in self.data:
