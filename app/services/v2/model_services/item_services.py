@@ -194,7 +194,7 @@ class ItemService(Base):
                 self.save()
                 return updated_item
         return None
-    
+
     def delete_item(self, item_id: str, closeConnection: bool = True) -> bool:
         for i in range(len(self.data)):
             if self.data[i].uid == item_id:
