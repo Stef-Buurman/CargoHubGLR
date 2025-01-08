@@ -71,9 +71,10 @@ def update_item(
         raise HTTPException(
             status_code=404, detail=f"Item line with id {item_line_id} not found"
         )
-    data_provider.fetch_item_line_pool().update_item_line(item_line_id, item_line)
-    data_provider.fetch_item_line_pool().save()
-    return item_line
+    updated_item_line = data_provider.fetch_item_line_pool().update_item_line(
+        item_line_id, item_line
+    )
+    return updated_item_line
 
 
 @item_line_router.delete("/{item_line_id}")

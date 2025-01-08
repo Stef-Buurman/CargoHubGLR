@@ -42,11 +42,14 @@ class ItemLines(Base):
                     item_line["created_at"] = self.data[i]["created_at"]
                 if self.is_debug:
                     self.data[i] = item_line
+                    return item_line
                 else:
-                    data_provider_v2.fetch_item_line_pool().update_item_line(
-                        item_line_id, ItemLine(**item_line)
+                    updated_item_line = (
+                        data_provider_v2.fetch_item_line_pool().update_item_line(
+                            item_line_id, ItemLine(**item_line)
+                        )
                     )
-                break
+                    return updated_item_line.model_dump()
 
     def remove_item_line(self, item_line_id):
         for x in self.data:
