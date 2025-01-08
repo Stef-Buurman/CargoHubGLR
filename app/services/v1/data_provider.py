@@ -72,7 +72,7 @@ def get_warehouses():
     from models.v1.warehouses import Warehouses
 
     global _warehouses
-    if _warehouses is None: 
+    if _warehouses is None:
         _warehouses = Warehouses(ROOT_PATH, DEBUG)
 
 
