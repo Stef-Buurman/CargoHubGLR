@@ -42,7 +42,7 @@ class ItemGroupService(Base):
         item_group.updated_at = self.get_timestamp()
         added_item_group = self.db.insert(item_group, closeConnection)
         self.data.append(added_item_group)
-        self.safe()
+        self.save()
         return added_item_group
 
     def update_item_group(
@@ -58,7 +58,7 @@ class ItemGroupService(Base):
                     item_group, item_group_id, closeConnection
                 )
                 self.data[i] = updated_item_group
-                self.safe()
+                self.save()
                 return updated_item_group
         return None  # pragma: no cover
 
@@ -97,11 +97,11 @@ class ItemGroupService(Base):
             if self.data[i].id == item_group_id:
                 self.db.delete(ItemGroup, item_group_id, closeConnection)
                 self.data.remove(self.data[i])
-                self.safe()
+                self.save()
                 return True
         return False
 
-    def safe(self):
+    def save(self):
         data_provider.fetch_item_group_pool().save(
             [item.model_dump() for item in self.data]
         )
