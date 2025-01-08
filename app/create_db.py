@@ -222,15 +222,6 @@ if __name__ == "__main__":
         if count % amount_before_closing == 0 or count == len(all_inventories):
             db_service.commit_and_close()
 
-        # if count % amount_before_closing == 0 or count == len(all_inventories):
-        #     data_provider_v2.fetch_inventory_pool().add_inventory(
-        #         Inventory(**inventory)
-        #     )
-        # else:
-        #     data_provider_v2.fetch_inventory_pool().add_inventory(
-        #         Inventory(**inventory), False
-        #     )
-
     count = 0
     all_items = data_provider.fetch_item_pool().get_items()
     for item in all_items:
@@ -306,13 +297,6 @@ if __name__ == "__main__":
         if count % amount_before_closing == 0 or count == len(all_shipments):
             db_service.commit_and_close()
 
-        # if count % amount_before_closing == 0 or count == len(all_shipments):
-        #     data_provider_v2.fetch_shipment_pool().add_shipment(Shipment(**shipment))
-        # else:
-        #     data_provider_v2.fetch_shipment_pool().add_shipment(
-        #         Shipment(**shipment), False
-        #     )
-
     count = 0
     all_suppliers = data_provider.fetch_supplier_pool().get_suppliers()
     for supplier in all_suppliers:
@@ -360,13 +344,6 @@ if __name__ == "__main__":
 
         if count % amount_before_closing == 0 or count == len(all_transfers):
             db_service.commit_and_close()
-
-        # if count % amount_before_closing == 0 or count == len(all_transfers):
-        #     data_provider_v2.fetch_transfer_pool().add_transfer(Transfer(**transfer))
-        # else:
-        #     data_provider_v2.fetch_transfer_pool().add_transfer(
-        #         Transfer(**transfer), False
-        #     )
 
     count = 0
     all_warehouses = data_provider.fetch_warehouse_pool().get_warehouses()
@@ -452,11 +429,6 @@ if __name__ == "__main__":
 
         if count % amount_before_closing == 0 or count == len(all_orders):
             db_service.commit_and_close()
-
-        # if count % amount_before_closing == 0 or count == len(all_orders):
-        #     data_provider_v2.fetch_order_pool().add_order(Order(**order))
-        # else:
-        #     data_provider_v2.fetch_order_pool().add_order(Order(**order), False)
 
     elapsed_time = time.time() - start_time
 
