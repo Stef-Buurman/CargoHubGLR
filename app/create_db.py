@@ -122,41 +122,43 @@ USERS = [
 
 db_service = DatabaseService()
 
+
 def insert(model: T, closeConnection: bool = True) -> T:  # pragma: no cover
-        table_name = model.table_name()
+    table_name = model.table_name()
 
-        fields = model.__dict__
+    fields = model.__dict__
 
-        primary_key_field = db_service.get_primary_key_column(table_name)
+    primary_key_field = db_service.get_primary_key_column(table_name)
+
+    if primary_key_field == "id":
+        fields.pop(primary_key_field, None)
+    else:
+        if (
+            db_service.execute_one(
+                f"SELECT * FROM {table_name} WHERE {primary_key_field} = ?",
+                (fields[primary_key_field],),
+            )
+            is not None
+        ):
+            return None
+
+    columns = ", ".join(fields.keys())
+    placeholders = ", ".join("?" for _ in fields)
+    values = tuple(fields.values())
+
+    insert_sql = f"INSERT INTO {table_name} ({columns}) VALUES ({placeholders})"
+
+    with db_service.get_connection_without_close() as conn:
+        cursor = conn.execute(insert_sql, values)
 
         if primary_key_field == "id":
-            fields.pop(primary_key_field, None)
-        else:
-            if (
-                db_service.execute_one(
-                    f"SELECT * FROM {table_name} WHERE {primary_key_field} = ?",
-                    (fields[primary_key_field],),
-                )
-                is not None
-            ):
-                return None
+            inserted_id = cursor.lastrowid
+            model = model.model_copy(update={primary_key_field: inserted_id})
 
-        columns = ", ".join(fields.keys())
-        placeholders = ", ".join("?" for _ in fields)
-        values = tuple(fields.values())
+    if closeConnection:
+        db_service.commit_and_close()
+    return model
 
-        insert_sql = f"INSERT INTO {table_name} ({columns}) VALUES ({placeholders})"
-
-        with db_service.get_connection_without_close() as conn:
-            cursor = conn.execute(insert_sql, values)
-
-            if primary_key_field == "id":
-                inserted_id = cursor.lastrowid
-                model = model.model_copy(update={primary_key_field: inserted_id})
-
-        if closeConnection:
-            db_service.commit_and_close()
-        return model
 
 if __name__ == "__main__":
     start_time = time.time()
@@ -195,7 +197,9 @@ if __name__ == "__main__":
 
         table_name = inventory.table_name()
 
-        fields = data_provider_v2.fetch_inventory_pool().get_key_values_of_inventory(inventory)
+        fields = data_provider_v2.fetch_inventory_pool().get_key_values_of_inventory(
+            inventory
+        )
 
         columns = ", ".join(fields.keys())
         placeholders = ", ".join("?" for _ in fields)
@@ -241,13 +245,9 @@ if __name__ == "__main__":
     for item_group in all_item_groups:
         count += 1
         if count % amount_before_closing == 0 or count == len(all_item_groups):
-            insert(
-                ItemGroup(**item_group)
-            )
+            insert(ItemGroup(**item_group))
         else:
-            insert(
-                ItemGroup(**item_group), False
-            )
+            insert(ItemGroup(**item_group), False)
 
     count = 0
     all_item_lines = data_provider.fetch_item_line_pool().get_item_lines()
@@ -256,9 +256,7 @@ if __name__ == "__main__":
         if count % amount_before_closing == 0 or count == len(all_item_lines):
             insert(ItemLine(**item_line))
         else:
-            insert(
-                ItemLine(**item_line), False
-            )
+            insert(ItemLine(**item_line), False)
 
     count = 0
     all_item_types = data_provider.fetch_item_type_pool().get_item_types()
@@ -267,9 +265,7 @@ if __name__ == "__main__":
         if count % amount_before_closing == 0 or count == len(all_item_types):
             insert(ItemType(**item_type))
         else:
-            insert(
-                ItemType(**item_type), False
-            )
+            insert(ItemType(**item_type), False)
 
     count = 0
     all_shipments = data_provider.fetch_shipment_pool().get_shipments()
@@ -324,9 +320,7 @@ if __name__ == "__main__":
         if count % amount_before_closing == 0 or count == len(all_suppliers):
             insert(Supplier(**supplier))
         else:
-            insert(
-                Supplier(**supplier), False
-            )
+            insert(Supplier(**supplier), False)
 
     count = 0
     all_transfers = data_provider.fetch_transfer_pool().get_transfers()
@@ -417,9 +411,7 @@ if __name__ == "__main__":
         if count % amount_before_closing == 0 or count == len(all_locations):
             insert(Location(**location))
         else:
-            insert(
-                Location(**location), False
-            )
+            insert(Location(**location), False)
 
     count = 0
     all_orders = data_provider.fetch_order_pool().get_orders()
@@ -460,7 +452,6 @@ if __name__ == "__main__":
 
         if count % amount_before_closing == 0 or count == len(all_orders):
             db_service.commit_and_close()
-
 
         # if count % amount_before_closing == 0 or count == len(all_orders):
         #     data_provider_v2.fetch_order_pool().add_order(Order(**order))
