@@ -8,6 +8,7 @@ ITEM_LINES = []
 
 class ItemLines(Base):
     def __init__(self, root_path, is_debug=False):
+        self.is_debug = is_debug
         self.data_path = root_path + "item_lines.json"
         self.load(is_debug)
 
@@ -21,10 +22,16 @@ class ItemLines(Base):
         return None
 
     def add_item_line(self, item_line):
-        added_item_line = data_provider_v2.fetch_item_line_pool().add_item_line(
-            ItemLine(**item_line)
-        )
-        return added_item_line.model_dump()
+        if self.is_debug:
+            item_line["id"] = len(self.data) + 1
+            item_line["created_at"] = self.get_timestamp()
+            item_line["updated_at"] = self.get_timestamp()
+            self.data.append(item_line)
+        else:
+            added_item_line = data_provider_v2.fetch_item_line_pool().add_item_line(
+                ItemLine(**item_line)
+            )
+            return added_item_line.model_dump()
 
     def update_item_line(self, item_line_id, item_line):
         item_line["updated_at"] = self.get_timestamp()
@@ -32,16 +39,22 @@ class ItemLines(Base):
             if self.data[i]["id"] == item_line_id:
                 item_line["id"] = item_line_id
                 item_line["created_at"] = self.data[i]["created_at"]
-                data_provider_v2.fetch_item_line_pool().update_item_line(
-                    item_line_id, ItemLine(**item_line)
-                )
+                if self.is_debug:
+                    self.data[i] = item_line
+                else:
+                    data_provider_v2.fetch_item_line_pool().update_item_line(
+                        item_line_id, ItemLine(**item_line)
+                    )
                 break
 
     def remove_item_line(self, item_line_id):
         for x in self.data:
             if x["id"] == item_line_id:
                 self.data.remove(x)
-                data_provider_v2.fetch_item_line_pool().delete_item_line(item_line_id)
+                if not self.is_debug:
+                    data_provider_v2.fetch_item_line_pool().archive_item_line(
+                        item_line_id
+                    )
 
     def load(self, is_debug):
         if is_debug:
