@@ -72,7 +72,6 @@ def get_test_items():
 TEST_ITEMS = get_test_items()
 
 
-
 @pytest.fixture
 def mock_db_service():
     """Fixture to create a mocked DatabaseService."""
