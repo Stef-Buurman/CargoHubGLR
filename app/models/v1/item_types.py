@@ -53,7 +53,6 @@ class ItemTypes(Base):
                     )
                     return updated_item_type.model_dump()
 
-
     def remove_item_type(self, item_type_id):
         for x in self.data:
             if x["id"] == item_type_id:
