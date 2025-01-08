@@ -196,14 +196,6 @@ class ItemService(Base):
                 return updated_item
         return None
 
-    def delete_item(self, item_id: str, closeConnection: bool = True) -> bool:
-        for i in range(len(self.data)):
-            if self.data[i].uid == item_id:
-                self.db.delete(Item, item_id, closeConnection)
-                self.data.remove(self.data[i])
-                return True
-        return False
-
     def save(self):
         if not self.is_debug:
             data_provider.fetch_item_pool().save(
