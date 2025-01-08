@@ -38,7 +38,8 @@ class ItemLines(Base):
         for i in range(len(self.data)):
             if self.data[i]["id"] == item_line_id:
                 item_line["id"] = item_line_id
-                item_line["created_at"] = self.data[i]["created_at"]
+                if item_line.get("created_at") is None:
+                    item_line["created_at"] = self.data[i]["created_at"]
                 if self.is_debug:
                     self.data[i] = item_line
                 else:
