@@ -30,32 +30,30 @@ def read_inventories(api_key: str = Depends(auth_provider.get_api_key)):
 
 @inventory_router.post("")
 def create_inventory(
-    inventorie: dict, api_key: str = Depends(auth_provider.get_api_key)
+    inventory: dict, api_key: str = Depends(auth_provider.get_api_key)
 ):
     data_provider.init()
-    existingInventorie = data_provider.fetch_inventory_pool().get_inventory(
-        inventorie["id"]
+    existingInventory = data_provider.fetch_inventory_pool().get_inventory(
+        inventory.get("id")
     )
-    if existingInventorie is not None:
+    if existingInventory is not None:
         raise HTTPException(status_code=409, detail="inventory already exists")
-    data_provider.fetch_inventory_pool().add_inventory(inventorie)
-    data_provider.fetch_inventory_pool().save()
-    return JSONResponse(status_code=status.HTTP_201_CREATED, content=inventorie)
+    created_inventory = data_provider.fetch_inventory_pool().add_inventory(inventory)
+    return JSONResponse(status_code=status.HTTP_201_CREATED, content=created_inventory)
 
 
 @inventory_router.put("/{inventory_id}")
 def update_inventory(
     inventory_id: int,
-    inventorie: dict,
+    inventory: dict,
     api_key: str = Depends(auth_provider.get_api_key),
 ):
     data_provider.init()
-    inventory = data_provider.fetch_inventory_pool().get_inventory(inventory_id)
-    if inventory is None:
+    existingInventory = data_provider.fetch_inventory_pool().get_inventory(inventory_id)
+    if existingInventory is None:
         raise HTTPException(status_code=404, detail="inventory not found")
-    data_provider.fetch_inventory_pool().update_inventory(inventory_id, inventorie)
-    data_provider.fetch_inventory_pool().save()
-    return inventorie
+    updated_inventory = data_provider.fetch_inventory_pool().update_inventory(inventory_id, inventory)
+    return updated_inventory
 
 
 @inventory_router.delete("/{inventory_id}")
