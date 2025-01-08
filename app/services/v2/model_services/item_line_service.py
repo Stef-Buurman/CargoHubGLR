@@ -6,7 +6,8 @@ from services.v1 import data_provider
 
 
 class ItemLineService(Base):
-    def __init__(self, db: Type[DatabaseService] = None):
+    def __init__(self, db: Type[DatabaseService] = None, is_debug: bool = False):
+        self.is_debug = is_debug
         if db is not None:
             self.db = db
         else:  # pragma: no cover
@@ -101,9 +102,10 @@ class ItemLineService(Base):
         return False
 
     def save(self):
-        data_provider.fetch_item_line_pool().save(
-            [item.model_dump() for item in self.data]
-        )
+        if not self.is_debug:
+            data_provider.fetch_item_line_pool().save(
+                [item.model_dump() for item in self.data]
+            )
 
     def load(self):
         self.data = self.get_all_item_lines()
