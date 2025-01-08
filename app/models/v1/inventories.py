@@ -51,7 +51,7 @@ class Inventories(Base):
             inventory["updated_at"] = self.get_timestamp()
             self.data.append(inventory)
             return inventory
-        else:  # pragma: no cover
+        else: # pragma: no cover
             created_inventory = data_provider_v2.fetch_inventory_pool().add_inventory(
                 Inventory(**inventory)
             )
@@ -67,7 +67,7 @@ class Inventories(Base):
                 if self.is_debug:
                     self.data[i] = inventory
                     return inventory
-                else:  # pragma: no cover
+                else: # pragma: no cover
                     updated_inventory = (
                         data_provider_v2.fetch_inventory_pool().update_inventory(
                             inventory_id, Inventory(**inventory)
