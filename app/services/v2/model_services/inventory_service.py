@@ -3,11 +3,13 @@ from models.v2.inventory import Inventory
 from services.v2.base_service import Base
 from services.v2.database_service import DB, DatabaseService
 from services.v2 import data_provider_v2
+from services.v1 import data_provider
 from utils.globals import *
 
 
 class InventoryService(Base):
-    def __init__(self, db: Type[DatabaseService] = None):
+    def __init__(self, db: Type[DatabaseService] = None, is_debug: bool = False):
+        self.is_debug = is_debug
         if db is not None:
             self.db = db
         else:  # pragma: no cover
@@ -76,7 +78,7 @@ class InventoryService(Base):
         return None
 
     def add_inventory(
-        self, inventory: Inventory, closeConnection: bool = True
+        self, inventory: Inventory
     ) -> Inventory | None:
         if self.has_inventory_archived_entities(inventory):
             return None
@@ -105,15 +107,12 @@ class InventoryService(Base):
                     VALUES (?, ?)
                     """
                     conn.execute(location_insert_sql, (inventory.id, location_id))
-
-        # if closeConnection:
-        #     self.db.commit_and_close()
-
         self.data.append(inventory)
+        self.save()
         return inventory
 
     def update_inventory(
-        self, inventory_id: int, inventory: Inventory, closeConnection: bool = True
+        self, inventory_id: int, inventory: Inventory
     ) -> Inventory:
         if (
             self.get_inventory(inventory_id) is None
@@ -170,18 +169,15 @@ class InventoryService(Base):
                     for loc_id in locations_to_insert:
                         insert_values.append((inventory_id, loc_id))
                     conn.executemany(insert_sql, insert_values)
-
-        # if closeConnection:
-        #     self.db.commit_and_close()
-
         for i in range(len(self.data)):
             if self.data[i].id == inventory_id:
                 self.data[i] = inventory
+                self.save()
                 break
         return inventory
 
     def archive_inventory(
-        self, inventory_id: int, closeConnection: bool = True
+        self, inventory_id: int
     ) -> Inventory | None:
         for i in range(len(self.data)):
             if self.data[i].id == inventory_id:
@@ -198,15 +194,12 @@ class InventoryService(Base):
 
                 with self.db.get_connection() as conn:
                     conn.execute(update_sql, values + (inventory_id,))
-
-                # if closeConnection:
-                #     self.db.commit_and_close()
-
+                self.save()
                 return self.data[i]
         return None
 
     def unarchive_inventory(
-        self, inventory_id: int, closeConnection: bool = True
+        self, inventory_id: int
     ) -> Inventory | None:
         for i in range(len(self.data)):
             if self.data[i].id == inventory_id:
@@ -223,12 +216,14 @@ class InventoryService(Base):
 
                 with self.db.get_connection() as conn:
                     conn.execute(update_sql, values + (inventory_id,))
-
-                # if closeConnection:
-                #     self.db.commit_and_close()
-
+                self.save()
                 return self.data[i]
         return False
+    
+    def save(self):
+        if not self.is_debug:
+            data_provider.fetch_inventory_pool().save([inventory.model_dump() for inventory in self.data])
+            
 
     def load(self):
         self.data = self.get_all_inventories()
