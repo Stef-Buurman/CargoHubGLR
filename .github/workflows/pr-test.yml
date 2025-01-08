@@ -160,3 +160,5 @@ jobs:
               \"avatar_url\": \"${ICON_URL}\"
             }" $ERRORWEBHOOK
           fi
+
+          
