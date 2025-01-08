@@ -59,7 +59,9 @@ class Items(Base):
             if self.data[i]["uid"] == item_id:
                 item["uid"] = item_id
                 item["created_at"] = self.data[i]["created_at"]
-                updated_item = data_provider_v2.fetch_item_pool().update_item(item_id, Item(**item))
+                updated_item = data_provider_v2.fetch_item_pool().update_item(
+                    item_id, Item(**item)
+                )
                 return updated_item.model_dump()
 
     def remove_item(self, item_id):
