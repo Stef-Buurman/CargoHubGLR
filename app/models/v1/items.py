@@ -78,7 +78,7 @@ class Items(Base):
             if x["uid"] == item_id:
                 self.data.remove(x)
                 if not self.is_debug:
-                    data_provider_v2.fetch_item_pool().delete_item(item_id)
+                    data_provider_v2.fetch_item_pool().archive_item(item_id)
 
     def load(self, is_debug, items):
         if is_debug:
