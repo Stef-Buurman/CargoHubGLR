@@ -25,9 +25,6 @@ class ItemLines(Base):
             ItemLine(**item_line)
         )
         return added_item_line.model_dump()
-        # item_line["created_at"] = self.get_timestamp()
-        # item_line["updated_at"] = self.get_timestamp()
-        # self.data.append(item_line)
 
     def update_item_line(self, item_line_id, item_line):
         item_line["updated_at"] = self.get_timestamp()
@@ -35,7 +32,6 @@ class ItemLines(Base):
             if self.data[i]["id"] == item_line_id:
                 item_line["id"] = item_line_id
                 item_line["created_at"] = self.data[i]["created_at"]
-                # self.data[i] = item_line
                 data_provider_v2.fetch_item_line_pool().update_item_line(
                     item_line_id, ItemLine(**item_line)
                 )
