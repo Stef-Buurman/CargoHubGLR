@@ -2,10 +2,12 @@ from typing import List, Type
 from models.v2.item_line import ItemLine
 from services.v2.base_service import Base
 from services.v2.database_service import DB, DatabaseService
+from services.v1 import data_provider
 
 
 class ItemLineService(Base):
-    def __init__(self, db: Type[DatabaseService] = None):
+    def __init__(self, db: Type[DatabaseService] = None, is_debug: bool = False):
+        self.is_debug = is_debug
         if db is not None:
             self.db = db
         else:  # pragma: no cover
@@ -41,6 +43,7 @@ class ItemLineService(Base):
         item_line.updated_at = self.get_timestamp()
         added_item_line = self.db.insert(item_line, closeConnection)
         self.data.append(added_item_line)
+        self.save()
         return added_item_line
 
     def update_item_line(
@@ -56,6 +59,7 @@ class ItemLineService(Base):
                     item_line, item_line_id, closeConnection
                 )
                 self.data[i] = updated_item_line
+                self.save()
                 return updated_item_line
         return None  # pragma: no cover
 
@@ -70,6 +74,7 @@ class ItemLineService(Base):
                     self.data[i], item_line_id, closeConnection
                 )
                 self.data[i] = updated_item_line
+                self.save()
                 return updated_item_line
         return None
 
@@ -84,8 +89,15 @@ class ItemLineService(Base):
                     self.data[i], item_line_id, closeConnection
                 )
                 self.data[i] = updated_item_line
+                self.save()
                 return updated_item_line
         return None
+
+    def save(self):
+        if not self.is_debug:
+            data_provider.fetch_item_line_pool().save(
+                [item.model_dump() for item in self.data]
+            )
 
     def load(self):
         self.data = self.get_all_item_lines()
