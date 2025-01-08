@@ -218,6 +218,12 @@ class InventoryService(Base):
                 [inventory.model_dump() for inventory in self.data]
             )
 
+    def save(self):
+        if not self.is_debug:
+            data_provider.fetch_inventory_pool().save(
+                [inventory.model_dump() for inventory in self.data]
+            )
+
     def load(self):
         self.data = self.get_all_inventories()
 
