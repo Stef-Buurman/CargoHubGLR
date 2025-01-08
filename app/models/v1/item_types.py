@@ -31,7 +31,6 @@ class ItemTypes(Base):
             if self.data[i]["id"] == item_type_id:
                 item_type["id"] = item_type_id
                 item_type["created_at"] = self.data[i]["created_at"]
-                # self.data[i] = item_type
                 data_provider_v2.fetch_item_type_pool().update_item_type(item_type_id, ItemType(**item_type))
                 break
 
