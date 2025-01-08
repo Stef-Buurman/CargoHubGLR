@@ -76,6 +76,8 @@ def test_add_item_type_invalid_api_key(client):
 def test_add_item_type(client):
     response = client.post("/item_types", json=test_item_type, headers=test_headers)
     assert response.status_code == 201 or response.status_code == 200
+    test_item_type["id"] = response.json()["id"]
+    test_item["item_type"] = test_item_type["id"]
     responseGet = client.get(
         "/item_types/" + str(test_item_type["id"]), headers=test_headers
     )
