@@ -263,4 +263,5 @@ def test_delete_item_type(client):
     responseGet = client.get(
         "/item_types/" + str(test_item_type["id"]), headers=test_headers
     )
-    assert responseGet.status_code == 404
+    assert responseGet.status_code == 200
+    assert responseGet.json()["is_archived"] == True

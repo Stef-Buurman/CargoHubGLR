@@ -253,4 +253,5 @@ def test_delete_item(client):
     response = client.delete("/items/" + test_item["uid"], headers=test_headers)
     assert response.status_code == 200
     response_get_item = client.get("/items/" + test_item["uid"], headers=test_headers)
-    assert response_get_item.status_code == 404
+    assert response_get_item.status_code == 200
+    assert response_get_item.json()["is_archived"] == True
