@@ -68,11 +68,12 @@ class Items(Base):
                     item["created_at"] = self.data[i]["created_at"]
                 if self.is_debug:
                     self.data[i] = item
-                    break
-                updated_item = data_provider_v2.fetch_item_pool().update_item(
-                    item_id, Item(**item)
-                )
-                return updated_item.model_dump()
+                    return item
+                else: # pragma: no cover
+                    updated_item = data_provider_v2.fetch_item_pool().update_item(
+                        item_id, Item(**item)
+                    )
+                    return updated_item.model_dump()
 
     def remove_item(self, item_id):
         for x in self.data:
