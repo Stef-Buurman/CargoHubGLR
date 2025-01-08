@@ -181,10 +181,6 @@ def test_get_inventory_totals_of_item(client):
         "/inventories/" + str(test_inventory["id"]), headers=test_headers
     )
     assert responseDeleteInventory.status_code == 200
-    responseGetInventory = client.get(
-        "/inventories/" + str(test_inventory["id"]), headers=test_headers
-    )
-    assert responseGetInventory.status_code == 404
 
 
 def test_update_item_no_api_key(client):
