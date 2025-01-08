@@ -301,4 +301,5 @@ def test_delete_item_line(client):
     response_get_item_line = client.get(
         "/item_lines/" + str(test_item_line["id"]), headers=test_headers
     )
-    assert response_get_item_line.status_code == 404
+    assert response_get_item_line.status_code == 200
+    assert response_get_item_line.json()["is_archived"] == True
