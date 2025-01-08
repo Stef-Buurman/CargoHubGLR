@@ -52,7 +52,9 @@ def update_inventory(
     existingInventory = data_provider.fetch_inventory_pool().get_inventory(inventory_id)
     if existingInventory is None:
         raise HTTPException(status_code=404, detail="inventory not found")
-    updated_inventory = data_provider.fetch_inventory_pool().update_inventory(inventory_id, inventory)
+    updated_inventory = data_provider.fetch_inventory_pool().update_inventory(
+        inventory_id, inventory
+    )
     return updated_inventory
 
 

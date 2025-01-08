@@ -77,9 +77,7 @@ class InventoryService(Base):
 
         return None
 
-    def add_inventory(
-        self, inventory: Inventory
-    ) -> Inventory | None:
+    def add_inventory(self, inventory: Inventory) -> Inventory | None:
         if self.has_inventory_archived_entities(inventory):
             return None
 
@@ -111,9 +109,7 @@ class InventoryService(Base):
         self.save()
         return inventory
 
-    def update_inventory(
-        self, inventory_id: int, inventory: Inventory
-    ) -> Inventory:
+    def update_inventory(self, inventory_id: int, inventory: Inventory) -> Inventory:
         if (
             self.get_inventory(inventory_id) is None
             or self.is_inventory_archived(inventory_id)
@@ -176,9 +172,7 @@ class InventoryService(Base):
                 break
         return inventory
 
-    def archive_inventory(
-        self, inventory_id: int
-    ) -> Inventory | None:
+    def archive_inventory(self, inventory_id: int) -> Inventory | None:
         for i in range(len(self.data)):
             if self.data[i].id == inventory_id:
                 self.data[i].is_archived = True
@@ -198,9 +192,7 @@ class InventoryService(Base):
                 return self.data[i]
         return None
 
-    def unarchive_inventory(
-        self, inventory_id: int
-    ) -> Inventory | None:
+    def unarchive_inventory(self, inventory_id: int) -> Inventory | None:
         for i in range(len(self.data)):
             if self.data[i].id == inventory_id:
                 self.data[i].is_archived = False
@@ -219,11 +211,12 @@ class InventoryService(Base):
                 self.save()
                 return self.data[i]
         return False
-    
+
     def save(self):
         if not self.is_debug:
-            data_provider.fetch_inventory_pool().save([inventory.model_dump() for inventory in self.data])
-            
+            data_provider.fetch_inventory_pool().save(
+                [inventory.model_dump() for inventory in self.data]
+            )
 
     def load(self):
         self.data = self.get_all_inventories()
