@@ -39,7 +39,8 @@ class ItemGroups(Base):
         for i in range(len(self.data)):
             if self.data[i]["id"] == item_group_id:
                 item_group["id"] = item_group_id
-                item_group["created_at"] = self.data[i]["created_at"]
+                if item_group.get("created_at") is None:
+                    item_group["created_at"] = self.data[i]["created_at"]
                 if self.is_debug:
                     self.data[i] = item_group
                 else:
