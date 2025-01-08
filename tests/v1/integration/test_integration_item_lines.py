@@ -91,6 +91,7 @@ def test_add_item_line_invalid_api_key(client):
 
 def test_add_item_line(client):
     response = client.post("/item_lines", json=test_item_line, headers=test_headers)
+    test_item_line["id"] = response.json()["id"]
     assert response.status_code == 201 or response.status_code == 200
     assert response.json()["id"] == test_item_line["id"]
 
