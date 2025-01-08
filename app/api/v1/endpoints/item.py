@@ -54,12 +54,11 @@ def read_inventory_totals_of_item(
 @item_router.post("")
 def create_item(item: dict, api_key: str = Depends(auth_provider.get_api_key)):
     data_provider.init()
-    existingItem = data_provider.fetch_item_pool().get_item(item["uid"])
+    existingItem = data_provider.fetch_item_pool().get_item(item.get("uid"))
     if existingItem is not None:
         raise HTTPException(status_code=409, detail="Item already exists")
-    data_provider.fetch_item_pool().add_item(item)
-    data_provider.fetch_item_pool().save()
-    return JSONResponse(status_code=status.HTTP_201_CREATED, content=item)
+    created_item = data_provider.fetch_item_pool().add_item(item)
+    return JSONResponse(status_code=status.HTTP_201_CREATED, content=created_item)
 
 
 @item_router.put("/{item_id}")
@@ -70,9 +69,8 @@ def update_item(
     existingItem = data_provider.fetch_item_pool().get_item(item_id)
     if existingItem is None:
         raise HTTPException(status_code=404, detail="Item not found")
-    data_provider.fetch_item_pool().update_item(item_id, item)
-    data_provider.fetch_item_pool().save()
-    return item
+    updated_item = data_provider.fetch_item_pool().update_item(item_id, item)
+    return updated_item
 
 
 @item_router.delete("/{item_id}")
