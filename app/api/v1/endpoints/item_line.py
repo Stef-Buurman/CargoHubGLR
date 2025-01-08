@@ -48,12 +48,11 @@ def read_items_for_item_line(
 @item_line_router.post("")
 def create_item(item_line: dict, api_key: str = Depends(auth_provider.get_api_key)):
     data_provider.init()
-    existingItem = data_provider.fetch_item_line_pool().get_item_line(item_line["id"])
+    existingItem = data_provider.fetch_item_line_pool().get_item_line(item_line.get("id"))
     if existingItem is not None:
         raise HTTPException(status_code=409, detail="Item line already exists")
-    data_provider.fetch_item_line_pool().add_item_line(item_line)
-    data_provider.fetch_item_line_pool().save()
-    return JSONResponse(status_code=status.HTTP_201_CREATED, content=item_line)
+    created_item_line = data_provider.fetch_item_line_pool().add_item_line(item_line)
+    return JSONResponse(status_code=status.HTTP_201_CREATED, content=created_item_line)
 
 
 @item_line_router.put("/{item_line_id}")
