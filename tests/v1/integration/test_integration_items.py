@@ -132,6 +132,7 @@ def test_get_inventory_of_nonexistent_item(client):
 
 
 def test_get_inventory_of_item(client):
+    test_inventory["item_id"] = test_item["uid"]
     responseAddInventory = client.post(
         "/inventories", json=test_inventory, headers=test_headers
     )
