@@ -1,3 +1,6 @@
+from typing import TypeVar
+
+from pydantic import BaseModel
 from models.v2.user import User
 from services.v1 import data_provider
 from services.v2 import data_provider_v2
@@ -16,6 +19,8 @@ from models.v2.supplier import Supplier
 from models.v2.transfer import Transfer
 from utils.globals import *
 import time
+
+T = TypeVar("T", bound=BaseModel)
 
 USERS = [
     {
@@ -115,9 +120,48 @@ USERS = [
 ]
 
 
+db_service = DatabaseService()
+
+
+def insert(model: T, closeConnection: bool = True) -> T:  # pragma: no cover
+    table_name = model.table_name()
+
+    fields = model.__dict__
+
+    primary_key_field = db_service.get_primary_key_column(table_name)
+
+    if primary_key_field == "id":
+        fields.pop(primary_key_field, None)
+    else:
+        if (
+            db_service.execute_one(
+                f"SELECT * FROM {table_name} WHERE {primary_key_field} = ?",
+                (fields[primary_key_field],),
+            )
+            is not None
+        ):
+            return None
+
+    columns = ", ".join(fields.keys())
+    placeholders = ", ".join("?" for _ in fields)
+    values = tuple(fields.values())
+
+    insert_sql = f"INSERT INTO {table_name} ({columns}) VALUES ({placeholders})"
+
+    with db_service.get_connection_without_close() as conn:
+        cursor = conn.execute(insert_sql, values)
+
+        if primary_key_field == "id":
+            inserted_id = cursor.lastrowid
+            model = model.model_copy(update={primary_key_field: inserted_id})
+
+    if closeConnection:
+        db_service.commit_and_close()
+    return model
+
+
 if __name__ == "__main__":
     start_time = time.time()
-    db_service = DatabaseService()
 
     data_provider_v2.init()
     data_provider.init()
@@ -138,108 +182,175 @@ if __name__ == "__main__":
     all_clients = data_provider.fetch_client_pool().get_clients()
     for client in all_clients:
         count += 1
-
+        x = Client(**client)
         if count % amount_before_closing == 0 or count == len(all_clients):
-            data_provider_v2.fetch_client_pool().add_client(Client(**client))
+            insert(x)
         else:
-            data_provider_v2.fetch_client_pool().add_client(Client(**client), False)
+            insert(x, False)
 
     count = 0
-    all_items = data_provider.fetch_inventory_pool().get_inventories()
-    for inventory in all_items:
+    all_inventories = data_provider.fetch_inventory_pool().get_inventories()
+    for inventory in all_inventories:
         count += 1
-        if count % amount_before_closing == 0 or count == len(all_items):
-            data_provider_v2.fetch_inventory_pool().add_inventory(
-                Inventory(**inventory)
-            )
-        else:
-            data_provider_v2.fetch_inventory_pool().add_inventory(
-                Inventory(**inventory), False
-            )
+
+        inventory = Inventory(**inventory)
+
+        table_name = inventory.table_name()
+
+        fields = data_provider_v2.fetch_inventory_pool().get_key_values_of_inventory(
+            inventory
+        )
+
+        columns = ", ".join(fields.keys())
+        placeholders = ", ".join("?" for _ in fields)
+        values = tuple(fields.values())
+
+        insert_sql = f"INSERT INTO {table_name} ({columns}) VALUES ({placeholders})"
+
+        with db_service.get_connection_without_close() as conn:
+            cursor_inventory = conn.execute(insert_sql, values)
+            inventory.id = cursor_inventory.lastrowid
+
+            if inventory.locations:
+                for location_id in inventory.locations:
+                    location_insert_sql = f"""
+                    INSERT INTO {inventory_locations_table} (inventory_id, location_id)
+                    VALUES (?, ?)
+                    """
+                    conn.execute(location_insert_sql, (inventory.id, location_id))
+
+        if count % amount_before_closing == 0 or count == len(all_inventories):
+            db_service.commit_and_close()
 
     count = 0
     all_items = data_provider.fetch_item_pool().get_items()
     for item in all_items:
         count += 1
         if count % amount_before_closing == 0 or count == len(all_items):
-            data_provider_v2.fetch_item_pool().add_item(Item(**item))
+            insert(Item(**item))
         else:
-            data_provider_v2.fetch_item_pool().add_item(Item(**item), False)
+            insert(Item(**item), False)
 
     count = 0
     all_item_groups = data_provider.fetch_item_group_pool().get_item_groups()
     for item_group in all_item_groups:
         count += 1
         if count % amount_before_closing == 0 or count == len(all_item_groups):
-            data_provider_v2.fetch_item_group_pool().add_item_group(
-                ItemGroup(**item_group)
-            )
+            insert(ItemGroup(**item_group))
         else:
-            data_provider_v2.fetch_item_group_pool().add_item_group(
-                ItemGroup(**item_group), False
-            )
+            insert(ItemGroup(**item_group), False)
 
     count = 0
     all_item_lines = data_provider.fetch_item_line_pool().get_item_lines()
     for item_line in all_item_lines:
         count += 1
         if count % amount_before_closing == 0 or count == len(all_item_lines):
-            data_provider_v2.fetch_item_line_pool().add_item_line(ItemLine(**item_line))
+            insert(ItemLine(**item_line))
         else:
-            data_provider_v2.fetch_item_line_pool().add_item_line(
-                ItemLine(**item_line), False
-            )
+            insert(ItemLine(**item_line), False)
 
     count = 0
     all_item_types = data_provider.fetch_item_type_pool().get_item_types()
     for item_type in all_item_types:
         count += 1
         if count % amount_before_closing == 0 or count == len(all_item_types):
-            data_provider_v2.fetch_item_type_pool().add_item_type(ItemType(**item_type))
+            insert(ItemType(**item_type))
         else:
-            data_provider_v2.fetch_item_type_pool().add_item_type(
-                ItemType(**item_type), False
-            )
+            insert(ItemType(**item_type), False)
 
     count = 0
     all_shipments = data_provider.fetch_shipment_pool().get_shipments()
     for shipment in all_shipments:
         count += 1
+
+        shipment = Shipment(**shipment)
+
+        table_name = shipment.table_name()
+
+        fields = {}
+        for key, value in vars(shipment).items():
+            if key != "id" and key != "items":
+                fields[key] = value
+
+        columns = ", ".join(fields.keys())
+        placeholders = ", ".join("?" for _ in fields)
+        values = tuple(fields.values())
+
+        insert_sql = f"INSERT INTO {table_name} ({columns}) VALUES ({placeholders})"
+
+        with db_service.get_connection_without_close() as conn:
+            cursor = conn.execute(insert_sql, values)
+            shipment_id = cursor.lastrowid
+            shipment.id = shipment_id
+
+            if shipment.items:
+                for shipment_items in shipment.items:
+                    items_insert_sql = f"""
+                    INSERT INTO {shipment_items_table} (shipment_id, item_uid, amount)
+                    VALUES (?, ?, ?)
+                    """
+                    conn.execute(
+                        items_insert_sql,
+                        (shipment_id, shipment_items.item_id, shipment_items.amount),
+                    )
+
         if count % amount_before_closing == 0 or count == len(all_shipments):
-            data_provider_v2.fetch_shipment_pool().add_shipment(Shipment(**shipment))
-        else:
-            data_provider_v2.fetch_shipment_pool().add_shipment(
-                Shipment(**shipment), False
-            )
+            db_service.commit_and_close()
 
     count = 0
     all_suppliers = data_provider.fetch_supplier_pool().get_suppliers()
     for supplier in all_suppliers:
         count += 1
         if count % amount_before_closing == 0 or count == len(all_suppliers):
-            data_provider_v2.fetch_supplier_pool().add_supplier(Supplier(**supplier))
+            insert(Supplier(**supplier))
         else:
-            data_provider_v2.fetch_supplier_pool().add_supplier(
-                Supplier(**supplier), False
-            )
+            insert(Supplier(**supplier), False)
 
     count = 0
     all_transfers = data_provider.fetch_transfer_pool().get_transfers()
     for transfer in all_transfers:
         count += 1
+
+        transfer = Transfer(**transfer)
+
+        table_name = transfer.table_name()
+
+        fields = {}
+        for key, value in vars(transfer).items():
+            if key != "id" and key != "items":
+                fields[key] = value
+
+        columns = ", ".join(fields.keys())
+        placeholders = ", ".join("?" for _ in fields)
+        values = tuple(fields.values())
+
+        insert_sql = f"INSERT INTO {table_name} ({columns}) VALUES ({placeholders})"
+
+        with db_service.get_connection_without_close() as conn:
+            cursor = conn.execute(insert_sql, values)
+            transfer_id = cursor.lastrowid
+            transfer.id = transfer_id
+
+            if transfer.items:
+                for transfer_items in transfer.items:
+                    items_insert_sql = f"""
+                    INSERT INTO {transfer_items_table} (transfer_id, item_uid, amount)
+                    VALUES (?, ?, ?)
+                    """
+                    conn.execute(
+                        items_insert_sql,
+                        (transfer_id, transfer_items.item_id, transfer_items.amount),
+                    )
+
         if count % amount_before_closing == 0 or count == len(all_transfers):
-            data_provider_v2.fetch_transfer_pool().add_transfer(Transfer(**transfer))
-        else:
-            data_provider_v2.fetch_transfer_pool().add_transfer(
-                Transfer(**transfer), False
-            )
+            db_service.commit_and_close()
 
     count = 0
     all_warehouses = data_provider.fetch_warehouse_pool().get_warehouses()
     for warehouse in all_warehouses:
         count += 1
         if count % amount_before_closing == 0 or count == len(all_warehouses):
-            data_provider_v2.fetch_warehouse_pool().add_warehouse(
+            insert(
                 Warehouse(
                     code=warehouse["code"],
                     name=warehouse["name"],
@@ -254,7 +365,7 @@ if __name__ == "__main__":
                 )
             )
         else:
-            data_provider_v2.fetch_warehouse_pool().add_warehouse(
+            insert(
                 Warehouse(
                     code=warehouse["code"],
                     name=warehouse["name"],
@@ -275,20 +386,49 @@ if __name__ == "__main__":
     for location in all_locations:
         count += 1
         if count % amount_before_closing == 0 or count == len(all_locations):
-            data_provider_v2.fetch_location_pool().add_location(Location(**location))
+            insert(Location(**location))
         else:
-            data_provider_v2.fetch_location_pool().add_location(
-                Location(**location), False
-            )
+            insert(Location(**location), False)
 
     count = 0
     all_orders = data_provider.fetch_order_pool().get_orders()
     for order in all_orders:
         count += 1
+
+        order = Order(**order)
+
+        table_name = order.table_name()
+
+        fields = {}
+        for key, value in vars(order).items():
+            if key != "id" and key != "items":
+                fields[key] = value
+
+        columns = ", ".join(fields.keys())
+        placeholders = ", ".join("?" for _ in fields)
+        values = tuple(fields.values())
+
+        insert_sql = f"""INSERT INTO {
+            table_name} ({columns}) VALUES ({placeholders})"""
+
+        with db_service.get_connection_without_close() as conn:
+            cursor = conn.execute(insert_sql, values)
+            order_id = cursor.lastrowid
+            order.id = order_id
+
+            if order.items:
+                for order_items in order.items:
+                    items_insert_sql = f"""
+                    INSERT INTO {order_items_table} (order_id, item_id, amount)
+                    VALUES (?, ?, ?)
+                    """
+                    conn.execute(
+                        items_insert_sql,
+                        (order_id, order_items.item_id, order_items.amount),
+                    )
+
         if count % amount_before_closing == 0 or count == len(all_orders):
-            data_provider_v2.fetch_order_pool().add_order(Order(**order))
-        else:
-            data_provider_v2.fetch_order_pool().add_order(Order(**order), False)
+            db_service.commit_and_close()
 
     elapsed_time = time.time() - start_time
 
