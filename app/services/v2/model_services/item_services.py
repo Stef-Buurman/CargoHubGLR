@@ -3,6 +3,7 @@ from models.v2.item import Item
 from services.v2.base_service import Base
 from services.v2.database_service import DB, DatabaseService
 from services.v2 import data_provider_v2
+from services.v1 import data_provider
 
 
 class ItemService(Base):
@@ -132,6 +133,7 @@ class ItemService(Base):
         item.updated_at = self.get_timestamp()
         added_item = self.db.insert(item, closeConnection)
         self.data.append(added_item)
+        self.save()
         return added_item
 
     def generate_uid(self) -> str:
@@ -155,10 +157,13 @@ class ItemService(Base):
         item.updated_at = self.get_timestamp()
         for i in range(len(self.data)):
             if self.data[i].uid == item_id:
+                item.uid = item_id
+                item.created_at = self.data[i].created_at
                 updated_item = self.db.update(item, item_id, closeConnection)
                 self.data[i] = updated_item
+                self.save()
                 return updated_item
-        return "hoi"
+        return None
 
     def is_item_archived(self, item_id: str) -> bool | None:
         for item in self.data:
@@ -169,22 +174,37 @@ class ItemService(Base):
     def archive_item(self, item_id: str, closeConnection: bool = True) -> Item | None:
         for i in range(len(self.data)):
             if self.data[i].uid == item_id:
-                self.data[i].is_archived = True
-                self.data[i].updated_at = self.get_timestamp()
-                updated_item = self.db.update(self.data[i], item_id, closeConnection)
+                new_item = self.data[i].model_copy()
+                new_item.is_archived = True
+                new_item.updated_at = self.get_timestamp()
+                updated_item = self.db.update(new_item, item_id, closeConnection)
                 self.data[i] = updated_item
+                self.save()
                 return updated_item
         return None
 
     def unarchive_item(self, item_id: str, closeConnection: bool = True) -> Item | None:
         for i in range(len(self.data)):
             if self.data[i].uid == item_id:
-                self.data[i].is_archived = False
-                self.data[i].updated_at = self.get_timestamp()
-                updated_item = self.db.update(self.data[i], item_id, closeConnection)
+                new_item = self.data[i].model_copy()
+                new_item.is_archived = False
+                new_item.updated_at = self.get_timestamp()
+                updated_item = self.db.update(new_item, item_id, closeConnection)
                 self.data[i] = updated_item
+                self.save()
                 return updated_item
         return None
+    
+    def delete_item(self, item_id: str, closeConnection: bool = True) -> bool:
+        for i in range(len(self.data)):
+            if self.data[i].uid == item_id:
+                self.db.delete(Item, item_id, closeConnection)
+                self.data.remove(self.data[i])
+                return True
+        return False
+
+    def save(self):
+        data_provider.fetch_item_pool().save([item.model_dump() for item in self.data])
 
     def load(self):
         self.data = self.get_all_items()
