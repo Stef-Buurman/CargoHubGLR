@@ -47,13 +47,12 @@ def create_item_group(
 ):
     data_provider.init()
     existingitem_group = data_provider.fetch_item_group_pool().get_item_group(
-        item_group["id"]
+        item_group.get("id")
     )
     if existingitem_group is not None:
         raise HTTPException(status_code=409, detail="Item_group already exists")
-    data_provider.fetch_item_group_pool().add_item_group(item_group)
-    data_provider.fetch_item_group_pool().save()
-    return JSONResponse(status_code=status.HTTP_201_CREATED, content=item_group)
+    created_item_group = data_provider.fetch_item_group_pool().add_item_group(item_group)
+    return JSONResponse(status_code=status.HTTP_201_CREATED, content=created_item_group)
 
 
 @item_group_router.put("/{item_group_id}")
@@ -69,7 +68,7 @@ def update_item_group(
     if existingitem_group is None:
         raise HTTPException(status_code=404, detail="Item_group not found")
     data_provider.fetch_item_group_pool().update_item_group(item_group_id, item_group)
-    data_provider.fetch_item_group_pool().save()
+    # data_provider.fetch_item_group_pool().save()
     return item_group
 
 
