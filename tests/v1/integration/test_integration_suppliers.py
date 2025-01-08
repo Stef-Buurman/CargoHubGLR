@@ -186,15 +186,6 @@ def test_get_supplier_items(client):
     for item in response_items:
         assert item["supplier_id"] == test_supplier["id"]
 
-    response_delete_item_1 = client.delete(
-        "/items/" + test_item_1["uid"], headers=test_headers
-    )
-    assert response_delete_item_1.status_code == 200
-    response_delete_item_2 = client.delete(
-        "/items/" + test_item_2["uid"], headers=test_headers
-    )
-    assert response_delete_item_2.status_code == 200
-
 
 def test_update_supplier_no_api_key(client):
     updated_supplier = test_supplier.copy()

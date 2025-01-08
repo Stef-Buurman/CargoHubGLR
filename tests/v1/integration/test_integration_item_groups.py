@@ -218,4 +218,5 @@ def test_delete_item_group(client):
     response_get_item_group = client.get(
         "/item_groups/" + str(test_item_group["id"]), headers=test_headers
     )
-    assert response_get_item_group.status_code == 404
+    assert response_get_item_group.status_code == 200
+    assert response_get_item_group.json()["is_archived"] == True

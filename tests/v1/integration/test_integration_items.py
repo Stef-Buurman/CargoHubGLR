@@ -79,6 +79,7 @@ def test_add_item_invalid_api_key(client):
 def test_add_item(client):
     response = client.post("/items", json=test_item, headers=test_headers)
     assert response.status_code == 201
+    test_item["uid"] = response.json()["uid"]
     response_get_item = client.get("/items/" + test_item["uid"], headers=test_headers)
     assert response_get_item.status_code == 200
     assert response_get_item.json()["uid"] == test_item["uid"]
@@ -131,6 +132,7 @@ def test_get_inventory_of_nonexistent_item(client):
 
 
 def test_get_inventory_of_item(client):
+    test_inventory["item_id"] = test_item["uid"]
     responseAddInventory = client.post(
         "/inventories", json=test_inventory, headers=test_headers
     )
@@ -175,14 +177,6 @@ def test_get_inventory_totals_of_item(client):
     assert response.json()["total_ordered"] == test_inventory["total_ordered"]
     assert response.json()["total_allocated"] == test_inventory["total_allocated"]
     assert response.json()["total_available"] == test_inventory["total_available"]
-    responseDeleteInventory = client.delete(
-        "/inventories/" + str(test_inventory["id"]), headers=test_headers
-    )
-    assert responseDeleteInventory.status_code == 200
-    responseGetInventory = client.get(
-        "/inventories/" + str(test_inventory["id"]), headers=test_headers
-    )
-    assert responseGetInventory.status_code == 404
 
 
 def test_update_item_no_api_key(client):
@@ -253,4 +247,5 @@ def test_delete_item(client):
     response = client.delete("/items/" + test_item["uid"], headers=test_headers)
     assert response.status_code == 200
     response_get_item = client.get("/items/" + test_item["uid"], headers=test_headers)
-    assert response_get_item.status_code == 404
+    assert response_get_item.status_code == 200
+    assert response_get_item.json()["is_archived"] == True

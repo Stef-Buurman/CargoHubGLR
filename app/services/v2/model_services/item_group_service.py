@@ -74,6 +74,7 @@ class ItemGroupService(Base):
                     self.data[i], item_group_id, closeConnection
                 )
                 self.data[i] = updated_item_group
+                self.save()
                 return updated_item_group
         return None
 
@@ -88,19 +89,9 @@ class ItemGroupService(Base):
                     self.data[i], item_group_id, closeConnection
                 )
                 self.data[i] = updated_item_group
+                self.save()
                 return updated_item_group
         return None
-
-    def delete_item_group(
-        self, item_group_id: int, closeConnection: bool = True
-    ) -> bool:
-        for i in range(len(self.data)):
-            if self.data[i].id == item_group_id:
-                self.db.delete(ItemGroup, item_group_id, closeConnection)
-                self.data.remove(self.data[i])
-                self.save()
-                return True
-        return False
 
     def save(self):
         if not self.is_debug:
