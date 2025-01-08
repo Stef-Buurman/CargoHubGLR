@@ -18,6 +18,7 @@ test_inventory = {
 }
 
 
+
 @pytest.fixture
 def client():
     with httpx.Client(base_url=MAIN_URL, timeout=timeout) as client:
