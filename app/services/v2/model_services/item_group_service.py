@@ -89,8 +89,10 @@ class ItemGroupService(Base):
                 self.data[i] = updated_item_group
                 return updated_item_group
         return None
-    
-    def delete_item_group(self, item_group_id: int, closeConnection: bool = True) -> bool:
+
+    def delete_item_group(
+        self, item_group_id: int, closeConnection: bool = True
+    ) -> bool:
         for i in range(len(self.data)):
             if self.data[i].id == item_group_id:
                 self.db.delete(ItemGroup, item_group_id, closeConnection)
@@ -98,9 +100,11 @@ class ItemGroupService(Base):
                 self.safe()
                 return True
         return False
-    
+
     def safe(self):
-        data_provider.fetch_item_group_pool().save([item.model_dump() for item in self.data])
+        data_provider.fetch_item_group_pool().save(
+            [item.model_dump() for item in self.data]
+        )
 
     def load(self):
         self.data = self.get_all_item_groups()

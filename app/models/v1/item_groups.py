@@ -22,7 +22,9 @@ class ItemGroups(Base):
         return None
 
     def add_item_group(self, item_group):
-        added_item_group = data_provider_v2.fetch_item_group_pool().add_item_group(ItemGroup(**item_group))
+        added_item_group = data_provider_v2.fetch_item_group_pool().add_item_group(
+            ItemGroup(**item_group)
+        )
         return added_item_group.model_dump()
 
     def update_item_group(self, item_group_id, item_group):
@@ -32,14 +34,18 @@ class ItemGroups(Base):
                 item_group["id"] = item_group_id
                 item_group["created_at"] = self.data[i]["created_at"]
                 # self.data[i] = item_group
-                data_provider_v2.fetch_item_group_pool().update_item_group(item_group_id, ItemGroup(**item_group))
+                data_provider_v2.fetch_item_group_pool().update_item_group(
+                    item_group_id, ItemGroup(**item_group)
+                )
                 break
 
     def remove_item_group(self, item_group_id):
         for x in self.data:
             if x["id"] == item_group_id:
                 self.data.remove(x)
-                data_provider_v2.fetch_item_group_pool().delete_item_group(item_group_id)
+                data_provider_v2.fetch_item_group_pool().delete_item_group(
+                    item_group_id
+                )
 
     def load(self, is_debug):
         if is_debug:
@@ -49,8 +55,8 @@ class ItemGroups(Base):
             self.data = json.load(f)
             f.close()
 
-    def save(self, data = None):  # pragma: no cover
-        if(data):
+    def save(self, data=None):  # pragma: no cover
+        if data:
             self.data = data
         f = open(self.data_path, "w")
         json.dump(self.data, f)

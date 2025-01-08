@@ -51,7 +51,9 @@ def create_item_group(
     )
     if existingitem_group is not None:
         raise HTTPException(status_code=409, detail="Item_group already exists")
-    created_item_group = data_provider.fetch_item_group_pool().add_item_group(item_group)
+    created_item_group = data_provider.fetch_item_group_pool().add_item_group(
+        item_group
+    )
     return JSONResponse(status_code=status.HTTP_201_CREATED, content=created_item_group)
 
 
