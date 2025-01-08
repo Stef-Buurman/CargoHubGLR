@@ -47,13 +47,12 @@ def create_item_type(
 ):
     data_provider.init()
     existingitem_type = data_provider.fetch_item_type_pool().get_item_type(
-        item_type["id"]
+        item_type.get("id")
     )
     if existingitem_type is not None:
         raise HTTPException(status_code=409, detail="Item_type already exists")
-    data_provider.fetch_item_type_pool().add_item_type(item_type)
-    data_provider.fetch_item_type_pool().save()
-    return JSONResponse(status_code=status.HTTP_201_CREATED, content=item_type)
+    created_item_type =  data_provider.fetch_item_type_pool().add_item_type(item_type)
+    return JSONResponse(status_code=status.HTTP_201_CREATED, content=created_item_type)
 
 
 @item_type_router.put("/{item_type_id}")
