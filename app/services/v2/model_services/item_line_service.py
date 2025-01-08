@@ -92,15 +92,13 @@ class ItemLineService(Base):
 
     def delete_item_line(
         self, item_line_id: int, closeConnection: bool = True
-    ) -> ItemLine | None:
+    ) -> bool:
         for i in range(len(self.data)):
             if self.data[i].id == item_line_id:
-                deleted_item_line = self.db.delete(
-                    ItemLine, item_line_id, closeConnection
-                )
+                self.db.delete(ItemLine, item_line_id, closeConnection)
                 self.data.remove(self.data[i])
-                return deleted_item_line
-        return None
+                return True
+        return False
 
     def save(self):
         data_provider.fetch_item_line_pool().save(
