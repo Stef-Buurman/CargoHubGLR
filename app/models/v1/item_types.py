@@ -53,7 +53,9 @@ class ItemTypes(Base):
             if x["id"] == item_type_id:
                 self.data.remove(x)
                 if not self.is_debug:
-                    data_provider_v2.fetch_item_type_pool().archive_item_type(item_type_id)
+                    data_provider_v2.fetch_item_type_pool().archive_item_type(
+                        item_type_id
+                    )
 
     def load(self, is_debug):
         if is_debug:
