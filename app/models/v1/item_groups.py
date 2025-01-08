@@ -43,11 +43,14 @@ class ItemGroups(Base):
                     item_group["created_at"] = self.data[i]["created_at"]
                 if self.is_debug:
                     self.data[i] = item_group
+                    return item_group
                 else:
-                    data_provider_v2.fetch_item_group_pool().update_item_group(
-                        item_group_id, ItemGroup(**item_group)
+                    updated_item_group = (
+                        data_provider_v2.fetch_item_group_pool().update_item_group(
+                            item_group_id, ItemGroup(**item_group)
+                        )
                     )
-                break
+                    return updated_item_group.model_dump()
 
     def remove_item_group(self, item_group_id):
         for x in self.data:

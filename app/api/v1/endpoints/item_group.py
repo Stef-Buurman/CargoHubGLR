@@ -69,9 +69,10 @@ def update_item_group(
     )
     if existingitem_group is None:
         raise HTTPException(status_code=404, detail="Item_group not found")
-    data_provider.fetch_item_group_pool().update_item_group(item_group_id, item_group)
-    # data_provider.fetch_item_group_pool().save()
-    return item_group
+    updated_item_group = data_provider.fetch_item_group_pool().update_item_group(
+        item_group_id, item_group
+    )
+    return updated_item_group
 
 
 @item_group_router.delete("/{item_group_id}")
