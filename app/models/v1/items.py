@@ -95,3 +95,4 @@ class Items(Base):
         f = open(self.data_path, "w")
         json.dump(self.data, f)
         f.close()
+
