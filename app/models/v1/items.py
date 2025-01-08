@@ -63,11 +63,11 @@ class Items(Base):
         item["updated_at"] = self.get_timestamp()
         for i in range(len(self.data)):
             if self.data[i]["uid"] == item_id:
+                item["uid"] = item_id
+                item["created_at"] = self.data[i]["created_at"]
                 if self.is_debug:
                     self.data[i] = item
                     break
-                item["uid"] = item_id
-                item["created_at"] = self.data[i]["created_at"]
                 updated_item = data_provider_v2.fetch_item_pool().update_item(
                     item_id, Item(**item)
                 )
