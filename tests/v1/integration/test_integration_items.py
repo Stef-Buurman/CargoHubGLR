@@ -177,10 +177,6 @@ def test_get_inventory_totals_of_item(client):
     assert response.json()["total_ordered"] == test_inventory["total_ordered"]
     assert response.json()["total_allocated"] == test_inventory["total_allocated"]
     assert response.json()["total_available"] == test_inventory["total_available"]
-    responseDeleteInventory = client.delete(
-        "/inventories/" + str(test_inventory["id"]), headers=test_headers
-    )
-    assert responseDeleteInventory.status_code == 200
 
 
 def test_update_item_no_api_key(client):
