@@ -2,6 +2,7 @@ from typing import List, Type
 from models.v2.item_line import ItemLine
 from services.v2.base_service import Base
 from services.v2.database_service import DB, DatabaseService
+from services.v1 import data_provider
 
 
 class ItemLineService(Base):
@@ -41,6 +42,7 @@ class ItemLineService(Base):
         item_line.updated_at = self.get_timestamp()
         added_item_line = self.db.insert(item_line, closeConnection)
         self.data.append(added_item_line)
+        self.save()
         return added_item_line
 
     def update_item_line(
@@ -56,6 +58,7 @@ class ItemLineService(Base):
                     item_line, item_line_id, closeConnection
                 )
                 self.data[i] = updated_item_line
+                self.save()
                 return updated_item_line
         return None  # pragma: no cover
 
@@ -86,6 +89,17 @@ class ItemLineService(Base):
                 self.data[i] = updated_item_line
                 return updated_item_line
         return None
+    
+    def delete_item_line(self, item_line_id: int, closeConnection: bool = True) -> ItemLine | None:
+        for i in range(len(self.data)):
+            if self.data[i].id == item_line_id:
+                deleted_item_line = self.db.delete(ItemLine, item_line_id, closeConnection)
+                self.data.remove(self.data[i])
+                return deleted_item_line
+        return None
+
+    def save(self):
+        data_provider.fetch_item_line_pool().save([item.model_dump() for item in self.data])
 
     def load(self):
         self.data = self.get_all_item_lines()
