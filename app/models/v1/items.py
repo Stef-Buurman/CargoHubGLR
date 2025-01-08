@@ -69,7 +69,7 @@ class Items(Base):
                 if self.is_debug:
                     self.data[i] = item
                     return item
-                else: # pragma: no cover
+                else:  # pragma: no cover
                     updated_item = data_provider_v2.fetch_item_pool().update_item(
                         item_id, Item(**item)
                     )
