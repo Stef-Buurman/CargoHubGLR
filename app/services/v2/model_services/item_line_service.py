@@ -73,6 +73,7 @@ class ItemLineService(Base):
                     self.data[i], item_line_id, closeConnection
                 )
                 self.data[i] = updated_item_line
+                self.save()
                 return updated_item_line
         return None
 
@@ -87,6 +88,7 @@ class ItemLineService(Base):
                     self.data[i], item_line_id, closeConnection
                 )
                 self.data[i] = updated_item_line
+                self.save()
                 return updated_item_line
         return None
 
