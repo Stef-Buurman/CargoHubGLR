@@ -9,6 +9,7 @@ ITEM_TYPES = []
 
 class ItemTypes(Base):
     def __init__(self, root_path, is_debug=False):
+        self.is_debug = is_debug
         self.data_path = root_path + "item_types.json"
         self.load(is_debug)
 
@@ -22,10 +23,17 @@ class ItemTypes(Base):
         return None
 
     def add_item_type(self, item_type):
-        created_item_type = data_provider_v2.fetch_item_type_pool().add_item_type(
-            ItemType(**item_type)
-        )
-        return created_item_type.model_dump()
+        if self.is_debug:
+            item_type["id"] = len(self.data) + 1
+            item_type["created_at"] = self.get_timestamp()
+            item_type["updated_at"] = self.get_timestamp()
+            self.data.append(item_type)
+            return item_type
+        else:
+            created_item_type = data_provider_v2.fetch_item_type_pool().add_item_type(
+                ItemType(**item_type)
+            )
+            return created_item_type.model_dump()
 
     def update_item_type(self, item_type_id, item_type):
         item_type["updated_at"] = self.get_timestamp()
@@ -34,16 +42,18 @@ class ItemTypes(Base):
                 item_type["id"] = item_type_id
                 item_type["created_at"] = self.data[i]["created_at"]
                 # self.data[i] = item_type
-                data_provider_v2.fetch_item_type_pool().update_item_type(
-                    item_type_id, ItemType(**item_type)
-                )
+                if not self.is_debug:
+                    data_provider_v2.fetch_item_type_pool().update_item_type(
+                        item_type_id, ItemType(**item_type)
+                    )
                 break
 
     def remove_item_type(self, item_type_id):
         for x in self.data:
             if x["id"] == item_type_id:
                 self.data.remove(x)
-                data_provider_v2.fetch_item_type_pool().delete_item_type(item_type_id)
+                if not self.is_debug:
+                    data_provider_v2.fetch_item_type_pool().archive_item_type(item_type_id)
 
     def load(self, is_debug):
         if is_debug:
