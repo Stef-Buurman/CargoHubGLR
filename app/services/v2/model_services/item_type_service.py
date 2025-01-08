@@ -73,6 +73,7 @@ class ItemTypeService(Base):
                     self.data[i], item_type_id, closeConnection
                 )
                 self.data[i] = updated_item_type
+                self.save()
                 return updated_item_type
         return None
 
@@ -86,6 +87,7 @@ class ItemTypeService(Base):
                     self.data[i], item_type_id, closeConnection
                 )
                 self.data[i] = updated_item_type
+                self.save()
                 return updated_item_type
         return None
 
