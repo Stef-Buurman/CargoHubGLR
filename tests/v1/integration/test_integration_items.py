@@ -72,6 +72,7 @@ def test_add_item_no_api_key(client):
 def test_add_item_invalid_api_key(client):
     response = client.post("/items", json=test_item, headers=invalid_headers)
     assert response.status_code == 403
+    test_item["uid"] = response.json()["uid"]
     response_get_item = client.get("/items/" + test_item["uid"], headers=test_headers)
     assert response_get_item.status_code == 404
 

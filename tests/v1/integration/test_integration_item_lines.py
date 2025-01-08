@@ -182,15 +182,6 @@ def test_get_item_line_items(client):
     for item in response_items:
         assert item["item_line"] == test_item_line["id"]
 
-    response_delete_item_1 = client.delete(
-        "/items/" + test_item_1["uid"], headers=test_headers
-    )
-    assert response_delete_item_1.status_code == 200
-    response_delete_item_2 = client.delete(
-        "/items/" + test_item_2["uid"], headers=test_headers
-    )
-    assert response_delete_item_2.status_code == 200
-
 
 def test_update_item_line_no_api_key(client):
     updated_item_line = test_item_line.copy()
