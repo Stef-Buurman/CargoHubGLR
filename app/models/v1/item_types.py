@@ -40,7 +40,8 @@ class ItemTypes(Base):
         for i in range(len(self.data)):
             if self.data[i]["id"] == item_type_id:
                 item_type["id"] = item_type_id
-                item_type["created_at"] = self.data[i]["created_at"]
+                if item_type.get("created_at") is None:
+                    item_type["created_at"] = self.data[i]["created_at"]
                 if self.is_debug:
                     self.data[i] = item_type
                 else:
