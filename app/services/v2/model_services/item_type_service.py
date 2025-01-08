@@ -2,6 +2,7 @@ from typing import List, Type
 from models.v2.item_type import ItemType
 from services.v2.base_service import Base
 from services.v2.database_service import DB, DatabaseService
+from services.v1 import data_provider
 
 
 class ItemTypeService(Base):
@@ -35,6 +36,7 @@ class ItemTypeService(Base):
         item_type.updated_at = self.get_timestamp()
         added_item_type = self.db.insert(item_type, closeConnection)
         self.data.append(added_item_type)
+        self.save()
         return added_item_type
 
     def update_item_type(
@@ -50,6 +52,7 @@ class ItemTypeService(Base):
                     item_type, item_type_id, closeConnection
                 )
                 self.data[i] = updae_item_type
+                self.save()
                 return updae_item_type
         return None  # pragma: no cover
 
@@ -85,6 +88,21 @@ class ItemTypeService(Base):
                 self.data[i] = updated_item_type
                 return updated_item_type
         return None
+    
+    def delete_item_type(
+        self, item_type_id: int, closeConnection: bool = True
+    ) -> ItemType | None:
+        for i in range(len(self.data)):
+            if self.data[i].id == item_type_id:
+                deleted_item_type = self.db.delete(ItemType, item_type_id, closeConnection)
+                self.data.remove(self.data[i])
+                return deleted_item_type
+        return None
+
+    def save(self):
+        data_provider.fetch_item_type_pool().save(
+            [item.model_dump() for item in self.data]
+        )
 
     def load(self):
         self.data = self.get_all_item_types()
