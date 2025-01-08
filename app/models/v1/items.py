@@ -64,7 +64,8 @@ class Items(Base):
         for i in range(len(self.data)):
             if self.data[i]["uid"] == item_id:
                 item["uid"] = item_id
-                item["created_at"] = self.data[i]["created_at"]
+                if item.get("created_at") is None:
+                    item["created_at"] = self.data[i]["created_at"]
                 if self.is_debug:
                     self.data[i] = item
                     break
