@@ -40,12 +40,11 @@ def read_client_orders(
 @client_router.post("")
 def create_client(client: dict, api_key: str = Depends(auth_provider.get_api_key)):
     data_provider.init()
-    existing_client = data_provider.fetch_client_pool().get_client(client["id"])
+    existing_client = data_provider.fetch_client_pool().get_client(client.get("id"))
     if existing_client is not None:
         raise HTTPException(status_code=409, detail="Client already exists")
-    data_provider.fetch_client_pool().add_client(client)
-    data_provider.fetch_client_pool().save()
-    return JSONResponse(status_code=status.HTTP_201_CREATED, content=client)
+    created_client = data_provider.fetch_client_pool().add_client(client)
+    return JSONResponse(status_code=status.HTTP_201_CREATED, content=created_client)
 
 
 @client_router.put("/{client_id}")
@@ -56,9 +55,8 @@ def update_client(
     existing_client = data_provider.fetch_client_pool().get_client(client_id)
     if existing_client is None:
         raise HTTPException(status_code=404, detail="Client not found")
-    data_provider.fetch_client_pool().update_client(client_id, client)
-    data_provider.fetch_client_pool().save()
-    return client
+    updated_client = data_provider.fetch_client_pool().update_client(client_id, client)
+    return updated_client
 
 
 @client_router.delete("/{client_id}")
