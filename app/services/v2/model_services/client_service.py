@@ -100,3 +100,4 @@ class ClientService(Base):
 
     def load(self):
         self.data = self.get_all_clients()
+
