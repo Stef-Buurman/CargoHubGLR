@@ -39,12 +39,11 @@ def read_order_items(order_id: int, api_key: str = Depends(auth_provider.get_api
 @order_router.post("")
 def create_order(order: dict, api_key: str = Depends(auth_provider.get_api_key)):
     data_provider.init()
-    existingOrder = data_provider.fetch_order_pool().get_order(order["id"])
+    existingOrder = data_provider.fetch_order_pool().get_order(order.get("id"))
     if existingOrder is not None:
         raise HTTPException(status_code=409, detail="Order already exists")
-    data_provider.fetch_order_pool().add_order(order)
-    data_provider.fetch_order_pool().save()
-    return JSONResponse(status_code=status.HTTP_201_CREATED, content=order)
+    created_order = data_provider.fetch_order_pool().add_order(order)
+    return JSONResponse(status_code=status.HTTP_201_CREATED, content=created_order)
 
 
 @order_router.put("/{order_id}")
@@ -55,9 +54,8 @@ def update_order(
     existingOrder = data_provider.fetch_order_pool().get_order(order_id)
     if existingOrder is None:
         raise HTTPException(status_code=404, detail="Order not found")
-    data_provider.fetch_order_pool().update_order(order_id, order)
-    data_provider.fetch_order_pool().save()
-    return order
+    updated_order = data_provider.fetch_order_pool().update_order(order_id, order)
+    return updated_order
 
 
 @order_router.put("/{order_id}/items")
@@ -68,9 +66,8 @@ def add_items_to_order(
     existingOrder = data_provider.fetch_order_pool().get_order(order_id)
     if existingOrder is None:
         raise HTTPException(status_code=404, detail="Order not found")
-    data_provider.fetch_order_pool().update_items_in_order(order_id, items)
-    data_provider.fetch_order_pool().save()
-    return items
+    updated_order = data_provider.fetch_order_pool().update_items_in_order(order_id, items)
+    return updated_order
 
 
 @order_router.delete("/{order_id}")
