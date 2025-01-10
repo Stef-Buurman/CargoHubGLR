@@ -16,17 +16,21 @@ CargoHub previously used a custom-built software solution for processing data an
 
 ### Client
 
-### Suppliers
+### Supplier
 
-### Orders
+### Order
 
-### Items
+### Inventory
 
-### Item groups
+### Location
 
-### Item types
+### Item
 
-### Item lines
+### Item group
+
+### Item type
+
+### Item line
 
 ## Setup
 
