@@ -66,7 +66,9 @@ def add_items_to_order(
     existingOrder = data_provider.fetch_order_pool().get_order(order_id)
     if existingOrder is None:
         raise HTTPException(status_code=404, detail="Order not found")
-    updated_order = data_provider.fetch_order_pool().update_items_in_order(order_id, items)
+    updated_order = data_provider.fetch_order_pool().update_items_in_order(
+        order_id, items
+    )
     return updated_order
 
 

@@ -63,7 +63,9 @@ def add_items_to_order(order_id: int, items: list[ItemInObject]):
         raise HTTPException(status_code=404, detail="Order not found")
     elif existingOrder:
         raise HTTPException(status_code=400, detail="Order is archived")
-    updated_order = data_provider_v2.fetch_order_pool().update_items_in_order(order_id, items)
+    updated_order = data_provider_v2.fetch_order_pool().update_items_in_order(
+        order_id, items
+    )
     return updated_order.model_dump()
 
 
