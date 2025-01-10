@@ -27,3 +27,11 @@ CargoHub previously used a custom-built software solution for processing data an
 ### Item types
 
 ### Item lines
+
+## Setup
+
+To setup the project
+
+## Usage
+
+## License
