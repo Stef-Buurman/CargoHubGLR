@@ -58,7 +58,10 @@ class OrderService(Base):
                 cursor = conn.execute(query_items)
                 all_order_items = cursor.fetchall()
                 # order["items"] = all_order_items
-                order["items"] = [ItemInObject(item_id=row[0], amount=row[1]) for row in all_order_items]
+                order["items"] = [
+                    ItemInObject(item_id=row[0], amount=row[1])
+                    for row in all_order_items
+                ]
                 return Order(**order)
         return None
 
