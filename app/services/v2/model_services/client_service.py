@@ -2,13 +2,12 @@ from typing import List, Type
 from models.v2.client import Client
 from services.v2.base_service import Base
 from services.v2.database_service import DB, DatabaseService
+from services.v1 import data_provider
 
 
 class ClientService(Base):
-    def __init__(
-        self,
-        db: Type[DatabaseService] = None,
-    ):
+    def __init__(self, db: Type[DatabaseService] = None, is_debug: bool = False):
+        self.is_debug = is_debug
         if db is not None:
             self.db = db
         else:  # pragma: no cover
@@ -36,6 +35,7 @@ class ClientService(Base):
         client.updated_at = self.get_timestamp()
         added_client = self.db.insert(client, closeConnection)
         self.data.append(added_client)
+        self.save()
         return added_client
 
     def update_client(
@@ -47,8 +47,12 @@ class ClientService(Base):
         client.updated_at = self.get_timestamp()
         for i in range(len(self.data)):
             if self.data[i].id == client_id:
+                client.id = client_id
+                if client.created_at is None:
+                    client.created_at = self.data[i].created_at
                 updated_client = self.db.update(client, client_id, closeConnection)
                 self.data[i] = updated_client
+                self.save()
                 return updated_client
         return None
 
@@ -63,6 +67,7 @@ class ClientService(Base):
                     self.data[i], client_id, closeConnection
                 )
                 self.data[i] = updated_client
+                self.save()
                 return updated_client
         return None
 
@@ -77,6 +82,7 @@ class ClientService(Base):
                     self.data[i], client_id, closeConnection
                 )
                 self.data[i] = updated_client
+                self.save()
                 return updated_client
         return None
 
@@ -85,6 +91,12 @@ class ClientService(Base):
             if client.id == client_id:
                 return client.is_archived
         return None
+
+    def save(self):
+        if not self.is_debug:
+            data_provider.fetch_client_pool().save(
+                [client.model_dump() for client in self.data]
+            )
 
     def load(self):
         self.data = self.get_all_clients()

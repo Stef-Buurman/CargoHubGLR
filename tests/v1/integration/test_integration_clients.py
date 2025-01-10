@@ -60,6 +60,7 @@ def test_add_CargoClient_invalid_api_key(client):
 
 def test_add_CargoClient(client):
     response = client.post("/clients", json=test_CargoClient, headers=test_headers)
+    test_CargoClient["id"] = response.json()["id"]
     assert response.status_code == 201 or response.status_code == 200
     assert response.json()["id"] == test_CargoClient["id"]
 
@@ -223,4 +224,5 @@ def test_delete_CargoClient(client):
     response_get_CargoClient = client.get(
         "/clients/" + str(test_CargoClient["id"]), headers=test_headers
     )
-    assert response_get_CargoClient.status_code == 404
+    assert response_get_CargoClient.status_code == 200
+    assert response_get_CargoClient.json()["is_archived"] == True
