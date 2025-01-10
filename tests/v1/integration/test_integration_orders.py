@@ -329,4 +329,5 @@ def test_delete_order(client):
     response_get_order = client.get(
         "/orders/" + str(test_order["id"]), headers=test_headers
     )
-    assert response_get_order.status_code == 404
+    assert response_get_order.status_code == 200
+    assert response_get_order.json()["is_archived"] is True
