@@ -47,13 +47,12 @@ def create_warehouse(
 ):
     data_provider.init()
     existing_warehouse = data_provider.fetch_warehouse_pool().get_warehouse(
-        warehouse["id"]
+        warehouse.get("id")
     )
     if existing_warehouse is not None:
         raise HTTPException(status_code=409, detail="Warehouse already exists")
-    data_provider.fetch_warehouse_pool().add_warehouse(warehouse)
-    data_provider.fetch_warehouse_pool().save()
-    return JSONResponse(status_code=status.HTTP_201_CREATED, content=warehouse)
+    created_warehouse = data_provider.fetch_warehouse_pool().add_warehouse(warehouse)
+    return JSONResponse(status_code=status.HTTP_201_CREATED, content=created_warehouse)
 
 
 @warehouse_router.put("/{warehouse_id}")
@@ -68,9 +67,10 @@ def update_warehouse(
     )
     if existing_warehouse is None:
         raise HTTPException(status_code=404, detail="Warehouse not found")
-    data_provider.fetch_warehouse_pool().update_warehouse(warehouse_id, warehouse)
-    data_provider.fetch_warehouse_pool().save()
-    return warehouse
+    updated_warehouse = data_provider.fetch_warehouse_pool().update_warehouse(
+        warehouse_id, warehouse
+    )
+    return updated_warehouse
 
 
 @warehouse_router.delete("/{warehouse_id}")
