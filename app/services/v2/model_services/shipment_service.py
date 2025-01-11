@@ -5,10 +5,12 @@ from services.v2.base_service import Base
 from services.v2.database_service import DB, DatabaseService
 from services.v2 import data_provider_v2
 from utils.globals import *
+from services.v1 import data_provider
 
 
 class ShipmentService(Base):
-    def __init__(self, db: Type[DatabaseService] = None):
+    def __init__(self, db: Type[DatabaseService] = None, is_debug: bool = False):
+        self.is_debug = is_debug
         if db is not None:
             self.db = db
         else:  # pragma: no cover
@@ -121,6 +123,7 @@ class ShipmentService(Base):
         # if closeConnection:
         #     self.db.commit_and_close()
         self.data.append(shipment)
+        self.save()
         return shipment
 
     def update_shipment(
@@ -181,9 +184,12 @@ class ShipmentService(Base):
 
         for i in range(len(self.data)):
             if self.data[i].id == shipment_id:
+                shipment.id = shipment_id
+                if shipment.created_at is None:
+                    shipment.created_at = self.data[i].created_at
                 self.data[i] = shipment
+                self.save()
                 break
-
         return shipment
 
     def update_items_in_shipment(
@@ -265,6 +271,7 @@ class ShipmentService(Base):
 
                 # if closeConnection:
                 #     self.db.commit_and_close()
+                self.save()
                 return self.data[i]
         return None
 
@@ -291,8 +298,15 @@ class ShipmentService(Base):
 
                 # if closeConnection:
                 #     self.db.commit_and_close()
+                self.save()
                 return self.data[i]
         return None
+
+    def save(self):
+        if not self.is_debug:
+            data_provider.fetch_shipment_pool().save(
+                [shipment.model_dump() for shipment in self.data]
+            )
 
     def load(
         self,
