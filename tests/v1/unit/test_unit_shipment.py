@@ -45,7 +45,13 @@ def test_add_shipment(shipments_instance):
 
 
 def test_update_shipment(shipments_instance):
-    shipments_instance.data = [{"id": 1, "items": [{"item_id": 1, "amount": 5}]}]
+    shipments_instance.data = [
+        {
+            "id": 1,
+            "items": [{"item_id": 1, "amount": 5}],
+            "created_at": "1973-01-28T20:09:11Z",
+        }
+    ]
     updated_shipment = {"id": 1, "items": [{"item_id": 1, "amount": 10}]}
     shipments_instance.update_shipment(1, updated_shipment)
     assert shipments_instance.data[0]["items"][0]["amount"] == 10
@@ -53,7 +59,13 @@ def test_update_shipment(shipments_instance):
 
 
 def test_update_items_in_shipment(shipments_instance):
-    shipments_instance.data = [{"id": 1, "items": [{"item_id": 1, "amount": 5}]}]
+    shipments_instance.data = [
+        {
+            "id": 1,
+            "items": [{"item_id": 1, "amount": 5}],
+            "created_at": "1973-01-28T20:09:11Z",
+        }
+    ]
     items = [{"item_id": 1, "amount": 10}, {"item_id": 2, "amount": 5}]
     shipments_instance.update_items_in_shipment(1, items)
     assert len(shipments_instance.data[0]["items"]) == 2
@@ -62,14 +74,22 @@ def test_update_items_in_shipment(shipments_instance):
 
 
 def test_update_items_in_shipment_no_items(shipments_instance):
-    shipments_instance.data = [{"id": 1, "items": [{"item_id": 1, "amount": 5}]}]
+    shipments_instance.data = [
+        {
+            "id": 1,
+            "items": [{"item_id": 1, "amount": 5}],
+            "created_at": "1973-01-28T20:09:11Z",
+        }
+    ]
     items = []
     shipments_instance.update_items_in_shipment(1, items)
     assert len(shipments_instance.data[0]["items"]) == 0
 
 
 def test_update_items_in_shipment_no_current_items(shipments_instance):
-    shipments_instance.data = [{"id": 1, "items": []}]
+    shipments_instance.data = [
+        {"id": 1, "items": [], "created_at": "1973-01-28T20:09:11Z"}
+    ]
     items = [{"item_id": 1, "amount": 10}]
     shipments_instance.update_items_in_shipment(1, items)
     assert len(shipments_instance.data[0]["items"]) == 1
@@ -85,7 +105,9 @@ def test_update_items_in_shipment_no_current_items(shipments_instance):
 
 
 def test_update_items_for_shipment_no_current_items(shipments_instance):
-    shipments_instance.data = [{"id": 1, "items": []}]
+    shipments_instance.data = [
+        {"id": 1, "items": [], "created_at": "1973-01-28T20:09:11Z"}
+    ]
     items = [{"item_id": 1, "amount": 10}]
     shipments_instance.update_items_for_shipment(1, items)
     assert len(shipments_instance.data[0]["items"]) == 1
@@ -93,7 +115,13 @@ def test_update_items_for_shipment_no_current_items(shipments_instance):
 
 
 def test_update_items_for_shipment(shipments_instance):
-    shipments_instance.data = [{"id": 1, "items": [{"item_id": 1, "amount": 5}]}]
+    shipments_instance.data = [
+        {
+            "id": 1,
+            "items": [{"item_id": 1, "amount": 5}],
+            "created_at": "1973-01-28T20:09:11Z",
+        }
+    ]
     items = [{"item_id": 1, "amount": 10}, {"item_id": 2, "amount": 5}]
     shipments_instance.update_items_for_shipment(1, items)
     assert len(shipments_instance.data[0]["items"]) == 2
@@ -102,7 +130,13 @@ def test_update_items_for_shipment(shipments_instance):
 
 
 def test_update_items_for_shipment_no_items(shipments_instance):
-    shipments_instance.data = [{"id": 1, "items": [{"item_id": 1, "amount": 5}]}]
+    shipments_instance.data = [
+        {
+            "id": 1,
+            "items": [{"item_id": 1, "amount": 5}],
+            "created_at": "1973-01-28T20:09:11Z",
+        }
+    ]
     items = []
     shipments_instance.update_items_for_shipment(1, items)
     assert len(shipments_instance.data[0]["items"]) == 0
