@@ -46,7 +46,9 @@ def read_items_of_supplier(
 @supplier_router.post("")
 def create_supplier(supplier: dict, api_key: str = Depends(auth_provider.get_api_key)):
     data_provider.init()
-    existingSupplier = data_provider.fetch_supplier_pool().get_supplier(supplier.get("id"))
+    existingSupplier = data_provider.fetch_supplier_pool().get_supplier(
+        supplier.get("id")
+    )
     if existingSupplier is not None:
         raise HTTPException(status_code=409, detail="Supplier already exists")
     added_supplier = data_provider.fetch_supplier_pool().add_supplier(supplier)
@@ -61,7 +63,9 @@ def update_supplier(
     existingSupplier = data_provider.fetch_supplier_pool().get_supplier(supplier_id)
     if existingSupplier is None:
         raise HTTPException(status_code=404, detail="Supplier not found")
-    updated_supplier = data_provider.fetch_supplier_pool().update_supplier(supplier_id, supplier)
+    updated_supplier = data_provider.fetch_supplier_pool().update_supplier(
+        supplier_id, supplier
+    )
     return updated_supplier
 
 
