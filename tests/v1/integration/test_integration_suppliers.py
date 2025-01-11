@@ -158,9 +158,11 @@ def test_get_supplier_items_invalid_id(client):
 
 
 def test_get_supplier_items(client):
+    test_item_1["supplier_id"] = test_supplier["id"]
     response_post_fake_item_1 = client.post(
         "/items", json=test_item_1, headers=test_headers
     )
+    test_item_2["supplier_id"] = test_supplier["id"]
     response_post_fake_item_2 = client.post(
         "/items", json=test_item_2, headers=test_headers
     )
