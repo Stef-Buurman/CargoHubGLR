@@ -28,14 +28,15 @@ def read_locations(api_key: str = Depends(auth_provider.get_api_key)):
 @location_router.post("")
 def create_location(location: dict, api_key: str = Depends(auth_provider.get_api_key)):
     data_provider.init()
-    existing_location = data_provider.fetch_location_pool().get_location(location["id"])
+    existing_location = data_provider.fetch_location_pool().get_location(
+        location.get("id")
+    )
     if existing_location is not None:
         raise HTTPException(
             status_code=409, detail=f"Location with id {location['id']} already exists"
         )
-    data_provider.fetch_location_pool().add_location(location)
-    data_provider.fetch_location_pool().save()
-    return JSONResponse(status_code=status.HTTP_201_CREATED, content=location)
+    created_location = data_provider.fetch_location_pool().add_location(location)
+    return JSONResponse(status_code=status.HTTP_201_CREATED, content=created_location)
 
 
 @location_router.put("/{location_id}")
@@ -48,9 +49,10 @@ def update_location(
         raise HTTPException(
             status_code=404, detail=f"Location with id {location_id} not found"
         )
-    data_provider.fetch_location_pool().update_location(location_id, location)
-    data_provider.fetch_location_pool().save()
-    return JSONResponse(status_code=status.HTTP_200_OK, content=location)
+    updated_location = data_provider.fetch_location_pool().update_location(
+        location_id, location
+    )
+    return JSONResponse(status_code=status.HTTP_200_OK, content=updated_location)
 
 
 @location_router.delete("/{location_id}")

@@ -3,10 +3,12 @@ from models.v2.location import Location
 from typing import List, Type
 from services.v2.base_service import Base
 from services.v2.database_service import DB, DatabaseService
+from services.v1 import data_provider
 
 
 class LocationService(Base):
-    def __init__(self, db: Type[DatabaseService] = None):
+    def __init__(self, db: Type[DatabaseService] = None, is_debug: bool = False):
+        self.is_debug = is_debug
         if db is not None:
             self.db = db
         else:  # pragma: no cover
@@ -45,6 +47,7 @@ class LocationService(Base):
         location.updated_at = self.get_timestamp()
         added_location = self.db.insert(location, closeConnection)
         self.data.append(added_location)
+        self.save()
         return added_location
 
     def update_location(
@@ -60,10 +63,14 @@ class LocationService(Base):
         location.updated_at = self.get_timestamp()
         for i in range(len(self.data)):
             if self.data[i].id == location_id:
+                location.id = location_id
+                if location.created_at is None:
+                    location.created_at = self.data[i].created_at
                 updated_location = self.db.update(
                     location, location_id, closeConnection
                 )
                 self.data[i] = updated_location
+                self.save()
                 return updated_location
         return None  # pragma: no cover
 
@@ -78,6 +85,7 @@ class LocationService(Base):
                     self.data[i], location_id, closeConnection
                 )
                 self.data[i] = updated_location
+                self.save()
                 return updated_location
         return None
 
@@ -92,8 +100,15 @@ class LocationService(Base):
                     self.data[i], location_id, closeConnection
                 )
                 self.data[i] = updated_location
+                self.save()
                 return updated_location
         return None
+
+    def save(self):
+        if not self.is_debug:
+            data_provider.fetch_location_pool().save(
+                [location.model_dump() for location in self.data]
+            )
 
     def load(self):
         self.data = self.get_all_locations()

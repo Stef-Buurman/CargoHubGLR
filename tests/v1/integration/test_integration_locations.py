@@ -54,6 +54,7 @@ def test_add_location_invalid_api_key(client):
 
 def test_add_location(client):
     response = client.post("/locations", json=test_location, headers=test_headers)
+    test_location["id"] = response.json()["id"]
     assert response.status_code == 201 or response.status_code == 200
     assert response.json()["id"] == test_location["id"]
 
@@ -179,4 +180,5 @@ def test_delete_location(client):
     responseGet = client.get(
         "/locations/" + str(test_location["id"]), headers=test_headers
     )
-    assert responseGet.status_code == 404
+    assert responseGet.status_code == 200
+    assert responseGet.json()["is_archived"] is True

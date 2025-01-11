@@ -1,11 +1,13 @@
-from models.v2.warehouse import Warehouse
+from models.v2.warehouse import Warehouse, Contact
 from typing import List, Type
 from services.v2.base_service import Base
 from services.v2.database_service import DB, DatabaseService
+from services.v1 import data_provider
 
 
 class WarehouseService(Base):
-    def __init__(self, db: Type[DatabaseService] = None):
+    def __init__(self, db: Type[DatabaseService] = None, is_debug: bool = False):
+        self.is_debug = is_debug
         if db is not None:
             self.db = db
         else:  # pragma: no cover
@@ -35,6 +37,7 @@ class WarehouseService(Base):
         warehouse.updated_at = self.get_timestamp()
         added_warehouse = self.db.insert(warehouse, closeConnection)
         self.data.append(added_warehouse)
+        self.save()
         return added_warehouse
 
     def update_warehouse(
@@ -46,10 +49,14 @@ class WarehouseService(Base):
         warehouse.updated_at = self.get_timestamp()
         for i in range(len(self.data)):
             if self.data[i].id == warehouse_id:
+                warehouse.id = warehouse_id
+                if warehouse.created_at is None:
+                    warehouse.created_at = self.data[i].created_at
                 updated_warehouse = self.db.update(
                     warehouse, warehouse_id, closeConnection
                 )
                 self.data[i] = updated_warehouse
+                self.save()
                 return updated_warehouse
         return None  # pragma: no cover
 
@@ -64,6 +71,7 @@ class WarehouseService(Base):
                     self.data[i], warehouse_id, closeConnection
                 )
                 self.data[i] = updated_warehouse
+                self.save()
                 return updated_warehouse
         return None
 
@@ -78,8 +86,15 @@ class WarehouseService(Base):
                     self.data[i], warehouse_id, closeConnection
                 )
                 self.data[i] = updated_warehouse
+                self.save()
                 return updated_warehouse
         return None
+
+    def save(self):
+        if not self.is_debug:
+            data_provider.fetch_warehouse_pool().save(
+                [warehouse.model_dump() for warehouse in self.data]
+            )
 
     def load(self):
         self.data = self.get_all_warehouses()
