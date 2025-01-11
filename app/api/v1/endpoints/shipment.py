@@ -57,7 +57,9 @@ def read_items_for_shipment(
 @shipment_router.post("")
 def create_shipment(shipment: dict, api_key: str = Depends(auth_provider.get_api_key)):
     data_provider.init()
-    existingShipment = data_provider.fetch_shipment_pool().get_shipment(shipment.get("id"))
+    existingShipment = data_provider.fetch_shipment_pool().get_shipment(
+        shipment.get("id")
+    )
     if existingShipment is not None:
         raise HTTPException(status_code=409, detail="Shipment already exists")
     created_shipment = data_provider.fetch_shipment_pool().add_shipment(shipment)
@@ -72,7 +74,9 @@ def update_shipment(
     existingShipment = data_provider.fetch_shipment_pool().get_shipment(shipment_id)
     if existingShipment is None:
         raise HTTPException(status_code=404, detail="Shipment not found")
-    updated_shipment = data_provider.fetch_shipment_pool().update_shipment(shipment_id, shipment)
+    updated_shipment = data_provider.fetch_shipment_pool().update_shipment(
+        shipment_id, shipment
+    )
     return updated_shipment
 
 
