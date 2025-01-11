@@ -2,10 +2,12 @@ from models.v2.supplier import Supplier
 from typing import List, Type
 from services.v2.base_service import Base
 from services.v2.database_service import DB, DatabaseService
+from services.v1 import data_provider
 
 
 class SupplierService(Base):
-    def __init__(self, db: Type[DatabaseService] = None):
+    def __init__(self, db: Type[DatabaseService] = None, is_debug: bool = False):
+        self.is_debug = is_debug
         if db is not None:
             self.db = db
         else:  # pragma: no cover
@@ -35,6 +37,7 @@ class SupplierService(Base):
         supplier.updated_at = self.get_timestamp()
         added_supplier = self.db.insert(supplier, closeConnection)
         self.data.append(added_supplier)
+        self.save()
         return added_supplier
 
     def update_supplier(
@@ -51,6 +54,7 @@ class SupplierService(Base):
                     supplier, supplier_id, closeConnection
                 )
                 self.data[i] = updated_supplier
+                self.save()
                 return updated_supplier
         return None  # pragma: no cover
 
@@ -65,6 +69,7 @@ class SupplierService(Base):
                     self.data[i], supplier_id, closeConnection
                 )
                 self.data[i] = updated_supplier
+                self.save()
                 return updated_supplier
         return None
 
@@ -79,8 +84,15 @@ class SupplierService(Base):
                     self.data[i], supplier_id, closeConnection
                 )
                 self.data[i] = updated_supplier
+                self.save()
                 return updated_supplier
         return None
+
+    def save(self):
+        if not self.is_debug:
+            data_provider.fetch_supplier_pool().save(
+                [supplier.model_dump() for supplier in self.data]
+            )
 
     def load(self):
         self.data = self.get_all_suppliers()
