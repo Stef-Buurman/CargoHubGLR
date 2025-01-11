@@ -54,7 +54,7 @@ class Locations(Base):
                 else:
                     updated_location = (
                         data_provider_v2.fetch_location_pool().update_location(
-                            location_id, **location
+                            location_id, Location(**location)
                         )
                     )
                     return updated_location.model_dump()
