@@ -1,4 +1,4 @@
-from models.v2.warehouse import Warehouse
+from models.v2.warehouse import Warehouse, Contact
 from typing import List, Type
 from services.v2.base_service import Base
 from services.v2.database_service import DB, DatabaseService
