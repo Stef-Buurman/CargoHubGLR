@@ -37,7 +37,7 @@ class Locations(Base):
             return location
         else:
             created_location = data_provider_v2.fetch_location_pool().add_location(
-                **location
+                Location(**location)
             )
             return created_location.model_dump()
 
