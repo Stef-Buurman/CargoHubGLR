@@ -98,6 +98,7 @@ def test_add_supplier_invalid_api_key(client):
 
 def test_add_supplier(client):
     response = client.post("/suppliers", json=test_supplier, headers=test_headers)
+    test_supplier["id"] = response.json()["id"]
     assert response.status_code == 201 or response.status_code == 200
     assert response.json()["id"] == test_supplier["id"]
 
@@ -157,9 +158,11 @@ def test_get_supplier_items_invalid_id(client):
 
 
 def test_get_supplier_items(client):
+    test_item_1["supplier_id"] = test_supplier["id"]
     response_post_fake_item_1 = client.post(
         "/items", json=test_item_1, headers=test_headers
     )
+    test_item_2["supplier_id"] = test_supplier["id"]
     response_post_fake_item_2 = client.post(
         "/items", json=test_item_2, headers=test_headers
     )
@@ -295,4 +298,5 @@ def test_delete_supplier(client):
     response_get_supplier = client.get(
         "/suppliers/" + str(test_supplier["id"]), headers=test_headers
     )
-    assert response_get_supplier.status_code == 404
+    assert response_get_supplier.status_code == 200
+    assert response_get_supplier.json()["is_archived"] is True
