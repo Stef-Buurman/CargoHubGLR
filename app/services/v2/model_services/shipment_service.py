@@ -184,9 +184,12 @@ class ShipmentService(Base):
 
         for i in range(len(self.data)):
             if self.data[i].id == shipment_id:
+                shipment.id = shipment_id
+                if shipment.created_at is None:
+                    shipment.created_at = self.data[i].created_at
                 self.data[i] = shipment
+                self.save()
                 break
-        self.save()
         return shipment
 
     def update_items_in_shipment(
