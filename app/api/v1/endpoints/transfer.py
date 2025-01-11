@@ -40,12 +40,13 @@ def read_transfer_items(
 @transfer_router.post("")
 def create_transfer(transfer: dict, api_key: str = Depends(auth_provider.get_api_key)):
     data_provider.init()
-    existing_transfer = data_provider.fetch_transfer_pool().get_transfer(transfer["id"])
+    existing_transfer = data_provider.fetch_transfer_pool().get_transfer(
+        transfer.get("id")
+    )
     if existing_transfer is not None:
         raise HTTPException(status_code=409, detail="Transfer already exists")
-    data_provider.fetch_transfer_pool().add_transfer(transfer)
-    data_provider.fetch_transfer_pool().save()
-    return JSONResponse(status_code=status.HTTP_201_CREATED, content=transfer)
+    created_transfer = data_provider.fetch_transfer_pool().add_transfer(transfer)
+    return JSONResponse(status_code=status.HTTP_201_CREATED, content=created_transfer)
 
 
 @transfer_router.put("/{transfer_id}")
@@ -56,9 +57,10 @@ def update_transfer(
     existing_transfer = data_provider.fetch_transfer_pool().get_transfer(transfer_id)
     if existing_transfer is None:
         raise HTTPException(status_code=404, detail="Transfer not found")
-    data_provider.fetch_transfer_pool().update_transfer(transfer_id, transfer)
-    data_provider.fetch_transfer_pool().save()
-    return transfer
+    updated_transfer = data_provider.fetch_transfer_pool().update_transfer(
+        transfer_id, transfer
+    )
+    return updated_transfer
 
 
 @transfer_router.put("/{transfer_id}/commit")

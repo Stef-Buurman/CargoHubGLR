@@ -6,10 +6,12 @@ from services.v2.base_service import Base
 from utils.globals import *
 from services.v2.database_service import DB, DatabaseService
 from services.v2 import data_provider_v2
+from services.v1 import data_provider
 
 
 class TransferService(Base):
-    def __init__(self, db: Type[DatabaseService] = None):
+    def __init__(self, db: Type[DatabaseService] = None, is_debug: bool = False):
+        self.is_debug = is_debug
         if db is not None:
             self.db = db
         else:  # pragma: no cover
@@ -135,6 +137,7 @@ class TransferService(Base):
         #     self.db.commit_and_close()
 
         self.data.append(transfer)
+        self.save()
         return transfer
 
     def update_transfer(
@@ -185,7 +188,11 @@ class TransferService(Base):
 
         for i in range(len(self.data)):
             if self.data[i].id == transfer_id:
+                transfer.id = transfer_id
+                if transfer.created_at is None:
+                    transfer.created_at = self.data[i].created_at
                 self.data[i] = transfer
+                self.save()
                 return transfer
         return None
 
@@ -211,6 +218,7 @@ class TransferService(Base):
                     fetch_inventory_pool().update_inventory(y.id, y)
 
         transfer.transfer_status = "Processed"
+        self.save()
         return transfer
 
     def archive_transfer(self, transfer_id: int, closeConnection: bool = True) -> bool:
@@ -237,6 +245,7 @@ class TransferService(Base):
 
                 # if closeConnection:
                 #     self.db.commit_and_close()
+                self.save()
                 return True
         return False
 
@@ -266,8 +275,15 @@ class TransferService(Base):
 
                 # if closeConnection:
                 #     self.db.commit_and_close()
+                self.save()
                 return True
         return False
+
+    def save(self):
+        if not self.is_debug:
+            data_provider.fetch_transfer_pool().save(
+                [transfer.model_dump() for transfer in self.data]
+            )
 
     def load(self):
         self.data = self.get_all_transfers()
