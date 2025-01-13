@@ -67,7 +67,7 @@ def mock_db_service():
 def warehouse_service(mock_db_service):
     """Fixture to create an WarehouseService instance with the mocked DatabaseService."""
     mock_db_service.get_all.return_value = TEST_WAREHOUSES
-    service = WarehouseService(mock_db_service)
+    service = WarehouseService(mock_db_service, True)
     return service
 
 

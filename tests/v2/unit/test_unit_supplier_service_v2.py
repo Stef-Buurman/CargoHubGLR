@@ -70,7 +70,7 @@ def mock_db_service():
 def supplier_service(mock_db_service):
     """Fixture to create an SupplierService instance with the mocked DatabaseService."""
     mock_db_service.get_all.return_value = TEST_SUPPLIERS
-    service = SupplierService(mock_db_service)
+    service = SupplierService(mock_db_service, True)
     return service
 
 
