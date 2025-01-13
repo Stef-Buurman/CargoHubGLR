@@ -59,7 +59,7 @@ class ShipmentService(Base):
         for shipment in self.data:
             if shipment.id == shipment_id:
                 return shipment
-
+            
         with self.db.get_connection() as conn:
             query = f"SELECT * FROM {Shipment.table_name()} WHERE id = ?"
             cursor = conn.execute(query, (shipment_id,))
