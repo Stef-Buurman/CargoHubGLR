@@ -107,13 +107,16 @@ class LoggingProviderMiddleware(BaseHTTPMiddleware):
                 try:
                     previous_data = await get_previous_data(request)
                     request_body = await request.json()
-                    filtered_previous_data = {
-                        k: getattr(previous_data, k, None)
-                        for k in request_body.keys()
-                        if k != "source_id"
-                        and k != "id"
-                        and getattr(previous_data, k, None) != request_body[k]
-                    }
+                    if isinstance(request_body, dict):
+                        filtered_previous_data = {
+                            k: getattr(previous_data, k, None)
+                            for k in request_body.keys()
+                            if k != "source_id"
+                            and k != "id"
+                            and getattr(previous_data, k, None) != request_body[k]
+                        }
+                    else:
+                        filtered_previous_data = {}
                     info_logger.info(
                         f"Previous Data: {json.dumps(filtered_previous_data, default=lambda o: o.__dict__)}"
                     )
@@ -182,13 +185,16 @@ class LoggingProviderMiddleware(BaseHTTPMiddleware):
 
                 response.body_iterator = new_body_iterator()
                 updated_fields = json.loads(response_body.decode("utf-8"))
-                filtered_updated_fields = {
-                    k: updated_fields.get(k)
-                    for k in request_body.keys()
-                    if k != "source_id"
-                    and k != "id"
-                    and getattr(previous_data, k, None) != updated_fields.get(k)
-                }
+                if isinstance(request_body, dict):
+                    filtered_updated_fields = {
+                        k: updated_fields.get(k)
+                        for k in request_body.keys()
+                        if k != "source_id"
+                        and k != "id"
+                        and getattr(previous_data, k, None) != updated_fields.get(k)
+                    }
+                else:
+                    filtered_updated_fields = {}
                 info_logger.info(f"New Data: {json.dumps(filtered_updated_fields)}")
                 info_logger.info(f"Response: {response.status_code}")
             elif request.method == "PATCH":

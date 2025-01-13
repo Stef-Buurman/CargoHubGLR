@@ -50,8 +50,8 @@ class OrderService(Base):
                 return order
 
         with self.db.get_connection() as conn:
-            query = f"SELECT * FROM {Order.table_name()} WHERE id = {order_id}"
-            cursor = conn.execute(query)
+            query = f"SELECT * FROM {Order.table_name()} WHERE id = ?"
+            cursor = conn.execute(query, (order_id,))
             order_row = cursor.fetchone()
             if order_row:
                 column_names = [description[0] for description in cursor.description]
