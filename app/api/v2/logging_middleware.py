@@ -100,11 +100,19 @@ class LoggingProviderMiddleware(BaseHTTPMiddleware):
                     )
             elif request.method == "PATCH":
                 try:
+                    path_parts = request.url.path.split("/")
                     request_body = await request.json()
                     previous_data = await get_previous_data(request)
-                    filtered_previous_data = {
-                        k: getattr(previous_data, k, None) for k in request_body.keys()
-                    }
+
+                    if len(path_parts) > 5 and path_parts[5] == "unarchive":
+                        filtered_previous_data = {
+                            "is_archived": getattr(previous_data, "is_archived", None)
+                        }
+                    else:
+                        filtered_previous_data = {
+                            k: getattr(previous_data, k, None)
+                            for k in request_body.keys()
+                        }
                     info_logger.info(
                         f"Previous Data: {json.dumps(filtered_previous_data, default=lambda o: o.__dict__)}"
                     )
@@ -138,9 +146,16 @@ class LoggingProviderMiddleware(BaseHTTPMiddleware):
                 response.body_iterator = new_body_iterator()
                 updated_fields = json.loads(response_body.decode("utf-8"))
                 request_body = await request.json()
-                filtered_updated_fields = {
-                    k: updated_fields.get(k) for k in request_body.keys()
-                }
+                path_parts = request.url.path.split("/")
+
+                if len(path_parts) > 5 and path_parts[5] == "unarchive":
+                    filtered_updated_fields = {
+                        "is_archived": updated_fields.get("is_archived", None)
+                    }
+                else:
+                    filtered_updated_fields = {
+                        k: updated_fields.get(k) for k in request_body.keys()
+                    }
                 info_logger.info(f"New Data: {json.dumps(filtered_updated_fields)}")
                 info_logger.info(f"Response: {response.status_code}")
             return response
