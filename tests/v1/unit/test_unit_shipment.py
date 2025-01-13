@@ -113,13 +113,12 @@ def test_update_items_for_shipment(shipments_instance):
 
 
 def test_update_items_for_shipment_no_items(shipments_instance):
-
     items = []
     shipments_instance.update_items_for_shipment(1, items)
     assert len(shipments_instance.data[0]["items"]) == 0
 
 
-def test_remove_shipment_no_shipments(shipments_instance):
+def test_remove_shipment_not_found(shipments_instance):
     current_length = len(shipments_instance.data)
     shipments_instance.remove_shipment(100)
     assert len(shipments_instance.data) == current_length
