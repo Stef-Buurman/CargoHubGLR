@@ -2,7 +2,8 @@ import logging
 import json
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
-from services.v1 import data_provider
+
+# from services.v1 import data_provider
 from services.v2 import data_provider_v2
 
 
@@ -89,8 +90,15 @@ class LoggingProviderMiddleware(BaseHTTPMiddleware):
             elif request.method in ["PUT"]:
                 try:
                     previous_data = await get_previous_data(request)
+                    request_body = await request.json()
+                    filtered_previous_data = {
+                        k: getattr(previous_data, k, None)
+                        for k in request_body.keys()
+                        if k != "source_id"
+                        and getattr(previous_data, k, None) != request_body[k]
+                    }
                     info_logger.info(
-                        f"Previous Data: {json.dumps(previous_data, default=lambda o: o.__dict__)}"
+                        f"Previous Data: {json.dumps(filtered_previous_data, default=lambda o: o.__dict__)}"
                     )
                 except Exception as e:
                     error_logger.error(
@@ -133,10 +141,10 @@ class LoggingProviderMiddleware(BaseHTTPMiddleware):
                         f"Error occurred while fetching previous data: {e}",
                         exc_info=True,
                     )
-
+            previous_data = await get_previous_data(request)
             response = await call_next(request)
 
-            if request.method in ["POST", "PUT"]:
+            if request.method in ["POST"]:
                 response_body = b"".join(
                     [section async for section in response.body_iterator]
                 )
@@ -146,6 +154,25 @@ class LoggingProviderMiddleware(BaseHTTPMiddleware):
 
                 response.body_iterator = new_body_iterator()
                 info_logger.info(f"New Data: {response_body.decode('utf-8')}")
+                info_logger.info(f"Response: {response.status_code}")
+            elif request.method == "PUT":
+                response_body = b"".join(
+                    [section async for section in response.body_iterator]
+                )
+
+                async def new_body_iterator():
+                    yield response_body
+
+                response.body_iterator = new_body_iterator()
+                updated_fields = json.loads(response_body.decode("utf-8"))
+                request_body = await request.json()
+                filtered_updated_fields = {
+                    k: updated_fields.get(k)
+                    for k in request_body.keys()
+                    if k != "source_id"
+                    and getattr(previous_data, k, None) != updated_fields.get(k)
+                }
+                info_logger.info(f"New Data: {json.dumps(filtered_updated_fields)}")
                 info_logger.info(f"Response: {response.status_code}")
             elif request.method == "PATCH":
                 response_body = b"".join(
