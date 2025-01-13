@@ -9,14 +9,12 @@ import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 from services.v1 import data_provider
 
-SHIPMENTS = []
-
 
 class Shipments(Base):
-    def __init__(self, root_path, is_debug=False):
+    def __init__(self, root_path, is_debug=False, shipments=None):
         self.is_debug = is_debug
         self.data_path = root_path + "shipments.json"
-        self.load(is_debug)
+        self.load(is_debug, shipments)
 
     def get_shipments(self):
         return self.data
@@ -158,9 +156,9 @@ class Shipments(Base):
         shipment["items"] = items
         self.update_shipment(shipment_id, shipment)
 
-    def load(self, is_debug):
+    def load(self, is_debug, shipments=None):
         if is_debug:
-            self.data = SHIPMENTS
+            self.data = shipments
         else:  # pragma: no cover
             f = open(self.data_path, "r")
             self.data = json.load(f)

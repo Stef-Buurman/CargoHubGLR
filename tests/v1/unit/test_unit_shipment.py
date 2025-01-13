@@ -6,7 +6,7 @@ from app.models.v1.shipments import Shipments
 @pytest.fixture
 def shipments_instance():
     """Fixture to create an instance of Shipments."""
-    return Shipments("test_path/", is_debug=True)
+    return Shipments("test_path/", is_debug=True, shipments=[])
 
 
 def test_load_shipments(shipments_instance):
