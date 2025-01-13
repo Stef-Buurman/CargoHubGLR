@@ -30,10 +30,7 @@ def shipments_instance():
                 "total_package_weight": 594.42,
                 "created_at": "2000-03-10T11:11:14Z",
                 "updated_at": "2000-03-11T13:11:14Z",
-                "items": [
-                    {"item_id": "P000726", "amount": 22},
-                    {"item_id": "P001108", "amount": 20},
-                ],
+                "items": [{"item_id": 1, "amount": 5}],
             }
         ],
     )
