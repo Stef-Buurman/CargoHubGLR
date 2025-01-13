@@ -51,7 +51,7 @@ def partial_update_user(user_id: int, user: dict):
     elif existing_user:
         raise HTTPException(status_code=400, detail="User is archived")
 
-    existing_user = data_provider_v2.fetch_user_pool().is_user_archived(user_id)
+    existing_user = data_provider_v2.fetch_user_pool().get_user_by_id(user_id)
 
     valid_keys = User.model_fields.keys()
     update_data = {key: value for key, value in user.items() if key in valid_keys}
