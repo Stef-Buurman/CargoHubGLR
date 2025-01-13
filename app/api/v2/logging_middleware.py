@@ -58,11 +58,11 @@ async def get_previous_data(request: Request):
         id = path_parts[4] if len(path_parts) > 4 else None
 
         if resource_type == "users" and id:
-            return await data_provider_v2.fetch_user_pool().get_user_by_id(id)
+            return data_provider_v2.fetch_user_pool().get_user_by_id(id)
         elif resource_type == "orders" and id:
             return data_provider_v2.fetch_order_pool().get_order(id)
         elif resource_type == "shipments" and id:
-            return await data_provider_v2.fetch_shipment_pool().get_shipment(id)
+            return data_provider_v2.fetch_shipment_pool().get_shipment(id)
 
     return {}
 
@@ -90,13 +90,25 @@ class LoggingProviderMiddleware(BaseHTTPMiddleware):
             elif request.method in ["PUT"]:
                 try:
                     previous_data = await get_previous_data(request)
+                                 
+
                     request_body = await request.json()
-                    filtered_previous_data = {
-                        k: getattr(previous_data, k, None)
-                        for k in request_body.keys()
-                        if k != "source_id"
-                        and getattr(previous_data, k, None) != request_body[k]
-                    }
+                    filtered_previous_data = {}
+                    for k in request_body.keys():
+                        if k != "source_id":
+                            previous_value = getattr(previous_data, k, None)
+                            new_value = request_body[k]
+                            if k == "items" and isinstance(previous_value, list):
+                                previous_items = [
+                                    {"item_id": item.item_id, "amount": item.amount}
+                                    for item in previous_value
+                                ]
+                                new_items = new_value
+                                if previous_items != new_items:
+                                    filtered_previous_data["items"] = previous_items
+                            else:
+                                if previous_value != new_value:
+                                    filtered_previous_data[k] = previous_value
                     info_logger.info(
                         f"Previous Data: {json.dumps(filtered_previous_data, default=lambda o: o.__dict__)}"
                     )
@@ -156,24 +168,34 @@ class LoggingProviderMiddleware(BaseHTTPMiddleware):
                 info_logger.info(f"New Data: {response_body.decode('utf-8')}")
                 info_logger.info(f"Response: {response.status_code}")
             elif request.method == "PUT":
-                response_body = b"".join(
-                    [section async for section in response.body_iterator]
-                )
+                try:
+                    response_body = b"".join([section async for section in response.body_iterator])
 
-                async def new_body_iterator():
-                    yield response_body
+                    async def new_body_iterator():
+                        yield response_body
 
-                response.body_iterator = new_body_iterator()
-                updated_fields = json.loads(response_body.decode("utf-8"))
-                request_body = await request.json()
-                filtered_updated_fields = {
-                    k: updated_fields.get(k)
-                    for k in request_body.keys()
-                    if k != "source_id"
-                    and getattr(previous_data, k, None) != updated_fields.get(k)
-                }
-                info_logger.info(f"New Data: {json.dumps(filtered_updated_fields)}")
-                info_logger.info(f"Response: {response.status_code}")
+                    response.body_iterator = new_body_iterator()
+                    updated_fields = json.loads(response_body.decode("utf-8"))
+                    filtered_updated_fields = {}
+                    for k in request_body.keys():
+                        if k != "source_id":
+                            previous_value = getattr(previous_data, k, None)
+                            new_value = updated_fields.get(k)
+                            if k == "items" and isinstance(previous_value, list):
+                                previous_items = [
+                                    {"item_id": item.item_id, "amount": item.amount}
+                                    for item in previous_value
+                                ]
+                                new_items = new_value
+                                if previous_items != new_items:
+                                    filtered_updated_fields["items"] = new_items
+                            else:
+                                if previous_value != new_value:
+                                    filtered_updated_fields[k] = new_value
+                    info_logger.info(f"New Data: {json.dumps(filtered_updated_fields)}")
+                    info_logger.info(f"Response: {response.status_code}")
+                except Exception as e:
+                    error_logger.error(f"Error occurred while processing the response: {e}", exc_info=True)
             elif request.method == "PATCH":
                 response_body = b"".join(
                     [section async for section in response.body_iterator]
