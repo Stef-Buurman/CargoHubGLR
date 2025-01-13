@@ -52,8 +52,10 @@ class OrderService(Base):
         with self.db.get_connection() as conn:
             query = f"SELECT * FROM {Order.table_name()} WHERE id = {order_id}"
             cursor = conn.execute(query)
-            order = cursor.fetchone()
-            if order:
+            order_row = cursor.fetchone()
+            if order_row:
+                column_names = [description[0] for description in cursor.description]
+                order = dict(zip(column_names, order_row))
                 query_items = f"SELECT item_id, amount, order_id FROM {order_items_table} WHERE order_id = {order_id}"
                 cursor = conn.execute(query_items)
                 all_order_items = cursor.fetchall()
@@ -159,8 +161,8 @@ class OrderService(Base):
 
         with self.db.get_connection() as conn:
             conn.execute(update_sql, values)
-
-            if order.items:
+            existing_order = self.get_order(order_id)
+            if existing_order and existing_order.items != order.items:
                 delete_items_sql = f"""DELETE FROM {
                     order_items_table} WHERE order_id = ?"""
                 conn.execute(delete_items_sql, (order_id,))
@@ -275,7 +277,6 @@ class OrderService(Base):
         self.data = self.get_all_orders()
 
     def is_order_archived(self, order_id: int) -> bool:
-        print(order_id)
         for order in self.data:
             if order.id == order_id:
                 return order.is_archived

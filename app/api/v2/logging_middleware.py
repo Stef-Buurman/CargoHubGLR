@@ -70,7 +70,15 @@ async def get_previous_data(request: Request):
 
             return data
         elif resource_type == "shipments" and id:
-            return data_provider_v2.fetch_shipment_pool().get_shipment(id)
+            data = data_provider_v2.fetch_shipment_pool().get_shipment(id)
+
+            if data and data.items:
+                data.items = [
+                    {"item_id": item.item_id, "amount": item.amount}
+                    for item in data.items
+                ]
+
+            return data
 
     return {}
 
@@ -102,7 +110,8 @@ class LoggingProviderMiddleware(BaseHTTPMiddleware):
                     filtered_previous_data = {
                         k: getattr(previous_data, k, None)
                         for k in request_body.keys()
-                        if k != "source_id" and k != "id"
+                        if k != "source_id"
+                        and k != "id"
                         and getattr(previous_data, k, None) != request_body[k]
                     }
                     info_logger.info(
@@ -176,7 +185,8 @@ class LoggingProviderMiddleware(BaseHTTPMiddleware):
                 filtered_updated_fields = {
                     k: updated_fields.get(k)
                     for k in request_body.keys()
-                    if k != "source_id" and k != "id"
+                    if k != "source_id"
+                    and k != "id"
                     and getattr(previous_data, k, None) != updated_fields.get(k)
                 }
                 info_logger.info(f"New Data: {json.dumps(filtered_updated_fields)}")

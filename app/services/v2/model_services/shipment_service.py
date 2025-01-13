@@ -59,14 +59,14 @@ class ShipmentService(Base):
         for shipment in self.data:
             if shipment.id == shipment_id:
                 return shipment
-
+            
         with self.db.get_connection() as conn:
-            query = f"SELECT * FROM {Shipment.table_name()} WHERE id = {shipment_id}"
-            cursor = conn.execute(query)
-            shipment = cursor.fetchone()
-            if shipment:
+            query = f"SELECT * FROM {Shipment.table_name()} WHERE id = ?"
+            cursor = conn.execute(query, (shipment_id,))
+            shipment_row = cursor.fetchone()
+            if shipment_row:
                 column_names = [desc[0] for desc in cursor.description]
-                shipment = dict(zip(column_names, shipment))
+                shipment = dict(zip(column_names, shipment_row))
                 query_items = f"SELECT item_uid, amount FROM {shipment_items_table} WHERE shipment_id = {shipment_id}"
                 cursor = conn.execute(query_items)
                 all_shipment_items = cursor.fetchall()
