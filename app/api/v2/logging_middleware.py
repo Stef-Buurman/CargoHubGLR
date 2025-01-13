@@ -49,7 +49,7 @@ error_logger.addHandler(error_stream_handler)
 class LoggingProviderMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
 
-        info_logger.info(f"Request: {request.method} {request.url}")
+        info_logger.info(f"Request: {request.method} {request.url.path}")
 
         try:
 
@@ -57,15 +57,19 @@ class LoggingProviderMiddleware(BaseHTTPMiddleware):
             if request_body:
                 body = json.loads(request_body)
                 info_logger.info(f"SourceId: {body.get('source_id')}")
-                info_logger.info(f"Request Body: {body}")
+                # info_logger.info(f"Request Body: {body}")
         except json.JSONDecodeError:
             info_logger.warning("Failed to parse request body as JSON")
 
         try:
             response = await call_next(request)
-            response_body = b"".join([section async for section in response.body_iterator])
+            response_body = b"".join(
+                [section async for section in response.body_iterator]
+            )
+
             async def new_body_iterator():
                 yield response_body
+
             response.body_iterator = new_body_iterator()
             info_logger.info(f"Response Body: {response_body.decode('utf-8')}")
             info_logger.info(f"Response: {response.status_code}")
