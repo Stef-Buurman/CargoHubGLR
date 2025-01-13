@@ -2,6 +2,8 @@ import logging
 import json
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
+from services.v1 import data_provider
+from services.v2 import data_provider_v2
 
 
 info_logger = logging.getLogger("infoLogger")
@@ -46,6 +48,27 @@ error_stream_handler.setFormatter(
 error_logger.addHandler(error_stream_handler)
 
 
+async def get_previous_data(request: Request):
+    path_parts = request.url.path.split("/")
+
+    if len(path_parts) > 2:
+        # version = path_parts[2]
+        resource_type = path_parts[3] if len(path_parts) > 3 else None
+
+        if resource_type == "users":
+            return await data_provider_v2.fetch_user_pool().get_user_by_id(
+                path_parts[4]
+            )
+        elif resource_type == "orders":
+            return data_provider_v2.fetch_order_pool().get_order(path_parts[4])
+        elif resource_type == "shipments":
+            return await data_provider_v2.fetch_shipment_pool().get_shipment(
+                path_parts[4]
+            )
+
+    return {}
+
+
 class LoggingProviderMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
 
@@ -62,17 +85,64 @@ class LoggingProviderMiddleware(BaseHTTPMiddleware):
             info_logger.warning("Failed to parse request body as JSON")
 
         try:
+            if request.method == "POST":
+                info_logger.info("Previous Data: None")
+            elif request.method in ["PUT", "DELETE"]:
+                try:
+                    previous_data = await get_previous_data(request)
+                    info_logger.info(
+                        f"Previous Data: {json.dumps(previous_data, default=lambda o: o.__dict__)}"
+                    )
+                except Exception as e:
+                    error_logger.error(
+                        f"Error occurred while fetching previous data: {e}",
+                        exc_info=True,
+                    )
+            elif request.method == "PATCH":
+                try:
+                    request_body = await request.json()
+                    previous_data = await get_previous_data(request)
+                    filtered_previous_data = {
+                        k: getattr(previous_data, k, None) for k in request_body.keys()
+                    }
+                    info_logger.info(
+                        f"Previous Data: {json.dumps(filtered_previous_data, default=lambda o: o.__dict__)}"
+                    )
+                except Exception as e:
+                    error_logger.error(
+                        f"Error occurred while fetching previous data: {e}",
+                        exc_info=True,
+                    )
+
             response = await call_next(request)
-            response_body = b"".join(
-                [section async for section in response.body_iterator]
-            )
 
-            async def new_body_iterator():
-                yield response_body
+            if request.method in ["POST", "PUT", "DELETE"]:
+                response_body = b"".join(
+                    [section async for section in response.body_iterator]
+                )
 
-            response.body_iterator = new_body_iterator()
-            info_logger.info(f"Response Body: {response_body.decode('utf-8')}")
-            info_logger.info(f"Response: {response.status_code}")
+                async def new_body_iterator():
+                    yield response_body
+
+                response.body_iterator = new_body_iterator()
+                info_logger.info(f"New Data: {response_body.decode('utf-8')}")
+                info_logger.info(f"Response: {response.status_code}")
+            elif request.method == "PATCH":
+                response_body = b"".join(
+                    [section async for section in response.body_iterator]
+                )
+
+                async def new_body_iterator():
+                    yield response_body
+
+                response.body_iterator = new_body_iterator()
+                updated_fields = json.loads(response_body.decode("utf-8"))
+                request_body = await request.json()
+                filtered_updated_fields = {
+                    k: updated_fields.get(k) for k in request_body.keys()
+                }
+                info_logger.info(f"New Data: {json.dumps(filtered_updated_fields)}")
+                info_logger.info(f"Response: {response.status_code}")
             return response
         except Exception as e:
 
