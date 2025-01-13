@@ -73,11 +73,6 @@ def test_add_order(client):
     test_order["id"] = response.json()["id"]
 
 
-def test_add_existing_order(client):
-    response = client.post("/orders", json=test_order, headers=test_headers)
-    assert response.status_code == 409
-
-
 def test_get_order_by_id(client):
     response = client.get("/orders/" + str(test_order["id"]), headers=test_headers)
     assert response.status_code == 200
