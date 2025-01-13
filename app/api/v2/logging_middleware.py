@@ -77,17 +77,16 @@ class LoggingProviderMiddleware(BaseHTTPMiddleware):
             if request_body:
                 body = json.loads(request_body)
                 if isinstance(body, dict):
-                    info_logger.info(f"SourceId: {body.get('source_id')}")
+                    info_logger.info(f"Source_id: {body.get('source_id')}")
                 else:
                     info_logger.warning("Request body is not a dictionary")
-                # info_logger.info(f"Request Body: {body}")
         except json.JSONDecodeError:
             info_logger.warning("Failed to parse request body as JSON")
 
         try:
             if request.method == "POST":
                 info_logger.info("Previous Data: None")
-            elif request.method in ["PUT", "DELETE"]:
+            elif request.method in ["PUT"]:
                 try:
                     previous_data = await get_previous_data(request)
                     info_logger.info(
@@ -112,6 +111,7 @@ class LoggingProviderMiddleware(BaseHTTPMiddleware):
                         filtered_previous_data = {
                             k: getattr(previous_data, k, None)
                             for k in request_body.keys()
+                            if k != "source_id"
                         }
                     info_logger.info(
                         f"Previous Data: {json.dumps(filtered_previous_data, default=lambda o: o.__dict__)}"
@@ -121,10 +121,22 @@ class LoggingProviderMiddleware(BaseHTTPMiddleware):
                         f"Error occurred while fetching previous data: {e}",
                         exc_info=True,
                     )
+            elif request.method == "DELETE":
+                try:
+                    previous_data = await get_previous_data(request)
+                    is_archived_value = {
+                        "is_archived": getattr(previous_data, "is_archived", None)
+                    }
+                    info_logger.info(f"Previous Data: {json.dumps(is_archived_value)}")
+                except Exception as e:
+                    error_logger.error(
+                        f"Error occurred while fetching previous data: {e}",
+                        exc_info=True,
+                    )
 
             response = await call_next(request)
 
-            if request.method in ["POST", "PUT", "DELETE"]:
+            if request.method in ["POST", "PUT"]:
                 response_body = b"".join(
                     [section async for section in response.body_iterator]
                 )
@@ -154,9 +166,26 @@ class LoggingProviderMiddleware(BaseHTTPMiddleware):
                     }
                 else:
                     filtered_updated_fields = {
-                        k: updated_fields.get(k) for k in request_body.keys()
+                        k: updated_fields.get(k)
+                        for k in request_body.keys()
+                        if k != "source_id"
                     }
                 info_logger.info(f"New Data: {json.dumps(filtered_updated_fields)}")
+                info_logger.info(f"Response: {response.status_code}")
+            elif request.method == "DELETE":
+                response_body = b"".join(
+                    [section async for section in response.body_iterator]
+                )
+
+                async def new_body_iterator():
+                    yield response_body
+
+                response.body_iterator = new_body_iterator()
+                deleted_data = json.loads(response_body.decode("utf-8"))
+                is_archived_value = {
+                    "is_archived": deleted_data.get("is_archived", None)
+                }
+                info_logger.info(f"New Data: {json.dumps(is_archived_value)}")
                 info_logger.info(f"Response: {response.status_code}")
             return response
         except Exception as e:
