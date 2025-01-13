@@ -608,7 +608,9 @@ def test_unarchive_shipment_invalid_api_key(client):
 
 
 def test_unarchive_invalid_shipment_id(client):
-    response = client.patch("/shipments/invalid_id/unarchive", json={}, headers=test_headers)
+    response = client.patch(
+        "/shipments/invalid_id/unarchive", json={}, headers=test_headers
+    )
     assert response.status_code == 422
 
 
