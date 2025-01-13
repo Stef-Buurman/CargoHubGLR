@@ -90,7 +90,6 @@ class LoggingProviderMiddleware(BaseHTTPMiddleware):
             elif request.method in ["PUT"]:
                 try:
                     previous_data = await get_previous_data(request)
-                                 
 
                     request_body = await request.json()
                     filtered_previous_data = {}
@@ -169,7 +168,9 @@ class LoggingProviderMiddleware(BaseHTTPMiddleware):
                 info_logger.info(f"Response: {response.status_code}")
             elif request.method == "PUT":
                 try:
-                    response_body = b"".join([section async for section in response.body_iterator])
+                    response_body = b"".join(
+                        [section async for section in response.body_iterator]
+                    )
 
                     async def new_body_iterator():
                         yield response_body
@@ -195,7 +196,10 @@ class LoggingProviderMiddleware(BaseHTTPMiddleware):
                     info_logger.info(f"New Data: {json.dumps(filtered_updated_fields)}")
                     info_logger.info(f"Response: {response.status_code}")
                 except Exception as e:
-                    error_logger.error(f"Error occurred while processing the response: {e}", exc_info=True)
+                    error_logger.error(
+                        f"Error occurred while processing the response: {e}",
+                        exc_info=True,
+                    )
             elif request.method == "PATCH":
                 response_body = b"".join(
                     [section async for section in response.body_iterator]
