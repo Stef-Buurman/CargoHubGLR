@@ -52,19 +52,16 @@ async def get_previous_data(request: Request):
     path_parts = request.url.path.split("/")
 
     if len(path_parts) > 2:
-        # version = path_parts[2]
+        # version = path_parts[2] if len(path_parts) > 2 else None
         resource_type = path_parts[3] if len(path_parts) > 3 else None
+        id = path_parts[4] if len(path_parts) > 4 else None
 
-        if resource_type == "users":
-            return await data_provider_v2.fetch_user_pool().get_user_by_id(
-                path_parts[4]
-            )
-        elif resource_type == "orders":
-            return data_provider_v2.fetch_order_pool().get_order(path_parts[4])
-        elif resource_type == "shipments":
-            return await data_provider_v2.fetch_shipment_pool().get_shipment(
-                path_parts[4]
-            )
+        if resource_type == "users" and id:
+            return await data_provider_v2.fetch_user_pool().get_user_by_id(id)
+        elif resource_type == "orders" and id:
+            return data_provider_v2.fetch_order_pool().get_order(id)
+        elif resource_type == "shipments" and id:
+            return await data_provider_v2.fetch_shipment_pool().get_shipment(id)
 
     return {}
 
@@ -79,7 +76,10 @@ class LoggingProviderMiddleware(BaseHTTPMiddleware):
             request_body = await request.body()
             if request_body:
                 body = json.loads(request_body)
-                info_logger.info(f"SourceId: {body.get('source_id')}")
+                if isinstance(body, dict):
+                    info_logger.info(f"SourceId: {body.get('source_id')}")
+                else:
+                    info_logger.warning("Request body is not a dictionary")
                 # info_logger.info(f"Request Body: {body}")
         except json.JSONDecodeError:
             info_logger.warning("Failed to parse request body as JSON")
