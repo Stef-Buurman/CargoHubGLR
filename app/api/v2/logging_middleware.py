@@ -1,18 +1,24 @@
 import logging
 import json
+import os
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 
 # from services.v1 import data_provider
 from services.v2 import data_provider_v2
 
+PROJECT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../"))
+
+logs_path = os.path.join(PROJECT_PATH, "logs")
+if not os.path.exists(logs_path):
+    os.makedirs(logs_path)
 
 info_logger = logging.getLogger("infoLogger")
 info_logger.setLevel(logging.INFO)
 info_logger.propagate = False
 
 
-info_file_handler = logging.FileHandler("logs/application.log")
+info_file_handler = logging.FileHandler(PROJECT_PATH + "logs/application.log")
 info_file_handler.setLevel(logging.INFO)
 info_file_handler.setFormatter(
     logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
@@ -33,7 +39,7 @@ error_logger.setLevel(logging.ERROR)
 error_logger.propagate = False
 
 
-error_file_handler = logging.FileHandler("logs/error.log")
+error_file_handler = logging.FileHandler(PROJECT_PATH + "logs/error.log")
 error_file_handler.setLevel(logging.ERROR)
 error_file_handler.setFormatter(
     logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
