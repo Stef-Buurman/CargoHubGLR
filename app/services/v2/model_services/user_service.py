@@ -5,7 +5,6 @@ from models.v2.user import User
 from services.v2.base_service import Base
 from utils.globals import *
 from datetime import datetime, timedelta
-from services.v2.database_service import DB
 from utils.globals import cache_time_minutes
 
 USERS = []
