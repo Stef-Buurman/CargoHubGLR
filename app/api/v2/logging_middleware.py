@@ -12,7 +12,7 @@ info_logger.setLevel(logging.INFO)
 info_logger.propagate = False
 
 
-info_file_handler = logging.FileHandler("application.log")
+info_file_handler = logging.FileHandler("logs/application.log")
 info_file_handler.setLevel(logging.INFO)
 info_file_handler.setFormatter(
     logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
@@ -33,7 +33,7 @@ error_logger.setLevel(logging.ERROR)
 error_logger.propagate = False
 
 
-error_file_handler = logging.FileHandler("error.log")
+error_file_handler = logging.FileHandler("logs/error.log")
 error_file_handler.setLevel(logging.ERROR)
 error_file_handler.setFormatter(
     logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
@@ -58,7 +58,7 @@ async def get_previous_data(request: Request):
         id = path_parts[4] if len(path_parts) > 4 else None
 
         if resource_type == "users" and id:
-            return data_provider_v2.fetch_user_pool().get_user_by_id(id)
+            return data_provider_v2.fetch_user_pool().get_user_by_id(id, True)
         elif resource_type == "orders" and id:
             data = data_provider_v2.fetch_order_pool().get_order(id)
 
