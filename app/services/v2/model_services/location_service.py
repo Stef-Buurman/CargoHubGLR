@@ -12,7 +12,7 @@ class LocationService(Base):
         if db is not None:
             self.db = db
         else:  
-            self.db = data_provider_v2.fetch_database()
+            self.db = DB
         self.load()
 
     def get_all_locations(self) -> List[Location]:
