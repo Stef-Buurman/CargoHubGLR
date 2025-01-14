@@ -146,6 +146,11 @@ def test_get_user_not_found(client):
     assert response.status_code == 404
 
 
+def test_get_user_by_invalid_id(client):
+    response = client.get(f"/users/invalid", headers=test_headers)
+    assert response.status_code == 422
+
+
 def test_update_user(client):
     new_user = test_user.model_copy()
     new_user.app = "Integration_Tests_Updated"
@@ -183,6 +188,15 @@ def test_update_user_not_found(client):
     assert response.status_code == 404
 
 
+def test_update_user_by_invalid_id(client):
+    new_user = test_user.model_copy()
+    new_user.app = "Integration_Tests_Updated"
+    response = client.put(
+        f"/users/invalid", json=new_user.model_dump(), headers=test_headers
+    )
+    assert response.status_code == 422
+
+
 def test_archive_user_no_api_key(client):
     response = client.delete(f"/users/{test_user.id}")
     assert response.status_code == 403
@@ -198,6 +212,11 @@ def test_archive_user_not_found(client):
     assert response.status_code == 404
 
 
+def test_archive_user_invalid_id(client):
+    response = client.delete(f"/users/invalid", headers=test_headers)
+    assert response.status_code == 422
+
+
 def test_archive_user(client):
     response = client.delete(f"/users/{test_user.id}", headers=test_headers)
     assert response.status_code == 200
@@ -205,6 +224,11 @@ def test_archive_user(client):
     response_get = client.get(f"/users/{test_user.id}", headers=test_headers)
     assert response_get.status_code == 200
     assert response_get.json()["is_archived"] is True
+
+
+def test_already_archive_user(client):
+    response = client.delete(f"/users/{test_user.id}", headers=test_headers)
+    assert response.status_code == 400
 
 
 def test_update_user_archived(client):
@@ -230,6 +254,11 @@ def test_unarchive_user(client):
     assert response_get.json()["is_archived"] is False
 
 
+def test_already_unarchive_user(client):
+    response = client.patch(f"/users/{test_user.id}/unarchive", headers=test_headers)
+    assert response.status_code == 400
+
+
 def test_unarchive_user_no_api_key(client):
     response = client.patch(f"/users/{test_user.id}/unarchive")
     assert response.status_code == 403
@@ -243,3 +272,8 @@ def test_unarchive_user_invalid_api_key(client):
 def test_unarchive_user_not_found(client):
     response = client.patch(f"/users/{non_existent_id}/unarchive", headers=test_headers)
     assert response.status_code == 404
+
+
+def test_unarchive_user_invalid_id(client):
+    response = client.patch(f"/users/invalid/unarchive", headers=test_headers)
+    assert response.status_code == 422

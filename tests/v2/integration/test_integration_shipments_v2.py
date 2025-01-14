@@ -314,7 +314,6 @@ def test_add_items_to_shipment(client):
     added_item = None
     removed_item_from_client = None
     test_shipment["items"] = response_get.json()["items"]
-    print(test_shipment["items"])
     for item in response_get.json()["items"]:
         if item["item_id"] == item_to_add["item_id"]:
             added_item = item

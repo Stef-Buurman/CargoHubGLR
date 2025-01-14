@@ -73,11 +73,6 @@ def test_add_order(client):
     test_order["id"] = response.json()["id"]
 
 
-# def test_add_existing_order(client):
-#     response = client.post("/orders", json=test_order, headers=test_headers)
-#     assert response.status_code == 409
-
-
 def test_get_order_by_id(client):
     response = client.get("/orders/" + str(test_order["id"]), headers=test_headers)
     assert response.status_code == 200
@@ -446,12 +441,17 @@ def test_update_archived_order(client):
     assert response_get_order.status_code == 200
     assert response_get_order.json()["is_archived"] is True
 
+    response_unarchive = client.patch(
+        f"/orders/{str(test_order['id'])}/unarchive", headers=test_headers
+    )
+    assert response_unarchive.status_code == 200
+
 
 def test_partial_update_archived_order(client):
     response_delete = client.delete(
         "/orders/" + str(test_order["id"]), headers=test_headers
     )
-    assert response_delete.status_code == 400
+    assert response_delete.status_code == 200
 
     response = client.patch(
         "/orders/" + str(test_order["id"]),
@@ -465,3 +465,32 @@ def test_partial_update_archived_order(client):
     )
     assert response_get_order.status_code == 200
     assert response_get_order.json()["is_archived"] is True
+    response_unarchive = client.patch(
+        f"/orders/{str(test_order['id'])}/unarchive", headers=test_headers
+    )
+    assert response_unarchive.status_code == 200
+
+
+def test_update_order_items_archived_order(client):
+    response_delete = client.delete(
+        "/orders/" + str(test_order["id"]), headers=test_headers
+    )
+    assert response_delete.status_code == 200
+
+    response = client.put(
+        f'/orders/{str(test_order["id"])}/items',
+        json=test_order["items"],
+        headers=test_headers,
+    )
+    assert response.status_code == 400
+
+    response_get_order = client.get(
+        f'/orders/{str(test_order["id"])}', headers=test_headers
+    )
+    assert response_get_order.status_code == 200
+    assert response_get_order.json()["is_archived"] is True
+
+    response_unarchive = client.patch(
+        f"/orders/{str(test_order['id'])}/unarchive", headers=test_headers
+    )
+    assert response_unarchive.status_code == 200

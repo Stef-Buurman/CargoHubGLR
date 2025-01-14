@@ -368,3 +368,10 @@ def test_partial_update_archived_transfer(client):
         headers=test_headers,
     )
     assert response.status_code == 400
+
+
+def test_commit_archived_transfer(client):
+    response = client.put(
+        "/transfers/" + str(test_transfer["id"]) + "/commit", headers=test_headers
+    )
+    assert response.status_code == 400
