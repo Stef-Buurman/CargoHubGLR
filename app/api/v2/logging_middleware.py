@@ -77,7 +77,6 @@ class LoggingProviderMiddleware(BaseHTTPMiddleware):
             info_logger.info(f"Request: {request.method} {request.url.path}")
 
             try:
-
                 request_body = await request.body()
                 if request_body:
                     body = json.loads(request_body)
@@ -89,149 +88,62 @@ class LoggingProviderMiddleware(BaseHTTPMiddleware):
                 info_logger.warning("Failed to parse request body as JSON")
 
             try:
-                if request.method == "POST":
-                    info_logger.info("Previous Data: None")
-                elif request.method in ["PUT"]:
-                    try:
-                        previous_data = await get_previous_data(request)
-                        request_body = await request.json()
-                        if isinstance(request_body, dict):
-                            filtered_previous_data = {
-                                k: getattr(previous_data, k, None)
-                                for k in request_body.keys()
-                                if k != "source_id"
-                                and k != "id"
-                                and getattr(previous_data, k, None) != request_body[k]
-                            }
-                        else:
-                            filtered_previous_data = {}
-                        info_logger.info(
-                            f"Previous Data: {json.dumps(filtered_previous_data, default=lambda o: o.__dict__)}"
-                        )
-                    except Exception as e:
-                        error_logger.error(
-                            f"Error occurred while fetching previous data: {e}",
-                            exc_info=True,
-                        )
-                elif request.method == "PATCH":
-                    try:
-                        path_parts = request.url.path.split("/")
-                        request_body = await request.json()
-                        previous_data = await get_previous_data(request)
-
-                        if len(path_parts) > 5 and path_parts[5] == "unarchive":
-                            filtered_previous_data = {
-                                "is_archived": getattr(
-                                    previous_data, "is_archived", None
-                                )
-                            }
-                        else:
-                            filtered_previous_data = {
-                                k: getattr(previous_data, k, None)
-                                for k in request_body.keys()
-                                if k != "source_id"
-                            }
-                        info_logger.info(
-                            f"Previous Data: {json.dumps(filtered_previous_data, default=lambda o: o.__dict__)}"
-                        )
-                    except Exception as e:
-                        error_logger.error(
-                            f"Error occurred while fetching previous data: {e}",
-                            exc_info=True,
-                        )
-                elif request.method == "DELETE":
-                    try:
-                        previous_data = await get_previous_data(request)
-                        is_archived_value = {
-                            "is_archived": getattr(previous_data, "is_archived", None)
-                        }
-                        info_logger.info(
-                            f"Previous Data: {json.dumps(is_archived_value)}"
-                        )
-                    except Exception as e:
-                        error_logger.error(
-                            f"Error occurred while fetching previous data: {e}",
-                            exc_info=True,
-                        )
                 previous_data = await get_previous_data(request)
                 response = await call_next(request)
+                response_body = b"".join(
+                    [section async for section in response.body_iterator]
+                )
+                path_parts = request.url.path.split("/")
 
-                if request.method in ["POST"]:
-                    response_body = b"".join(
-                        [section async for section in response.body_iterator]
-                    )
+                async def new_body_iterator():
+                    yield response_body
 
-                    async def new_body_iterator():
-                        yield response_body
+                response.body_iterator = new_body_iterator()
 
-                    response.body_iterator = new_body_iterator()
+                if request.method == "POST":
+                    info_logger.info("Previous Data: None")
                     info_logger.info(f"New Data: {response_body.decode('utf-8')}")
-                    info_logger.info(f"Response: {response.status_code}")
-                elif request.method == "PUT":
-                    response_body = b"".join(
-                        [section async for section in response.body_iterator]
-                    )
-
-                    async def new_body_iterator():
-                        yield response_body
-
-                    response.body_iterator = new_body_iterator()
+                elif request.method in ["PUT", "PATCH"] and len(path_parts) <= 5:
+                    request_body = await request.json()
                     updated_fields = json.loads(response_body.decode("utf-8"))
                     if isinstance(request_body, dict):
+                        filtered_previous_data = {
+                            k: getattr(previous_data, k, None)
+                            for k in request_body.keys()
+                            if k not in ["source_id", "id"]
+                            and getattr(previous_data, k, None) != request_body[k]
+                        }
                         filtered_updated_fields = {
                             k: updated_fields.get(k)
                             for k in request_body.keys()
-                            if k != "source_id"
-                            and k != "id"
+                            if k not in ["source_id", "id"]
                             and getattr(previous_data, k, None) != updated_fields.get(k)
                         }
                     else:
+                        filtered_previous_data = {}
                         filtered_updated_fields = {}
-                    info_logger.info(f"New Data: {json.dumps(filtered_updated_fields)}")
-                    info_logger.info(f"Response: {response.status_code}")
-                elif request.method == "PATCH":
-                    response_body = b"".join(
-                        [section async for section in response.body_iterator]
+
+                    info_logger.info(
+                        f"Previous Data: {json.dumps(filtered_previous_data, default=lambda o: o.__dict__)}"
                     )
-
-                    async def new_body_iterator():
-                        yield response_body
-
-                    response.body_iterator = new_body_iterator()
-                    updated_fields = json.loads(response_body.decode("utf-8"))
-                    request_body = await request.json()
-                    path_parts = request.url.path.split("/")
-
-                    if len(path_parts) > 5 and path_parts[5] == "unarchive":
-                        filtered_updated_fields = {
-                            "is_archived": updated_fields.get("is_archived", None)
-                        }
-                    else:
-                        filtered_updated_fields = {
-                            k: updated_fields.get(k)
-                            for k in request_body.keys()
-                            if k != "source_id"
-                        }
                     info_logger.info(f"New Data: {json.dumps(filtered_updated_fields)}")
-                    info_logger.info(f"Response: {response.status_code}")
-                elif request.method == "DELETE":
-                    response_body = b"".join(
-                        [section async for section in response.body_iterator]
-                    )
-
-                    async def new_body_iterator():
-                        yield response_body
-
-                    response.body_iterator = new_body_iterator()
+                elif request.method == "DELETE" or (
+                    request.method == "PATCH"
+                    and len(path_parts) >= 6
+                    and path_parts[5] == "unarchive"
+                ):
                     deleted_data = json.loads(response_body.decode("utf-8"))
                     is_archived_value = {
                         "is_archived": deleted_data.get("is_archived", None)
                     }
+                    info_logger.info(
+                        f"Previous Data: {json.dumps({'is_archived': getattr(previous_data, 'is_archived', None)})}"
+                    )
                     info_logger.info(f"New Data: {json.dumps(is_archived_value)}")
-                    info_logger.info(f"Response: {response.status_code}")
+
+                info_logger.info(f"Response: {response.status_code}")
                 return response
             except Exception as e:
-
                 error_logger.error(
                     f"Error occurred while processing the request: {e}", exc_info=True
                 )
