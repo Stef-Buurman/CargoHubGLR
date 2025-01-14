@@ -14,6 +14,7 @@ _orders = None
 _shipments = None
 _clients = None
 _users = None
+_database = None
 _background_tasks = None
 
 
@@ -135,6 +136,13 @@ def get_users():
     global _users
     if _users is None:
         _users = UserService()
+    
+
+def get_database():
+    from .database_service import DatabaseService
+    global _database
+    if _database is None:
+        _database = DatabaseService()
 
 
 def get_background_tasks():
@@ -207,6 +215,11 @@ def fetch_shipment_pool():
 def fetch_user_pool():
     get_users()
     return _users
+
+
+def fetch_database():
+    get_database()
+    return _database
 
 
 def fetch_background_tasks():
