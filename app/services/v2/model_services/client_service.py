@@ -1,4 +1,5 @@
 from typing import List, Type
+from services.v2 import data_provider_v2
 from models.v2.client import Client
 from services.v2.base_service import Base
 from services.v2.database_service import DB, DatabaseService
@@ -84,8 +85,10 @@ class ClientService(Base):
 
     def save(self):
         if not self.is_debug:
-            data_provider.fetch_client_pool().save(
-                [client.model_dump() for client in self.data]
+            data_provider_v2.fetch_background_tasks().add_task(
+                data_provider.fetch_client_pool().save(
+                    [client.model_dump() for client in self.data]
+                )
             )
 
     def load(self):

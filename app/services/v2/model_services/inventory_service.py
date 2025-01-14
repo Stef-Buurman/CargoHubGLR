@@ -214,7 +214,7 @@ class InventoryService(Base):
 
     def save(self):
         if not self.is_debug:
-            data_provider_v2.fetch_background_tasks(
+            data_provider_v2.fetch_background_tasks().add_task(
                 data_provider.fetch_inventory_pool().save(
                     [inventory.model_dump() for inventory in self.data]
                 )

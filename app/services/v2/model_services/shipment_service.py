@@ -287,7 +287,7 @@ class ShipmentService(Base):
 
     def save(self):
         if not self.is_debug:
-            data_provider_v2.fetch_background_tasks(
+            data_provider_v2.fetch_background_tasks().add_task(
                 data_provider.fetch_shipment_pool().save(
                     [shipment.model_dump() for shipment in self.data]
                 )
