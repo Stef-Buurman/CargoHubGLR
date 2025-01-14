@@ -30,28 +30,22 @@ class ItemTypeService(Base):
                 return item_type
         return self.db.get(ItemType, item_type_id)
 
-    def add_item_type(
-        self, item_type: ItemType, closeConnection: bool = True
-    ) -> ItemType:
+    def add_item_type(self, item_type: ItemType) -> ItemType:
         item_type.created_at = self.get_timestamp()
         item_type.updated_at = self.get_timestamp()
-        added_item_type = self.db.insert(item_type, closeConnection)
+        added_item_type = self.db.insert(item_type)
         self.data.append(added_item_type)
         self.save()
         return added_item_type
 
-    def update_item_type(
-        self, item_type_id: int, item_type: ItemType, closeConnection: bool = True
-    ) -> ItemType:
+    def update_item_type(self, item_type_id: int, item_type: ItemType) -> ItemType:
         if self.is_item_type_archived(item_type_id):
             return None
 
         item_type.updated_at = self.get_timestamp()
         for i in range(len(self.data)):
             if self.data[i].id == item_type_id:
-                updae_item_type = self.db.update(
-                    item_type, item_type_id, closeConnection
-                )
+                updae_item_type = self.db.update(item_type, item_type_id)
                 self.data[i] = updae_item_type
                 self.save()
                 return updae_item_type
@@ -63,30 +57,22 @@ class ItemTypeService(Base):
                 return item_type.is_archived
         return None
 
-    def archive_item_type(
-        self, item_type_id: int, closeConnection: bool = True
-    ) -> ItemType | None:
+    def archive_item_type(self, item_type_id: int) -> ItemType | None:
         for i in range(len(self.data)):
             if self.data[i].id == item_type_id:
                 self.data[i].is_archived = True
                 self.data[i].updated_at = self.get_timestamp()
-                updated_item_type = self.db.update(
-                    self.data[i], item_type_id, closeConnection
-                )
+                updated_item_type = self.db.update(self.data[i], item_type_id)
                 self.data[i] = updated_item_type
                 self.save()
                 return updated_item_type
         return None
 
-    def unarchive_item_type(
-        self, item_type_id: int, closeConnection: bool = True
-    ) -> ItemType | None:
+    def unarchive_item_type(self, item_type_id: int) -> ItemType | None:
         for i in range(len(self.data)):
             if self.data[i].id == item_type_id:
                 self.data[i].is_archived = False
-                updated_item_type = self.db.update(
-                    self.data[i], item_type_id, closeConnection
-                )
+                updated_item_type = self.db.update(self.data[i], item_type_id)
                 self.data[i] = updated_item_type
                 self.save()
                 return updated_item_type
