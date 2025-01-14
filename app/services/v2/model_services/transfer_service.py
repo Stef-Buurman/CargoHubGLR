@@ -14,7 +14,7 @@ class TransferService(Base):
         self.is_debug = is_debug
         if db is not None:
             self.db = db
-        else:  
+        else:
             self.db = DB
         self.load()
 
