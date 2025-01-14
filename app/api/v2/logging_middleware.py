@@ -112,11 +112,7 @@ class LoggingProviderMiddleware(BaseHTTPMiddleware):
             elif request.method in ["PUT"]:
                 try:
                     previous_data = await get_previous_data(request)
-                    request_body = await request.body()
-                    if request_body:
-                        request_body = json.loads(request_body)
-                    else:
-                        request_body = {}
+                    request_body = await request.json()
                     if isinstance(request_body, dict):
                         filtered_previous_data = {
                             k: getattr(previous_data, k, None)
@@ -138,11 +134,7 @@ class LoggingProviderMiddleware(BaseHTTPMiddleware):
             elif request.method == "PATCH":
                 try:
                     path_parts = request.url.path.split("/")
-                    request_body = await request.body()
-                    if request_body:
-                        request_body = json.loads(request_body)
-                    else:
-                        request_body = {}
+                    request_body = await request.json()
                     previous_data = await get_previous_data(request)
 
                     if len(path_parts) > 5 and path_parts[5] == "unarchive":
