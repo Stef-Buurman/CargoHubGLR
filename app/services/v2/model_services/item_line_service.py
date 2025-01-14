@@ -36,58 +36,44 @@ class ItemLineService(Base):
                 return item_line.is_archived
         return None
 
-    def add_item_line(
-        self, item_line: ItemLine, closeConnection: bool = True
-    ) -> ItemLine:
+    def add_item_line(self, item_line: ItemLine) -> ItemLine:
         item_line.created_at = self.get_timestamp()
         item_line.updated_at = self.get_timestamp()
-        added_item_line = self.db.insert(item_line, closeConnection)
+        added_item_line = self.db.insert(item_line)
         self.data.append(added_item_line)
         self.save()
         return added_item_line
 
-    def update_item_line(
-        self, item_line_id: int, item_line: ItemLine, closeConnection: bool = True
-    ) -> ItemLine:
+    def update_item_line(self, item_line_id: int, item_line: ItemLine) -> ItemLine:
         if self.is_item_line_archived(item_line_id):
             return None
 
         item_line.updated_at = self.get_timestamp()
         for i in range(len(self.data)):
             if self.data[i].id == item_line_id:
-                updated_item_line = self.db.update(
-                    item_line, item_line_id, closeConnection
-                )
+                updated_item_line = self.db.update(item_line, item_line_id)
                 self.data[i] = updated_item_line
                 self.save()
                 return updated_item_line
         return None  # pragma: no cover
 
-    def archive_item_line(
-        self, item_line_id: int, closeConnection: bool = True
-    ) -> ItemLine | None:
+    def archive_item_line(self, item_line_id: int) -> ItemLine | None:
         for i in range(len(self.data)):
             if self.data[i].id == item_line_id:
                 self.data[i].is_archived = True
                 self.data[i].updated_at = self.get_timestamp()
-                updated_item_line = self.db.update(
-                    self.data[i], item_line_id, closeConnection
-                )
+                updated_item_line = self.db.update(self.data[i], item_line_id)
                 self.data[i] = updated_item_line
                 self.save()
                 return updated_item_line
         return None
 
-    def unarchive_item_line(
-        self, item_line_id: int, closeConnection: bool = True
-    ) -> ItemLine | None:
+    def unarchive_item_line(self, item_line_id: int) -> ItemLine | None:
         for i in range(len(self.data)):
             if self.data[i].id == item_line_id:
                 self.data[i].is_archived = False
                 self.data[i].updated_at = self.get_timestamp()
-                updated_item_line = self.db.update(
-                    self.data[i], item_line_id, closeConnection
-                )
+                updated_item_line = self.db.update(self.data[i], item_line_id)
                 self.data[i] = updated_item_line
                 self.save()
                 return updated_item_line
