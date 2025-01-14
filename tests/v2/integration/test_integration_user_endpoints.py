@@ -257,7 +257,7 @@ def test_unarchive_user(client):
 
 
 def test_already_unarchive_user(client):
-    response = client.patch(f"/users/{test_user.id}/unarchive", headers=test_headers)
+    response = client.patch(f"/users/{test_user.id}/unarchive", json={}, headers=test_headers)
     assert response.status_code == 400
 
 
@@ -281,5 +281,5 @@ def test_unarchive_user_not_found(client):
 
 
 def test_unarchive_user_invalid_id(client):
-    response = client.patch(f"/users/invalid/unarchive", headers=test_headers)
+    response = client.patch(f"/users/invalid/unarchive", json={}, headers=test_headers)
     assert response.status_code == 422
