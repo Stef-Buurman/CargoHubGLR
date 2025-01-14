@@ -320,13 +320,17 @@ def test_unarchive_item_group_no_api_key(client):
 
 def test_unarchive_item_group_invalid_api_key(client):
     response = client.patch(
-        f"/item_groups/{test_item_group['id']}/unarchive", json={}, headers=invalid_headers
+        f"/item_groups/{test_item_group['id']}/unarchive",
+        json={},
+        headers=invalid_headers,
     )
     assert response.status_code == 403
 
 
 def test_unarchive_item_group_invalid_id(client):
-    response = client.patch("/item_groups/invalid_id/unarchive", json={}, headers=test_headers)
+    response = client.patch(
+        "/item_groups/invalid_id/unarchive", json={}, headers=test_headers
+    )
     assert response.status_code == 422
 
 
