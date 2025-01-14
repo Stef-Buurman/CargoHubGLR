@@ -1,4 +1,5 @@
 from typing import List, Type
+from services.v2 import data_provider_v2
 from models.v2.item_type import ItemType
 from services.v2.base_service import Base
 from services.v2.database_service import DB, DatabaseService
@@ -80,9 +81,9 @@ class ItemTypeService(Base):
 
     def save(self):
         if not self.is_debug:
-            data_provider.fetch_item_type_pool().save(
+            data_provider_v2.fetch_background_tasks(data_provider.fetch_item_type_pool().save(
                 [item.model_dump() for item in self.data]
-            )
+            ))
 
     def load(self):
         self.data = self.get_all_item_types()
