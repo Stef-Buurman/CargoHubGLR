@@ -30,19 +30,15 @@ class SupplierService(Base):
                 return supplier
         return self.db.get(Supplier, supplier_id)
 
-    def add_supplier(
-        self, supplier: Supplier, closeConnection: bool = True
-    ) -> Supplier:
+    def add_supplier(self, supplier: Supplier) -> Supplier:
         supplier.created_at = self.get_timestamp()
         supplier.updated_at = self.get_timestamp()
-        added_supplier = self.db.insert(supplier, closeConnection)
+        added_supplier = self.db.insert(supplier)
         self.data.append(added_supplier)
         self.save()
         return added_supplier
 
-    def update_supplier(
-        self, supplier_id: int, supplier: Supplier, closeConnection: bool = True
-    ):
+    def update_supplier(self, supplier_id: int, supplier: Supplier):
         if self.is_supplier_archived(supplier_id):
             return None
 
@@ -50,39 +46,29 @@ class SupplierService(Base):
 
         for i in range(len(self.data)):
             if self.data[i].id == supplier_id:
-                updated_supplier = self.db.update(
-                    supplier, supplier_id, closeConnection
-                )
+                updated_supplier = self.db.update(supplier, supplier_id)
                 self.data[i] = updated_supplier
                 self.save()
                 return updated_supplier
         return None  # pragma: no cover
 
-    def archive_supplier(
-        self, supplier_id: int, closeConnection: bool = True
-    ) -> Supplier | None:
+    def archive_supplier(self, supplier_id: int) -> Supplier | None:
         for i in range(len(self.data)):
             if self.data[i].id == supplier_id:
                 self.data[i].updated_at = self.get_timestamp()
                 self.data[i].is_archived = True
-                updated_supplier = self.db.update(
-                    self.data[i], supplier_id, closeConnection
-                )
+                updated_supplier = self.db.update(self.data[i], supplier_id)
                 self.data[i] = updated_supplier
                 self.save()
                 return updated_supplier
         return None
 
-    def unarchive_supplier(
-        self, supplier_id: int, closeConnection: bool = True
-    ) -> Supplier | None:
+    def unarchive_supplier(self, supplier_id: int) -> Supplier | None:
         for i in range(len(self.data)):
             if self.data[i].id == supplier_id:
                 self.data[i].updated_at = self.get_timestamp()
                 self.data[i].is_archived = False
-                updated_supplier = self.db.update(
-                    self.data[i], supplier_id, closeConnection
-                )
+                updated_supplier = self.db.update(self.data[i], supplier_id)
                 self.data[i] = updated_supplier
                 self.save()
                 return updated_supplier
