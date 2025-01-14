@@ -300,7 +300,9 @@ def test_archive_warehouse_invalid_api_key(client):
 
 def test_unarchive_warehouse(client):
     response = client.patch(
-        "/warehouses/" + str(test_warehouse["id"]) + "/unarchive", headers=test_headers
+        "/warehouses/" + str(test_warehouse["id"]) + "/unarchive",
+        json={},
+        headers=test_headers,
     )
     assert response.status_code == 200
     response_get = client.get(
@@ -320,6 +322,7 @@ def test_unarchive_warehouse_no_api_key(client):
 def test_unarchive_warehouse_invalid_api_key(client):
     response = client.patch(
         "/warehouses/" + str(test_warehouse["id"]) + "/unarchive",
+        json={},
         headers=invalid_headers,
     )
     assert response.status_code == 403
@@ -327,19 +330,25 @@ def test_unarchive_warehouse_invalid_api_key(client):
 
 def test_unarchive_nonexistent_warehouse(client):
     response = client.patch(
-        "/warehouses/" + str(non_existent_id) + "/unarchive", headers=test_headers
+        "/warehouses/" + str(non_existent_id) + "/unarchive",
+        json={},
+        headers=test_headers,
     )
     assert response.status_code == 404
 
 
 def test_unarchive_invalid_warehouse_id(client):
-    response = client.patch("/warehouses/invalid_id/unarchive", headers=test_headers)
+    response = client.patch(
+        "/warehouses/invalid_id/unarchive", json={}, headers=test_headers
+    )
     assert response.status_code == 422
 
 
 def test_already_unarchived_warehouse(client):
     response = client.patch(
-        "/warehouses/" + str(test_warehouse["id"]) + "/unarchive", headers=test_headers
+        "/warehouses/" + str(test_warehouse["id"]) + "/unarchive",
+        json={},
+        headers=test_headers,
     )
     assert response.status_code == 400
 

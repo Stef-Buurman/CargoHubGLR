@@ -384,7 +384,7 @@ def test_archive_already_archived_supplier(client):
 def test_unarchive_supplier(client):
     response = client.patch(
         "/suppliers/" + str(test_supplier["id"]) + "/unarchive",
-        json=test_supplier,
+        json={},
         headers=test_headers,
     )
     assert response.status_code == 200
@@ -401,26 +401,34 @@ def test_unarchive_supplier_no_api_key(client):
 
 def test_unarchive_supplier_invalid_api_key(client):
     response = client.patch(
-        "/suppliers/" + str(test_supplier["id"]) + "/unarchive", headers=invalid_headers
+        "/suppliers/" + str(test_supplier["id"]) + "/unarchive",
+        json={},
+        headers=invalid_headers,
     )
     assert response.status_code == 403
 
 
 def test_unarchive_supplier_invalid_id(client):
-    response = client.patch("/suppliers/invalid_id/unarchive", headers=test_headers)
+    response = client.patch(
+        "/suppliers/invalid_id/unarchive", json={}, headers=test_headers
+    )
     assert response.status_code == 422
 
 
 def test_unarchive_supplier_non_existent_id(client):
     response = client.patch(
-        "/suppliers/" + str(non_existent_id) + "/unarchive", headers=test_headers
+        "/suppliers/" + str(non_existent_id) + "/unarchive",
+        json={},
+        headers=test_headers,
     )
     assert response.status_code == 404
 
 
 def test_unarchive_supplier_already_unarchived(client):
     response = client.patch(
-        "/suppliers/" + str(test_supplier["id"]) + "/unarchive", headers=test_headers
+        "/suppliers/" + str(test_supplier["id"]) + "/unarchive",
+        json={},
+        headers=test_headers,
     )
     assert response.status_code == 400
     response_get_supplier = client.get(
