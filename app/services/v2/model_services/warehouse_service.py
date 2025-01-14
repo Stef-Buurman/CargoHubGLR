@@ -1,4 +1,5 @@
-from models.v2.warehouse import Warehouse, Contact
+from services.v2 import data_provider_v2
+from models.v2.warehouse import Warehouse
 from typing import List, Type
 from services.v2.base_service import Base
 from services.v2.database_service import DB, DatabaseService
@@ -80,8 +81,10 @@ class WarehouseService(Base):
 
     def save(self):
         if not self.is_debug:
-            data_provider.fetch_warehouse_pool().save(
-                [warehouse.model_dump() for warehouse in self.data]
+            data_provider_v2.fetch_background_tasks()(
+                data_provider.fetch_warehouse_pool().save(
+                    [warehouse.model_dump() for warehouse in self.data]
+                )
             )
 
     def load(self):
