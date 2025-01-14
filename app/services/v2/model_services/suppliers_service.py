@@ -77,9 +77,11 @@ class SupplierService(Base):
 
     def save(self):
         if not self.is_debug:
-            data_provider_v2.fetch_background_tasks(data_provider.fetch_supplier_pool().save(
-                [supplier.model_dump() for supplier in self.data]
-            ))
+            data_provider_v2.fetch_background_tasks(
+                data_provider.fetch_supplier_pool().save(
+                    [supplier.model_dump() for supplier in self.data]
+                )
+            )
 
     def load(self):
         self.data = self.get_all_suppliers()

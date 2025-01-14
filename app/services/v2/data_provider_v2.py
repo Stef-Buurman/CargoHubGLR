@@ -135,7 +135,7 @@ def get_users():
     global _users
     if _users is None:
         _users = UserService()
-    
+
 
 def get_background_tasks():
     global _background_tasks

@@ -81,9 +81,11 @@ class ItemTypeService(Base):
 
     def save(self):
         if not self.is_debug:
-            data_provider_v2.fetch_background_tasks(data_provider.fetch_item_type_pool().save(
-                [item.model_dump() for item in self.data]
-            ))
+            data_provider_v2.fetch_background_tasks(
+                data_provider.fetch_item_type_pool().save(
+                    [item.model_dump() for item in self.data]
+                )
+            )
 
     def load(self):
         self.data = self.get_all_item_types()
