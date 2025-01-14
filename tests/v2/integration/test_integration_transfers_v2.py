@@ -304,7 +304,9 @@ def test_unarchive_transfer(client):
 
 
 def test_unarchive_transfer_no_api_key(client):
-    response = client.patch("/transfers/" + str(test_transfer["id"]) + "/unarchive", json={})
+    response = client.patch(
+        "/transfers/" + str(test_transfer["id"]) + "/unarchive", json={}
+    )
     assert response.status_code == 403
 
 

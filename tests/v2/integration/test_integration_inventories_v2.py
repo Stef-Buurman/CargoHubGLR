@@ -292,7 +292,9 @@ def test_partial_update_archived_inventory(client):
 
 
 def test_unarchive_inventory_no_api_key(client):
-    response = client.patch("/inventories/" + str(test_inventory["id"]) + "/unarchive", json={})
+    response = client.patch(
+        "/inventories/" + str(test_inventory["id"]) + "/unarchive", json={}
+    )
     assert response.status_code == 403
 
 
