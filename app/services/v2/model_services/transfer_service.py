@@ -95,9 +95,7 @@ class TransferService(Base):
                 return transfer.items
         return None
 
-    def add_transfer(
-        self, transfer: Transfer, closeConnection: bool = True
-    ) -> Transfer:
+    def add_transfer(self, transfer: Transfer) -> Transfer:
         if self.has_transfer_archived_entities(transfer):
             return None
 
@@ -133,16 +131,11 @@ class TransferService(Base):
                         (transfer_id, transfer_items.item_id, transfer_items.amount),
                     )
 
-        # if closeConnection:
-        #     self.db.commit_and_close()
-
         self.data.append(transfer)
         self.save()
         return transfer
 
-    def update_transfer(
-        self, transfer_id: int, transfer: Transfer, closeConnection: bool = True
-    ) -> Transfer:
+    def update_transfer(self, transfer_id: int, transfer: Transfer) -> Transfer:
         old_transfer = self.get_transfer(transfer_id)
         if self.is_transfer_archived(
             transfer_id
@@ -183,9 +176,6 @@ class TransferService(Base):
                         (transfer_id, transfer_items.item_id, transfer_items.amount),
                     )
 
-        # if closeConnection:
-        #     self.db.commit_and_close()
-
         for i in range(len(self.data)):
             if self.data[i].id == transfer_id:
                 transfer.id = transfer_id
@@ -221,7 +211,7 @@ class TransferService(Base):
         self.save()
         return transfer
 
-    def archive_transfer(self, transfer_id: int, closeConnection: bool = True) -> bool:
+    def archive_transfer(self, transfer_id: int) -> bool:
         for i in range(len(self.data)):
             if self.data[i].id == transfer_id:
                 self.data[i].updated_at = self.get_timestamp()
@@ -243,15 +233,11 @@ class TransferService(Base):
                 with self.db.get_connection() as conn:
                     conn.execute(update_sql, values)
 
-                # if closeConnection:
-                #     self.db.commit_and_close()
                 self.save()
                 return True
         return False
 
-    def unarchive_transfer(
-        self, transfer_id: int, closeConnection: bool = True
-    ) -> bool:
+    def unarchive_transfer(self, transfer_id: int) -> bool:
         for i in range(len(self.data)):
             if self.data[i].id == transfer_id:
                 self.data[i].updated_at = self.get_timestamp()
@@ -273,8 +259,6 @@ class TransferService(Base):
                 with self.db.get_connection() as conn:
                     conn.execute(update_sql, values)
 
-                # if closeConnection:
-                #     self.db.commit_and_close()
                 self.save()
                 return True
         return False
