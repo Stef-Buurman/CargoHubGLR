@@ -1,7 +1,7 @@
 from typing import List, Type
 from models.v2.item import Item
 from services.v2.base_service import Base
-from services.v2.database_service import  DatabaseService
+from services.v2.database_service import DatabaseService
 from services.v2 import data_provider_v2
 from services.v1 import data_provider
 

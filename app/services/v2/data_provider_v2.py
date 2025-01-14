@@ -136,10 +136,11 @@ def get_users():
     global _users
     if _users is None:
         _users = UserService()
-    
+
 
 def get_database():
     from .database_service import DatabaseService
+
     global _database
     if _database is None:
         _database = DatabaseService()

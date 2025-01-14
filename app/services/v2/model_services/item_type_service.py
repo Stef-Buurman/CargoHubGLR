@@ -2,7 +2,7 @@ from typing import List, Type
 from services.v2 import data_provider_v2
 from models.v2.item_type import ItemType
 from services.v2.base_service import Base
-from services.v2.database_service import  DatabaseService
+from services.v2.database_service import DatabaseService
 from services.v1 import data_provider
 
 
