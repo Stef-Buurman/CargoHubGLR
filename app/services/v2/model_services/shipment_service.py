@@ -1,8 +1,8 @@
-from typing import List, Optional, Type
+from typing import List, Type
 from models.v2.shipment import Shipment
 from models.v2.ItemInObject import ItemInObject
 from services.v2.base_service import Base
-from services.v2.database_service import DB, DatabaseService
+from services.v2.database_service import DatabaseService
 from services.v2 import data_provider_v2
 from utils.globals import *
 from services.v1 import data_provider
@@ -14,7 +14,7 @@ class ShipmentService(Base):
         if db is not None:
             self.db = db
         else:  # pragma: no cover
-            self.db = DB
+            self.db = data_provider_v2.fetch_database()
         self.load()
 
     def get_all_shipments(self) -> List[Shipment]:

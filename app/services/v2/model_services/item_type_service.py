@@ -2,7 +2,7 @@ from typing import List, Type
 from services.v2 import data_provider_v2
 from models.v2.item_type import ItemType
 from services.v2.base_service import Base
-from services.v2.database_service import DB, DatabaseService
+from services.v2.database_service import  DatabaseService
 from services.v1 import data_provider
 
 
@@ -12,7 +12,7 @@ class ItemTypeService(Base):
         if db is not None:
             self.db = db
         else:  # pragma: no cover
-            self.db = DB
+            self.db = data_provider_v2.fetch_database()
         self.load()
 
     def get_all_item_types(self) -> List[ItemType]:
