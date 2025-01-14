@@ -299,26 +299,31 @@ def test_unarchive_inventory_no_api_key(client):
 def test_unarchive_inventory_invalid_api_key(client):
     response = client.patch(
         "/inventories/" + str(test_inventory["id"]) + "/unarchive",
+        json={},
         headers=invalid_headers,
     )
     assert response.status_code == 403
 
 
 def test_unarchive_invalid_inventory_id(client):
-    response = client.patch("/inventories/invalid_id/unarchive", headers=test_headers)
+    response = client.patch(
+        "/inventories/invalid_id/unarchive", json={}, headers=test_headers
+    )
     assert response.status_code == 422
 
 
 def test_unarchive_nonexistent_inventory(client):
     response = client.patch(
-        f"/inventories/{non_existent_id}/unarchive", headers=test_headers
+        f"/inventories/{non_existent_id}/unarchive", json={}, headers=test_headers
     )
     assert response.status_code == 404
 
 
 def test_unarchive_inventory(client):
     response = client.patch(
-        "/inventories/" + str(test_inventory["id"]) + "/unarchive", headers=test_headers
+        "/inventories/" + str(test_inventory["id"]) + "/unarchive",
+        json={},
+        headers=test_headers,
     )
     assert response.status_code == 200
     assert response.json()["is_archived"] is False
