@@ -395,7 +395,7 @@ def test_unarchive_supplier(client):
 
 
 def test_unarchive_supplier_no_api_key(client):
-    response = client.patch("/suppliers/" + str(test_supplier["id"]) + "/unarchive")
+    response = client.patch("/suppliers/" + str(test_supplier["id"]) + "/unarchive", json={})
     assert response.status_code == 403
 
 
