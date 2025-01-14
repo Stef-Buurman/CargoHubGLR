@@ -58,7 +58,7 @@ class WarehouseService(Base):
                 self.data[i] = updated_warehouse
                 self.save()
                 return updated_warehouse
-        return None  
+        return None
 
     def archive_warehouse(
         self, warehouse_id: int, closeConnection: bool = True

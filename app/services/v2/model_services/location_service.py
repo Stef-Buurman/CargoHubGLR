@@ -72,7 +72,7 @@ class LocationService(Base):
                 self.data[i] = updated_location
                 self.save()
                 return updated_location
-        return None  
+        return None
 
     def archive_location(
         self, location_id: int, closeConnection: bool = True

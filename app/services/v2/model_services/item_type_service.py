@@ -55,7 +55,7 @@ class ItemTypeService(Base):
                 self.data[i] = updae_item_type
                 self.save()
                 return updae_item_type
-        return None  
+        return None
 
     def is_item_type_archived(self, item_type_id: int) -> bool:
         for item_type in self.data:

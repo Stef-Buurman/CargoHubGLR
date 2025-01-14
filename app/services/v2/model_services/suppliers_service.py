@@ -56,7 +56,7 @@ class SupplierService(Base):
                 self.data[i] = updated_supplier
                 self.save()
                 return updated_supplier
-        return None  
+        return None
 
     def archive_supplier(
         self, supplier_id: int, closeConnection: bool = True

@@ -61,7 +61,7 @@ class ItemGroupService(Base):
                 self.data[i] = updated_item_group
                 self.save()
                 return updated_item_group
-        return None  
+        return None
 
     def archive_item_group(
         self, item_group_id: int, closeConnection: bool = True
