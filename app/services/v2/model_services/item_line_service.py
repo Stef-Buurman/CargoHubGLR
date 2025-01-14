@@ -10,7 +10,7 @@ class ItemLineService(Base):
         self.is_debug = is_debug
         if db is not None:
             self.db = db
-        else:  
+        else:
             self.db = data_provider_v2.fetch_database()
         self.load()
 
@@ -61,7 +61,7 @@ class ItemLineService(Base):
                 self.data[i] = updated_item_line
                 self.save()
                 return updated_item_line
-        return None  
+        return None
 
     def archive_item_line(
         self, item_line_id: int, closeConnection: bool = True

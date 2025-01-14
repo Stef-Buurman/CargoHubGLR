@@ -10,7 +10,7 @@ class WarehouseService(Base):
         self.is_debug = is_debug
         if db is not None:
             self.db = db
-        else:  
+        else:
             self.db = data_provider_v2.fetch_database()
         self.load()
 
@@ -58,7 +58,7 @@ class WarehouseService(Base):
                 self.data[i] = updated_warehouse
                 self.save()
                 return updated_warehouse
-        return None  
+        return None
 
     def archive_warehouse(
         self, warehouse_id: int, closeConnection: bool = True
