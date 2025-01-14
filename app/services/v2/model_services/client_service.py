@@ -30,17 +30,15 @@ class ClientService(Base):
                 return client
         return self.db.get(Client, client_id)
 
-    def add_client(self, client: Client, closeConnection: bool = True) -> Client:
+    def add_client(self, client: Client) -> Client:
         client.created_at = self.get_timestamp()
         client.updated_at = self.get_timestamp()
-        added_client = self.db.insert(client, closeConnection)
+        added_client = self.db.insert(client)
         self.data.append(added_client)
         self.save()
         return added_client
 
-    def update_client(
-        self, client_id: int, client: Client, closeConnection: bool = True
-    ) -> Client | None:
+    def update_client(self, client_id: int, client: Client) -> Client | None:
         if self.is_client_archived(client_id):
             return None
 
@@ -50,37 +48,29 @@ class ClientService(Base):
                 client.id = client_id
                 if client.created_at is None:
                     client.created_at = self.data[i].created_at
-                updated_client = self.db.update(client, client_id, closeConnection)
+                updated_client = self.db.update(client, client_id)
                 self.data[i] = updated_client
                 self.save()
                 return updated_client
         return None
 
-    def archive_client(
-        self, client_id: int, closeConnection: bool = True
-    ) -> Client | None:
+    def archive_client(self, client_id: int) -> Client | None:
         for i in range(len(self.data)):
             if self.data[i].id == client_id:
                 self.data[i].is_archived = True
                 self.data[i].updated_at = self.get_timestamp()
-                updated_client = self.db.update(
-                    self.data[i], client_id, closeConnection
-                )
+                updated_client = self.db.update(self.data[i], client_id)
                 self.data[i] = updated_client
                 self.save()
                 return updated_client
         return None
 
-    def unarchive_client(
-        self, client_id: int, closeConnection: bool = True
-    ) -> Client | None:
+    def unarchive_client(self, client_id: int) -> Client | None:
         for i in range(len(self.data)):
             if self.data[i].id == client_id:
                 self.data[i].is_archived = False
                 self.data[i].updated_at = self.get_timestamp()
-                updated_client = self.db.update(
-                    self.data[i], client_id, closeConnection
-                )
+                updated_client = self.db.update(self.data[i], client_id)
                 self.data[i] = updated_client
                 self.save()
                 return updated_client
