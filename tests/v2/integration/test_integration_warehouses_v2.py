@@ -315,7 +315,9 @@ def test_unarchive_warehouse(client):
 
 
 def test_unarchive_warehouse_no_api_key(client):
-    response = client.patch("/warehouses/" + str(test_warehouse["id"]) + "/unarchive", json={})
+    response = client.patch(
+        "/warehouses/" + str(test_warehouse["id"]) + "/unarchive", json={}
+    )
     assert response.status_code == 403
 
 

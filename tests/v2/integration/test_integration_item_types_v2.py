@@ -433,7 +433,9 @@ def test_archive_item_type_already_archived(client):
 
 
 def test_unarchive_item_type_no_api_key(client):
-    response = client.patch("/item_types/" + str(test_item_type["id"]) + "/unarchive", json={})
+    response = client.patch(
+        "/item_types/" + str(test_item_type["id"]) + "/unarchive", json={}
+    )
     assert response.status_code == 403
     responseGet = client.get(
         "/item_types/" + str(test_item_type["id"]), headers=test_headers
