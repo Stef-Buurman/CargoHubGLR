@@ -334,7 +334,7 @@ def test_partial_update_archived_CargoClient(client):
 
 
 def test_unarchive_CargoClient_no_api_key(client):
-    response = client.patch("/clients/" + str(test_CargoClient["id"]) + "/unarchive")
+    response = client.patch("/clients/" + str(test_CargoClient["id"]) + "/unarchive", json={})
     assert response.status_code == 403
 
 

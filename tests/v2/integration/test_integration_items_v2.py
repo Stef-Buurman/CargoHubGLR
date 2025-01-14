@@ -298,7 +298,7 @@ def test_archive_item_already_archived(client):
 
 
 def test_unarchive_item_no_api_key(client):
-    response = client.patch("/items/" + test_item["uid"] + "/unarchive")
+    response = client.patch("/items/" + test_item["uid"] + "/unarchive", json={})
     assert response.status_code == 403
     response_get_item = client.get("/items/" + test_item["uid"], headers=test_headers)
     assert response_get_item.status_code == 200

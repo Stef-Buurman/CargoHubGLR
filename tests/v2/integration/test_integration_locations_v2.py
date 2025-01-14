@@ -250,7 +250,7 @@ def test_unarchive_location(client):
 
 
 def test_unarchive_location_no_api_key(client):
-    response = client.patch("/locations/" + str(test_location["id"]) + "/unarchive")
+    response = client.patch("/locations/" + str(test_location["id"]) + "/unarchive", json={})
     assert response.status_code == 403
 
 
