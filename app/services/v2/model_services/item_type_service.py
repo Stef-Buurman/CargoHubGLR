@@ -10,8 +10,8 @@ class ItemTypeService(Base):
         self.is_debug = is_debug
         if db is not None:
             self.db = db
-        else:  # pragma: no cover
-            self.db = DB
+        else:  
+            self.db = data_provider_v2.fetch_database()
         self.load()
 
     def get_all_item_types(self) -> List[ItemType]:
@@ -55,7 +55,7 @@ class ItemTypeService(Base):
                 self.data[i] = updae_item_type
                 self.save()
                 return updae_item_type
-        return None  # pragma: no cover
+        return None  
 
     def is_item_type_archived(self, item_type_id: int) -> bool:
         for item_type in self.data:

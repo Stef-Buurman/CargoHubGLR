@@ -10,7 +10,7 @@ class ClientService(Base):
         self.is_debug = is_debug
         if db is not None:
             self.db = db
-        else:  # pragma: no cover
+        else:
             self.db = DB
         self.load()
 

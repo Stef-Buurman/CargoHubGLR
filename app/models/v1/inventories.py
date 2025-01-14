@@ -51,7 +51,7 @@ class Inventories(Base):
             inventory["updated_at"] = self.get_timestamp()
             self.data.append(inventory)
             return inventory
-        else:  # pragma: no cover
+        else:  
             created_inventory = data_provider_v2.fetch_inventory_pool().add_inventory(
                 Inventory(**inventory)
             )
@@ -67,7 +67,7 @@ class Inventories(Base):
                 if self.is_debug:
                     self.data[i] = inventory
                     return inventory
-                else:  # pragma: no cover
+                else:  
                     updated_inventory = (
                         data_provider_v2.fetch_inventory_pool().update_inventory(
                             inventory_id, Inventory(**inventory)
@@ -87,12 +87,12 @@ class Inventories(Base):
     def load(self, is_debug):
         if is_debug:
             self.data = INVENTORIES
-        else:  # pragma: no cover
+        else:  
             f = open(self.data_path, "r")
             self.data = json.load(f)
             f.close()
 
-    def save(self, data=None):  # pragma: no cover
+    def save(self, data=None):  
         if data:
             self.data = data
         f = open(self.data_path, "w")

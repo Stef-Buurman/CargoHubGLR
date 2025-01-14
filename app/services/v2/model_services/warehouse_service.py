@@ -10,8 +10,8 @@ class WarehouseService(Base):
         self.is_debug = is_debug
         if db is not None:
             self.db = db
-        else:  # pragma: no cover
-            self.db = DB
+        else:  
+            self.db = data_provider_v2.fetch_database()
         self.load()
 
     def get_all_warehouses(self) -> List[Warehouse]:
@@ -58,7 +58,7 @@ class WarehouseService(Base):
                 self.data[i] = updated_warehouse
                 self.save()
                 return updated_warehouse
-        return None  # pragma: no cover
+        return None  
 
     def archive_warehouse(
         self, warehouse_id: int, closeConnection: bool = True

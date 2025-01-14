@@ -10,8 +10,8 @@ class ItemGroupService(Base):
         self.is_debug = is_debug
         if db is not None:
             self.db = db
-        else:  # pragma: no cover
-            self.db = DB
+        else:  
+            self.db = data_provider_v2.fetch_database()
         self.load()
 
     def get_all_item_groups(self) -> List[ItemGroup]:
@@ -61,7 +61,7 @@ class ItemGroupService(Base):
                 self.data[i] = updated_item_group
                 self.save()
                 return updated_item_group
-        return None  # pragma: no cover
+        return None  
 
     def archive_item_group(
         self, item_group_id: int, closeConnection: bool = True

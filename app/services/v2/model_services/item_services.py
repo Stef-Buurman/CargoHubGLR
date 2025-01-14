@@ -11,8 +11,8 @@ class ItemService(Base):
         self.is_debug = is_debug
         if db is not None:
             self.db = db
-        else:  # pragma: no cover
-            self.db = DB
+        else:  
+            self.db = data_provider_v2.fetch_database()
         self.load()
 
     def get_all_items(self) -> List[Item]:
