@@ -81,9 +81,7 @@ class ShipmentService(Base):
         shipment = self.get_shipment(shipment_id)
         return shipment.items if shipment else None
 
-    def add_shipment(
-        self, shipment: Shipment, closeConnection: bool = True
-    ) -> Shipment:
+    def add_shipment(self, shipment: Shipment) -> Shipment:
 
         if self.has_shipment_archived_entities(shipment):
             return None
@@ -119,16 +117,11 @@ class ShipmentService(Base):
                         items_insert_sql,
                         (shipment_id, shipment_items.item_id, shipment_items.amount),
                     )
-
-        # if closeConnection:
-        #     self.db.commit_and_close()
         self.data.append(shipment)
         self.save()
         return shipment
 
-    def update_shipment(
-        self, shipment_id: str, shipment: Shipment, closeConnection: bool = True
-    ) -> Shipment:
+    def update_shipment(self, shipment_id: str, shipment: Shipment) -> Shipment:
 
         current_shipment = self.get_shipment(shipment_id)
 
@@ -179,8 +172,6 @@ class ShipmentService(Base):
                             f"DELETE FROM {shipment_items_table} WHERE shipment_id = ? AND item_uid = ?",
                             (shipment_id, current_item_id),
                         )
-        # if closeConnection:
-        #     self.db.commit_and_close()
 
         for i in range(len(self.data)):
             if self.data[i].id == shipment_id:
@@ -248,9 +239,7 @@ class ShipmentService(Base):
             if item.item_id not in current_item_ids:
                 self.update_inventory_for_shipment(item.item_id, item.amount)
 
-    def archive_shipment(
-        self, shipment_id: str, closeConnection: bool = True
-    ) -> Shipment | None:
+    def archive_shipment(self, shipment_id: str) -> Shipment | None:
         for i in range(len(self.data)):
             if self.data[i].id == shipment_id:
                 self.data[i].is_archived = True
@@ -269,15 +258,11 @@ class ShipmentService(Base):
                 with self.db.get_connection() as conn:
                     conn.execute(update_sql, values + (shipment_id,))
 
-                # if closeConnection:
-                #     self.db.commit_and_close()
                 self.save()
                 return self.data[i]
         return None
 
-    def unarchive_shipment(
-        self, shipment_id: str, closeConnection: bool = True
-    ) -> Shipment | None:
+    def unarchive_shipment(self, shipment_id: str) -> Shipment | None:
         for i in range(len(self.data)):
             if self.data[i].id == shipment_id:
                 self.data[i].is_archived = False
@@ -296,8 +281,6 @@ class ShipmentService(Base):
                 with self.db.get_connection() as conn:
                     conn.execute(update_sql, values + (shipment_id,))
 
-                # if closeConnection:
-                #     self.db.commit_and_close()
                 self.save()
                 return self.data[i]
         return None
@@ -367,9 +350,7 @@ class ShipmentService(Base):
                 shipments.append(shipment)
         return shipments
 
-    def commit_shipment(
-        self, shipment_id: str, closeConnection: bool = True
-    ) -> Shipment | None:
+    def commit_shipment(self, shipment_id: str) -> Shipment | None:
         if self.is_shipment_archived(shipment_id):
             return None
 
@@ -380,15 +361,11 @@ class ShipmentService(Base):
                     data_provider_v2.fetch_order_pool().check_if_order_transit(
                         self.data[i].order_id
                     )
-                    return self.update_shipment(
-                        shipment_id, self.data[i], closeConnection
-                    )
+                    return self.update_shipment(shipment_id, self.data[i])
                 elif self.data[i].shipment_status == "Transit":
                     self.data[i].shipment_status = "Delivered"
                     data_provider_v2.fetch_order_pool().check_if_order_delivered(
                         self.data[i].order_id
                     )
-                    return self.update_shipment(
-                        shipment_id, self.data[i], closeConnection
-                    )
+                    return self.update_shipment(shipment_id, self.data[i])
         return None
