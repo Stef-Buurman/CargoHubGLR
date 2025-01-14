@@ -81,7 +81,7 @@ class DatabaseService:
             self.conn.close()
             self.conn = None
 
-    def insert(self, model: T, closeConnection: bool = True) -> T:  # pragma: no cover
+    def insert(self, model: T) -> T:  # pragma: no cover
         table_name = model.table_name()
 
         fields = model.__dict__
@@ -112,39 +112,32 @@ class DatabaseService:
             if primary_key_field == "id":
                 inserted_id = cursor.lastrowid
                 model = model.model_copy(update={primary_key_field: inserted_id})
-
-        # if closeConnection:
-        #     self.commit_and_close()
         return model
 
-    def update(
-        self, model: T, id: int, closeConnection: bool = True
-    ) -> T:  # pragma: no cover
+    def update(self, model: T, id: int) -> T:  # pragma: no cover
         table_name = model.table_name()
         primary_key_value = model.__dict__[self.get_primary_key_column(table_name)]
         fields = model.__dict__
         primary_key_field = self.get_primary_key_column(table_name)
+
         fields.pop(primary_key_field, None)
         columns = ", ".join(f"{key} = ?" for key in fields.keys())
         values = tuple(fields.values())
         update_sql = f"UPDATE {table_name} SET {columns} WHERE {primary_key_field} = ?"
+
         with self.get_connection() as conn:
             conn.execute(update_sql, values + (id,))
-        # if closeConnection:
-        #     self.commit_and_close()
+
         model = model.model_copy(update={primary_key_field: primary_key_value})
         return model
 
-    def delete(
-        self, model: T, id: int, closeConnection: bool = True
-    ) -> bool:  # pragma: no cover
+    def delete(self, model: T, id: int) -> bool:  # pragma: no cover
         table_name = model.table_name()
         primary_key_field = self.get_primary_key_column(table_name)
         delete_sql = f"DELETE FROM {table_name} WHERE {primary_key_field} = ?"
+
         with self.get_connection() as conn:
             conn.execute(delete_sql, (id,))
-        # if closeConnection:
-        #     self.commit_and_close()
         return True
 
     def get_primary_key_column(self, table_name: str) -> str:  # pragma: no cover
