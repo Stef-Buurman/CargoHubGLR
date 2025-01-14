@@ -433,7 +433,7 @@ def test_unarchive_already_unarchived_order(client):
 
 def test_update_archived_order(client):
     response_delete = client.delete(
-        "/orders/" + str(test_order["id"]), json={}, headers=test_headers
+        "/orders/" + str(test_order["id"]), headers=test_headers
     )
     assert response_delete.status_code == 200
 
