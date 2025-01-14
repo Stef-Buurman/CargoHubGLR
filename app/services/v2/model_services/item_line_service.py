@@ -1,7 +1,8 @@
 from typing import List, Type
+from services.v2 import data_provider_v2
 from models.v2.item_line import ItemLine
 from services.v2.base_service import Base
-from services.v2.database_service import DB, DatabaseService
+from services.v2.database_service import DatabaseService
 from services.v1 import data_provider
 
 
@@ -11,7 +12,7 @@ class ItemLineService(Base):
         if db is not None:
             self.db = db
         else:  # pragma: no cover
-            self.db = DB
+            self.db = data_provider_v2.fetch_database()
         self.load()
 
     def get_all_item_lines(self) -> List[ItemLine]:
@@ -36,58 +37,44 @@ class ItemLineService(Base):
                 return item_line.is_archived
         return None
 
-    def add_item_line(
-        self, item_line: ItemLine, closeConnection: bool = True
-    ) -> ItemLine:
+    def add_item_line(self, item_line: ItemLine) -> ItemLine:
         item_line.created_at = self.get_timestamp()
         item_line.updated_at = self.get_timestamp()
-        added_item_line = self.db.insert(item_line, closeConnection)
+        added_item_line = self.db.insert(item_line)
         self.data.append(added_item_line)
         self.save()
         return added_item_line
 
-    def update_item_line(
-        self, item_line_id: int, item_line: ItemLine, closeConnection: bool = True
-    ) -> ItemLine:
+    def update_item_line(self, item_line_id: int, item_line: ItemLine) -> ItemLine:
         if self.is_item_line_archived(item_line_id):
             return None
 
         item_line.updated_at = self.get_timestamp()
         for i in range(len(self.data)):
             if self.data[i].id == item_line_id:
-                updated_item_line = self.db.update(
-                    item_line, item_line_id, closeConnection
-                )
+                updated_item_line = self.db.update(item_line, item_line_id)
                 self.data[i] = updated_item_line
                 self.save()
                 return updated_item_line
         return None  # pragma: no cover
 
-    def archive_item_line(
-        self, item_line_id: int, closeConnection: bool = True
-    ) -> ItemLine | None:
+    def archive_item_line(self, item_line_id: int) -> ItemLine | None:
         for i in range(len(self.data)):
             if self.data[i].id == item_line_id:
                 self.data[i].is_archived = True
                 self.data[i].updated_at = self.get_timestamp()
-                updated_item_line = self.db.update(
-                    self.data[i], item_line_id, closeConnection
-                )
+                updated_item_line = self.db.update(self.data[i], item_line_id)
                 self.data[i] = updated_item_line
                 self.save()
                 return updated_item_line
         return None
 
-    def unarchive_item_line(
-        self, item_line_id: int, closeConnection: bool = True
-    ) -> ItemLine | None:
+    def unarchive_item_line(self, item_line_id: int) -> ItemLine | None:
         for i in range(len(self.data)):
             if self.data[i].id == item_line_id:
                 self.data[i].is_archived = False
                 self.data[i].updated_at = self.get_timestamp()
-                updated_item_line = self.db.update(
-                    self.data[i], item_line_id, closeConnection
-                )
+                updated_item_line = self.db.update(self.data[i], item_line_id)
                 self.data[i] = updated_item_line
                 self.save()
                 return updated_item_line
@@ -95,8 +82,10 @@ class ItemLineService(Base):
 
     def save(self):
         if not self.is_debug:
-            data_provider.fetch_item_line_pool().save(
-                [item.model_dump() for item in self.data]
+            data_provider_v2.fetch_background_tasks().add_task(
+                data_provider.fetch_item_line_pool().save(
+                    [item.model_dump() for item in self.data]
+                )
             )
 
     def load(self):

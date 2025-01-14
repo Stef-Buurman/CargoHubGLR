@@ -2,7 +2,7 @@ from services.v2 import data_provider_v2
 from models.v2.location import Location
 from typing import List, Type
 from services.v2.base_service import Base
-from services.v2.database_service import DB, DatabaseService
+from services.v2.database_service import DatabaseService
 from services.v1 import data_provider
 
 
@@ -12,7 +12,7 @@ class LocationService(Base):
         if db is not None:
             self.db = db
         else:  # pragma: no cover
-            self.db = DB
+            self.db = data_provider_v2.fetch_database()
         self.load()
 
     def get_all_locations(self) -> List[Location]:
@@ -38,21 +38,17 @@ class LocationService(Base):
                 warehouse_locations.append(location)
         return warehouse_locations
 
-    def add_location(
-        self, location: Location, closeConnection: bool = True
-    ) -> Location:
+    def add_location(self, location: Location) -> Location:
         if self.has_location_archived_entities(location):
             return None
         location.created_at = self.get_timestamp()
         location.updated_at = self.get_timestamp()
-        added_location = self.db.insert(location, closeConnection)
+        added_location = self.db.insert(location)
         self.data.append(added_location)
         self.save()
         return added_location
 
-    def update_location(
-        self, location_id: int, location: Location, closeConnection: bool = True
-    ) -> Location | None:
+    def update_location(self, location_id: int, location: Location) -> Location | None:
         if self.is_location_archived(
             location_id
         ) or self.has_location_archived_entities(
@@ -66,39 +62,29 @@ class LocationService(Base):
                 location.id = location_id
                 if location.created_at is None:
                     location.created_at = self.data[i].created_at
-                updated_location = self.db.update(
-                    location, location_id, closeConnection
-                )
+                updated_location = self.db.update(location, location_id)
                 self.data[i] = updated_location
                 self.save()
                 return updated_location
         return None  # pragma: no cover
 
-    def archive_location(
-        self, location_id: int, closeConnection: bool = True
-    ) -> Location | None:
+    def archive_location(self, location_id: int) -> Location | None:
         for i in range(len(self.data)):
             if self.data[i].id == location_id:
                 self.data[i].updated_at = self.get_timestamp()
                 self.data[i].is_archived = True
-                updated_location = self.db.update(
-                    self.data[i], location_id, closeConnection
-                )
+                updated_location = self.db.update(self.data[i], location_id)
                 self.data[i] = updated_location
                 self.save()
                 return updated_location
         return None
 
-    def unarchive_location(
-        self, location_id: int, closeConnection: bool = True
-    ) -> Location | None:
+    def unarchive_location(self, location_id: int) -> Location | None:
         for i in range(len(self.data)):
             if self.data[i].id == location_id:
                 self.data[i].updated_at = self.get_timestamp()
                 self.data[i].is_archived = False
-                updated_location = self.db.update(
-                    self.data[i], location_id, closeConnection
-                )
+                updated_location = self.db.update(self.data[i], location_id)
                 self.data[i] = updated_location
                 self.save()
                 return updated_location
@@ -106,8 +92,10 @@ class LocationService(Base):
 
     def save(self):
         if not self.is_debug:
-            data_provider.fetch_location_pool().save(
-                [location.model_dump() for location in self.data]
+            data_provider_v2.fetch_background_tasks().add_task(
+                data_provider.fetch_location_pool().save(
+                    [location.model_dump() for location in self.data]
+                )
             )
 
     def load(self):

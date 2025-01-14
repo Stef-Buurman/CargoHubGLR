@@ -1,7 +1,7 @@
 from typing import List, Type
 from models.v2.inventory import Inventory
 from services.v2.base_service import Base
-from services.v2.database_service import DB, DatabaseService
+from services.v2.database_service import DatabaseService
 from services.v2 import data_provider_v2
 from services.v1 import data_provider
 from utils.globals import *
@@ -13,7 +13,7 @@ class InventoryService(Base):
         if db is not None:
             self.db = db
         else:  # pragma: no cover
-            self.db = DB
+            self.db = data_provider_v2.fetch_database()
         self.load()
 
     def get_all_inventories(self) -> List[Inventory]:
@@ -214,8 +214,10 @@ class InventoryService(Base):
 
     def save(self):
         if not self.is_debug:
-            data_provider.fetch_inventory_pool().save(
-                [inventory.model_dump() for inventory in self.data]
+            data_provider_v2.fetch_background_tasks().add_task(
+                data_provider.fetch_inventory_pool().save(
+                    [inventory.model_dump() for inventory in self.data]
+                )
             )
 
     def load(self):

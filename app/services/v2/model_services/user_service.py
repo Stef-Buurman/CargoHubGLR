@@ -1,10 +1,10 @@
 from typing import List
+from services.v2 import data_provider_v2
 from models.v2.endpoint_access import EndpointAccess
 from models.v2.user import User
 from services.v2.base_service import Base
 from utils.globals import *
 from datetime import datetime, timedelta
-from services.v2.database_service import DB
 from utils.globals import cache_time_minutes
 
 USERS = []
@@ -12,7 +12,7 @@ USERS = []
 
 class UserService(Base):
     def __init__(self, is_debug: bool = False):
-        self.db = DB
+        self.db = data_provider_v2.fetch_database()
         self.last_updated = datetime.now()
         self.data = []
         self.load(is_debug)

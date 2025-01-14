@@ -4,7 +4,7 @@ from models.v2.order import Order
 from services.v2.base_service import Base
 from models.v2.ItemInObject import ItemInObject
 from utils.globals import *
-from services.v2.database_service import DB, DatabaseService
+from services.v2.database_service import DatabaseService
 from services.v1 import data_provider
 
 
@@ -14,7 +14,7 @@ class OrderService(Base):
         if db is not None:
             self.db = db
         else:  # pragma: no cover
-            self.db = DB
+            self.db = data_provider_v2.fetch_database()
         self.load()
 
     def get_all_orders(self) -> List[Order]:
@@ -265,8 +265,10 @@ class OrderService(Base):
 
     def save(self):
         if not self.is_debug:
-            data_provider.fetch_order_pool().save(
-                [order.model_dump() for order in self.data]
+            data_provider_v2.fetch_background_tasks().add_task(
+                data_provider.fetch_order_pool().save(
+                    [order.model_dump() for order in self.data]
+                )
             )
 
     def load(self):

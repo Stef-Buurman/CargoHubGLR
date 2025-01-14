@@ -4,7 +4,7 @@ from models.v2.ItemInObject import ItemInObject
 from typing import List, Type
 from services.v2.base_service import Base
 from utils.globals import *
-from services.v2.database_service import DB, DatabaseService
+from services.v2.database_service import DatabaseService
 from services.v2 import data_provider_v2
 from services.v1 import data_provider
 
@@ -15,7 +15,7 @@ class TransferService(Base):
         if db is not None:
             self.db = db
         else:  # pragma: no cover
-            self.db = DB
+            self.db = data_provider_v2.fetch_database()
         self.load()
 
     def get_all_transfers(self) -> List[Transfer]:
@@ -95,9 +95,7 @@ class TransferService(Base):
                 return transfer.items
         return None
 
-    def add_transfer(
-        self, transfer: Transfer, closeConnection: bool = True
-    ) -> Transfer:
+    def add_transfer(self, transfer: Transfer) -> Transfer:
         if self.has_transfer_archived_entities(transfer):
             return None
 
@@ -133,16 +131,11 @@ class TransferService(Base):
                         (transfer_id, transfer_items.item_id, transfer_items.amount),
                     )
 
-        # if closeConnection:
-        #     self.db.commit_and_close()
-
         self.data.append(transfer)
         self.save()
         return transfer
 
-    def update_transfer(
-        self, transfer_id: int, transfer: Transfer, closeConnection: bool = True
-    ) -> Transfer:
+    def update_transfer(self, transfer_id: int, transfer: Transfer) -> Transfer:
         old_transfer = self.get_transfer(transfer_id)
         if self.is_transfer_archived(
             transfer_id
@@ -183,9 +176,6 @@ class TransferService(Base):
                         (transfer_id, transfer_items.item_id, transfer_items.amount),
                     )
 
-        # if closeConnection:
-        #     self.db.commit_and_close()
-
         for i in range(len(self.data)):
             if self.data[i].id == transfer_id:
                 transfer.id = transfer_id
@@ -221,7 +211,7 @@ class TransferService(Base):
         self.save()
         return transfer
 
-    def archive_transfer(self, transfer_id: int, closeConnection: bool = True) -> bool:
+    def archive_transfer(self, transfer_id: int) -> bool:
         for i in range(len(self.data)):
             if self.data[i].id == transfer_id:
                 self.data[i].updated_at = self.get_timestamp()
@@ -243,15 +233,11 @@ class TransferService(Base):
                 with self.db.get_connection() as conn:
                     conn.execute(update_sql, values)
 
-                # if closeConnection:
-                #     self.db.commit_and_close()
                 self.save()
                 return True
         return False
 
-    def unarchive_transfer(
-        self, transfer_id: int, closeConnection: bool = True
-    ) -> bool:
+    def unarchive_transfer(self, transfer_id: int) -> bool:
         for i in range(len(self.data)):
             if self.data[i].id == transfer_id:
                 self.data[i].updated_at = self.get_timestamp()
@@ -273,16 +259,16 @@ class TransferService(Base):
                 with self.db.get_connection() as conn:
                     conn.execute(update_sql, values)
 
-                # if closeConnection:
-                #     self.db.commit_and_close()
                 self.save()
                 return True
         return False
 
     def save(self):
         if not self.is_debug:
-            data_provider.fetch_transfer_pool().save(
-                [transfer.model_dump() for transfer in self.data]
+            data_provider_v2.fetch_background_tasks().add_task(
+                data_provider.fetch_transfer_pool().save(
+                    [transfer.model_dump() for transfer in self.data]
+                )
             )
 
     def load(self):
