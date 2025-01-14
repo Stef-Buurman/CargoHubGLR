@@ -621,6 +621,3 @@ class DatabaseService:
 
         with self.get_connection() as conn:  # pragma: no cover
             conn.execute(query_endpoint_access)
-
-
-DB = DatabaseService()  # pragma: no cover
