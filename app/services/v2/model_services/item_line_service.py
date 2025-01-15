@@ -45,7 +45,9 @@ class ItemLineService(Base):
         self.save(background_task)
         return added_item_line
 
-    def update_item_line(self, item_line_id: int, item_line: ItemLine, background_task=True) -> ItemLine:
+    def update_item_line(
+        self, item_line_id: int, item_line: ItemLine, background_task=True
+    ) -> ItemLine:
         if self.is_item_line_archived(item_line_id):
             return None
 
@@ -58,7 +60,9 @@ class ItemLineService(Base):
                 return updated_item_line
         return None  # pragma: no cover
 
-    def archive_item_line(self, item_line_id: int, background_task=True) -> ItemLine | None:
+    def archive_item_line(
+        self, item_line_id: int, background_task=True
+    ) -> ItemLine | None:
         for i in range(len(self.data)):
             if self.data[i].id == item_line_id:
                 self.data[i].is_archived = True
@@ -69,7 +73,9 @@ class ItemLineService(Base):
                 return updated_item_line
         return None
 
-    def unarchive_item_line(self, item_line_id: int, background_task=True) -> ItemLine | None:
+    def unarchive_item_line(
+        self, item_line_id: int, background_task=True
+    ) -> ItemLine | None:
         for i in range(len(self.data)):
             if self.data[i].id == item_line_id:
                 self.data[i].is_archived = False

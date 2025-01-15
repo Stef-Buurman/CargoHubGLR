@@ -64,7 +64,9 @@ class Locations(Base):
             if x["id"] == location_id:
                 self.data.remove(x)
                 if not self.is_debug:
-                    data_provider_v2.fetch_location_pool().archive_location(location_id, False)
+                    data_provider_v2.fetch_location_pool().archive_location(
+                        location_id, False
+                    )
 
     def load(self, is_debug):
         if is_debug:

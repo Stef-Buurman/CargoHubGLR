@@ -48,7 +48,9 @@ class LocationService(Base):
         self.save(background_task)
         return added_location
 
-    def update_location(self, location_id: int, location: Location, background_task=True) -> Location | None:
+    def update_location(
+        self, location_id: int, location: Location, background_task=True
+    ) -> Location | None:
         if self.is_location_archived(
             location_id
         ) or self.has_location_archived_entities(
@@ -68,7 +70,9 @@ class LocationService(Base):
                 return updated_location
         return None  # pragma: no cover
 
-    def archive_location(self, location_id: int, background_task=True) -> Location | None:
+    def archive_location(
+        self, location_id: int, background_task=True
+    ) -> Location | None:
         for i in range(len(self.data)):
             if self.data[i].id == location_id:
                 self.data[i].updated_at = self.get_timestamp()
@@ -79,7 +83,9 @@ class LocationService(Base):
                 return updated_location
         return None
 
-    def unarchive_location(self, location_id: int, background_task=True) -> Location | None:
+    def unarchive_location(
+        self, location_id: int, background_task=True
+    ) -> Location | None:
         for i in range(len(self.data)):
             if self.data[i].id == location_id:
                 self.data[i].updated_at = self.get_timestamp()

@@ -135,7 +135,9 @@ class TransferService(Base):
         self.save(background_task)
         return transfer
 
-    def update_transfer(self, transfer_id: int, transfer: Transfer, background_task=True) -> Transfer:
+    def update_transfer(
+        self, transfer_id: int, transfer: Transfer, background_task=True
+    ) -> Transfer:
         old_transfer = self.get_transfer(transfer_id)
         if self.is_transfer_archived(
             transfer_id

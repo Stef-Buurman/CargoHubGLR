@@ -57,7 +57,9 @@ class Suppliers(Base):
             if x["id"] == supplier_id:
                 self.data.remove(x)
                 if not self.is_debug:
-                    data_provider_v2.fetch_supplier_pool().archive_supplier(supplier_id, False)
+                    data_provider_v2.fetch_supplier_pool().archive_supplier(
+                        supplier_id, False
+                    )
 
     def load(self, is_debug):
         if is_debug:

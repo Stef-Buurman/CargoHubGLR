@@ -56,7 +56,9 @@ class Items(Base):
             item["updated_at"] = self.get_timestamp()
             self.data.append(item)
         else:  # pragma: no cover
-            created_item = data_provider_v2.fetch_item_pool().add_item(Item(**item), False)
+            created_item = data_provider_v2.fetch_item_pool().add_item(
+                Item(**item), False
+            )
             return created_item.model_dump()
 
     def update_item(self, item_id, item):

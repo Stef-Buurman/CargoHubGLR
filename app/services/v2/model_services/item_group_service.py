@@ -45,7 +45,9 @@ class ItemGroupService(Base):
         self.save(background_task)
         return added_item_group
 
-    def update_item_group(self, item_group_id: int, item_group: ItemGroup, background_task=True) -> ItemGroup:
+    def update_item_group(
+        self, item_group_id: int, item_group: ItemGroup, background_task=True
+    ) -> ItemGroup:
         if self.is_item_group_archived(item_group_id):
             return None
 
@@ -58,7 +60,9 @@ class ItemGroupService(Base):
                 return updated_item_group
         return None  # pragma: no cover
 
-    def archive_item_group(self, item_group_id: int, background_task=True) -> ItemGroup | None:
+    def archive_item_group(
+        self, item_group_id: int, background_task=True
+    ) -> ItemGroup | None:
         for i in range(len(self.data)):
             if self.data[i].id == item_group_id:
                 self.data[i].is_archived = True
@@ -69,7 +73,9 @@ class ItemGroupService(Base):
                 return updated_item_group
         return None
 
-    def unarchive_item_group(self, item_group_id: int, background_task=True) -> ItemGroup | None:
+    def unarchive_item_group(
+        self, item_group_id: int, background_task=True
+    ) -> ItemGroup | None:
         for i in range(len(self.data)):
             if self.data[i].id == item_group_id:
                 self.data[i].is_archived = False

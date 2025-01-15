@@ -64,7 +64,9 @@ class Transfers(Base):
             if x["id"] == transfer_id:
                 self.data.remove(x)
                 if not self.is_debug:
-                    data_provider_v2.fetch_transfer_pool().archive_transfer(transfer_id, False)
+                    data_provider_v2.fetch_transfer_pool().archive_transfer(
+                        transfer_id, False
+                    )
 
     def load(self, is_debug):
         if is_debug:

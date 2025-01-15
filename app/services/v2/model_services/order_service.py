@@ -134,7 +134,9 @@ class OrderService(Base):
         self.save(background_task)
         return order
 
-    def update_order(self, order_id: int, order: Order, background_task=True) -> Order | None:
+    def update_order(
+        self, order_id: int, order: Order, background_task=True
+    ) -> Order | None:
         if self.is_order_archived(
             order_id
         ) is not False or self.has_order_archived_entities(

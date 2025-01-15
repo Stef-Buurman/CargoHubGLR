@@ -120,7 +120,9 @@ class Shipments(Base):
             if x["id"] == shipment_id:
                 self.data.remove(x)
                 if not self.is_debug:
-                    data_provider_v2.fetch_shipment_pool().archive_shipment(shipment_id, False)
+                    data_provider_v2.fetch_shipment_pool().archive_shipment(
+                        shipment_id, False
+                    )
 
     def update_items_for_shipment(self, shipment_id, items):
         shipment = self.get_shipment(shipment_id)

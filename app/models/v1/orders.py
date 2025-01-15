@@ -60,7 +60,9 @@ class Orders(Base):
             self.data.append(order)
             return order
         else:
-            added_order = data_provider_v2.fetch_order_pool().add_order(Order(**order), False)
+            added_order = data_provider_v2.fetch_order_pool().add_order(
+                Order(**order), False
+            )
             return added_order.model_dump()
 
     def update_order(self, order_id, order):

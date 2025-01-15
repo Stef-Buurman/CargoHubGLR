@@ -146,7 +146,9 @@ class ItemService(Base):
 
         return f"P{current_id:06d}"
 
-    def update_item(self, item_id: str, item: Item, background_task=True) -> Item | None:
+    def update_item(
+        self, item_id: str, item: Item, background_task=True
+    ) -> Item | None:
         old_item = self.get_item(item_id)
         if self.is_item_archived(
             item_id

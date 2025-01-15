@@ -121,7 +121,9 @@ class ShipmentService(Base):
         self.save(background_task)
         return shipment
 
-    def update_shipment(self, shipment_id: str, shipment: Shipment, background_task=True) -> Shipment:
+    def update_shipment(
+        self, shipment_id: str, shipment: Shipment, background_task=True
+    ) -> Shipment:
 
         current_shipment = self.get_shipment(shipment_id)
 
@@ -239,7 +241,9 @@ class ShipmentService(Base):
             if item.item_id not in current_item_ids:
                 self.update_inventory_for_shipment(item.item_id, item.amount)
 
-    def archive_shipment(self, shipment_id: str, background_task=True) -> Shipment | None:
+    def archive_shipment(
+        self, shipment_id: str, background_task=True
+    ) -> Shipment | None:
         for i in range(len(self.data)):
             if self.data[i].id == shipment_id:
                 self.data[i].is_archived = True
@@ -262,7 +266,9 @@ class ShipmentService(Base):
                 return self.data[i]
         return None
 
-    def unarchive_shipment(self, shipment_id: str, background_task=True) -> Shipment | None:
+    def unarchive_shipment(
+        self, shipment_id: str, background_task=True
+    ) -> Shipment | None:
         for i in range(len(self.data)):
             if self.data[i].id == shipment_id:
                 self.data[i].is_archived = False

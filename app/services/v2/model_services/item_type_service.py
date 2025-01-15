@@ -39,7 +39,9 @@ class ItemTypeService(Base):
         self.save(background_task)
         return added_item_type
 
-    def update_item_type(self, item_type_id: int, item_type: ItemType, background_task=True) -> ItemType:
+    def update_item_type(
+        self, item_type_id: int, item_type: ItemType, background_task=True
+    ) -> ItemType:
         if self.is_item_type_archived(item_type_id):
             return None
 
@@ -58,7 +60,9 @@ class ItemTypeService(Base):
                 return item_type.is_archived
         return None
 
-    def archive_item_type(self, item_type_id: int, background_task=True) -> ItemType | None:
+    def archive_item_type(
+        self, item_type_id: int, background_task=True
+    ) -> ItemType | None:
         for i in range(len(self.data)):
             if self.data[i].id == item_type_id:
                 self.data[i].is_archived = True
@@ -69,7 +73,9 @@ class ItemTypeService(Base):
                 return updated_item_type
         return None
 
-    def unarchive_item_type(self, item_type_id: int, background_task=True) -> ItemType | None:
+    def unarchive_item_type(
+        self, item_type_id: int, background_task=True
+    ) -> ItemType | None:
         for i in range(len(self.data)):
             if self.data[i].id == item_type_id:
                 self.data[i].is_archived = False

@@ -39,7 +39,9 @@ class SupplierService(Base):
         self.save(background_task)
         return added_supplier
 
-    def update_supplier(self, supplier_id: int, supplier: Supplier, background_task=True):
+    def update_supplier(
+        self, supplier_id: int, supplier: Supplier, background_task=True
+    ):
         if self.is_supplier_archived(supplier_id):
             return None
 
@@ -53,7 +55,9 @@ class SupplierService(Base):
                 return updated_supplier
         return None  # pragma: no cover
 
-    def archive_supplier(self, supplier_id: int, background_task=True) -> Supplier | None:
+    def archive_supplier(
+        self, supplier_id: int, background_task=True
+    ) -> Supplier | None:
         for i in range(len(self.data)):
             if self.data[i].id == supplier_id:
                 self.data[i].updated_at = self.get_timestamp()
@@ -64,7 +68,9 @@ class SupplierService(Base):
                 return updated_supplier
         return None
 
-    def unarchive_supplier(self, supplier_id: int, background_task=True) -> Supplier | None:
+    def unarchive_supplier(
+        self, supplier_id: int, background_task=True
+    ) -> Supplier | None:
         for i in range(len(self.data)):
             if self.data[i].id == supplier_id:
                 self.data[i].updated_at = self.get_timestamp()
