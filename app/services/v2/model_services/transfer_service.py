@@ -4,16 +4,18 @@ from models.v2.ItemInObject import ItemInObject
 from typing import List, Type
 from services.v2.base_service import Base
 from utils.globals import *
-from services.v2.database_service import DB, DatabaseService
+from services.v2.database_service import DatabaseService
 from services.v2 import data_provider_v2
+from services.v1 import data_provider
 
 
 class TransferService(Base):
-    def __init__(self, db: Type[DatabaseService] = None):
+    def __init__(self, db: Type[DatabaseService] = None, is_debug: bool = False):
+        self.is_debug = is_debug
         if db is not None:
             self.db = db
-        else:  # pragma: no cover
-            self.db = DB
+        else:
+            self.db = data_provider_v2.fetch_database()
         self.load()
 
     def get_all_transfers(self) -> List[Transfer]:
@@ -93,9 +95,7 @@ class TransferService(Base):
                 return transfer.items
         return None
 
-    def add_transfer(
-        self, transfer: Transfer, closeConnection: bool = True
-    ) -> Transfer:
+    def add_transfer(self, transfer: Transfer, background_task=True) -> Transfer:
         if self.has_transfer_archived_entities(transfer):
             return None
 
@@ -131,14 +131,12 @@ class TransferService(Base):
                         (transfer_id, transfer_items.item_id, transfer_items.amount),
                     )
 
-        # if closeConnection:
-        #     self.db.commit_and_close()
-
         self.data.append(transfer)
+        self.save(background_task)
         return transfer
 
     def update_transfer(
-        self, transfer_id: int, transfer: Transfer, closeConnection: bool = True
+        self, transfer_id: int, transfer: Transfer, background_task=True
     ) -> Transfer:
         old_transfer = self.get_transfer(transfer_id)
         if self.is_transfer_archived(
@@ -180,16 +178,17 @@ class TransferService(Base):
                         (transfer_id, transfer_items.item_id, transfer_items.amount),
                     )
 
-        # if closeConnection:
-        #     self.db.commit_and_close()
-
         for i in range(len(self.data)):
             if self.data[i].id == transfer_id:
+                transfer.id = transfer_id
+                if transfer.created_at is None:
+                    transfer.created_at = self.data[i].created_at
                 self.data[i] = transfer
+                self.save(background_task)
                 return transfer
         return None
 
-    def commit_transfer(self, transfer: Transfer):
+    def commit_transfer(self, transfer: Transfer, background_task=True):
         if transfer.is_archived:
             return None
 
@@ -211,9 +210,10 @@ class TransferService(Base):
                     fetch_inventory_pool().update_inventory(y.id, y)
 
         transfer.transfer_status = "Processed"
+        self.save(background_task)
         return transfer
 
-    def archive_transfer(self, transfer_id: int, closeConnection: bool = True) -> bool:
+    def archive_transfer(self, transfer_id: int, background_task=True) -> bool:
         for i in range(len(self.data)):
             if self.data[i].id == transfer_id:
                 self.data[i].updated_at = self.get_timestamp()
@@ -235,14 +235,11 @@ class TransferService(Base):
                 with self.db.get_connection() as conn:
                     conn.execute(update_sql, values)
 
-                # if closeConnection:
-                #     self.db.commit_and_close()
+                self.save(background_task)
                 return True
         return False
 
-    def unarchive_transfer(
-        self, transfer_id: int, closeConnection: bool = True
-    ) -> bool:
+    def unarchive_transfer(self, transfer_id: int, background_task=True) -> bool:
         for i in range(len(self.data)):
             if self.data[i].id == transfer_id:
                 self.data[i].updated_at = self.get_timestamp()
@@ -264,10 +261,22 @@ class TransferService(Base):
                 with self.db.get_connection() as conn:
                     conn.execute(update_sql, values)
 
-                # if closeConnection:
-                #     self.db.commit_and_close()
+                self.save(background_task)
                 return True
         return False
+
+    def save(self, background_task=True):
+        if not self.is_debug:
+
+            def call_v1_save_method():
+                data_provider.fetch_transfer_pool().save(
+                    [shipment.model_dump() for shipment in self.data]
+                )
+
+            if background_task:
+                data_provider_v2.fetch_background_tasks().add_task(call_v1_save_method)
+            else:
+                call_v1_save_method()
 
     def load(self):
         self.data = self.get_all_transfers()

@@ -82,7 +82,7 @@ def mock_db_service():
 def item_service(mock_db_service):
     """Fixture to create an ItemService instance with the mocked DatabaseService."""
     mock_db_service.get_all.return_value = TEST_ITEMS
-    service = ItemService(mock_db_service)
+    service = ItemService(mock_db_service, True)
     return service
 
 
@@ -296,6 +296,7 @@ def test_archive_item(item_service, mock_db_service):
     item_service.data = TEST_ITEMS
     item_id = "P000001"
     item = item_service.get_item(item_id)
+    item.is_archived = True
     mock_db_service.update.return_value = item
 
     result = item_service.archive_item(item_id)
@@ -348,6 +349,7 @@ def test_unarchive_item(item_service, mock_db_service):
     item_service.data = TEST_ITEMS
     item_id = TEST_ITEMS[0].uid
     item = item_service.get_item(item_id)
+    item.is_archived = False
     mock_db_service.update.return_value = item
 
     result = item_service.unarchive_item(item_id)

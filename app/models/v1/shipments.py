@@ -1,19 +1,20 @@
 import json
+from models.v2.shipment import Shipment
 
 from .base import Base
+from services.v2 import data_provider_v2
 import sys
 import os
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 from services.v1 import data_provider
 
-SHIPMENTS = []
-
 
 class Shipments(Base):
-    def __init__(self, root_path, is_debug=False):
+    def __init__(self, root_path, is_debug=False, shipments=None):
+        self.is_debug = is_debug
         self.data_path = root_path + "shipments.json"
-        self.load(is_debug)
+        self.load(is_debug, shipments)
 
     def get_shipments(self):
         return self.data
@@ -31,16 +32,34 @@ class Shipments(Base):
         return None
 
     def add_shipment(self, shipment):
-        shipment["created_at"] = self.get_timestamp()
-        shipment["updated_at"] = self.get_timestamp()
-        self.data.append(shipment)
+        if self.is_debug:
+            shipment["created_at"] = self.get_timestamp()
+            shipment["updated_at"] = self.get_timestamp()
+            self.data.append(shipment)
+            return shipment
+        else:
+            created_shipment = data_provider_v2.fetch_shipment_pool().add_shipment(
+                Shipment(**shipment), False
+            )
+            return created_shipment.model_dump()
 
     def update_shipment(self, shipment_id, shipment):
         shipment["updated_at"] = self.get_timestamp()
         for i in range(len(self.data)):
             if self.data[i]["id"] == shipment_id:
-                self.data[i] = shipment
-                break
+                shipment["id"] = shipment_id
+                if shipment.get("created_at") is None:
+                    shipment["created_at"] = self.data[i]["created_at"]
+                if self.is_debug:
+                    self.data[i] = shipment
+                    return shipment
+                else:
+                    updated_shipment = (
+                        data_provider_v2.fetch_shipment_pool().update_shipment(
+                            shipment_id, Shipment(**shipment), False
+                        )
+                    )
+                    return updated_shipment.model_dump()
 
     def update_items_in_shipment(self, shipment_id, items):
         shipment = self.get_shipment(shipment_id)
@@ -100,6 +119,10 @@ class Shipments(Base):
         for x in self.data:
             if x["id"] == shipment_id:
                 self.data.remove(x)
+                if not self.is_debug:
+                    data_provider_v2.fetch_shipment_pool().archive_shipment(
+                        shipment_id, False
+                    )
 
     def update_items_for_shipment(self, shipment_id, items):
         shipment = self.get_shipment(shipment_id)
@@ -135,15 +158,17 @@ class Shipments(Base):
         shipment["items"] = items
         self.update_shipment(shipment_id, shipment)
 
-    def load(self, is_debug):
+    def load(self, is_debug, shipments=None):
         if is_debug:
-            self.data = SHIPMENTS
-        else:  # pragma: no cover
+            self.data = shipments
+        else:
             f = open(self.data_path, "r")
             self.data = json.load(f)
             f.close()
 
-    def save(self):  # pragma: no cover
+    def save(self, data=None):
+        if data:
+            self.data = data
         f = open(self.data_path, "w")
         json.dump(self.data, f)
         f.close()

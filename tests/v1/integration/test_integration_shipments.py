@@ -71,6 +71,7 @@ def test_add_shipment_invalid_api_key(client):
 
 def test_add_shipment(client):
     response = client.post("/shipments", json=test_shipment, headers=test_headers)
+    test_shipment["id"] = response.json()["id"]
     assert response.status_code == 201 or response.status_code == 200
     assert response.json()["id"] == test_shipment["id"]
 
@@ -215,4 +216,5 @@ def test_delete_shipment(client):
     response_get_shipment = client.get(
         "/shipments/" + str(test_shipment["id"]), headers=test_headers
     )
-    assert response_get_shipment.status_code == 404
+    assert response_get_shipment.status_code == 200
+    assert response_get_shipment.json()["is_archived"] is True

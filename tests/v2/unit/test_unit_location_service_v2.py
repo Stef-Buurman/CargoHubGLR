@@ -45,7 +45,7 @@ def mock_db_service():
 def location_service(mock_db_service):
     """Fixture to create an LocationService instance with the mocked DatabaseService."""
     mock_db_service.get_all.return_value = TEST_LOCATIONS
-    service = LocationService(mock_db_service)
+    service = LocationService(mock_db_service, True)
     return service
 
 

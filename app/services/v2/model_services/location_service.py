@@ -2,15 +2,17 @@ from services.v2 import data_provider_v2
 from models.v2.location import Location
 from typing import List, Type
 from services.v2.base_service import Base
-from services.v2.database_service import DB, DatabaseService
+from services.v2.database_service import DatabaseService
+from services.v1 import data_provider
 
 
 class LocationService(Base):
-    def __init__(self, db: Type[DatabaseService] = None):
+    def __init__(self, db: Type[DatabaseService] = None, is_debug: bool = False):
+        self.is_debug = is_debug
         if db is not None:
             self.db = db
-        else:  # pragma: no cover
-            self.db = DB
+        else:
+            self.db = data_provider_v2.fetch_database()
         self.load()
 
     def get_all_locations(self) -> List[Location]:
@@ -36,19 +38,18 @@ class LocationService(Base):
                 warehouse_locations.append(location)
         return warehouse_locations
 
-    def add_location(
-        self, location: Location, closeConnection: bool = True
-    ) -> Location:
+    def add_location(self, location: Location, background_task=True) -> Location:
         if self.has_location_archived_entities(location):
             return None
         location.created_at = self.get_timestamp()
         location.updated_at = self.get_timestamp()
-        added_location = self.db.insert(location, closeConnection)
+        added_location = self.db.insert(location)
         self.data.append(added_location)
+        self.save(background_task)
         return added_location
 
     def update_location(
-        self, location_id: int, location: Location, closeConnection: bool = True
+        self, location_id: int, location: Location, background_task=True
     ) -> Location | None:
         if self.is_location_archived(
             location_id
@@ -60,40 +61,53 @@ class LocationService(Base):
         location.updated_at = self.get_timestamp()
         for i in range(len(self.data)):
             if self.data[i].id == location_id:
-                updated_location = self.db.update(
-                    location, location_id, closeConnection
-                )
+                location.id = location_id
+                if location.created_at is None:
+                    location.created_at = self.data[i].created_at
+                updated_location = self.db.update(location, location_id)
                 self.data[i] = updated_location
+                self.save(background_task)
                 return updated_location
-        return None  # pragma: no cover
+        return None
 
     def archive_location(
-        self, location_id: int, closeConnection: bool = True
+        self, location_id: int, background_task=True
     ) -> Location | None:
         for i in range(len(self.data)):
             if self.data[i].id == location_id:
                 self.data[i].updated_at = self.get_timestamp()
                 self.data[i].is_archived = True
-                updated_location = self.db.update(
-                    self.data[i], location_id, closeConnection
-                )
+                updated_location = self.db.update(self.data[i], location_id)
                 self.data[i] = updated_location
+                self.save(background_task)
                 return updated_location
         return None
 
     def unarchive_location(
-        self, location_id: int, closeConnection: bool = True
+        self, location_id: int, background_task=True
     ) -> Location | None:
         for i in range(len(self.data)):
             if self.data[i].id == location_id:
                 self.data[i].updated_at = self.get_timestamp()
                 self.data[i].is_archived = False
-                updated_location = self.db.update(
-                    self.data[i], location_id, closeConnection
-                )
+                updated_location = self.db.update(self.data[i], location_id)
                 self.data[i] = updated_location
+                self.save(background_task)
                 return updated_location
         return None
+
+    def save(self, background_task=True):
+        if not self.is_debug:
+
+            def call_v1_save_method():
+                data_provider.fetch_location_pool().save(
+                    [item.model_dump() for item in self.data]
+                )
+
+            if background_task:
+                data_provider_v2.fetch_background_tasks().add_task(call_v1_save_method)
+            else:
+                call_v1_save_method()
 
     def load(self):
         self.data = self.get_all_locations()

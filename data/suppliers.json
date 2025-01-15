@@ -1,5 +1,6 @@
 [
     {
+        "is_archived": false,
         "id": 1,
         "code": "SUP0001",
         "name": "Lee, Parks and Johnson",
@@ -16,6 +17,7 @@
         "updated_at": "1985-06-08 00:13:46"
     },
     {
+        "is_archived": false,
         "id": 2,
         "code": "SUP0002",
         "name": "Holden-Quinn",
@@ -32,6 +34,7 @@
         "updated_at": "2019-11-10 22:11:12"
     },
     {
+        "is_archived": false,
         "id": 3,
         "code": "SUP0003",
         "name": "White and Sons",
@@ -48,6 +51,7 @@
         "updated_at": "2019-06-16 19:29:49"
     },
     {
+        "is_archived": false,
         "id": 4,
         "code": "SUP0004",
         "name": "Walker-Collins",
@@ -64,6 +68,7 @@
         "updated_at": "2013-07-05 10:49:28"
     },
     {
+        "is_archived": false,
         "id": 5,
         "code": "SUP0005",
         "name": "Davis Group",
@@ -80,6 +85,7 @@
         "updated_at": "2013-03-16 07:34:36"
     },
     {
+        "is_archived": false,
         "id": 6,
         "code": "SUP0006",
         "name": "Martin PLC",
@@ -96,6 +102,7 @@
         "updated_at": "2019-12-28 10:23:09"
     },
     {
+        "is_archived": false,
         "id": 7,
         "code": "SUP0007",
         "name": "Cooper-Wagner",
@@ -112,6 +119,7 @@
         "updated_at": "2013-11-15 05:52:03"
     },
     {
+        "is_archived": false,
         "id": 8,
         "code": "SUP0008",
         "name": "Larsen Group",
@@ -128,6 +136,7 @@
         "updated_at": "2014-12-30 18:35:02"
     },
     {
+        "is_archived": false,
         "id": 9,
         "code": "SUP0009",
         "name": "Andrews PLC",
@@ -144,6 +153,7 @@
         "updated_at": "2009-12-03 18:23:41"
     },
     {
+        "is_archived": false,
         "id": 10,
         "code": "SUP0010",
         "name": "Thompson-Romero",
@@ -160,6 +170,7 @@
         "updated_at": "2021-05-23 09:52:25"
     },
     {
+        "is_archived": false,
         "id": 11,
         "code": "SUP0011",
         "name": "Palmer, Castaneda and Smith",
@@ -176,6 +187,7 @@
         "updated_at": "2024-05-21 09:51:08"
     },
     {
+        "is_archived": false,
         "id": 12,
         "code": "SUP0012",
         "name": "Hayes, Maldonado and Sparks",
@@ -192,6 +204,7 @@
         "updated_at": "2014-02-16 23:42:16"
     },
     {
+        "is_archived": false,
         "id": 13,
         "code": "SUP0013",
         "name": "Ball, Jackson and Ramos",
@@ -208,6 +221,7 @@
         "updated_at": "2020-05-27 20:23:50"
     },
     {
+        "is_archived": false,
         "id": 14,
         "code": "SUP0014",
         "name": "Holmes-Montgomery",
@@ -224,6 +238,7 @@
         "updated_at": "1991-09-08 02:48:07"
     },
     {
+        "is_archived": false,
         "id": 15,
         "code": "SUP0015",
         "name": "Velasquez and Sons",
@@ -240,6 +255,7 @@
         "updated_at": "2010-01-20 20:42:06"
     },
     {
+        "is_archived": false,
         "id": 16,
         "code": "SUP0016",
         "name": "Young LLC",
@@ -256,6 +272,7 @@
         "updated_at": "2013-03-19 16:36:51"
     },
     {
+        "is_archived": false,
         "id": 17,
         "code": "SUP0017",
         "name": "Davis, Williams and Franklin",
@@ -272,6 +289,7 @@
         "updated_at": "2015-07-24 09:34:45"
     },
     {
+        "is_archived": false,
         "id": 18,
         "code": "SUP0018",
         "name": "Martinez and Sons",
@@ -288,6 +306,7 @@
         "updated_at": "2012-06-12 03:15:35"
     },
     {
+        "is_archived": false,
         "id": 19,
         "code": "SUP0019",
         "name": "Robinson LLC",
@@ -304,6 +323,7 @@
         "updated_at": "1993-08-30 21:29:15"
     },
     {
+        "is_archived": false,
         "id": 20,
         "code": "SUP0020",
         "name": "Wright, Kelly and Allen",
@@ -320,6 +340,7 @@
         "updated_at": "2022-02-11 01:44:13"
     },
     {
+        "is_archived": false,
         "id": 21,
         "code": "SUP0021",
         "name": "Webb, Gonzalez and Foster",
@@ -336,6 +357,7 @@
         "updated_at": "1984-02-01 05:07:03"
     },
     {
+        "is_archived": false,
         "id": 22,
         "code": "SUP0022",
         "name": "Mcknight LLC",
@@ -352,6 +374,7 @@
         "updated_at": "2013-01-10 00:39:52"
     },
     {
+        "is_archived": false,
         "id": 23,
         "code": "SUP0023",
         "name": "Burns Inc",
@@ -368,6 +391,7 @@
         "updated_at": "2019-08-09 21:37:48"
     },
     {
+        "is_archived": false,
         "id": 24,
         "code": "SUP0024",
         "name": "Osborne, Wilkins and Walters",
@@ -384,6 +408,7 @@
         "updated_at": "1992-05-12 14:16:53"
     },
     {
+        "is_archived": false,
         "id": 25,
         "code": "SUP0025",
         "name": "Barnes-Collins",
@@ -400,6 +425,7 @@
         "updated_at": "2024-08-22 10:13:02"
     },
     {
+        "is_archived": false,
         "id": 26,
         "code": "SUP0026",
         "name": "Hanson, Stewart and Kennedy",
@@ -416,6 +442,7 @@
         "updated_at": "2018-09-06 07:08:02"
     },
     {
+        "is_archived": false,
         "id": 27,
         "code": "SUP0027",
         "name": "Cantu-Ayala",
@@ -432,6 +459,7 @@
         "updated_at": "2019-12-11 17:16:51"
     },
     {
+        "is_archived": false,
         "id": 28,
         "code": "SUP0028",
         "name": "Johnson, Forbes and Larson",
@@ -448,6 +476,7 @@
         "updated_at": "1987-08-20 18:35:26"
     },
     {
+        "is_archived": false,
         "id": 29,
         "code": "SUP0029",
         "name": "Oconnor-Patterson",
@@ -464,6 +493,7 @@
         "updated_at": "2021-03-30 15:41:54"
     },
     {
+        "is_archived": false,
         "id": 30,
         "code": "SUP0030",
         "name": "Sanchez-Butler",
@@ -480,6 +510,7 @@
         "updated_at": "2020-07-02 04:06:07"
     },
     {
+        "is_archived": false,
         "id": 31,
         "code": "SUP0031",
         "name": "Cameron Group",
@@ -496,6 +527,7 @@
         "updated_at": "2001-11-04 09:17:41"
     },
     {
+        "is_archived": false,
         "id": 32,
         "code": "SUP0032",
         "name": "Nguyen, Martin and Austin",
@@ -512,6 +544,7 @@
         "updated_at": "1998-09-24 19:52:06"
     },
     {
+        "is_archived": false,
         "id": 33,
         "code": "SUP0033",
         "name": "Villarreal PLC",
@@ -528,6 +561,7 @@
         "updated_at": "2022-04-03 09:15:04"
     },
     {
+        "is_archived": false,
         "id": 34,
         "code": "SUP0034",
         "name": "Fletcher, Rivas and Keller",
@@ -544,6 +578,7 @@
         "updated_at": "1990-08-05 04:18:58"
     },
     {
+        "is_archived": false,
         "id": 35,
         "code": "SUP0035",
         "name": "Mueller-White",
@@ -560,6 +595,7 @@
         "updated_at": "1995-07-23 14:36:17"
     },
     {
+        "is_archived": false,
         "id": 36,
         "code": "SUP0036",
         "name": "Fernandez, Sharp and Vazquez",
@@ -576,6 +612,7 @@
         "updated_at": "2009-11-08 04:05:15"
     },
     {
+        "is_archived": false,
         "id": 37,
         "code": "SUP0037",
         "name": "Hatfield-Bush",
@@ -592,6 +629,7 @@
         "updated_at": "2014-09-03 16:16:50"
     },
     {
+        "is_archived": false,
         "id": 38,
         "code": "SUP0038",
         "name": "Johnson Inc",
@@ -608,6 +646,7 @@
         "updated_at": "2024-07-02 16:42:40"
     },
     {
+        "is_archived": false,
         "id": 39,
         "code": "SUP0039",
         "name": "Sanchez Inc",
@@ -624,6 +663,7 @@
         "updated_at": "2002-08-25 23:28:08"
     },
     {
+        "is_archived": false,
         "id": 40,
         "code": "SUP0040",
         "name": "Hill-Long",
@@ -640,6 +680,7 @@
         "updated_at": "2023-02-15 12:28:22"
     },
     {
+        "is_archived": false,
         "id": 41,
         "code": "SUP0041",
         "name": "Brennan Inc",
@@ -656,6 +697,7 @@
         "updated_at": "1998-08-03 13:52:24"
     },
     {
+        "is_archived": false,
         "id": 42,
         "code": "SUP0042",
         "name": "Ramirez-Hernandez",
@@ -672,6 +714,7 @@
         "updated_at": "2021-09-21 04:43:17"
     },
     {
+        "is_archived": false,
         "id": 43,
         "code": "SUP0043",
         "name": "Brown Inc",
@@ -688,6 +731,7 @@
         "updated_at": "2024-04-07 17:26:44"
     },
     {
+        "is_archived": false,
         "id": 44,
         "code": "SUP0044",
         "name": "Hill-Taylor",
@@ -704,6 +748,7 @@
         "updated_at": "2004-06-15 08:15:21"
     },
     {
+        "is_archived": false,
         "id": 45,
         "code": "SUP0045",
         "name": "Salazar, White and Proctor",
@@ -720,6 +765,7 @@
         "updated_at": "2021-05-12 20:53:29"
     },
     {
+        "is_archived": false,
         "id": 46,
         "code": "SUP0046",
         "name": "Williams Inc",
@@ -736,6 +782,7 @@
         "updated_at": "2022-02-16 03:54:53"
     },
     {
+        "is_archived": false,
         "id": 47,
         "code": "SUP0047",
         "name": "Strickland, Johns and Lamb",
@@ -752,6 +799,7 @@
         "updated_at": "1989-10-10 12:07:09"
     },
     {
+        "is_archived": false,
         "id": 48,
         "code": "SUP0048",
         "name": "Jenkins Group",
@@ -768,6 +816,7 @@
         "updated_at": "2021-10-07 02:36:33"
     },
     {
+        "is_archived": false,
         "id": 49,
         "code": "SUP0049",
         "name": "Black-Weaver",
@@ -784,6 +833,7 @@
         "updated_at": "2019-07-14 06:28:02"
     },
     {
+        "is_archived": false,
         "id": 50,
         "code": "SUP0050",
         "name": "Price-Elliott",
@@ -800,6 +850,7 @@
         "updated_at": "2010-03-16 07:40:58"
     },
     {
+        "is_archived": false,
         "id": 51,
         "code": "SUP0051",
         "name": "Wilson, Alvarez and Walsh",
@@ -816,6 +867,7 @@
         "updated_at": "2020-08-30 01:12:32"
     },
     {
+        "is_archived": false,
         "id": 52,
         "code": "SUP0052",
         "name": "Mitchell, Harris and Garza",
@@ -832,6 +884,7 @@
         "updated_at": "2006-03-27 01:11:31"
     },
     {
+        "is_archived": false,
         "id": 53,
         "code": "SUP0053",
         "name": "Dunlap, Cox and Pacheco",
@@ -848,6 +901,7 @@
         "updated_at": "2017-12-29 13:59:55"
     },
     {
+        "is_archived": false,
         "id": 54,
         "code": "SUP0054",
         "name": "Black LLC",
@@ -864,6 +918,7 @@
         "updated_at": "2013-05-28 16:21:48"
     },
     {
+        "is_archived": false,
         "id": 55,
         "code": "SUP0055",
         "name": "Lutz-Henderson",
@@ -880,6 +935,7 @@
         "updated_at": "1985-10-27 12:26:17"
     },
     {
+        "is_archived": false,
         "id": 56,
         "code": "SUP0056",
         "name": "Jackson-Thornton",
@@ -896,6 +952,7 @@
         "updated_at": "2023-08-30 11:46:38"
     },
     {
+        "is_archived": false,
         "id": 57,
         "code": "SUP0057",
         "name": "Madden-Joseph",
@@ -912,6 +969,7 @@
         "updated_at": "1991-09-14 09:54:55"
     },
     {
+        "is_archived": false,
         "id": 58,
         "code": "SUP0058",
         "name": "Richards, Glenn and Jones",
@@ -928,6 +986,7 @@
         "updated_at": "2024-06-06 12:33:14"
     },
     {
+        "is_archived": false,
         "id": 59,
         "code": "SUP0059",
         "name": "Jones, Morales and Osborne",
@@ -944,6 +1003,7 @@
         "updated_at": "2019-08-21 21:48:57"
     },
     {
+        "is_archived": false,
         "id": 60,
         "code": "SUP0060",
         "name": "Jackson, Howard and Nelson",
@@ -960,6 +1020,7 @@
         "updated_at": "2020-11-14 17:52:22"
     },
     {
+        "is_archived": false,
         "id": 61,
         "code": "SUP0061",
         "name": "Wilson, Rush and Alvarado",
@@ -976,6 +1037,7 @@
         "updated_at": "2015-07-19 09:31:48"
     },
     {
+        "is_archived": false,
         "id": 62,
         "code": "SUP0062",
         "name": "Jenkins, Hernandez and Lopez",
@@ -992,6 +1054,7 @@
         "updated_at": "2021-01-01 19:45:58"
     },
     {
+        "is_archived": false,
         "id": 63,
         "code": "SUP0063",
         "name": "Larsen LLC",
@@ -1008,6 +1071,7 @@
         "updated_at": "1993-09-03 05:56:13"
     },
     {
+        "is_archived": false,
         "id": 64,
         "code": "SUP0064",
         "name": "Johnson LLC",
@@ -1024,6 +1088,7 @@
         "updated_at": "2016-10-15 00:21:08"
     },
     {
+        "is_archived": false,
         "id": 65,
         "code": "SUP0065",
         "name": "Davis, Lee and Casey",
@@ -1040,6 +1105,7 @@
         "updated_at": "2010-04-27 16:08:11"
     },
     {
+        "is_archived": false,
         "id": 66,
         "code": "SUP0066",
         "name": "Bass PLC",
@@ -1056,6 +1122,7 @@
         "updated_at": "2019-11-15 15:40:09"
     },
     {
+        "is_archived": false,
         "id": 67,
         "code": "SUP0067",
         "name": "Byrd, Washington and Lee",
@@ -1072,6 +1139,7 @@
         "updated_at": "2019-07-08 08:03:03"
     },
     {
+        "is_archived": false,
         "id": 68,
         "code": "SUP0068",
         "name": "Adams-Castro",
@@ -1088,6 +1156,7 @@
         "updated_at": "2004-04-07 02:06:00"
     },
     {
+        "is_archived": false,
         "id": 69,
         "code": "SUP0069",
         "name": "Hunt, Chang and Parker",
@@ -1104,6 +1173,7 @@
         "updated_at": "2006-09-24 12:58:43"
     },
     {
+        "is_archived": false,
         "id": 70,
         "code": "SUP0070",
         "name": "Mckenzie, Williams and Shepard",
@@ -1120,6 +1190,7 @@
         "updated_at": "2020-12-16 14:29:54"
     },
     {
+        "is_archived": false,
         "id": 71,
         "code": "SUP0071",
         "name": "Allen Ltd",
@@ -1136,6 +1207,7 @@
         "updated_at": "2020-01-16 17:55:34"
     },
     {
+        "is_archived": false,
         "id": 72,
         "code": "SUP0072",
         "name": "Moss, Harding and Sawyer",
@@ -1152,6 +1224,7 @@
         "updated_at": "2009-07-22 02:47:15"
     },
     {
+        "is_archived": false,
         "id": 73,
         "code": "SUP0073",
         "name": "Allen LLC",
@@ -1168,6 +1241,7 @@
         "updated_at": "1988-09-06 03:15:11"
     },
     {
+        "is_archived": false,
         "id": 74,
         "code": "SUP0074",
         "name": "Blake PLC",
@@ -1184,6 +1258,7 @@
         "updated_at": "2009-11-30 11:28:33"
     },
     {
+        "is_archived": false,
         "id": 75,
         "code": "SUP0075",
         "name": "Rodriguez Inc",
@@ -1200,6 +1275,7 @@
         "updated_at": "1992-10-28 00:15:05"
     },
     {
+        "is_archived": false,
         "id": 76,
         "code": "SUP0076",
         "name": "Mullen-Nelson",
@@ -1216,6 +1292,7 @@
         "updated_at": "1997-12-30 12:25:41"
     },
     {
+        "is_archived": false,
         "id": 77,
         "code": "SUP0077",
         "name": "Cox-Pope",
@@ -1232,6 +1309,7 @@
         "updated_at": "2021-03-13 09:54:23"
     },
     {
+        "is_archived": false,
         "id": 78,
         "code": "SUP0078",
         "name": "Sawyer-Brown",
@@ -1248,6 +1326,7 @@
         "updated_at": "2023-09-07 13:57:58"
     },
     {
+        "is_archived": false,
         "id": 79,
         "code": "SUP0079",
         "name": "Cuevas-Mitchell",
@@ -1264,6 +1343,7 @@
         "updated_at": "1986-06-26 23:01:22"
     },
     {
+        "is_archived": false,
         "id": 80,
         "code": "SUP0080",
         "name": "Valdez Ltd",
@@ -1280,6 +1360,7 @@
         "updated_at": "2008-01-08 18:16:59"
     },
     {
+        "is_archived": false,
         "id": 81,
         "code": "SUP0081",
         "name": "Acosta Ltd",
@@ -1296,6 +1377,7 @@
         "updated_at": "1990-10-05 17:14:25"
     },
     {
+        "is_archived": false,
         "id": 82,
         "code": "SUP0082",
         "name": "Pena-Coleman",
@@ -1312,6 +1394,7 @@
         "updated_at": "2019-08-08 13:03:41"
     },
     {
+        "is_archived": false,
         "id": 83,
         "code": "SUP0083",
         "name": "Montoya and Sons",
@@ -1328,6 +1411,7 @@
         "updated_at": "2018-03-06 22:21:53"
     },
     {
+        "is_archived": false,
         "id": 84,
         "code": "SUP0084",
         "name": "Gonzalez-Hughes",
@@ -1344,6 +1428,7 @@
         "updated_at": "2008-09-16 04:14:06"
     },
     {
+        "is_archived": false,
         "id": 85,
         "code": "SUP0085",
         "name": "Morris, Sanchez and Bernard",
@@ -1360,6 +1445,7 @@
         "updated_at": "2013-11-21 14:34:55"
     },
     {
+        "is_archived": false,
         "id": 86,
         "code": "SUP0086",
         "name": "Edwards-Hernandez",
@@ -1376,6 +1462,7 @@
         "updated_at": "1994-02-20 16:58:18"
     },
     {
+        "is_archived": false,
         "id": 87,
         "code": "SUP0087",
         "name": "Walker-Rogers",
@@ -1392,6 +1479,7 @@
         "updated_at": "2004-02-29 20:42:45"
     },
     {
+        "is_archived": false,
         "id": 88,
         "code": "SUP0088",
         "name": "Patel PLC",
@@ -1408,6 +1496,7 @@
         "updated_at": "2020-07-26 09:16:26"
     },
     {
+        "is_archived": false,
         "id": 89,
         "code": "SUP0089",
         "name": "Moore, Giles and Mendoza",
@@ -1424,6 +1513,7 @@
         "updated_at": "1997-06-11 10:05:16"
     },
     {
+        "is_archived": false,
         "id": 90,
         "code": "SUP0090",
         "name": "Lee Inc",
@@ -1440,6 +1530,7 @@
         "updated_at": "2024-07-11 11:13:00"
     },
     {
+        "is_archived": false,
         "id": 91,
         "code": "SUP0091",
         "name": "Hopkins-Ewing",
@@ -1456,6 +1547,7 @@
         "updated_at": "2020-10-11 22:26:31"
     },
     {
+        "is_archived": false,
         "id": 92,
         "code": "SUP0092",
         "name": "Smith Ltd",
@@ -1472,6 +1564,7 @@
         "updated_at": "1996-08-03 14:44:18"
     },
     {
+        "is_archived": false,
         "id": 93,
         "code": "SUP0093",
         "name": "Bates-Cooper",
@@ -1488,6 +1581,7 @@
         "updated_at": "2021-07-25 17:29:55"
     },
     {
+        "is_archived": false,
         "id": 94,
         "code": "SUP0094",
         "name": "Cole-Clark",
@@ -1504,6 +1598,7 @@
         "updated_at": "2017-09-30 09:04:50"
     },
     {
+        "is_archived": false,
         "id": 95,
         "code": "SUP0095",
         "name": "Frank, Wilson and Carpenter",
@@ -1520,6 +1615,7 @@
         "updated_at": "2022-07-01 22:27:01"
     },
     {
+        "is_archived": false,
         "id": 96,
         "code": "SUP0096",
         "name": "Gonzalez-Hernandez",
@@ -1536,6 +1632,7 @@
         "updated_at": "2013-02-01 02:23:53"
     },
     {
+        "is_archived": false,
         "id": 97,
         "code": "SUP0097",
         "name": "Johnston-Smith",
@@ -1552,6 +1649,7 @@
         "updated_at": "1997-09-20 19:34:32"
     },
     {
+        "is_archived": false,
         "id": 98,
         "code": "SUP0098",
         "name": "Castro, Garcia and Jennings",
@@ -1568,6 +1666,7 @@
         "updated_at": "2015-07-15 09:12:23"
     },
     {
+        "is_archived": false,
         "id": 99,
         "code": "SUP0099",
         "name": "Ramirez, Blair and Leon",
@@ -1584,6 +1683,7 @@
         "updated_at": "1999-02-23 11:00:47"
     },
     {
+        "is_archived": false,
         "id": 100,
         "code": "SUP0100",
         "name": "Bowman, Chandler and Robertson",
@@ -1600,6 +1700,7 @@
         "updated_at": "1974-07-12 22:05:49"
     },
     {
+        "is_archived": false,
         "id": 101,
         "code": "SUP0101",
         "name": "Brewer, Miller and Andrews",
@@ -1616,6 +1717,7 @@
         "updated_at": "2005-06-16 13:50:08"
     },
     {
+        "is_archived": false,
         "id": 102,
         "code": "SUP0102",
         "name": "Clark Group",
@@ -1632,6 +1734,7 @@
         "updated_at": "2010-02-11 17:57:08"
     },
     {
+        "is_archived": false,
         "id": 103,
         "code": "SUP0103",
         "name": "Gay-Andrade",
@@ -1648,6 +1751,7 @@
         "updated_at": "2012-09-12 01:49:12"
     },
     {
+        "is_archived": false,
         "id": 104,
         "code": "SUP0104",
         "name": "Rios, Blanchard and Mason",
@@ -1664,6 +1768,7 @@
         "updated_at": "1988-09-06 17:27:40"
     },
     {
+        "is_archived": false,
         "id": 105,
         "code": "SUP0105",
         "name": "Smith LLC",
@@ -1680,6 +1785,7 @@
         "updated_at": "2014-02-22 11:40:33"
     },
     {
+        "is_archived": false,
         "id": 106,
         "code": "SUP0106",
         "name": "Armstrong-Santiago",
@@ -1696,6 +1802,7 @@
         "updated_at": "2013-04-18 15:22:21"
     },
     {
+        "is_archived": false,
         "id": 107,
         "code": "SUP0107",
         "name": "Trujillo, Bailey and Navarro",
@@ -1712,6 +1819,7 @@
         "updated_at": "2005-01-11 03:47:02"
     },
     {
+        "is_archived": false,
         "id": 108,
         "code": "SUP0108",
         "name": "Martinez-Williams",
@@ -1728,6 +1836,7 @@
         "updated_at": "2014-06-16 16:02:29"
     },
     {
+        "is_archived": false,
         "id": 109,
         "code": "SUP0109",
         "name": "Rodriguez, Horton and Baker",
@@ -1744,6 +1853,7 @@
         "updated_at": "1986-01-21 06:25:44"
     },
     {
+        "is_archived": false,
         "id": 110,
         "code": "SUP0110",
         "name": "Buckley-Stone",
@@ -1760,6 +1870,7 @@
         "updated_at": "1995-10-26 00:16:38"
     },
     {
+        "is_archived": false,
         "id": 111,
         "code": "SUP0111",
         "name": "Combs LLC",
@@ -1776,6 +1887,7 @@
         "updated_at": "2023-12-26 06:01:52"
     },
     {
+        "is_archived": false,
         "id": 112,
         "code": "SUP0112",
         "name": "Chang LLC",
@@ -1792,6 +1904,7 @@
         "updated_at": "2023-06-17 00:47:29"
     },
     {
+        "is_archived": false,
         "id": 113,
         "code": "SUP0113",
         "name": "Richard, Hutchinson and Stephenson",
@@ -1808,6 +1921,7 @@
         "updated_at": "2017-07-04 06:19:07"
     },
     {
+        "is_archived": false,
         "id": 114,
         "code": "SUP0114",
         "name": "Lewis and Sons",
@@ -1824,6 +1938,7 @@
         "updated_at": "2018-03-20 15:03:06"
     },
     {
+        "is_archived": false,
         "id": 115,
         "code": "SUP0115",
         "name": "Carlson Ltd",
@@ -1840,6 +1955,7 @@
         "updated_at": "2021-04-04 10:01:19"
     },
     {
+        "is_archived": false,
         "id": 116,
         "code": "SUP0116",
         "name": "Brown Ltd",
@@ -1856,6 +1972,7 @@
         "updated_at": "2017-07-08 12:41:09"
     },
     {
+        "is_archived": false,
         "id": 117,
         "code": "SUP0117",
         "name": "Olson-Potts",
@@ -1872,6 +1989,7 @@
         "updated_at": "2023-11-16 05:01:32"
     },
     {
+        "is_archived": false,
         "id": 118,
         "code": "SUP0118",
         "name": "Taylor, Jackson and Jennings",
@@ -1888,6 +2006,7 @@
         "updated_at": "2024-07-27 01:08:03"
     },
     {
+        "is_archived": false,
         "id": 119,
         "code": "SUP0119",
         "name": "Villanueva, Lutz and Warren",
@@ -1904,6 +2023,7 @@
         "updated_at": "2014-05-13 12:20:28"
     },
     {
+        "is_archived": false,
         "id": 120,
         "code": "SUP0120",
         "name": "Hansen, Roberts and Walls",
@@ -1920,6 +2040,7 @@
         "updated_at": "2024-03-05 04:33:18"
     },
     {
+        "is_archived": false,
         "id": 121,
         "code": "SUP0121",
         "name": "Romero-Cook",
@@ -1936,6 +2057,7 @@
         "updated_at": "2016-12-19 07:54:08"
     },
     {
+        "is_archived": false,
         "id": 122,
         "code": "SUP0122",
         "name": "Valencia Inc",
@@ -1952,6 +2074,7 @@
         "updated_at": "1997-05-08 15:21:42"
     },
     {
+        "is_archived": false,
         "id": 123,
         "code": "SUP0123",
         "name": "Cook-Oconnor",
@@ -1968,6 +2091,7 @@
         "updated_at": "1980-02-26 11:33:22"
     },
     {
+        "is_archived": false,
         "id": 124,
         "code": "SUP0124",
         "name": "Morgan Inc",
@@ -1984,6 +2108,7 @@
         "updated_at": "2017-02-22 09:44:25"
     },
     {
+        "is_archived": false,
         "id": 125,
         "code": "SUP0125",
         "name": "Robinson-Moody",
@@ -2000,6 +2125,7 @@
         "updated_at": "2022-06-16 02:48:30"
     },
     {
+        "is_archived": false,
         "id": 126,
         "code": "SUP0126",
         "name": "Mcgrath Group",
@@ -2016,6 +2142,7 @@
         "updated_at": "2021-11-09 09:59:00"
     },
     {
+        "is_archived": false,
         "id": 127,
         "code": "SUP0127",
         "name": "Hughes PLC",
@@ -2032,6 +2159,7 @@
         "updated_at": "2002-04-15 04:41:41"
     },
     {
+        "is_archived": false,
         "id": 128,
         "code": "SUP0128",
         "name": "Gray-Brown",
@@ -2048,6 +2176,7 @@
         "updated_at": "2020-07-01 09:34:10"
     },
     {
+        "is_archived": false,
         "id": 129,
         "code": "SUP0129",
         "name": "May, Rivers and Smith",
@@ -2064,6 +2193,7 @@
         "updated_at": "2007-02-16 16:19:20"
     },
     {
+        "is_archived": false,
         "id": 130,
         "code": "SUP0130",
         "name": "Lamb-Dougherty",
@@ -2080,6 +2210,7 @@
         "updated_at": "2024-02-08 12:47:23"
     },
     {
+        "is_archived": false,
         "id": 131,
         "code": "SUP0131",
         "name": "Harvey Inc",
@@ -2096,6 +2227,7 @@
         "updated_at": "1994-01-01 01:43:46"
     },
     {
+        "is_archived": false,
         "id": 132,
         "code": "SUP0132",
         "name": "Thompson-Moore",
@@ -2112,6 +2244,7 @@
         "updated_at": "1995-07-16 23:30:10"
     },
     {
+        "is_archived": false,
         "id": 133,
         "code": "SUP0133",
         "name": "Davis, Cross and Wiley",
@@ -2128,6 +2261,7 @@
         "updated_at": "2019-04-20 05:11:05"
     },
     {
+        "is_archived": false,
         "id": 134,
         "code": "SUP0134",
         "name": "Baker-Graham",
@@ -2144,6 +2278,7 @@
         "updated_at": "2019-04-22 06:05:01"
     },
     {
+        "is_archived": false,
         "id": 135,
         "code": "SUP0135",
         "name": "Pearson, Watson and Hansen",
@@ -2160,6 +2295,7 @@
         "updated_at": "2020-05-26 06:02:48"
     },
     {
+        "is_archived": false,
         "id": 136,
         "code": "SUP0136",
         "name": "Howard-Wilson",
@@ -2176,6 +2312,7 @@
         "updated_at": "2022-07-10 09:31:29"
     },
     {
+        "is_archived": false,
         "id": 137,
         "code": "SUP0137",
         "name": "Sweeney-Morgan",
@@ -2192,6 +2329,7 @@
         "updated_at": "1980-11-02 05:07:16"
     },
     {
+        "is_archived": false,
         "id": 138,
         "code": "SUP0138",
         "name": "Anderson-Elliott",
@@ -2208,6 +2346,7 @@
         "updated_at": "1975-04-26 12:48:03"
     },
     {
+        "is_archived": false,
         "id": 139,
         "code": "SUP0139",
         "name": "Logan, Jenkins and Sullivan",
@@ -2224,6 +2363,7 @@
         "updated_at": "2012-03-26 13:01:23"
     },
     {
+        "is_archived": false,
         "id": 140,
         "code": "SUP0140",
         "name": "Hall, Keith and Peterson",
@@ -2240,6 +2380,7 @@
         "updated_at": "2019-03-17 01:56:34"
     },
     {
+        "is_archived": false,
         "id": 141,
         "code": "SUP0141",
         "name": "Cochran PLC",
@@ -2256,6 +2397,7 @@
         "updated_at": "1998-04-16 22:48:46"
     },
     {
+        "is_archived": false,
         "id": 142,
         "code": "SUP0142",
         "name": "Moore-Carter",
@@ -2272,6 +2414,7 @@
         "updated_at": "2022-05-22 11:23:02"
     },
     {
+        "is_archived": false,
         "id": 143,
         "code": "SUP0143",
         "name": "Todd and Sons",
@@ -2288,6 +2431,7 @@
         "updated_at": "2016-03-20 12:49:12"
     },
     {
+        "is_archived": false,
         "id": 144,
         "code": "SUP0144",
         "name": "Jackson-Butler",
@@ -2304,6 +2448,7 @@
         "updated_at": "1994-01-06 20:22:32"
     },
     {
+        "is_archived": false,
         "id": 145,
         "code": "SUP0145",
         "name": "Brown Inc",
@@ -2320,6 +2465,7 @@
         "updated_at": "2001-04-09 20:12:24"
     },
     {
+        "is_archived": false,
         "id": 146,
         "code": "SUP0146",
         "name": "Baker, Baker and Mercer",
@@ -2336,6 +2482,7 @@
         "updated_at": "2016-06-23 02:27:40"
     },
     {
+        "is_archived": false,
         "id": 147,
         "code": "SUP0147",
         "name": "Wallace Ltd",
@@ -2352,6 +2499,7 @@
         "updated_at": "2014-04-02 18:11:19"
     },
     {
+        "is_archived": false,
         "id": 148,
         "code": "SUP0148",
         "name": "Warren PLC",
@@ -2368,6 +2516,7 @@
         "updated_at": "2019-08-02 17:29:54"
     },
     {
+        "is_archived": false,
         "id": 149,
         "code": "SUP0149",
         "name": "Cox-Smith",
@@ -2384,6 +2533,7 @@
         "updated_at": "2019-03-31 06:27:02"
     },
     {
+        "is_archived": false,
         "id": 150,
         "code": "SUP0150",
         "name": "Combs-Patterson",
@@ -2400,6 +2550,7 @@
         "updated_at": "2013-11-13 09:08:36"
     },
     {
+        "is_archived": false,
         "id": 151,
         "code": "SUP0151",
         "name": "Thornton and Sons",
@@ -2416,6 +2567,7 @@
         "updated_at": "2007-11-29 04:08:56"
     },
     {
+        "is_archived": false,
         "id": 152,
         "code": "SUP0152",
         "name": "Lambert-Edwards",
@@ -2432,6 +2584,7 @@
         "updated_at": "2005-04-16 08:14:57"
     },
     {
+        "is_archived": false,
         "id": 153,
         "code": "SUP0153",
         "name": "Carlson, Marshall and Morgan",
@@ -2448,6 +2601,7 @@
         "updated_at": "2015-05-09 07:28:15"
     },
     {
+        "is_archived": false,
         "id": 154,
         "code": "SUP0154",
         "name": "Miller, Fields and Kemp",
@@ -2464,6 +2618,7 @@
         "updated_at": "2023-09-13 09:08:21"
     },
     {
+        "is_archived": false,
         "id": 155,
         "code": "SUP0155",
         "name": "Knight Group",
@@ -2480,6 +2635,7 @@
         "updated_at": "2024-07-08 00:27:11"
     },
     {
+        "is_archived": false,
         "id": 156,
         "code": "SUP0156",
         "name": "Hamilton PLC",
@@ -2496,6 +2652,7 @@
         "updated_at": "1984-11-25 12:41:51"
     },
     {
+        "is_archived": false,
         "id": 157,
         "code": "SUP0157",
         "name": "Nguyen, Pitts and Lambert",
@@ -2512,6 +2669,7 @@
         "updated_at": "1992-08-05 01:53:40"
     },
     {
+        "is_archived": false,
         "id": 158,
         "code": "SUP0158",
         "name": "Rodgers-Rocha",
@@ -2528,6 +2686,7 @@
         "updated_at": "2016-01-03 15:51:07"
     },
     {
+        "is_archived": false,
         "id": 159,
         "code": "SUP0159",
         "name": "Sanchez Ltd",
@@ -2544,6 +2703,7 @@
         "updated_at": "2023-08-14 09:56:59"
     },
     {
+        "is_archived": false,
         "id": 160,
         "code": "SUP0160",
         "name": "Stewart Ltd",
@@ -2560,6 +2720,7 @@
         "updated_at": "2022-12-06 00:36:43"
     },
     {
+        "is_archived": false,
         "id": 161,
         "code": "SUP0161",
         "name": "Hess, Baker and Allen",
@@ -2576,6 +2737,7 @@
         "updated_at": "2021-04-08 01:04:05"
     },
     {
+        "is_archived": false,
         "id": 162,
         "code": "SUP0162",
         "name": "Martin, Walker and Dunn",
@@ -2592,6 +2754,7 @@
         "updated_at": "1986-03-26 14:56:27"
     },
     {
+        "is_archived": false,
         "id": 163,
         "code": "SUP0163",
         "name": "Barton, Schroeder and Noble",
@@ -2608,6 +2771,7 @@
         "updated_at": "2019-11-02 03:30:54"
     },
     {
+        "is_archived": false,
         "id": 164,
         "code": "SUP0164",
         "name": "Hamilton-Owens",
@@ -2624,6 +2788,7 @@
         "updated_at": "2014-09-27 18:05:29"
     },
     {
+        "is_archived": false,
         "id": 165,
         "code": "SUP0165",
         "name": "Valdez LLC",
@@ -2640,6 +2805,7 @@
         "updated_at": "2009-10-10 15:30:56"
     },
     {
+        "is_archived": false,
         "id": 166,
         "code": "SUP0166",
         "name": "Alexander, Jackson and Rosales",
@@ -2656,6 +2822,7 @@
         "updated_at": "2001-08-17 20:09:17"
     },
     {
+        "is_archived": false,
         "id": 167,
         "code": "SUP0167",
         "name": "Sanchez Group",
@@ -2672,6 +2839,7 @@
         "updated_at": "2021-04-05 02:17:41"
     },
     {
+        "is_archived": false,
         "id": 168,
         "code": "SUP0168",
         "name": "Smith-Yoder",
@@ -2688,6 +2856,7 @@
         "updated_at": "2015-11-13 23:27:30"
     },
     {
+        "is_archived": false,
         "id": 169,
         "code": "SUP0169",
         "name": "Collins, Rodgers and Crawford",
@@ -2704,6 +2873,7 @@
         "updated_at": "1998-02-05 01:17:53"
     },
     {
+        "is_archived": false,
         "id": 170,
         "code": "SUP0170",
         "name": "Rodriguez Group",
@@ -2720,6 +2890,7 @@
         "updated_at": "2019-05-06 12:02:31"
     },
     {
+        "is_archived": false,
         "id": 171,
         "code": "SUP0171",
         "name": "Morrison-Williams",
@@ -2736,6 +2907,7 @@
         "updated_at": "2024-07-23 13:06:59"
     },
     {
+        "is_archived": false,
         "id": 172,
         "code": "SUP0172",
         "name": "Santana Group",
@@ -2752,6 +2924,7 @@
         "updated_at": "2019-06-16 13:50:30"
     },
     {
+        "is_archived": false,
         "id": 173,
         "code": "SUP0173",
         "name": "Garcia, Johnson and Saunders",
@@ -2768,6 +2941,7 @@
         "updated_at": "2022-09-23 18:26:22"
     },
     {
+        "is_archived": false,
         "id": 174,
         "code": "SUP0174",
         "name": "Terrell and Sons",
@@ -2784,6 +2958,7 @@
         "updated_at": "1995-12-25 06:45:57"
     },
     {
+        "is_archived": false,
         "id": 175,
         "code": "SUP0175",
         "name": "Griffin, Guzman and Jimenez",
@@ -2800,6 +2975,7 @@
         "updated_at": "2024-07-20 17:03:43"
     },
     {
+        "is_archived": false,
         "id": 176,
         "code": "SUP0176",
         "name": "Carr-Nunez",
@@ -2816,6 +2992,7 @@
         "updated_at": "2021-07-14 22:50:18"
     },
     {
+        "is_archived": false,
         "id": 177,
         "code": "SUP0177",
         "name": "Tran-Brown",
@@ -2832,6 +3009,7 @@
         "updated_at": "1980-06-06 19:54:58"
     },
     {
+        "is_archived": false,
         "id": 178,
         "code": "SUP0178",
         "name": "Hoffman Group",
@@ -2848,6 +3026,7 @@
         "updated_at": "2008-12-10 15:29:09"
     },
     {
+        "is_archived": false,
         "id": 179,
         "code": "SUP0179",
         "name": "Mills, Miller and Wright",
@@ -2864,6 +3043,7 @@
         "updated_at": "2022-05-05 00:29:03"
     },
     {
+        "is_archived": false,
         "id": 180,
         "code": "SUP0180",
         "name": "Wise, Buchanan and Hill",
@@ -2880,6 +3060,7 @@
         "updated_at": "2014-09-21 16:37:41"
     },
     {
+        "is_archived": false,
         "id": 181,
         "code": "SUP0181",
         "name": "Miller, Wilson and Lee",
@@ -2896,6 +3077,7 @@
         "updated_at": "2007-02-23 16:00:40"
     },
     {
+        "is_archived": false,
         "id": 182,
         "code": "SUP0182",
         "name": "Chapman, Kline and Mendoza",
@@ -2912,6 +3094,7 @@
         "updated_at": "1988-08-04 04:46:25"
     },
     {
+        "is_archived": false,
         "id": 183,
         "code": "SUP0183",
         "name": "Williams, Howard and Estes",
@@ -2928,6 +3111,7 @@
         "updated_at": "2009-03-20 06:40:02"
     },
     {
+        "is_archived": false,
         "id": 184,
         "code": "SUP0184",
         "name": "Ward Ltd",
@@ -2944,6 +3128,7 @@
         "updated_at": "2018-05-14 06:57:41"
     },
     {
+        "is_archived": false,
         "id": 185,
         "code": "SUP0185",
         "name": "Castro PLC",
@@ -2960,6 +3145,7 @@
         "updated_at": "2018-11-06 07:55:23"
     },
     {
+        "is_archived": false,
         "id": 186,
         "code": "SUP0186",
         "name": "Spencer Inc",
@@ -2976,6 +3162,7 @@
         "updated_at": "2018-06-28 22:48:40"
     },
     {
+        "is_archived": false,
         "id": 187,
         "code": "SUP0187",
         "name": "Howard PLC",
@@ -2992,6 +3179,7 @@
         "updated_at": "2008-05-18 17:43:31"
     },
     {
+        "is_archived": false,
         "id": 188,
         "code": "SUP0188",
         "name": "George-Taylor",
@@ -3008,6 +3196,7 @@
         "updated_at": "2022-06-03 14:54:44"
     },
     {
+        "is_archived": false,
         "id": 189,
         "code": "SUP0189",
         "name": "Moore, Washington and Brooks",
@@ -3024,6 +3213,7 @@
         "updated_at": "2022-08-26 09:31:50"
     },
     {
+        "is_archived": false,
         "id": 190,
         "code": "SUP0190",
         "name": "Kelley LLC",
@@ -3040,6 +3230,7 @@
         "updated_at": "2023-04-22 16:00:50"
     },
     {
+        "is_archived": false,
         "id": 191,
         "code": "SUP0191",
         "name": "Zhang and Sons",
@@ -3056,6 +3247,7 @@
         "updated_at": "2002-01-01 07:11:09"
     },
     {
+        "is_archived": false,
         "id": 192,
         "code": "SUP0192",
         "name": "Roman and Sons",
@@ -3072,6 +3264,7 @@
         "updated_at": "1976-08-05 10:14:10"
     },
     {
+        "is_archived": false,
         "id": 193,
         "code": "SUP0193",
         "name": "Dunn, Robinson and Davies",
@@ -3088,6 +3281,7 @@
         "updated_at": "2023-12-04 11:43:27"
     },
     {
+        "is_archived": false,
         "id": 194,
         "code": "SUP0194",
         "name": "Roberson, Murray and Smith",
@@ -3104,6 +3298,7 @@
         "updated_at": "2002-08-02 13:35:41"
     },
     {
+        "is_archived": false,
         "id": 195,
         "code": "SUP0195",
         "name": "Jordan-Williams",
@@ -3120,6 +3315,7 @@
         "updated_at": "2006-09-16 01:03:33"
     },
     {
+        "is_archived": false,
         "id": 196,
         "code": "SUP0196",
         "name": "Garcia-Lyons",
@@ -3136,6 +3332,7 @@
         "updated_at": "2015-04-23 13:48:00"
     },
     {
+        "is_archived": false,
         "id": 197,
         "code": "SUP0197",
         "name": "Combs, Erickson and Robles",
@@ -3152,6 +3349,7 @@
         "updated_at": "2018-04-06 20:44:45"
     },
     {
+        "is_archived": false,
         "id": 198,
         "code": "SUP0198",
         "name": "Saunders, Smith and Washington",
@@ -3168,6 +3366,7 @@
         "updated_at": "2011-05-28 06:25:35"
     },
     {
+        "is_archived": false,
         "id": 199,
         "code": "SUP0199",
         "name": "Johnson-Kidd",
@@ -3184,6 +3383,7 @@
         "updated_at": "2024-03-21 10:44:32"
     },
     {
+        "is_archived": false,
         "id": 200,
         "code": "SUP0200",
         "name": "Roberts PLC",
@@ -3200,6 +3400,7 @@
         "updated_at": "2023-07-01 16:27:31"
     },
     {
+        "is_archived": false,
         "id": 201,
         "code": "SUP0201",
         "name": "Johnson Group",
@@ -3216,6 +3417,7 @@
         "updated_at": "2017-06-15 21:58:52"
     },
     {
+        "is_archived": false,
         "id": 202,
         "code": "SUP0202",
         "name": "Reed, Brown and Richard",
@@ -3232,6 +3434,7 @@
         "updated_at": "2019-11-12 19:14:39"
     },
     {
+        "is_archived": false,
         "id": 203,
         "code": "SUP0203",
         "name": "Christensen Ltd",
@@ -3248,6 +3451,7 @@
         "updated_at": "2004-03-03 05:33:28"
     },
     {
+        "is_archived": false,
         "id": 204,
         "code": "SUP0204",
         "name": "Lewis-Love",
@@ -3264,6 +3468,7 @@
         "updated_at": "2014-10-09 15:38:18"
     },
     {
+        "is_archived": false,
         "id": 205,
         "code": "SUP0205",
         "name": "Herring, Duncan and Buchanan",
@@ -3280,6 +3485,7 @@
         "updated_at": "2019-11-09 02:19:40"
     },
     {
+        "is_archived": false,
         "id": 206,
         "code": "SUP0206",
         "name": "Russo-Hamilton",
@@ -3296,6 +3502,7 @@
         "updated_at": "2003-10-02 17:44:09"
     },
     {
+        "is_archived": false,
         "id": 207,
         "code": "SUP0207",
         "name": "Holden-Browning",
@@ -3312,6 +3519,7 @@
         "updated_at": "2015-11-06 04:14:19"
     },
     {
+        "is_archived": false,
         "id": 208,
         "code": "SUP0208",
         "name": "Moreno, Young and Patel",
@@ -3328,6 +3536,7 @@
         "updated_at": "1995-09-08 11:38:58"
     },
     {
+        "is_archived": false,
         "id": 209,
         "code": "SUP0209",
         "name": "Carrillo, Torres and Alexander",
@@ -3344,6 +3553,7 @@
         "updated_at": "2023-06-28 14:27:24"
     },
     {
+        "is_archived": false,
         "id": 210,
         "code": "SUP0210",
         "name": "Rodriguez, Rivera and Simmons",
@@ -3360,6 +3570,7 @@
         "updated_at": "1991-11-12 08:22:15"
     },
     {
+        "is_archived": false,
         "id": 211,
         "code": "SUP0211",
         "name": "Short-Davis",
@@ -3376,6 +3587,7 @@
         "updated_at": "2018-06-24 22:14:10"
     },
     {
+        "is_archived": false,
         "id": 212,
         "code": "SUP0212",
         "name": "Figueroa Ltd",
@@ -3392,6 +3604,7 @@
         "updated_at": "1972-01-24 12:59:27"
     },
     {
+        "is_archived": false,
         "id": 213,
         "code": "SUP0213",
         "name": "Curry, Kelly and Ramirez",
@@ -3408,6 +3621,7 @@
         "updated_at": "2020-07-22 17:07:48"
     },
     {
+        "is_archived": false,
         "id": 214,
         "code": "SUP0214",
         "name": "Scott-Olson",
@@ -3424,6 +3638,7 @@
         "updated_at": "2008-01-13 09:15:37"
     },
     {
+        "is_archived": false,
         "id": 215,
         "code": "SUP0215",
         "name": "Thomas-Johnson",
@@ -3440,6 +3655,7 @@
         "updated_at": "2015-07-21 00:51:43"
     },
     {
+        "is_archived": false,
         "id": 216,
         "code": "SUP0216",
         "name": "Williams, Miller and Ferguson",
@@ -3456,6 +3672,7 @@
         "updated_at": "2001-11-16 00:17:58"
     },
     {
+        "is_archived": false,
         "id": 217,
         "code": "SUP0217",
         "name": "Pearson Group",
@@ -3472,6 +3689,7 @@
         "updated_at": "2009-02-11 18:33:21"
     },
     {
+        "is_archived": false,
         "id": 218,
         "code": "SUP0218",
         "name": "Ashley, Russell and Luna",
@@ -3488,6 +3706,7 @@
         "updated_at": "2023-10-02 10:48:41"
     },
     {
+        "is_archived": false,
         "id": 219,
         "code": "SUP0219",
         "name": "Hernandez Group",
@@ -3504,6 +3723,7 @@
         "updated_at": "2016-03-14 13:51:02"
     },
     {
+        "is_archived": false,
         "id": 220,
         "code": "SUP0220",
         "name": "Silva-Gonzalez",
@@ -3520,6 +3740,7 @@
         "updated_at": "1988-08-19 03:09:45"
     },
     {
+        "is_archived": false,
         "id": 221,
         "code": "SUP0221",
         "name": "Mcintyre-Davis",
@@ -3536,6 +3757,7 @@
         "updated_at": "2001-03-30 02:46:23"
     },
     {
+        "is_archived": false,
         "id": 222,
         "code": "SUP0222",
         "name": "Medina, Wang and Graham",
@@ -3552,6 +3774,7 @@
         "updated_at": "1999-07-27 11:17:56"
     },
     {
+        "is_archived": false,
         "id": 223,
         "code": "SUP0223",
         "name": "Jenkins-Crane",
@@ -3568,6 +3791,7 @@
         "updated_at": "1991-04-21 09:38:40"
     },
     {
+        "is_archived": false,
         "id": 224,
         "code": "SUP0224",
         "name": "Austin-Hodge",
@@ -3584,6 +3808,7 @@
         "updated_at": "2013-01-20 10:53:29"
     },
     {
+        "is_archived": false,
         "id": 225,
         "code": "SUP0225",
         "name": "Bradford, Palmer and Nguyen",
@@ -3600,6 +3825,7 @@
         "updated_at": "2012-04-23 01:21:38"
     },
     {
+        "is_archived": false,
         "id": 226,
         "code": "SUP0226",
         "name": "Stanley, Evans and Ramirez",
@@ -3616,6 +3842,7 @@
         "updated_at": "2015-03-20 17:57:58"
     },
     {
+        "is_archived": false,
         "id": 227,
         "code": "SUP0227",
         "name": "Campbell-Murphy",
@@ -3632,6 +3859,7 @@
         "updated_at": "2004-03-01 20:05:31"
     },
     {
+        "is_archived": false,
         "id": 228,
         "code": "SUP0228",
         "name": "White-Hunter",
@@ -3648,6 +3876,7 @@
         "updated_at": "2024-03-29 17:21:30"
     },
     {
+        "is_archived": false,
         "id": 229,
         "code": "SUP0229",
         "name": "Sellers, Mckay and Lawson",
@@ -3664,6 +3893,7 @@
         "updated_at": "2019-08-12 15:00:41"
     },
     {
+        "is_archived": false,
         "id": 230,
         "code": "SUP0230",
         "name": "Stevens and Sons",
@@ -3680,6 +3910,7 @@
         "updated_at": "2023-04-07 16:15:13"
     },
     {
+        "is_archived": false,
         "id": 231,
         "code": "SUP0231",
         "name": "Oneill, Smith and Phillips",
@@ -3696,6 +3927,7 @@
         "updated_at": "2007-01-20 10:40:05"
     },
     {
+        "is_archived": false,
         "id": 232,
         "code": "SUP0232",
         "name": "Smith-White",
@@ -3712,6 +3944,7 @@
         "updated_at": "2009-02-27 14:06:58"
     },
     {
+        "is_archived": false,
         "id": 233,
         "code": "SUP0233",
         "name": "Wright PLC",
@@ -3728,6 +3961,7 @@
         "updated_at": "1997-04-25 01:11:18"
     },
     {
+        "is_archived": false,
         "id": 234,
         "code": "SUP0234",
         "name": "Reynolds, Moore and Thompson",
@@ -3744,6 +3978,7 @@
         "updated_at": "1991-05-24 03:20:22"
     },
     {
+        "is_archived": false,
         "id": 235,
         "code": "SUP0235",
         "name": "Morris, Cline and Davis",
@@ -3760,6 +3995,7 @@
         "updated_at": "2015-01-22 05:53:30"
     },
     {
+        "is_archived": false,
         "id": 236,
         "code": "SUP0236",
         "name": "Haynes-Knight",
@@ -3776,6 +4012,7 @@
         "updated_at": "2009-03-18 17:51:00"
     },
     {
+        "is_archived": false,
         "id": 237,
         "code": "SUP0237",
         "name": "Wolfe, Thompson and Carroll",
@@ -3792,6 +4029,7 @@
         "updated_at": "2015-01-27 04:08:41"
     },
     {
+        "is_archived": false,
         "id": 238,
         "code": "SUP0238",
         "name": "Edwards, Walter and Thompson",
@@ -3808,6 +4046,7 @@
         "updated_at": "2023-05-31 01:44:36"
     },
     {
+        "is_archived": false,
         "id": 239,
         "code": "SUP0239",
         "name": "Todd PLC",
@@ -3824,6 +4063,7 @@
         "updated_at": "2020-02-23 07:12:29"
     },
     {
+        "is_archived": false,
         "id": 240,
         "code": "SUP0240",
         "name": "James, Hamilton and Russell",
@@ -3840,6 +4080,7 @@
         "updated_at": "1986-09-15 23:37:36"
     },
     {
+        "is_archived": false,
         "id": 241,
         "code": "SUP0241",
         "name": "Wright LLC",
@@ -3856,6 +4097,7 @@
         "updated_at": "2022-11-11 01:42:59"
     },
     {
+        "is_archived": false,
         "id": 242,
         "code": "SUP0242",
         "name": "Castillo LLC",
@@ -3872,6 +4114,7 @@
         "updated_at": "2016-09-01 05:42:10"
     },
     {
+        "is_archived": false,
         "id": 243,
         "code": "SUP0243",
         "name": "Harris and Sons",
@@ -3888,6 +4131,7 @@
         "updated_at": "2023-08-17 01:40:15"
     },
     {
+        "is_archived": false,
         "id": 244,
         "code": "SUP0244",
         "name": "Meza, Bradshaw and Sampson",
@@ -3904,6 +4148,7 @@
         "updated_at": "2018-03-21 23:18:49"
     },
     {
+        "is_archived": false,
         "id": 245,
         "code": "SUP0245",
         "name": "Cox-Howe",
@@ -3920,6 +4165,7 @@
         "updated_at": "1996-03-05 06:35:23"
     },
     {
+        "is_archived": false,
         "id": 246,
         "code": "SUP0246",
         "name": "Weeks, Perez and Robinson",
@@ -3936,6 +4182,7 @@
         "updated_at": "2006-04-06 18:03:37"
     },
     {
+        "is_archived": false,
         "id": 247,
         "code": "SUP0247",
         "name": "Johnson-Price",
@@ -3952,6 +4199,7 @@
         "updated_at": "2024-07-16 13:12:12"
     },
     {
+        "is_archived": false,
         "id": 248,
         "code": "SUP0248",
         "name": "Rhodes-Johnson",
@@ -3968,6 +4216,7 @@
         "updated_at": "2011-08-10 11:44:29"
     },
     {
+        "is_archived": false,
         "id": 249,
         "code": "SUP0249",
         "name": "Smith-Rogers",
@@ -3984,6 +4233,7 @@
         "updated_at": "2015-05-16 06:01:17"
     },
     {
+        "is_archived": false,
         "id": 250,
         "code": "SUP0250",
         "name": "Small Ltd",
@@ -4000,6 +4250,7 @@
         "updated_at": "2024-06-16 22:38:51"
     },
     {
+        "is_archived": false,
         "id": 251,
         "code": "SUP0251",
         "name": "Palmer, Henderson and Frost",
@@ -4016,6 +4267,7 @@
         "updated_at": "1997-06-08 09:09:45"
     },
     {
+        "is_archived": false,
         "id": 252,
         "code": "SUP0252",
         "name": "Lee, Turner and Bradley",
@@ -4032,6 +4284,7 @@
         "updated_at": "2017-10-30 12:27:57"
     },
     {
+        "is_archived": false,
         "id": 253,
         "code": "SUP0253",
         "name": "Perez-Walker",
@@ -4048,6 +4301,7 @@
         "updated_at": "1986-06-27 12:36:48"
     },
     {
+        "is_archived": false,
         "id": 254,
         "code": "SUP0254",
         "name": "Colon and Sons",
@@ -4064,6 +4318,7 @@
         "updated_at": "2022-02-24 18:23:57"
     },
     {
+        "is_archived": false,
         "id": 255,
         "code": "SUP0255",
         "name": "Wright Ltd",
@@ -4080,6 +4335,7 @@
         "updated_at": "2021-12-10 06:53:21"
     },
     {
+        "is_archived": false,
         "id": 256,
         "code": "SUP0256",
         "name": "Foster, Bryant and Juarez",
@@ -4096,6 +4352,7 @@
         "updated_at": "2002-08-01 13:16:10"
     },
     {
+        "is_archived": false,
         "id": 257,
         "code": "SUP0257",
         "name": "Smith-Jackson",
@@ -4112,6 +4369,7 @@
         "updated_at": "2009-02-07 12:48:00"
     },
     {
+        "is_archived": false,
         "id": 258,
         "code": "SUP0258",
         "name": "Kennedy-Carpenter",
@@ -4128,6 +4386,7 @@
         "updated_at": "2013-02-12 09:05:40"
     },
     {
+        "is_archived": false,
         "id": 259,
         "code": "SUP0259",
         "name": "Gomez PLC",
@@ -4144,6 +4403,7 @@
         "updated_at": "2006-04-19 08:17:16"
     },
     {
+        "is_archived": false,
         "id": 260,
         "code": "SUP0260",
         "name": "Galloway-Jarvis",
@@ -4160,6 +4420,7 @@
         "updated_at": "2020-12-29 21:04:51"
     },
     {
+        "is_archived": false,
         "id": 261,
         "code": "SUP0261",
         "name": "Ali LLC",
@@ -4176,6 +4437,7 @@
         "updated_at": "2024-02-25 18:06:19"
     },
     {
+        "is_archived": false,
         "id": 262,
         "code": "SUP0262",
         "name": "Clayton-Harrington",
@@ -4192,6 +4454,7 @@
         "updated_at": "2021-04-26 02:41:08"
     },
     {
+        "is_archived": false,
         "id": 263,
         "code": "SUP0263",
         "name": "Wells Inc",
@@ -4208,6 +4471,7 @@
         "updated_at": "2023-07-17 15:14:29"
     },
     {
+        "is_archived": false,
         "id": 264,
         "code": "SUP0264",
         "name": "Johnson-Smith",
@@ -4224,6 +4488,7 @@
         "updated_at": "1987-01-16 01:53:35"
     },
     {
+        "is_archived": false,
         "id": 265,
         "code": "SUP0265",
         "name": "Hall, Jackson and Carlson",
@@ -4240,6 +4505,7 @@
         "updated_at": "2012-02-13 20:13:05"
     },
     {
+        "is_archived": false,
         "id": 266,
         "code": "SUP0266",
         "name": "Flores PLC",
@@ -4256,6 +4522,7 @@
         "updated_at": "1981-05-19 00:01:14"
     },
     {
+        "is_archived": false,
         "id": 267,
         "code": "SUP0267",
         "name": "Mcgee, Young and Barrett",
@@ -4272,6 +4539,7 @@
         "updated_at": "2024-08-03 19:49:01"
     },
     {
+        "is_archived": false,
         "id": 268,
         "code": "SUP0268",
         "name": "Dunn PLC",
@@ -4288,6 +4556,7 @@
         "updated_at": "2019-02-21 12:32:31"
     },
     {
+        "is_archived": false,
         "id": 269,
         "code": "SUP0269",
         "name": "Reynolds-Kim",
@@ -4304,6 +4573,7 @@
         "updated_at": "2002-06-10 20:40:52"
     },
     {
+        "is_archived": false,
         "id": 270,
         "code": "SUP0270",
         "name": "Wright LLC",
@@ -4320,6 +4590,7 @@
         "updated_at": "2024-04-20 18:57:17"
     },
     {
+        "is_archived": false,
         "id": 271,
         "code": "SUP0271",
         "name": "Mcdonald-Anderson",
@@ -4336,6 +4607,7 @@
         "updated_at": "2018-12-14 07:32:12"
     },
     {
+        "is_archived": false,
         "id": 272,
         "code": "SUP0272",
         "name": "Meyer-Huffman",
@@ -4352,6 +4624,7 @@
         "updated_at": "2023-12-19 15:23:04"
     },
     {
+        "is_archived": false,
         "id": 273,
         "code": "SUP0273",
         "name": "Rice, Garcia and Lutz",
@@ -4368,6 +4641,7 @@
         "updated_at": "2015-04-29 06:37:15"
     },
     {
+        "is_archived": false,
         "id": 274,
         "code": "SUP0274",
         "name": "Ramirez, Nguyen and Johnson",
@@ -4384,6 +4658,7 @@
         "updated_at": "2010-01-26 09:33:00"
     },
     {
+        "is_archived": false,
         "id": 275,
         "code": "SUP0275",
         "name": "Terry, Mccarty and Hernandez",
@@ -4400,6 +4675,7 @@
         "updated_at": "2024-01-08 16:17:00"
     },
     {
+        "is_archived": false,
         "id": 276,
         "code": "SUP0276",
         "name": "Benson, Gibson and Bennett",
@@ -4416,6 +4692,7 @@
         "updated_at": "2019-01-04 17:23:35"
     },
     {
+        "is_archived": false,
         "id": 277,
         "code": "SUP0277",
         "name": "King-Snyder",
@@ -4432,6 +4709,7 @@
         "updated_at": "2016-07-15 08:00:09"
     },
     {
+        "is_archived": false,
         "id": 278,
         "code": "SUP0278",
         "name": "Simon, Haynes and Brown",
@@ -4448,6 +4726,7 @@
         "updated_at": "1977-03-19 12:33:23"
     },
     {
+        "is_archived": false,
         "id": 279,
         "code": "SUP0279",
         "name": "Wade, Maynard and Harris",
@@ -4464,6 +4743,7 @@
         "updated_at": "2018-01-06 05:44:08"
     },
     {
+        "is_archived": false,
         "id": 280,
         "code": "SUP0280",
         "name": "Alexander Group",
@@ -4480,6 +4760,7 @@
         "updated_at": "2022-05-19 01:44:23"
     },
     {
+        "is_archived": false,
         "id": 281,
         "code": "SUP0281",
         "name": "Sanchez, Davis and Smith",
@@ -4496,6 +4777,7 @@
         "updated_at": "2016-01-16 12:59:30"
     },
     {
+        "is_archived": false,
         "id": 282,
         "code": "SUP0282",
         "name": "Robbins, Nelson and Wilkinson",
@@ -4512,6 +4794,7 @@
         "updated_at": "2023-03-27 09:20:30"
     },
     {
+        "is_archived": false,
         "id": 283,
         "code": "SUP0283",
         "name": "Lewis Ltd",
@@ -4528,6 +4811,7 @@
         "updated_at": "2007-06-23 06:48:37"
     },
     {
+        "is_archived": false,
         "id": 284,
         "code": "SUP0284",
         "name": "Wagner LLC",
@@ -4544,6 +4828,7 @@
         "updated_at": "1981-10-11 00:08:19"
     },
     {
+        "is_archived": false,
         "id": 285,
         "code": "SUP0285",
         "name": "Stokes-Roth",
@@ -4560,6 +4845,7 @@
         "updated_at": "2011-06-24 19:33:53"
     },
     {
+        "is_archived": false,
         "id": 286,
         "code": "SUP0286",
         "name": "Vaughn, King and Nelson",
@@ -4576,6 +4862,7 @@
         "updated_at": "2022-12-27 23:09:45"
     },
     {
+        "is_archived": false,
         "id": 287,
         "code": "SUP0287",
         "name": "Robinson, Dougherty and Johnson",
@@ -4592,6 +4879,7 @@
         "updated_at": "2005-02-21 14:55:30"
     },
     {
+        "is_archived": false,
         "id": 288,
         "code": "SUP0288",
         "name": "Mcneil, Brady and Walters",
@@ -4608,6 +4896,7 @@
         "updated_at": "1975-05-16 22:54:18"
     },
     {
+        "is_archived": false,
         "id": 289,
         "code": "SUP0289",
         "name": "Shaw LLC",
@@ -4624,6 +4913,7 @@
         "updated_at": "2022-06-24 21:57:52"
     },
     {
+        "is_archived": false,
         "id": 290,
         "code": "SUP0290",
         "name": "White-Marshall",
@@ -4640,6 +4930,7 @@
         "updated_at": "2017-04-02 17:27:51"
     },
     {
+        "is_archived": false,
         "id": 291,
         "code": "SUP0291",
         "name": "Phillips PLC",
@@ -4656,6 +4947,7 @@
         "updated_at": "1993-03-14 12:31:50"
     },
     {
+        "is_archived": false,
         "id": 292,
         "code": "SUP0292",
         "name": "Robertson, Lopez and Jennings",
@@ -4672,6 +4964,7 @@
         "updated_at": "2007-02-03 22:57:45"
     },
     {
+        "is_archived": false,
         "id": 293,
         "code": "SUP0293",
         "name": "Brown PLC",
@@ -4688,6 +4981,7 @@
         "updated_at": "2017-05-11 06:30:30"
     },
     {
+        "is_archived": false,
         "id": 294,
         "code": "SUP0294",
         "name": "Guerrero Group",
@@ -4704,6 +4998,7 @@
         "updated_at": "2008-12-17 11:13:58"
     },
     {
+        "is_archived": false,
         "id": 295,
         "code": "SUP0295",
         "name": "Cruz-Chapman",
@@ -4720,6 +5015,7 @@
         "updated_at": "2012-01-12 13:21:48"
     },
     {
+        "is_archived": false,
         "id": 296,
         "code": "SUP0296",
         "name": "Cline, Parks and Hall",
@@ -4736,6 +5032,7 @@
         "updated_at": "2018-04-29 16:20:22"
     },
     {
+        "is_archived": false,
         "id": 297,
         "code": "SUP0297",
         "name": "Duncan, Lee and Smith",
@@ -4752,6 +5049,7 @@
         "updated_at": "2024-01-21 11:00:07"
     },
     {
+        "is_archived": false,
         "id": 298,
         "code": "SUP0298",
         "name": "Thomas Ltd",
@@ -4768,6 +5066,7 @@
         "updated_at": "2022-07-22 08:00:45"
     },
     {
+        "is_archived": false,
         "id": 299,
         "code": "SUP0299",
         "name": "Schwartz PLC",
@@ -4784,6 +5083,7 @@
         "updated_at": "2015-04-22 23:31:53"
     },
     {
+        "is_archived": false,
         "id": 300,
         "code": "SUP0300",
         "name": "Ibarra and Sons",
@@ -4800,6 +5100,7 @@
         "updated_at": "2019-09-11 22:25:53"
     },
     {
+        "is_archived": false,
         "id": 301,
         "code": "SUP0301",
         "name": "Turner-Smith",
@@ -4816,6 +5117,7 @@
         "updated_at": "2024-03-29 03:38:21"
     },
     {
+        "is_archived": false,
         "id": 302,
         "code": "SUP0302",
         "name": "Price-Martinez",
@@ -4832,6 +5134,7 @@
         "updated_at": "1986-02-04 06:16:29"
     },
     {
+        "is_archived": false,
         "id": 303,
         "code": "SUP0303",
         "name": "Conner Group",
@@ -4848,6 +5151,7 @@
         "updated_at": "2014-04-11 19:12:47"
     },
     {
+        "is_archived": false,
         "id": 304,
         "code": "SUP0304",
         "name": "Jefferson, Forbes and Small",
@@ -4864,6 +5168,7 @@
         "updated_at": "2021-11-06 11:21:05"
     },
     {
+        "is_archived": false,
         "id": 305,
         "code": "SUP0305",
         "name": "Butler and Sons",
@@ -4880,6 +5185,7 @@
         "updated_at": "2013-12-12 06:47:25"
     },
     {
+        "is_archived": false,
         "id": 306,
         "code": "SUP0306",
         "name": "Harrison LLC",
@@ -4896,6 +5202,7 @@
         "updated_at": "2022-03-02 08:25:11"
     },
     {
+        "is_archived": false,
         "id": 307,
         "code": "SUP0307",
         "name": "Rivers-Mendoza",
@@ -4912,6 +5219,7 @@
         "updated_at": "1981-01-24 09:48:42"
     },
     {
+        "is_archived": false,
         "id": 308,
         "code": "SUP0308",
         "name": "Pruitt, Johnson and Blackburn",
@@ -4928,6 +5236,7 @@
         "updated_at": "1986-04-03 08:11:15"
     },
     {
+        "is_archived": false,
         "id": 309,
         "code": "SUP0309",
         "name": "Reyes, Patton and Gross",
@@ -4944,6 +5253,7 @@
         "updated_at": "2018-01-06 00:49:41"
     },
     {
+        "is_archived": false,
         "id": 310,
         "code": "SUP0310",
         "name": "Stephenson LLC",
@@ -4960,6 +5270,7 @@
         "updated_at": "2024-08-31 12:11:46"
     },
     {
+        "is_archived": false,
         "id": 311,
         "code": "SUP0311",
         "name": "Love, Wells and Alexander",
@@ -4976,6 +5287,7 @@
         "updated_at": "2022-03-17 16:32:34"
     },
     {
+        "is_archived": false,
         "id": 312,
         "code": "SUP0312",
         "name": "Perez, Rangel and Thomas",
@@ -4992,6 +5304,7 @@
         "updated_at": "1987-11-26 15:43:22"
     },
     {
+        "is_archived": false,
         "id": 313,
         "code": "SUP0313",
         "name": "Giles Ltd",
@@ -5008,6 +5321,7 @@
         "updated_at": "1993-03-28 05:55:36"
     },
     {
+        "is_archived": false,
         "id": 314,
         "code": "SUP0314",
         "name": "Boone PLC",
@@ -5024,6 +5338,7 @@
         "updated_at": "2000-07-10 17:20:38"
     },
     {
+        "is_archived": false,
         "id": 315,
         "code": "SUP0315",
         "name": "Osborne, Howell and Pearson",
@@ -5040,6 +5355,7 @@
         "updated_at": "2022-06-16 06:45:31"
     },
     {
+        "is_archived": false,
         "id": 316,
         "code": "SUP0316",
         "name": "Richards, Warner and Decker",
@@ -5056,6 +5372,7 @@
         "updated_at": "2021-10-09 10:15:07"
     },
     {
+        "is_archived": false,
         "id": 317,
         "code": "SUP0317",
         "name": "Baker, Garcia and Thornton",
@@ -5072,6 +5389,7 @@
         "updated_at": "2024-07-17 12:38:52"
     },
     {
+        "is_archived": false,
         "id": 318,
         "code": "SUP0318",
         "name": "Ortiz LLC",
@@ -5088,6 +5406,7 @@
         "updated_at": "2016-02-01 04:56:58"
     },
     {
+        "is_archived": false,
         "id": 319,
         "code": "SUP0319",
         "name": "Pace, Mclean and Patterson",
@@ -5104,6 +5423,7 @@
         "updated_at": "2016-07-22 18:30:37"
     },
     {
+        "is_archived": false,
         "id": 320,
         "code": "SUP0320",
         "name": "Johnson-Mcintyre",
@@ -5120,6 +5440,7 @@
         "updated_at": "2021-05-26 03:58:05"
     },
     {
+        "is_archived": false,
         "id": 321,
         "code": "SUP0321",
         "name": "Watson-Brown",
@@ -5136,6 +5457,7 @@
         "updated_at": "2023-05-12 07:16:44"
     },
     {
+        "is_archived": false,
         "id": 322,
         "code": "SUP0322",
         "name": "Morgan Group",
@@ -5152,6 +5474,7 @@
         "updated_at": "1991-03-13 07:42:39"
     },
     {
+        "is_archived": false,
         "id": 323,
         "code": "SUP0323",
         "name": "Waters Group",
@@ -5168,6 +5491,7 @@
         "updated_at": "2015-03-20 13:45:40"
     },
     {
+        "is_archived": false,
         "id": 324,
         "code": "SUP0324",
         "name": "Orozco-Weaver",
@@ -5184,6 +5508,7 @@
         "updated_at": "2022-08-08 10:31:24"
     },
     {
+        "is_archived": false,
         "id": 325,
         "code": "SUP0325",
         "name": "Stanley and Sons",
@@ -5200,6 +5525,7 @@
         "updated_at": "1983-11-17 00:38:48"
     },
     {
+        "is_archived": false,
         "id": 326,
         "code": "SUP0326",
         "name": "Hardin-Andrews",
@@ -5216,6 +5542,7 @@
         "updated_at": "2005-09-16 03:09:20"
     },
     {
+        "is_archived": false,
         "id": 327,
         "code": "SUP0327",
         "name": "Armstrong and Sons",
@@ -5232,6 +5559,7 @@
         "updated_at": "2023-03-18 17:51:48"
     },
     {
+        "is_archived": false,
         "id": 328,
         "code": "SUP0328",
         "name": "Fisher LLC",
@@ -5248,6 +5576,7 @@
         "updated_at": "2014-05-30 23:28:27"
     },
     {
+        "is_archived": false,
         "id": 329,
         "code": "SUP0329",
         "name": "Walker and Sons",
@@ -5264,6 +5593,7 @@
         "updated_at": "2023-08-26 19:35:50"
     },
     {
+        "is_archived": false,
         "id": 330,
         "code": "SUP0330",
         "name": "Zamora-Garcia",
@@ -5280,6 +5610,7 @@
         "updated_at": "2024-09-02 12:27:54"
     },
     {
+        "is_archived": false,
         "id": 331,
         "code": "SUP0331",
         "name": "Williams, Humphrey and Lopez",
@@ -5296,6 +5627,7 @@
         "updated_at": "2016-03-18 12:22:02"
     },
     {
+        "is_archived": false,
         "id": 332,
         "code": "SUP0332",
         "name": "Evans-Moore",
@@ -5312,6 +5644,7 @@
         "updated_at": "2014-08-29 02:06:33"
     },
     {
+        "is_archived": false,
         "id": 333,
         "code": "SUP0333",
         "name": "West Ltd",
@@ -5328,6 +5661,7 @@
         "updated_at": "2013-09-11 13:09:08"
     },
     {
+        "is_archived": false,
         "id": 334,
         "code": "SUP0334",
         "name": "Bennett-Mclaughlin",
@@ -5344,6 +5678,7 @@
         "updated_at": "2018-09-01 03:23:13"
     },
     {
+        "is_archived": false,
         "id": 335,
         "code": "SUP0335",
         "name": "Vaughn and Sons",
@@ -5360,6 +5695,7 @@
         "updated_at": "2013-07-06 12:11:59"
     },
     {
+        "is_archived": false,
         "id": 336,
         "code": "SUP0336",
         "name": "Graves, Herrera and Fernandez",
@@ -5376,6 +5712,7 @@
         "updated_at": "1975-04-25 20:53:36"
     },
     {
+        "is_archived": false,
         "id": 337,
         "code": "SUP0337",
         "name": "Novak-Thompson",
@@ -5392,6 +5729,7 @@
         "updated_at": "1984-11-30 09:09:44"
     },
     {
+        "is_archived": false,
         "id": 338,
         "code": "SUP0338",
         "name": "Sanchez-Garcia",
@@ -5408,6 +5746,7 @@
         "updated_at": "2020-08-19 22:33:50"
     },
     {
+        "is_archived": false,
         "id": 339,
         "code": "SUP0339",
         "name": "Lin, Chapman and Hickman",
@@ -5424,6 +5763,7 @@
         "updated_at": "1993-04-26 19:34:12"
     },
     {
+        "is_archived": false,
         "id": 340,
         "code": "SUP0340",
         "name": "Jackson, Erickson and Kaiser",
@@ -5440,6 +5780,7 @@
         "updated_at": "2005-10-22 19:51:26"
     },
     {
+        "is_archived": false,
         "id": 341,
         "code": "SUP0341",
         "name": "Allen-Torres",
@@ -5456,6 +5797,7 @@
         "updated_at": "2023-08-18 19:13:14"
     },
     {
+        "is_archived": false,
         "id": 342,
         "code": "SUP0342",
         "name": "Dorsey Inc",
@@ -5472,6 +5814,7 @@
         "updated_at": "2024-08-24 06:26:47"
     },
     {
+        "is_archived": false,
         "id": 343,
         "code": "SUP0343",
         "name": "Mosley LLC",
@@ -5488,6 +5831,7 @@
         "updated_at": "2021-03-26 02:20:08"
     },
     {
+        "is_archived": false,
         "id": 344,
         "code": "SUP0344",
         "name": "Scott, Rodriguez and Bishop",
@@ -5504,6 +5848,7 @@
         "updated_at": "1990-08-08 20:08:52"
     },
     {
+        "is_archived": false,
         "id": 345,
         "code": "SUP0345",
         "name": "Willis-Carter",
@@ -5520,6 +5865,7 @@
         "updated_at": "2019-07-11 03:04:45"
     },
     {
+        "is_archived": false,
         "id": 346,
         "code": "SUP0346",
         "name": "Lamb, Payne and Armstrong",
@@ -5536,6 +5882,7 @@
         "updated_at": "1998-01-12 01:00:57"
     },
     {
+        "is_archived": false,
         "id": 347,
         "code": "SUP0347",
         "name": "Keller Ltd",
@@ -5552,6 +5899,7 @@
         "updated_at": "2016-01-01 10:44:54"
     },
     {
+        "is_archived": false,
         "id": 348,
         "code": "SUP0348",
         "name": "Gomez, Wells and Daugherty",
@@ -5568,6 +5916,7 @@
         "updated_at": "2024-09-04 11:28:44"
     },
     {
+        "is_archived": false,
         "id": 349,
         "code": "SUP0349",
         "name": "Alexander-Navarro",
@@ -5584,6 +5933,7 @@
         "updated_at": "2002-03-27 06:17:23"
     },
     {
+        "is_archived": false,
         "id": 350,
         "code": "SUP0350",
         "name": "Lee-Soto",
@@ -5600,6 +5950,7 @@
         "updated_at": "2004-09-11 09:14:56"
     },
     {
+        "is_archived": false,
         "id": 351,
         "code": "SUP0351",
         "name": "Thompson Inc",
@@ -5616,6 +5967,7 @@
         "updated_at": "2016-06-20 06:50:29"
     },
     {
+        "is_archived": false,
         "id": 352,
         "code": "SUP0352",
         "name": "Jones Inc",
@@ -5632,6 +5984,7 @@
         "updated_at": "1993-06-23 23:38:33"
     },
     {
+        "is_archived": false,
         "id": 353,
         "code": "SUP0353",
         "name": "Brewer-Mclaughlin",
@@ -5648,6 +6001,7 @@
         "updated_at": "2023-03-13 09:08:31"
     },
     {
+        "is_archived": false,
         "id": 354,
         "code": "SUP0354",
         "name": "Castro-Chapman",
@@ -5664,6 +6018,7 @@
         "updated_at": "2015-06-13 04:50:15"
     },
     {
+        "is_archived": false,
         "id": 355,
         "code": "SUP0355",
         "name": "Thomas Group",
@@ -5680,6 +6035,7 @@
         "updated_at": "2011-02-24 17:11:34"
     },
     {
+        "is_archived": false,
         "id": 356,
         "code": "SUP0356",
         "name": "Barry-Hernandez",
@@ -5696,6 +6052,7 @@
         "updated_at": "2023-11-17 21:05:54"
     },
     {
+        "is_archived": false,
         "id": 357,
         "code": "SUP0357",
         "name": "Walsh, Taylor and Smith",
@@ -5712,6 +6069,7 @@
         "updated_at": "2010-07-22 16:13:47"
     },
     {
+        "is_archived": false,
         "id": 358,
         "code": "SUP0358",
         "name": "Koch LLC",
@@ -5728,6 +6086,7 @@
         "updated_at": "2001-03-12 23:05:15"
     },
     {
+        "is_archived": false,
         "id": 359,
         "code": "SUP0359",
         "name": "Newman-James",
@@ -5744,6 +6103,7 @@
         "updated_at": "1993-05-06 04:13:08"
     },
     {
+        "is_archived": false,
         "id": 360,
         "code": "SUP0360",
         "name": "Bush-Rhodes",
@@ -5760,6 +6120,7 @@
         "updated_at": "2024-04-30 08:31:18"
     },
     {
+        "is_archived": false,
         "id": 361,
         "code": "SUP0361",
         "name": "Gibbs Ltd",
@@ -5776,6 +6137,7 @@
         "updated_at": "2016-12-22 03:17:39"
     },
     {
+        "is_archived": false,
         "id": 362,
         "code": "SUP0362",
         "name": "Monroe, Avila and Fisher",
@@ -5792,6 +6154,7 @@
         "updated_at": "1993-10-04 22:14:04"
     },
     {
+        "is_archived": false,
         "id": 363,
         "code": "SUP0363",
         "name": "Christian, Williams and Hart",
@@ -5808,6 +6171,7 @@
         "updated_at": "2013-01-07 02:06:31"
     },
     {
+        "is_archived": false,
         "id": 364,
         "code": "SUP0364",
         "name": "Leonard, Mclaughlin and Mays",
@@ -5824,6 +6188,7 @@
         "updated_at": "2023-06-03 23:55:53"
     },
     {
+        "is_archived": false,
         "id": 365,
         "code": "SUP0365",
         "name": "Ware-Sanchez",
@@ -5840,6 +6205,7 @@
         "updated_at": "2015-09-12 11:54:35"
     },
     {
+        "is_archived": false,
         "id": 366,
         "code": "SUP0366",
         "name": "Hines-Garcia",
@@ -5856,6 +6222,7 @@
         "updated_at": "1999-12-14 04:41:36"
     },
     {
+        "is_archived": false,
         "id": 367,
         "code": "SUP0367",
         "name": "Palmer, Taylor and Villanueva",
@@ -5872,6 +6239,7 @@
         "updated_at": "1995-03-31 12:50:58"
     },
     {
+        "is_archived": false,
         "id": 368,
         "code": "SUP0368",
         "name": "Weeks Group",
@@ -5888,6 +6256,7 @@
         "updated_at": "2004-12-07 02:10:38"
     },
     {
+        "is_archived": false,
         "id": 369,
         "code": "SUP0369",
         "name": "Edwards and Sons",
@@ -5904,6 +6273,7 @@
         "updated_at": "2024-08-10 08:20:21"
     },
     {
+        "is_archived": false,
         "id": 370,
         "code": "SUP0370",
         "name": "Torres, Lawson and Miller",
@@ -5920,6 +6290,7 @@
         "updated_at": "2019-09-17 05:44:36"
     },
     {
+        "is_archived": false,
         "id": 371,
         "code": "SUP0371",
         "name": "Farrell and Sons",
@@ -5936,6 +6307,7 @@
         "updated_at": "2019-11-11 14:19:53"
     },
     {
+        "is_archived": false,
         "id": 372,
         "code": "SUP0372",
         "name": "Anderson, Perry and Sullivan",
@@ -5952,6 +6324,7 @@
         "updated_at": "2022-08-31 06:50:42"
     },
     {
+        "is_archived": false,
         "id": 373,
         "code": "SUP0373",
         "name": "Joseph-Middleton",
@@ -5968,6 +6341,7 @@
         "updated_at": "2017-02-05 12:26:55"
     },
     {
+        "is_archived": false,
         "id": 374,
         "code": "SUP0374",
         "name": "Garza, Patrick and Warner",
@@ -5984,6 +6358,7 @@
         "updated_at": "2004-04-08 13:44:42"
     },
     {
+        "is_archived": false,
         "id": 375,
         "code": "SUP0375",
         "name": "Davis and Sons",
@@ -6000,6 +6375,7 @@
         "updated_at": "2022-11-09 05:24:07"
     },
     {
+        "is_archived": false,
         "id": 376,
         "code": "SUP0376",
         "name": "Mcclure Inc",
@@ -6016,6 +6392,7 @@
         "updated_at": "2021-08-27 19:35:28"
     },
     {
+        "is_archived": false,
         "id": 377,
         "code": "SUP0377",
         "name": "Jones, Hood and Shaw",
@@ -6032,6 +6409,7 @@
         "updated_at": "2000-10-21 01:59:51"
     },
     {
+        "is_archived": false,
         "id": 378,
         "code": "SUP0378",
         "name": "Watkins, Davidson and Gonzalez",
@@ -6048,6 +6426,7 @@
         "updated_at": "1986-06-22 07:40:18"
     },
     {
+        "is_archived": false,
         "id": 379,
         "code": "SUP0379",
         "name": "Ford-Olson",
@@ -6064,6 +6443,7 @@
         "updated_at": "2019-05-18 07:32:42"
     },
     {
+        "is_archived": false,
         "id": 380,
         "code": "SUP0380",
         "name": "Johnson, Williams and Oliver",
@@ -6080,6 +6460,7 @@
         "updated_at": "2024-09-03 03:49:22"
     },
     {
+        "is_archived": false,
         "id": 381,
         "code": "SUP0381",
         "name": "Bush-Higgins",
@@ -6096,6 +6477,7 @@
         "updated_at": "2009-04-08 18:46:28"
     },
     {
+        "is_archived": false,
         "id": 382,
         "code": "SUP0382",
         "name": "Malone, Morgan and Schneider",
@@ -6112,6 +6494,7 @@
         "updated_at": "2020-07-06 17:09:55"
     },
     {
+        "is_archived": false,
         "id": 383,
         "code": "SUP0383",
         "name": "Greer Ltd",
@@ -6128,6 +6511,7 @@
         "updated_at": "2023-09-05 14:07:25"
     },
     {
+        "is_archived": false,
         "id": 384,
         "code": "SUP0384",
         "name": "Gibson PLC",
@@ -6144,6 +6528,7 @@
         "updated_at": "1988-07-08 22:42:55"
     },
     {
+        "is_archived": false,
         "id": 385,
         "code": "SUP0385",
         "name": "Davis, Villegas and Nunez",
@@ -6160,6 +6545,7 @@
         "updated_at": "2016-05-31 12:36:19"
     },
     {
+        "is_archived": false,
         "id": 386,
         "code": "SUP0386",
         "name": "Garcia Group",
@@ -6176,6 +6562,7 @@
         "updated_at": "2012-10-03 05:28:09"
     },
     {
+        "is_archived": false,
         "id": 387,
         "code": "SUP0387",
         "name": "Jones Ltd",
@@ -6192,6 +6579,7 @@
         "updated_at": "1989-09-03 15:32:51"
     },
     {
+        "is_archived": false,
         "id": 388,
         "code": "SUP0388",
         "name": "Ortiz Group",
@@ -6208,6 +6596,7 @@
         "updated_at": "2018-11-14 21:51:37"
     },
     {
+        "is_archived": false,
         "id": 389,
         "code": "SUP0389",
         "name": "Lee-Tapia",
@@ -6224,6 +6613,7 @@
         "updated_at": "2016-10-24 13:15:05"
     },
     {
+        "is_archived": false,
         "id": 390,
         "code": "SUP0390",
         "name": "Kim and Sons",
@@ -6240,6 +6630,7 @@
         "updated_at": "2018-11-05 07:03:50"
     },
     {
+        "is_archived": false,
         "id": 391,
         "code": "SUP0391",
         "name": "Robbins, Campbell and Flores",
@@ -6256,6 +6647,7 @@
         "updated_at": "1990-01-23 23:19:30"
     },
     {
+        "is_archived": false,
         "id": 392,
         "code": "SUP0392",
         "name": "Chambers, Flynn and Stephens",
@@ -6272,6 +6664,7 @@
         "updated_at": "2016-12-11 19:03:23"
     },
     {
+        "is_archived": false,
         "id": 393,
         "code": "SUP0393",
         "name": "Mills-Adams",
@@ -6288,6 +6681,7 @@
         "updated_at": "2021-07-25 05:26:39"
     },
     {
+        "is_archived": false,
         "id": 394,
         "code": "SUP0394",
         "name": "Brown-Mitchell",
@@ -6304,6 +6698,7 @@
         "updated_at": "2020-12-19 04:34:59"
     },
     {
+        "is_archived": false,
         "id": 395,
         "code": "SUP0395",
         "name": "Campbell Inc",
@@ -6320,6 +6715,7 @@
         "updated_at": "2012-02-21 02:32:09"
     },
     {
+        "is_archived": false,
         "id": 396,
         "code": "SUP0396",
         "name": "Obrien, Jones and Cruz",
@@ -6336,6 +6732,7 @@
         "updated_at": "2019-06-27 19:47:24"
     },
     {
+        "is_archived": false,
         "id": 397,
         "code": "SUP0397",
         "name": "Hunt-Castro",
@@ -6352,6 +6749,7 @@
         "updated_at": "2015-11-26 17:43:33"
     },
     {
+        "is_archived": false,
         "id": 398,
         "code": "SUP0398",
         "name": "Rivers PLC",
@@ -6368,6 +6766,7 @@
         "updated_at": "2001-12-13 06:00:48"
     },
     {
+        "is_archived": false,
         "id": 399,
         "code": "SUP0399",
         "name": "Garcia and Sons",
@@ -6384,6 +6783,7 @@
         "updated_at": "1990-03-28 12:26:35"
     },
     {
+        "is_archived": false,
         "id": 400,
         "code": "SUP0400",
         "name": "Young and Sons",
@@ -6400,6 +6800,7 @@
         "updated_at": "2011-08-28 16:38:25"
     },
     {
+        "is_archived": false,
         "id": 401,
         "code": "SUP0401",
         "name": "Reynolds, Snow and Webb",
@@ -6416,6 +6817,7 @@
         "updated_at": "2022-03-23 20:00:42"
     },
     {
+        "is_archived": false,
         "id": 402,
         "code": "SUP0402",
         "name": "Morrison, Malone and Kaiser",
@@ -6432,6 +6834,7 @@
         "updated_at": "2016-01-07 01:43:51"
     },
     {
+        "is_archived": false,
         "id": 403,
         "code": "SUP0403",
         "name": "Waller-Benton",
@@ -6448,6 +6851,7 @@
         "updated_at": "2012-01-24 07:05:34"
     },
     {
+        "is_archived": false,
         "id": 404,
         "code": "SUP0404",
         "name": "Norris-Wyatt",
@@ -6464,6 +6868,7 @@
         "updated_at": "2005-01-30 16:09:12"
     },
     {
+        "is_archived": false,
         "id": 405,
         "code": "SUP0405",
         "name": "Davis Group",
@@ -6480,6 +6885,7 @@
         "updated_at": "2023-06-17 13:10:32"
     },
     {
+        "is_archived": false,
         "id": 406,
         "code": "SUP0406",
         "name": "Jones-Hill",
@@ -6496,6 +6902,7 @@
         "updated_at": "2016-04-15 19:39:20"
     },
     {
+        "is_archived": false,
         "id": 407,
         "code": "SUP0407",
         "name": "Jones Group",
@@ -6512,6 +6919,7 @@
         "updated_at": "2017-02-14 23:01:39"
     },
     {
+        "is_archived": false,
         "id": 408,
         "code": "SUP0408",
         "name": "Sparks, Williams and Charles",
@@ -6528,6 +6936,7 @@
         "updated_at": "2022-10-24 19:34:17"
     },
     {
+        "is_archived": false,
         "id": 409,
         "code": "SUP0409",
         "name": "Anderson Inc",
@@ -6544,6 +6953,7 @@
         "updated_at": "2020-11-04 21:47:01"
     },
     {
+        "is_archived": false,
         "id": 410,
         "code": "SUP0410",
         "name": "Phillips, Taylor and Reynolds",
@@ -6560,6 +6970,7 @@
         "updated_at": "2023-07-20 11:27:55"
     },
     {
+        "is_archived": false,
         "id": 411,
         "code": "SUP0411",
         "name": "Brown-Lopez",
@@ -6576,6 +6987,7 @@
         "updated_at": "2022-04-03 10:07:33"
     },
     {
+        "is_archived": false,
         "id": 412,
         "code": "SUP0412",
         "name": "Richardson-Pope",
@@ -6592,6 +7004,7 @@
         "updated_at": "2003-10-31 05:35:09"
     },
     {
+        "is_archived": false,
         "id": 413,
         "code": "SUP0413",
         "name": "Townsend-Austin",
@@ -6608,6 +7021,7 @@
         "updated_at": "2024-06-29 06:26:58"
     },
     {
+        "is_archived": false,
         "id": 414,
         "code": "SUP0414",
         "name": "Walker LLC",
@@ -6624,6 +7038,7 @@
         "updated_at": "2017-06-25 18:07:57"
     },
     {
+        "is_archived": false,
         "id": 415,
         "code": "SUP0415",
         "name": "Davis, Smith and Johnson",
@@ -6640,6 +7055,7 @@
         "updated_at": "2019-05-21 08:15:35"
     },
     {
+        "is_archived": false,
         "id": 416,
         "code": "SUP0416",
         "name": "Park and Sons",
@@ -6656,6 +7072,7 @@
         "updated_at": "2010-04-27 09:38:59"
     },
     {
+        "is_archived": false,
         "id": 417,
         "code": "SUP0417",
         "name": "Johnson and Sons",
@@ -6672,6 +7089,7 @@
         "updated_at": "2023-01-13 17:06:46"
     },
     {
+        "is_archived": false,
         "id": 418,
         "code": "SUP0418",
         "name": "Gay-Young",
@@ -6688,6 +7106,7 @@
         "updated_at": "2020-11-11 20:34:39"
     },
     {
+        "is_archived": false,
         "id": 419,
         "code": "SUP0419",
         "name": "Mora-Lowe",
@@ -6704,6 +7123,7 @@
         "updated_at": "1998-11-20 03:08:07"
     },
     {
+        "is_archived": false,
         "id": 420,
         "code": "SUP0420",
         "name": "Howell Ltd",
@@ -6720,6 +7140,7 @@
         "updated_at": "2012-01-12 06:50:01"
     },
     {
+        "is_archived": false,
         "id": 421,
         "code": "SUP0421",
         "name": "Bates, Stephenson and Goodwin",
@@ -6736,6 +7157,7 @@
         "updated_at": "2012-05-16 09:09:29"
     },
     {
+        "is_archived": false,
         "id": 422,
         "code": "SUP0422",
         "name": "Smith, Berger and Harper",
@@ -6752,6 +7174,7 @@
         "updated_at": "2007-12-05 04:47:18"
     },
     {
+        "is_archived": false,
         "id": 423,
         "code": "SUP0423",
         "name": "Martinez PLC",
@@ -6768,6 +7191,7 @@
         "updated_at": "2007-05-04 15:55:31"
     },
     {
+        "is_archived": false,
         "id": 424,
         "code": "SUP0424",
         "name": "Flynn, Kelley and Garcia",
@@ -6784,6 +7208,7 @@
         "updated_at": "1982-04-06 22:24:20"
     },
     {
+        "is_archived": false,
         "id": 425,
         "code": "SUP0425",
         "name": "Mccormick Ltd",
@@ -6800,6 +7225,7 @@
         "updated_at": "2002-11-01 09:25:16"
     },
     {
+        "is_archived": false,
         "id": 426,
         "code": "SUP0426",
         "name": "Cox, Cox and Frank",
@@ -6816,6 +7242,7 @@
         "updated_at": "2019-08-16 00:35:42"
     },
     {
+        "is_archived": false,
         "id": 427,
         "code": "SUP0427",
         "name": "Brooks Ltd",
@@ -6832,6 +7259,7 @@
         "updated_at": "2015-09-05 06:43:30"
     },
     {
+        "is_archived": false,
         "id": 428,
         "code": "SUP0428",
         "name": "Woodard-Johnson",
@@ -6848,6 +7276,7 @@
         "updated_at": "2006-02-22 09:49:44"
     },
     {
+        "is_archived": false,
         "id": 429,
         "code": "SUP0429",
         "name": "Oliver, Lewis and Stevens",
@@ -6864,6 +7293,7 @@
         "updated_at": "2007-09-29 08:41:32"
     },
     {
+        "is_archived": false,
         "id": 430,
         "code": "SUP0430",
         "name": "Thomas, Watson and Sandoval",
@@ -6880,6 +7310,7 @@
         "updated_at": "2019-11-25 03:23:03"
     },
     {
+        "is_archived": false,
         "id": 431,
         "code": "SUP0431",
         "name": "Stephenson-Ross",
@@ -6896,6 +7327,7 @@
         "updated_at": "2024-08-23 04:12:24"
     },
     {
+        "is_archived": false,
         "id": 432,
         "code": "SUP0432",
         "name": "Garza, Wang and Gentry",
@@ -6912,6 +7344,7 @@
         "updated_at": "2004-09-29 08:21:46"
     },
     {
+        "is_archived": false,
         "id": 433,
         "code": "SUP0433",
         "name": "Coleman LLC",
@@ -6928,6 +7361,7 @@
         "updated_at": "2018-09-15 07:51:38"
     },
     {
+        "is_archived": false,
         "id": 434,
         "code": "SUP0434",
         "name": "Lloyd LLC",
@@ -6944,6 +7378,7 @@
         "updated_at": "2022-06-03 04:40:07"
     },
     {
+        "is_archived": false,
         "id": 435,
         "code": "SUP0435",
         "name": "Deleon and Sons",
@@ -6960,6 +7395,7 @@
         "updated_at": "1985-07-14 10:14:26"
     },
     {
+        "is_archived": false,
         "id": 436,
         "code": "SUP0436",
         "name": "Andrews, Reese and Golden",
@@ -6976,6 +7412,7 @@
         "updated_at": "2016-11-19 11:58:18"
     },
     {
+        "is_archived": false,
         "id": 437,
         "code": "SUP0437",
         "name": "Carson-Simon",
@@ -6992,6 +7429,7 @@
         "updated_at": "1994-12-31 19:58:16"
     },
     {
+        "is_archived": false,
         "id": 438,
         "code": "SUP0438",
         "name": "Patel-Boyd",
@@ -7008,6 +7446,7 @@
         "updated_at": "2005-02-03 02:16:49"
     },
     {
+        "is_archived": false,
         "id": 439,
         "code": "SUP0439",
         "name": "Freeman-Graham",
@@ -7024,6 +7463,7 @@
         "updated_at": "2001-12-05 11:09:43"
     },
     {
+        "is_archived": false,
         "id": 440,
         "code": "SUP0440",
         "name": "Santos and Sons",
@@ -7040,6 +7480,7 @@
         "updated_at": "2024-03-11 01:42:41"
     },
     {
+        "is_archived": false,
         "id": 441,
         "code": "SUP0441",
         "name": "Macias-Moses",
@@ -7056,6 +7497,7 @@
         "updated_at": "2008-04-29 14:37:57"
     },
     {
+        "is_archived": false,
         "id": 442,
         "code": "SUP0442",
         "name": "Morgan Ltd",
@@ -7072,6 +7514,7 @@
         "updated_at": "1999-06-12 09:41:05"
     },
     {
+        "is_archived": false,
         "id": 443,
         "code": "SUP0443",
         "name": "Arnold-Norton",
@@ -7088,6 +7531,7 @@
         "updated_at": "2022-02-18 12:43:39"
     },
     {
+        "is_archived": false,
         "id": 444,
         "code": "SUP0444",
         "name": "Humphrey, Harrison and Mills",
@@ -7104,6 +7548,7 @@
         "updated_at": "2011-07-11 20:19:00"
     },
     {
+        "is_archived": false,
         "id": 445,
         "code": "SUP0445",
         "name": "Wright LLC",
@@ -7120,6 +7565,7 @@
         "updated_at": "2021-04-11 19:20:59"
     },
     {
+        "is_archived": false,
         "id": 446,
         "code": "SUP0446",
         "name": "Thornton, Malone and Murphy",
@@ -7136,6 +7582,7 @@
         "updated_at": "2024-01-13 23:16:06"
     },
     {
+        "is_archived": false,
         "id": 447,
         "code": "SUP0447",
         "name": "Norris Group",
@@ -7152,6 +7599,7 @@
         "updated_at": "1986-10-01 17:07:17"
     },
     {
+        "is_archived": false,
         "id": 448,
         "code": "SUP0448",
         "name": "Vega, Cameron and Walker",
@@ -7168,6 +7616,7 @@
         "updated_at": "2023-05-17 20:38:52"
     },
     {
+        "is_archived": false,
         "id": 449,
         "code": "SUP0449",
         "name": "Wood PLC",
@@ -7184,6 +7633,7 @@
         "updated_at": "2023-01-20 05:03:16"
     },
     {
+        "is_archived": false,
         "id": 450,
         "code": "SUP0450",
         "name": "Bennett, Benton and Arroyo",
@@ -7200,6 +7650,7 @@
         "updated_at": "2020-07-30 08:40:37"
     },
     {
+        "is_archived": false,
         "id": 451,
         "code": "SUP0451",
         "name": "Reid PLC",
@@ -7216,6 +7667,7 @@
         "updated_at": "2015-10-11 15:18:40"
     },
     {
+        "is_archived": false,
         "id": 452,
         "code": "SUP0452",
         "name": "Ford PLC",
@@ -7232,6 +7684,7 @@
         "updated_at": "2020-01-03 20:34:27"
     },
     {
+        "is_archived": false,
         "id": 453,
         "code": "SUP0453",
         "name": "Ford Group",
@@ -7248,6 +7701,7 @@
         "updated_at": "2022-01-11 05:04:30"
     },
     {
+        "is_archived": false,
         "id": 454,
         "code": "SUP0454",
         "name": "Edwards PLC",
@@ -7264,6 +7718,7 @@
         "updated_at": "2015-02-09 16:21:49"
     },
     {
+        "is_archived": false,
         "id": 455,
         "code": "SUP0455",
         "name": "Navarro-Roberts",
@@ -7280,6 +7735,7 @@
         "updated_at": "2015-03-22 12:50:02"
     },
     {
+        "is_archived": false,
         "id": 456,
         "code": "SUP0456",
         "name": "Moses-Cooley",
@@ -7296,6 +7752,7 @@
         "updated_at": "2021-05-04 07:49:34"
     },
     {
+        "is_archived": false,
         "id": 457,
         "code": "SUP0457",
         "name": "Cole-Kirk",
@@ -7312,6 +7769,7 @@
         "updated_at": "1998-11-02 19:27:21"
     },
     {
+        "is_archived": false,
         "id": 458,
         "code": "SUP0458",
         "name": "Miller and Sons",
@@ -7328,6 +7786,7 @@
         "updated_at": "2021-07-24 14:50:02"
     },
     {
+        "is_archived": false,
         "id": 459,
         "code": "SUP0459",
         "name": "Cooper LLC",
@@ -7344,6 +7803,7 @@
         "updated_at": "2014-09-07 19:27:36"
     },
     {
+        "is_archived": false,
         "id": 460,
         "code": "SUP0460",
         "name": "Adams-Stewart",
@@ -7360,6 +7820,7 @@
         "updated_at": "2024-03-09 04:04:37"
     },
     {
+        "is_archived": false,
         "id": 461,
         "code": "SUP0461",
         "name": "Cordova, Stanley and Houston",
@@ -7376,6 +7837,7 @@
         "updated_at": "2018-11-11 19:42:16"
     },
     {
+        "is_archived": false,
         "id": 462,
         "code": "SUP0462",
         "name": "Webster-Page",
@@ -7392,6 +7854,7 @@
         "updated_at": "2008-05-18 14:50:01"
     },
     {
+        "is_archived": false,
         "id": 463,
         "code": "SUP0463",
         "name": "Davis and Sons",
@@ -7408,6 +7871,7 @@
         "updated_at": "2016-08-21 17:22:26"
     },
     {
+        "is_archived": false,
         "id": 464,
         "code": "SUP0464",
         "name": "Smith LLC",
@@ -7424,6 +7888,7 @@
         "updated_at": "2013-03-12 10:05:05"
     },
     {
+        "is_archived": false,
         "id": 465,
         "code": "SUP0465",
         "name": "Evans-Glass",
@@ -7440,6 +7905,7 @@
         "updated_at": "2022-08-11 02:43:07"
     },
     {
+        "is_archived": false,
         "id": 466,
         "code": "SUP0466",
         "name": "Nelson-Johnson",
@@ -7456,6 +7922,7 @@
         "updated_at": "2008-01-04 17:03:10"
     },
     {
+        "is_archived": false,
         "id": 467,
         "code": "SUP0467",
         "name": "Brown PLC",
@@ -7472,6 +7939,7 @@
         "updated_at": "2011-08-26 02:11:34"
     },
     {
+        "is_archived": false,
         "id": 468,
         "code": "SUP0468",
         "name": "Mitchell, Cole and Butler",
@@ -7488,6 +7956,7 @@
         "updated_at": "2023-08-03 18:50:29"
     },
     {
+        "is_archived": false,
         "id": 469,
         "code": "SUP0469",
         "name": "Leonard-Lee",
@@ -7504,6 +7973,7 @@
         "updated_at": "2001-01-20 18:00:50"
     },
     {
+        "is_archived": false,
         "id": 470,
         "code": "SUP0470",
         "name": "Stout-Oliver",
@@ -7520,6 +7990,7 @@
         "updated_at": "2020-11-24 16:05:49"
     },
     {
+        "is_archived": false,
         "id": 471,
         "code": "SUP0471",
         "name": "Thompson, Cummings and Baker",
@@ -7536,6 +8007,7 @@
         "updated_at": "2005-11-26 15:48:08"
     },
     {
+        "is_archived": false,
         "id": 472,
         "code": "SUP0472",
         "name": "Nguyen Ltd",
@@ -7552,6 +8024,7 @@
         "updated_at": "2014-01-07 23:22:21"
     },
     {
+        "is_archived": false,
         "id": 473,
         "code": "SUP0473",
         "name": "Stephenson-Greer",
@@ -7568,6 +8041,7 @@
         "updated_at": "2022-10-17 20:45:46"
     },
     {
+        "is_archived": false,
         "id": 474,
         "code": "SUP0474",
         "name": "Williams-Johnson",
@@ -7584,6 +8058,7 @@
         "updated_at": "2002-08-20 08:30:38"
     },
     {
+        "is_archived": false,
         "id": 475,
         "code": "SUP0475",
         "name": "Wallace, Chambers and Watson",
@@ -7600,6 +8075,7 @@
         "updated_at": "1996-12-24 21:52:43"
     },
     {
+        "is_archived": false,
         "id": 476,
         "code": "SUP0476",
         "name": "Hodges-Herman",
@@ -7616,6 +8092,7 @@
         "updated_at": "2021-09-19 02:27:41"
     },
     {
+        "is_archived": false,
         "id": 477,
         "code": "SUP0477",
         "name": "Terry PLC",
@@ -7632,6 +8109,7 @@
         "updated_at": "2012-09-18 11:35:54"
     },
     {
+        "is_archived": false,
         "id": 478,
         "code": "SUP0478",
         "name": "Richardson-Glover",
@@ -7648,6 +8126,7 @@
         "updated_at": "2023-01-16 05:54:05"
     },
     {
+        "is_archived": false,
         "id": 479,
         "code": "SUP0479",
         "name": "Stevens, Miller and Nguyen",
@@ -7664,6 +8143,7 @@
         "updated_at": "2022-05-05 07:44:23"
     },
     {
+        "is_archived": false,
         "id": 480,
         "code": "SUP0480",
         "name": "Hayes and Sons",
@@ -7680,6 +8160,7 @@
         "updated_at": "2024-08-18 06:11:37"
     },
     {
+        "is_archived": false,
         "id": 481,
         "code": "SUP0481",
         "name": "Anderson-Newman",
@@ -7696,6 +8177,7 @@
         "updated_at": "1984-11-10 01:00:20"
     },
     {
+        "is_archived": false,
         "id": 482,
         "code": "SUP0482",
         "name": "Byrd PLC",
@@ -7712,6 +8194,7 @@
         "updated_at": "2018-05-17 10:26:34"
     },
     {
+        "is_archived": false,
         "id": 483,
         "code": "SUP0483",
         "name": "Kennedy, Brown and Leon",
@@ -7728,6 +8211,7 @@
         "updated_at": "2004-06-18 04:59:17"
     },
     {
+        "is_archived": false,
         "id": 484,
         "code": "SUP0484",
         "name": "Cooper, Evans and Stone",
@@ -7744,6 +8228,7 @@
         "updated_at": "2014-12-25 19:13:29"
     },
     {
+        "is_archived": false,
         "id": 485,
         "code": "SUP0485",
         "name": "Hall Inc",
@@ -7760,6 +8245,7 @@
         "updated_at": "2024-04-17 23:03:36"
     },
     {
+        "is_archived": false,
         "id": 486,
         "code": "SUP0486",
         "name": "Thompson, Crawford and Knox",
@@ -7776,6 +8262,7 @@
         "updated_at": "2011-12-17 10:49:52"
     },
     {
+        "is_archived": false,
         "id": 487,
         "code": "SUP0487",
         "name": "Carter-Spencer",
@@ -7792,6 +8279,7 @@
         "updated_at": "1996-03-06 13:34:02"
     },
     {
+        "is_archived": false,
         "id": 488,
         "code": "SUP0488",
         "name": "Gardner-Brock",
@@ -7808,6 +8296,7 @@
         "updated_at": "2016-01-07 16:48:12"
     },
     {
+        "is_archived": false,
         "id": 489,
         "code": "SUP0489",
         "name": "Henderson-Johnson",
@@ -7824,6 +8313,7 @@
         "updated_at": "1991-12-16 07:19:21"
     },
     {
+        "is_archived": false,
         "id": 490,
         "code": "SUP0490",
         "name": "Casey Ltd",
@@ -7840,6 +8330,7 @@
         "updated_at": "2018-05-06 11:45:41"
     },
     {
+        "is_archived": false,
         "id": 491,
         "code": "SUP0491",
         "name": "Pham, Ellis and Mckee",
@@ -7856,6 +8347,7 @@
         "updated_at": "2001-12-27 10:28:47"
     },
     {
+        "is_archived": false,
         "id": 492,
         "code": "SUP0492",
         "name": "Fisher Group",
@@ -7872,6 +8364,7 @@
         "updated_at": "1997-07-23 22:41:01"
     },
     {
+        "is_archived": false,
         "id": 493,
         "code": "SUP0493",
         "name": "Moss, Marquez and Reilly",
@@ -7888,6 +8381,7 @@
         "updated_at": "2021-12-09 21:54:57"
     },
     {
+        "is_archived": false,
         "id": 494,
         "code": "SUP0494",
         "name": "Miller, Contreras and Barker",
@@ -7904,6 +8398,7 @@
         "updated_at": "2023-08-14 10:40:51"
     },
     {
+        "is_archived": false,
         "id": 495,
         "code": "SUP0495",
         "name": "Baker, Lawson and Collins",
@@ -7920,6 +8415,7 @@
         "updated_at": "2010-08-05 17:51:37"
     },
     {
+        "is_archived": false,
         "id": 496,
         "code": "SUP0496",
         "name": "Garner PLC",
@@ -7936,6 +8432,7 @@
         "updated_at": "1998-10-11 04:20:18"
     },
     {
+        "is_archived": false,
         "id": 497,
         "code": "SUP0497",
         "name": "Neal-Hoffman",

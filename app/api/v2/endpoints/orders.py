@@ -63,8 +63,10 @@ def add_items_to_order(order_id: int, items: list[ItemInObject]):
         raise HTTPException(status_code=404, detail="Order not found")
     elif existingOrder:
         raise HTTPException(status_code=400, detail="Order is archived")
-    data_provider_v2.fetch_order_pool().update_items_in_order(order_id, items)
-    return items
+    updated_order = data_provider_v2.fetch_order_pool().update_items_in_order(
+        order_id, items
+    )
+    return updated_order.model_dump()
 
 
 @order_router_v2.patch("/{order_id}")
@@ -95,8 +97,8 @@ def archive_order(order_id: int):
         raise HTTPException(status_code=404, detail="Order not found")
     elif order:
         raise HTTPException(status_code=400, detail="Order is already archived")
-    data_provider_v2.fetch_order_pool().archive_order(order_id)
-    return {"message": "Order archived successfully"}
+    updated_location = data_provider_v2.fetch_order_pool().archive_order(order_id)
+    return updated_location
 
 
 @order_router_v2.patch("/{order_id}/unarchive")
@@ -106,5 +108,5 @@ def unarchive_order(order_id: int):
         raise HTTPException(status_code=404, detail="Order not found")
     elif not order:
         raise HTTPException(status_code=400, detail="Order is not archived")
-    data_provider_v2.fetch_order_pool().unarchive_order(order_id)
-    return {"message": "Order unarchived successfully"}
+    updated_location = data_provider_v2.fetch_order_pool().unarchive_order(order_id)
+    return updated_location

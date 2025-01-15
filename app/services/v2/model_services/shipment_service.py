@@ -1,18 +1,20 @@
-from typing import List, Optional, Type
+from typing import List, Type
 from models.v2.shipment import Shipment
 from models.v2.ItemInObject import ItemInObject
 from services.v2.base_service import Base
-from services.v2.database_service import DB, DatabaseService
+from services.v2.database_service import DatabaseService
 from services.v2 import data_provider_v2
 from utils.globals import *
+from services.v1 import data_provider
 
 
 class ShipmentService(Base):
-    def __init__(self, db: Type[DatabaseService] = None):
+    def __init__(self, db: Type[DatabaseService] = None, is_debug: bool = False):
+        self.is_debug = is_debug
         if db is not None:
             self.db = db
-        else:  # pragma: no cover
-            self.db = DB
+        else:
+            self.db = data_provider_v2.fetch_database()
         self.load()
 
     def get_all_shipments(self) -> List[Shipment]:
@@ -59,12 +61,12 @@ class ShipmentService(Base):
                 return shipment
 
         with self.db.get_connection() as conn:
-            query = f"SELECT * FROM {Shipment.table_name()} WHERE id = {shipment_id}"
-            cursor = conn.execute(query)
-            shipment = cursor.fetchone()
-            if shipment:
+            query = f"SELECT * FROM {Shipment.table_name()} WHERE id = ?"
+            cursor = conn.execute(query, (shipment_id,))
+            shipment_row = cursor.fetchone()
+            if shipment_row:
                 column_names = [desc[0] for desc in cursor.description]
-                shipment = dict(zip(column_names, shipment))
+                shipment = dict(zip(column_names, shipment_row))
                 query_items = f"SELECT item_uid, amount FROM {shipment_items_table} WHERE shipment_id = {shipment_id}"
                 cursor = conn.execute(query_items)
                 all_shipment_items = cursor.fetchall()
@@ -79,9 +81,7 @@ class ShipmentService(Base):
         shipment = self.get_shipment(shipment_id)
         return shipment.items if shipment else None
 
-    def add_shipment(
-        self, shipment: Shipment, closeConnection: bool = True
-    ) -> Shipment:
+    def add_shipment(self, shipment: Shipment, background_task=True) -> Shipment:
 
         if self.has_shipment_archived_entities(shipment):
             return None
@@ -117,14 +117,12 @@ class ShipmentService(Base):
                         items_insert_sql,
                         (shipment_id, shipment_items.item_id, shipment_items.amount),
                     )
-
-        # if closeConnection:
-        #     self.db.commit_and_close()
         self.data.append(shipment)
+        self.save(background_task)
         return shipment
 
     def update_shipment(
-        self, shipment_id: str, shipment: Shipment, closeConnection: bool = True
+        self, shipment_id: str, shipment: Shipment, background_task=True
     ) -> Shipment:
 
         current_shipment = self.get_shipment(shipment_id)
@@ -176,14 +174,15 @@ class ShipmentService(Base):
                             f"DELETE FROM {shipment_items_table} WHERE shipment_id = ? AND item_uid = ?",
                             (shipment_id, current_item_id),
                         )
-        # if closeConnection:
-        #     self.db.commit_and_close()
 
         for i in range(len(self.data)):
             if self.data[i].id == shipment_id:
+                shipment.id = shipment_id
+                if shipment.created_at is None:
+                    shipment.created_at = self.data[i].created_at
                 self.data[i] = shipment
+                self.save(background_task)
                 break
-
         return shipment
 
     def update_items_in_shipment(
@@ -243,7 +242,7 @@ class ShipmentService(Base):
                 self.update_inventory_for_shipment(item.item_id, item.amount)
 
     def archive_shipment(
-        self, shipment_id: str, closeConnection: bool = True
+        self, shipment_id: str, background_task=True
     ) -> Shipment | None:
         for i in range(len(self.data)):
             if self.data[i].id == shipment_id:
@@ -263,13 +262,12 @@ class ShipmentService(Base):
                 with self.db.get_connection() as conn:
                     conn.execute(update_sql, values + (shipment_id,))
 
-                # if closeConnection:
-                #     self.db.commit_and_close()
+                self.save(background_task)
                 return self.data[i]
         return None
 
     def unarchive_shipment(
-        self, shipment_id: str, closeConnection: bool = True
+        self, shipment_id: str, background_task=True
     ) -> Shipment | None:
         for i in range(len(self.data)):
             if self.data[i].id == shipment_id:
@@ -289,10 +287,22 @@ class ShipmentService(Base):
                 with self.db.get_connection() as conn:
                     conn.execute(update_sql, values + (shipment_id,))
 
-                # if closeConnection:
-                #     self.db.commit_and_close()
+                self.save(background_task)
                 return self.data[i]
         return None
+
+    def save(self, background_task=True):
+        if not self.is_debug:
+
+            def call_v1_save_method():
+                data_provider.fetch_shipment_pool().save(
+                    [shipment.model_dump() for shipment in self.data]
+                )
+
+            if background_task:
+                data_provider_v2.fetch_background_tasks().add_task(call_v1_save_method)
+            else:
+                call_v1_save_method()
 
     def load(
         self,
@@ -353,9 +363,7 @@ class ShipmentService(Base):
                 shipments.append(shipment)
         return shipments
 
-    def commit_shipment(
-        self, shipment_id: str, closeConnection: bool = True
-    ) -> Shipment | None:
+    def commit_shipment(self, shipment_id: str) -> Shipment | None:
         if self.is_shipment_archived(shipment_id):
             return None
 
@@ -363,15 +371,14 @@ class ShipmentService(Base):
             if self.data[i].id == shipment_id:
                 if self.data[i].shipment_status == "Pending":
                     self.data[i].shipment_status = "Transit"
-                    return self.update_shipment(
-                        shipment_id, self.data[i], closeConnection
+                    data_provider_v2.fetch_order_pool().check_if_order_transit(
+                        self.data[i].order_id
                     )
+                    return self.update_shipment(shipment_id, self.data[i])
                 elif self.data[i].shipment_status == "Transit":
                     self.data[i].shipment_status = "Delivered"
                     data_provider_v2.fetch_order_pool().check_if_order_delivered(
                         self.data[i].order_id
                     )
-                    return self.update_shipment(
-                        shipment_id, self.data[i], closeConnection
-                    )
+                    return self.update_shipment(shipment_id, self.data[i])
         return None

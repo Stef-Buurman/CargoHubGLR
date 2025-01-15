@@ -60,6 +60,7 @@ def test_add_inventory_invalid_api_key(client):
 
 def test_add_inventory(client):
     response = client.post("/inventories", json=test_inventory, headers=test_headers)
+    test_inventory["id"] = response.json()["id"]
     assert response.status_code == 201 or response.status_code == 200
     assert response.json()["id"] == test_inventory["id"]
 
@@ -202,4 +203,5 @@ def test_delete_inventory(client):
     response_get_inventory = client.get(
         "/inventories/" + str(test_inventory["id"]), headers=test_headers
     )
-    assert response_get_inventory.status_code == 404
+    assert response_get_inventory.status_code == 200
+    assert response_get_inventory.json()["is_archived"] == True

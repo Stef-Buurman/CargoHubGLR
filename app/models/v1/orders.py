@@ -1,7 +1,7 @@
 import json
-
+from models.v2.order import Order
 from .base import Base
-
+from services.v2 import data_provider_v2
 import sys
 import os
 
@@ -13,6 +13,7 @@ ORDERS = []
 
 class Orders(Base):
     def __init__(self, root_path, is_debug=False):
+        self.is_debug = is_debug
         self.data_path = root_path + "orders.json"
         self.load(is_debug)
 
@@ -53,16 +54,32 @@ class Orders(Base):
         return result
 
     def add_order(self, order):
-        order["created_at"] = self.get_timestamp()
-        order["updated_at"] = self.get_timestamp()
-        self.data.append(order)
+        if self.is_debug:
+            order["created_at"] = self.get_timestamp()
+            order["updated_at"] = self.get_timestamp()
+            self.data.append(order)
+            return order
+        else:
+            added_order = data_provider_v2.fetch_order_pool().add_order(
+                Order(**order), False
+            )
+            return added_order.model_dump()
 
     def update_order(self, order_id, order):
         order["updated_at"] = self.get_timestamp()
         for i in range(len(self.data)):
             if self.data[i]["id"] == order_id:
-                self.data[i] = order
-                break
+                order["id"] = order_id
+                if order.get("created_at") is None:
+                    order["created_at"] = self.data[i]["created_at"]
+                if self.is_debug:
+                    self.data[i] = order
+                    return order
+                else:
+                    updated_order = data_provider_v2.fetch_order_pool().update_order(
+                        order_id, Order(**order), False
+                    )
+                    return updated_order.model_dump()
 
     def update_items_in_order(self, order_id, items):
         order = self.get_order(order_id)
@@ -133,7 +150,7 @@ class Orders(Base):
                     )
 
         order["items"] = items
-        self.update_order(order_id, order)
+        return self.update_order(order_id, order)
 
     def update_orders_in_shipment(self, shipment_id, orders):
         packed_orders = self.get_orders_in_shipment(shipment_id)
@@ -147,23 +164,26 @@ class Orders(Base):
             order = self.get_order(x)
             order["shipment_id"] = shipment_id
             order["order_status"] = "Packed"
-            self.update_order(x, order)
-            return order
+            return self.update_order(x, order)
 
     def remove_order(self, order_id):
         for x in self.data:
             if x["id"] == order_id:
                 self.data.remove(x)
+                if not self.is_debug:
+                    data_provider_v2.fetch_order_pool().archive_order(order_id, False)
 
     def load(self, is_debug):
         if is_debug:
             self.data = ORDERS
-        else:  # pragma: no cover
+        else:
             f = open(self.data_path, "r")
             self.data = json.load(f)
             f.close()
 
-    def save(self):  # pragma: no cover
+    def save(self, data=None):
+        if data is not None:
+            self.data = data
         f = open(self.data_path, "w")
         json.dump(self.data, f)
         f.close()

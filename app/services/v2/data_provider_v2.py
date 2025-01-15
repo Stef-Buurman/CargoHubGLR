@@ -1,3 +1,6 @@
+from fastapi import BackgroundTasks
+
+
 _warehouses = None
 _locations = None
 _transfers = None
@@ -11,6 +14,8 @@ _orders = None
 _shipments = None
 _clients = None
 _users = None
+_database = None
+_background_tasks = None
 
 
 def init():
@@ -133,6 +138,20 @@ def get_users():
         _users = UserService()
 
 
+def get_database():
+    from .database_service import DatabaseService
+
+    global _database
+    if _database is None:
+        _database = DatabaseService()
+
+
+def get_background_tasks():
+    global _background_tasks
+    if _background_tasks is None:
+        _background_tasks = BackgroundTasks()
+
+
 # Fetching pools
 def fetch_warehouse_pool():
     get_warehouses()
@@ -197,3 +216,13 @@ def fetch_shipment_pool():
 def fetch_user_pool():
     get_users()
     return _users
+
+
+def fetch_database():
+    get_database()
+    return _database
+
+
+def fetch_background_tasks():
+    get_background_tasks()
+    return _background_tasks

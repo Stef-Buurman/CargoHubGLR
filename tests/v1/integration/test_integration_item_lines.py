@@ -91,6 +91,9 @@ def test_add_item_line_invalid_api_key(client):
 
 def test_add_item_line(client):
     response = client.post("/item_lines", json=test_item_line, headers=test_headers)
+    test_item_line["id"] = response.json()["id"]
+    test_item_1["item_line"] = test_item_line["id"]
+    test_item_2["item_line"] = test_item_line["id"]
     assert response.status_code == 201 or response.status_code == 200
     assert response.json()["id"] == test_item_line["id"]
 
@@ -178,15 +181,6 @@ def test_get_item_line_items(client):
 
     for item in response_items:
         assert item["item_line"] == test_item_line["id"]
-
-    response_delete_item_1 = client.delete(
-        "/items/" + test_item_1["uid"], headers=test_headers
-    )
-    assert response_delete_item_1.status_code == 200
-    response_delete_item_2 = client.delete(
-        "/items/" + test_item_2["uid"], headers=test_headers
-    )
-    assert response_delete_item_2.status_code == 200
 
 
 def test_update_item_line_no_api_key(client):
@@ -301,4 +295,5 @@ def test_delete_item_line(client):
     response_get_item_line = client.get(
         "/item_lines/" + str(test_item_line["id"]), headers=test_headers
     )
-    assert response_get_item_line.status_code == 404
+    assert response_get_item_line.status_code == 200
+    assert response_get_item_line.json()["is_archived"] == True

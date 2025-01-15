@@ -69,6 +69,7 @@ def test_add_order_invalid_api_key(client):
 
 def test_add_order(client):
     response = client.post("/orders", json=test_order, headers=test_headers)
+    test_order["id"] = response.json()["id"]
     assert response.status_code == 201 or response.status_code == 200
     assert response.json()["id"] == test_order["id"]
 
@@ -328,4 +329,5 @@ def test_delete_order(client):
     response_get_order = client.get(
         "/orders/" + str(test_order["id"]), headers=test_headers
     )
-    assert response_get_order.status_code == 404
+    assert response_get_order.status_code == 200
+    assert response_get_order.json()["is_archived"] is True

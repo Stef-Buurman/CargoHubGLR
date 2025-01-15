@@ -43,7 +43,7 @@ def mock_db_service():
 def item_line_service(mock_db_service):
     """Fixture to create an ItemLineService instance with the mocked DatabaseService."""
     mock_db_service.get_all.return_value = TEST_ITEM_LINES
-    service = ItemLineService(mock_db_service)
+    service = ItemLineService(mock_db_service, True)
     return service
 
 
