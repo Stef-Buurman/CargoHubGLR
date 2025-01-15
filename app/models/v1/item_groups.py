@@ -30,7 +30,7 @@ class ItemGroups(Base):
             return item_group
         else:
             added_item_group = data_provider_v2.fetch_item_group_pool().add_item_group(
-                ItemGroup(**item_group)
+                ItemGroup(**item_group), False
             )
             return added_item_group.model_dump()
 
@@ -47,7 +47,7 @@ class ItemGroups(Base):
                 else:
                     updated_item_group = (
                         data_provider_v2.fetch_item_group_pool().update_item_group(
-                            item_group_id, ItemGroup(**item_group)
+                            item_group_id, ItemGroup(**item_group), False
                         )
                     )
                     return updated_item_group.model_dump()
@@ -58,7 +58,7 @@ class ItemGroups(Base):
                 self.data.remove(x)
                 if not self.is_debug:
                     data_provider_v2.fetch_item_group_pool().archive_item_group(
-                        item_group_id
+                        item_group_id, False
                     )
 
     def load(self, is_debug):
