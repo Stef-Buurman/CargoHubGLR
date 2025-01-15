@@ -2,8 +2,6 @@ from fastapi import HTTPException, Request, Security
 from fastapi.security import APIKeyHeader
 
 
-
-
 USERS = [
     {
         "api_key": "test_api_key",

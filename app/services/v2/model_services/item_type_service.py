@@ -42,8 +42,6 @@ class ItemTypeService(Base):
     def update_item_type(
         self, item_type_id: int, item_type: ItemType, background_task=True
     ) -> ItemType:
-        
-
 
         if self.is_item_type_archived(item_type_id):
             return None
