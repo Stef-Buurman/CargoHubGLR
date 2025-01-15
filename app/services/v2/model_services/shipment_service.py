@@ -81,7 +81,7 @@ class ShipmentService(Base):
         shipment = self.get_shipment(shipment_id)
         return shipment.items if shipment else None
 
-    def add_shipment(self, shipment: Shipment) -> Shipment:
+    def add_shipment(self, shipment: Shipment, background_task=True) -> Shipment:
 
         if self.has_shipment_archived_entities(shipment):
             return None
@@ -118,10 +118,12 @@ class ShipmentService(Base):
                         (shipment_id, shipment_items.item_id, shipment_items.amount),
                     )
         self.data.append(shipment)
-        self.save()
+        self.save(background_task)
         return shipment
 
-    def update_shipment(self, shipment_id: str, shipment: Shipment) -> Shipment:
+    def update_shipment(
+        self, shipment_id: str, shipment: Shipment, background_task=True
+    ) -> Shipment:
 
         current_shipment = self.get_shipment(shipment_id)
 
@@ -179,7 +181,7 @@ class ShipmentService(Base):
                 if shipment.created_at is None:
                     shipment.created_at = self.data[i].created_at
                 self.data[i] = shipment
-                self.save()
+                self.save(background_task)
                 break
         return shipment
 
@@ -239,7 +241,9 @@ class ShipmentService(Base):
             if item.item_id not in current_item_ids:
                 self.update_inventory_for_shipment(item.item_id, item.amount)
 
-    def archive_shipment(self, shipment_id: str) -> Shipment | None:
+    def archive_shipment(
+        self, shipment_id: str, background_task=True
+    ) -> Shipment | None:
         for i in range(len(self.data)):
             if self.data[i].id == shipment_id:
                 self.data[i].is_archived = True
@@ -258,11 +262,13 @@ class ShipmentService(Base):
                 with self.db.get_connection() as conn:
                     conn.execute(update_sql, values + (shipment_id,))
 
-                self.save()
+                self.save(background_task)
                 return self.data[i]
         return None
 
-    def unarchive_shipment(self, shipment_id: str) -> Shipment | None:
+    def unarchive_shipment(
+        self, shipment_id: str, background_task=True
+    ) -> Shipment | None:
         for i in range(len(self.data)):
             if self.data[i].id == shipment_id:
                 self.data[i].is_archived = False
@@ -281,17 +287,22 @@ class ShipmentService(Base):
                 with self.db.get_connection() as conn:
                     conn.execute(update_sql, values + (shipment_id,))
 
-                self.save()
+                self.save(background_task)
                 return self.data[i]
         return None
 
-    def save(self):
+    def save(self, background_task=True):
         if not self.is_debug:
-            data_provider_v2.fetch_background_tasks().add_task(
+
+            def call_v1_save_method():
                 data_provider.fetch_shipment_pool().save(
                     [shipment.model_dump() for shipment in self.data]
                 )
-            )
+
+            if background_task:
+                data_provider_v2.fetch_background_tasks().add_task(call_v1_save_method)
+            else:
+                call_v1_save_method()
 
     def load(
         self,

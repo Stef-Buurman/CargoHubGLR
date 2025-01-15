@@ -38,17 +38,19 @@ class LocationService(Base):
                 warehouse_locations.append(location)
         return warehouse_locations
 
-    def add_location(self, location: Location) -> Location:
+    def add_location(self, location: Location, background_task=True) -> Location:
         if self.has_location_archived_entities(location):
             return None
         location.created_at = self.get_timestamp()
         location.updated_at = self.get_timestamp()
         added_location = self.db.insert(location)
         self.data.append(added_location)
-        self.save()
+        self.save(background_task)
         return added_location
 
-    def update_location(self, location_id: int, location: Location) -> Location | None:
+    def update_location(
+        self, location_id: int, location: Location, background_task=True
+    ) -> Location | None:
         if self.is_location_archived(
             location_id
         ) or self.has_location_archived_entities(
@@ -64,39 +66,48 @@ class LocationService(Base):
                     location.created_at = self.data[i].created_at
                 updated_location = self.db.update(location, location_id)
                 self.data[i] = updated_location
-                self.save()
+                self.save(background_task)
                 return updated_location
         return None  # pragma: no cover
 
-    def archive_location(self, location_id: int) -> Location | None:
+    def archive_location(
+        self, location_id: int, background_task=True
+    ) -> Location | None:
         for i in range(len(self.data)):
             if self.data[i].id == location_id:
                 self.data[i].updated_at = self.get_timestamp()
                 self.data[i].is_archived = True
                 updated_location = self.db.update(self.data[i], location_id)
                 self.data[i] = updated_location
-                self.save()
+                self.save(background_task)
                 return updated_location
         return None
 
-    def unarchive_location(self, location_id: int) -> Location | None:
+    def unarchive_location(
+        self, location_id: int, background_task=True
+    ) -> Location | None:
         for i in range(len(self.data)):
             if self.data[i].id == location_id:
                 self.data[i].updated_at = self.get_timestamp()
                 self.data[i].is_archived = False
                 updated_location = self.db.update(self.data[i], location_id)
                 self.data[i] = updated_location
-                self.save()
+                self.save(background_task)
                 return updated_location
         return None
 
-    def save(self):
+    def save(self, background_task=True):
         if not self.is_debug:
-            data_provider_v2.fetch_background_tasks().add_task(
+
+            def call_v1_save_method():
                 data_provider.fetch_location_pool().save(
-                    [location.model_dump() for location in self.data]
+                    [item.model_dump() for item in self.data]
                 )
-            )
+
+            if background_task:
+                data_provider_v2.fetch_background_tasks().add_task(call_v1_save_method)
+            else:
+                call_v1_save_method()
 
     def load(self):
         self.data = self.get_all_locations()

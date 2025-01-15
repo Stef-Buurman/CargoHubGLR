@@ -126,7 +126,7 @@ class ItemService(Base):
                 return True
         return False
 
-    def add_item(self, item: Item) -> Item | None:
+    def add_item(self, item: Item, background_task=True) -> Item | None:
         if self.has_item_archived_entities(item):
             return None
         item.uid = self.generate_uid()
@@ -134,7 +134,7 @@ class ItemService(Base):
         item.updated_at = self.get_timestamp()
         added_item = self.db.insert(item)
         self.data.append(added_item)
-        self.save()
+        self.save(background_task)
         return added_item
 
     def generate_uid(self) -> str:
@@ -146,7 +146,9 @@ class ItemService(Base):
 
         return f"P{current_id:06d}"
 
-    def update_item(self, item_id: str, item: Item) -> Item | None:
+    def update_item(
+        self, item_id: str, item: Item, background_task=True
+    ) -> Item | None:
         old_item = self.get_item(item_id)
         if self.is_item_archived(
             item_id
@@ -160,7 +162,7 @@ class ItemService(Base):
                 item.created_at = self.data[i].created_at
                 updated_item = self.db.update(item, item_id)
                 self.data[i] = updated_item
-                self.save()
+                self.save(background_task)
                 return updated_item
         return None
 
@@ -170,7 +172,7 @@ class ItemService(Base):
                 return item.is_archived
         return None
 
-    def archive_item(self, item_id: str) -> Item | None:
+    def archive_item(self, item_id: str, background_task=True) -> Item | None:
         for i in range(len(self.data)):
             if self.data[i].uid == item_id:
                 new_item = self.data[i].model_copy()
@@ -178,11 +180,11 @@ class ItemService(Base):
                 new_item.updated_at = self.get_timestamp()
                 updated_item = self.db.update(new_item, item_id)
                 self.data[i] = updated_item
-                self.save()
+                self.save(background_task)
                 return updated_item
         return None
 
-    def unarchive_item(self, item_id: str) -> Item | None:
+    def unarchive_item(self, item_id: str, background_task=True) -> Item | None:
         for i in range(len(self.data)):
             if self.data[i].uid == item_id:
                 new_item = self.data[i].model_copy()
@@ -190,17 +192,22 @@ class ItemService(Base):
                 new_item.updated_at = self.get_timestamp()
                 updated_item = self.db.update(new_item, item_id)
                 self.data[i] = updated_item
-                self.save()
+                self.save(background_task)
                 return updated_item
         return None
 
-    def save(self):
+    def save(self, background_task=True):
         if not self.is_debug:
-            data_provider_v2.fetch_background_tasks().add_task(
+
+            def call_v1_save_method():
                 data_provider.fetch_item_pool().save(
                     [item.model_dump() for item in self.data]
                 )
-            )
+
+            if background_task:
+                data_provider_v2.fetch_background_tasks().add_task(call_v1_save_method)
+            else:
+                call_v1_save_method()
 
     def load(self):
         self.data = self.get_all_items()

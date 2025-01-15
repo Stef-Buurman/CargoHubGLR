@@ -39,7 +39,7 @@ class Shipments(Base):
             return shipment
         else:
             created_shipment = data_provider_v2.fetch_shipment_pool().add_shipment(
-                Shipment(**shipment)
+                Shipment(**shipment), False
             )
             return created_shipment.model_dump()
 
@@ -56,7 +56,7 @@ class Shipments(Base):
                 else:
                     updated_shipment = (
                         data_provider_v2.fetch_shipment_pool().update_shipment(
-                            shipment_id, Shipment(**shipment)
+                            shipment_id, Shipment(**shipment), False
                         )
                     )
                     return updated_shipment.model_dump()
@@ -120,7 +120,9 @@ class Shipments(Base):
             if x["id"] == shipment_id:
                 self.data.remove(x)
                 if not self.is_debug:
-                    data_provider_v2.fetch_shipment_pool().archive_shipment(shipment_id)
+                    data_provider_v2.fetch_shipment_pool().archive_shipment(
+                        shipment_id, False
+                    )
 
     def update_items_for_shipment(self, shipment_id, items):
         shipment = self.get_shipment(shipment_id)

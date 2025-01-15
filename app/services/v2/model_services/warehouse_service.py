@@ -31,16 +31,16 @@ class WarehouseService(Base):
                 return warehouse
         return self.db.get(Warehouse, warehouse_id)
 
-    def add_warehouse(self, warehouse: Warehouse) -> Warehouse:
+    def add_warehouse(self, warehouse: Warehouse, background_task=True) -> Warehouse:
         warehouse.created_at = self.get_timestamp()
         warehouse.updated_at = self.get_timestamp()
         added_warehouse = self.db.insert(warehouse)
         self.data.append(added_warehouse)
-        self.save()
+        self.save(background_task)
         return added_warehouse
 
     def update_warehouse(
-        self, warehouse_id: int, warehouse: Warehouse
+        self, warehouse_id: int, warehouse: Warehouse, background_task=True
     ) -> Warehouse | None:
         if self.is_warehouse_archived(warehouse_id):
             return None
@@ -53,39 +53,48 @@ class WarehouseService(Base):
                     warehouse.created_at = self.data[i].created_at
                 updated_warehouse = self.db.update(warehouse, warehouse_id)
                 self.data[i] = updated_warehouse
-                self.save()
+                self.save(background_task)
                 return updated_warehouse
         return None  # pragma: no cover
 
-    def archive_warehouse(self, warehouse_id: int) -> Warehouse | None:
+    def archive_warehouse(
+        self, warehouse_id: int, background_task=True
+    ) -> Warehouse | None:
         for i in range(len(self.data)):
             if self.data[i].id == warehouse_id:
                 self.data[i].updated_at = self.get_timestamp()
                 self.data[i].is_archived = True
                 updated_warehouse = self.db.update(self.data[i], warehouse_id)
                 self.data[i] = updated_warehouse
-                self.save()
+                self.save(background_task)
                 return updated_warehouse
         return None
 
-    def unarchive_warehouse(self, warehouse_id: int) -> Warehouse | None:
+    def unarchive_warehouse(
+        self, warehouse_id: int, background_task=True
+    ) -> Warehouse | None:
         for i in range(len(self.data)):
             if self.data[i].id == warehouse_id:
                 self.data[i].updated_at = self.get_timestamp()
                 self.data[i].is_archived = False
                 updated_warehouse = self.db.update(self.data[i], warehouse_id)
                 self.data[i] = updated_warehouse
-                self.save()
+                self.save(background_task)
                 return updated_warehouse
         return None
 
-    def save(self):
+    def save(self, background_task=True):
         if not self.is_debug:
-            data_provider_v2.fetch_background_tasks().add_task(
+
+            def call_v1_save_method():
                 data_provider.fetch_warehouse_pool().save(
-                    [warehouse.model_dump() for warehouse in self.data]
+                    [shipment.model_dump() for shipment in self.data]
                 )
-            )
+
+            if background_task:
+                data_provider_v2.fetch_background_tasks().add_task(call_v1_save_method)
+            else:
+                call_v1_save_method()
 
     def load(self):
         self.data = self.get_all_warehouses()

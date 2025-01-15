@@ -30,7 +30,7 @@ class Warehouses(Base):
             return warehouse
         else:
             created_warehouse = data_provider_v2.fetch_warehouse_pool().add_warehouse(
-                Warehouse(**warehouse)
+                Warehouse(**warehouse), False
             )
             return created_warehouse.model_dump()
 
@@ -47,7 +47,7 @@ class Warehouses(Base):
                 else:
                     updated_warehouse = (
                         data_provider_v2.fetch_warehouse_pool().update_warehouse(
-                            warehouse_id, Warehouse(**warehouse)
+                            warehouse_id, Warehouse(**warehouse), False
                         )
                     )
                     return updated_warehouse.model_dump()
@@ -58,7 +58,7 @@ class Warehouses(Base):
                 self.data.remove(x)
                 if not self.is_debug:
                     data_provider_v2.fetch_warehouse_pool().archive_warehouse(
-                        warehouse_id
+                        warehouse_id, False
                     )
 
     def load(self, is_debug):

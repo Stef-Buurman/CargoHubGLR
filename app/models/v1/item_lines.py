@@ -29,7 +29,7 @@ class ItemLines(Base):
             self.data.append(item_line)
         else:
             added_item_line = data_provider_v2.fetch_item_line_pool().add_item_line(
-                ItemLine(**item_line)
+                ItemLine(**item_line), False
             )
             return added_item_line.model_dump()
 
@@ -46,7 +46,7 @@ class ItemLines(Base):
                 else:
                     updated_item_line = (
                         data_provider_v2.fetch_item_line_pool().update_item_line(
-                            item_line_id, ItemLine(**item_line)
+                            item_line_id, ItemLine(**item_line), False
                         )
                     )
                     return updated_item_line.model_dump()
@@ -57,7 +57,7 @@ class ItemLines(Base):
                 self.data.remove(x)
                 if not self.is_debug:
                     data_provider_v2.fetch_item_line_pool().archive_item_line(
-                        item_line_id
+                        item_line_id, False
                     )
 
     def load(self, is_debug):

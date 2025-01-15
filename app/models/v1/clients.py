@@ -30,7 +30,7 @@ class Clients(Base):
             return client
         else:
             created_client = data_provider_v2.fetch_client_pool().add_client(
-                Client(**client)
+                Client(**client), False
             )
             return created_client.model_dump()
 
@@ -46,7 +46,7 @@ class Clients(Base):
                     return client
                 else:
                     updated_client = data_provider_v2.fetch_client_pool().update_client(
-                        client_id, Client(**client)
+                        client_id, Client(**client), False
                     )
                     return updated_client.model_dump()
 
@@ -55,7 +55,9 @@ class Clients(Base):
             if x["id"] == client_id:
                 self.data.remove(x)
                 if not self.is_debug:
-                    data_provider_v2.fetch_client_pool().archive_client(client_id)
+                    data_provider_v2.fetch_client_pool().archive_client(
+                        client_id, False
+                    )
 
     def load(self, is_debug):
         if is_debug:

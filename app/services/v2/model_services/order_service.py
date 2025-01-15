@@ -94,7 +94,7 @@ class OrderService(Base):
                 result.append(order)
         return result
 
-    def add_order(self, order: Order) -> Order:
+    def add_order(self, order: Order, background_task=True) -> Order:
         if self.has_order_archived_entities(order):
             return None
 
@@ -131,10 +131,12 @@ class OrderService(Base):
                         (order_id, order_items.item_id, order_items.amount),
                     )
         self.data.append(order)
-        self.save()
+        self.save(background_task)
         return order
 
-    def update_order(self, order_id: int, order: Order) -> Order | None:
+    def update_order(
+        self, order_id: int, order: Order, background_task=True
+    ) -> Order | None:
         if self.is_order_archived(
             order_id
         ) is not False or self.has_order_archived_entities(
@@ -180,7 +182,7 @@ class OrderService(Base):
         for i in range(len(self.data)):
             if self.data[i].id == order_id:
                 self.data[i] = order
-        self.save()
+        self.save(background_task)
         return order
 
     def update_items_in_order(
@@ -215,7 +217,7 @@ class OrderService(Base):
                 updated_orders.append(self.update_order(order.id, order))
         return updated_orders
 
-    def archive_order(self, order_id: int) -> Order | None:
+    def archive_order(self, order_id: int, background_task=True) -> Order | None:
         for i in range(len(self.data)):
             if self.data[i].id == order_id:
                 self.data[i].updated_at = self.get_timestamp()
@@ -236,11 +238,11 @@ class OrderService(Base):
 
                 with self.db.get_connection() as conn:
                     conn.execute(update_sql, values)
-                self.save()
+                self.save(background_task)
                 return self.data[i]
         return None
 
-    def unarchive_order(self, order_id: int) -> Order | None:
+    def unarchive_order(self, order_id: int, background_task=True) -> Order | None:
         for i in range(len(self.data)):
             if self.data[i].id == order_id:
                 self.data[i].updated_at = self.get_timestamp()
@@ -261,17 +263,22 @@ class OrderService(Base):
 
                 with self.db.get_connection() as conn:
                     conn.execute(update_sql, values)
-                self.save()
+                self.save(background_task)
                 return self.data[i]
         return None
 
-    def save(self):
+    def save(self, background_task=True):
         if not self.is_debug:
-            data_provider_v2.fetch_background_tasks().add_task(
+
+            def call_v1_save_method():
                 data_provider.fetch_order_pool().save(
                     [order.model_dump() for order in self.data]
                 )
-            )
+
+            if background_task:
+                data_provider_v2.fetch_background_tasks().add_task(call_v1_save_method)
+            else:
+                call_v1_save_method()
 
     def load(self):
         self.data = self.get_all_orders()

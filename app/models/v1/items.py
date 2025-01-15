@@ -56,7 +56,9 @@ class Items(Base):
             item["updated_at"] = self.get_timestamp()
             self.data.append(item)
         else:  # pragma: no cover
-            created_item = data_provider_v2.fetch_item_pool().add_item(Item(**item))
+            created_item = data_provider_v2.fetch_item_pool().add_item(
+                Item(**item), False
+            )
             return created_item.model_dump()
 
     def update_item(self, item_id, item):
@@ -71,7 +73,7 @@ class Items(Base):
                     return item
                 else:  # pragma: no cover
                     updated_item = data_provider_v2.fetch_item_pool().update_item(
-                        item_id, Item(**item)
+                        item_id, Item(**item), False
                     )
                     return updated_item.model_dump()
 
@@ -80,7 +82,7 @@ class Items(Base):
             if x["uid"] == item_id:
                 self.data.remove(x)
                 if not self.is_debug:
-                    data_provider_v2.fetch_item_pool().archive_item(item_id)
+                    data_provider_v2.fetch_item_pool().archive_item(item_id, False)
 
     def load(self, is_debug, items):
         if is_debug:

@@ -31,15 +31,17 @@ class ItemTypeService(Base):
                 return item_type
         return self.db.get(ItemType, item_type_id)
 
-    def add_item_type(self, item_type: ItemType) -> ItemType:
+    def add_item_type(self, item_type: ItemType, background_task=True) -> ItemType:
         item_type.created_at = self.get_timestamp()
         item_type.updated_at = self.get_timestamp()
         added_item_type = self.db.insert(item_type)
         self.data.append(added_item_type)
-        self.save()
+        self.save(background_task)
         return added_item_type
 
-    def update_item_type(self, item_type_id: int, item_type: ItemType) -> ItemType:
+    def update_item_type(
+        self, item_type_id: int, item_type: ItemType, background_task=True
+    ) -> ItemType:
         if self.is_item_type_archived(item_type_id):
             return None
 
@@ -48,7 +50,7 @@ class ItemTypeService(Base):
             if self.data[i].id == item_type_id:
                 updae_item_type = self.db.update(item_type, item_type_id)
                 self.data[i] = updae_item_type
-                self.save()
+                self.save(background_task)
                 return updae_item_type
         return None  # pragma: no cover
 
@@ -58,34 +60,43 @@ class ItemTypeService(Base):
                 return item_type.is_archived
         return None
 
-    def archive_item_type(self, item_type_id: int) -> ItemType | None:
+    def archive_item_type(
+        self, item_type_id: int, background_task=True
+    ) -> ItemType | None:
         for i in range(len(self.data)):
             if self.data[i].id == item_type_id:
                 self.data[i].is_archived = True
                 self.data[i].updated_at = self.get_timestamp()
                 updated_item_type = self.db.update(self.data[i], item_type_id)
                 self.data[i] = updated_item_type
-                self.save()
+                self.save(background_task)
                 return updated_item_type
         return None
 
-    def unarchive_item_type(self, item_type_id: int) -> ItemType | None:
+    def unarchive_item_type(
+        self, item_type_id: int, background_task=True
+    ) -> ItemType | None:
         for i in range(len(self.data)):
             if self.data[i].id == item_type_id:
                 self.data[i].is_archived = False
                 updated_item_type = self.db.update(self.data[i], item_type_id)
                 self.data[i] = updated_item_type
-                self.save()
+                self.save(background_task)
                 return updated_item_type
         return None
 
-    def save(self):
+    def save(self, background_task=True):
         if not self.is_debug:
-            data_provider_v2.fetch_background_tasks().add_task(
+
+            def call_v1_save_method():
                 data_provider.fetch_item_type_pool().save(
                     [item.model_dump() for item in self.data]
                 )
-            )
+
+            if background_task:
+                data_provider_v2.fetch_background_tasks().add_task(call_v1_save_method)
+            else:
+                call_v1_save_method()
 
     def load(self):
         self.data = self.get_all_item_types()

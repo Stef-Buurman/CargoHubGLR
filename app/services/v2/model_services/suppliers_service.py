@@ -31,15 +31,17 @@ class SupplierService(Base):
                 return supplier
         return self.db.get(Supplier, supplier_id)
 
-    def add_supplier(self, supplier: Supplier) -> Supplier:
+    def add_supplier(self, supplier: Supplier, background_task=True) -> Supplier:
         supplier.created_at = self.get_timestamp()
         supplier.updated_at = self.get_timestamp()
         added_supplier = self.db.insert(supplier)
         self.data.append(added_supplier)
-        self.save()
+        self.save(background_task)
         return added_supplier
 
-    def update_supplier(self, supplier_id: int, supplier: Supplier):
+    def update_supplier(
+        self, supplier_id: int, supplier: Supplier, background_task=True
+    ):
         if self.is_supplier_archived(supplier_id):
             return None
 
@@ -49,39 +51,48 @@ class SupplierService(Base):
             if self.data[i].id == supplier_id:
                 updated_supplier = self.db.update(supplier, supplier_id)
                 self.data[i] = updated_supplier
-                self.save()
+                self.save(background_task)
                 return updated_supplier
         return None  # pragma: no cover
 
-    def archive_supplier(self, supplier_id: int) -> Supplier | None:
+    def archive_supplier(
+        self, supplier_id: int, background_task=True
+    ) -> Supplier | None:
         for i in range(len(self.data)):
             if self.data[i].id == supplier_id:
                 self.data[i].updated_at = self.get_timestamp()
                 self.data[i].is_archived = True
                 updated_supplier = self.db.update(self.data[i], supplier_id)
                 self.data[i] = updated_supplier
-                self.save()
+                self.save(background_task)
                 return updated_supplier
         return None
 
-    def unarchive_supplier(self, supplier_id: int) -> Supplier | None:
+    def unarchive_supplier(
+        self, supplier_id: int, background_task=True
+    ) -> Supplier | None:
         for i in range(len(self.data)):
             if self.data[i].id == supplier_id:
                 self.data[i].updated_at = self.get_timestamp()
                 self.data[i].is_archived = False
                 updated_supplier = self.db.update(self.data[i], supplier_id)
                 self.data[i] = updated_supplier
-                self.save()
+                self.save(background_task)
                 return updated_supplier
         return None
 
-    def save(self):
+    def save(self, background_task=True):
         if not self.is_debug:
-            data_provider_v2.fetch_background_tasks().add_task(
+
+            def call_v1_save_method():
                 data_provider.fetch_supplier_pool().save(
-                    [supplier.model_dump() for supplier in self.data]
+                    [shipment.model_dump() for shipment in self.data]
                 )
-            )
+
+            if background_task:
+                data_provider_v2.fetch_background_tasks().add_task(call_v1_save_method)
+            else:
+                call_v1_save_method()
 
     def load(self):
         self.data = self.get_all_suppliers()

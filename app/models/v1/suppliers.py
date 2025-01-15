@@ -30,7 +30,7 @@ class Suppliers(Base):
             return supplier
         else:
             created_client = data_provider_v2.fetch_supplier_pool().add_supplier(
-                Supplier(**supplier)
+                Supplier(**supplier), False
             )
             return created_client.model_dump()
 
@@ -47,7 +47,7 @@ class Suppliers(Base):
                 else:
                     updated_supplier = (
                         data_provider_v2.fetch_supplier_pool().update_supplier(
-                            supplier_id, Supplier(**supplier)
+                            supplier_id, Supplier(**supplier), False
                         )
                     )
                     return updated_supplier.model_dump()
@@ -57,7 +57,9 @@ class Suppliers(Base):
             if x["id"] == supplier_id:
                 self.data.remove(x)
                 if not self.is_debug:
-                    data_provider_v2.fetch_supplier_pool().archive_supplier(supplier_id)
+                    data_provider_v2.fetch_supplier_pool().archive_supplier(
+                        supplier_id, False
+                    )
 
     def load(self, is_debug):
         if is_debug:

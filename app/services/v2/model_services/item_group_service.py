@@ -37,15 +37,17 @@ class ItemGroupService(Base):
                 return item_group.is_archived
         return None
 
-    def add_item_group(self, item_group: ItemGroup) -> ItemGroup:
+    def add_item_group(self, item_group: ItemGroup, background_task=True) -> ItemGroup:
         item_group.created_at = self.get_timestamp()
         item_group.updated_at = self.get_timestamp()
         added_item_group = self.db.insert(item_group)
         self.data.append(added_item_group)
-        self.save()
+        self.save(background_task)
         return added_item_group
 
-    def update_item_group(self, item_group_id: int, item_group: ItemGroup) -> ItemGroup:
+    def update_item_group(
+        self, item_group_id: int, item_group: ItemGroup, background_task=True
+    ) -> ItemGroup:
         if self.is_item_group_archived(item_group_id):
             return None
 
@@ -54,39 +56,48 @@ class ItemGroupService(Base):
             if self.data[i].id == item_group_id:
                 updated_item_group = self.db.update(item_group, item_group_id)
                 self.data[i] = updated_item_group
-                self.save()
+                self.save(background_task)
                 return updated_item_group
         return None  # pragma: no cover
 
-    def archive_item_group(self, item_group_id: int) -> ItemGroup | None:
+    def archive_item_group(
+        self, item_group_id: int, background_task=True
+    ) -> ItemGroup | None:
         for i in range(len(self.data)):
             if self.data[i].id == item_group_id:
                 self.data[i].is_archived = True
                 self.data[i].updated_at = self.get_timestamp()
                 updated_item_group = self.db.update(self.data[i], item_group_id)
                 self.data[i] = updated_item_group
-                self.save()
+                self.save(background_task)
                 return updated_item_group
         return None
 
-    def unarchive_item_group(self, item_group_id: int) -> ItemGroup | None:
+    def unarchive_item_group(
+        self, item_group_id: int, background_task=True
+    ) -> ItemGroup | None:
         for i in range(len(self.data)):
             if self.data[i].id == item_group_id:
                 self.data[i].is_archived = False
                 self.data[i].updated_at = self.get_timestamp()
                 updated_item_group = self.db.update(self.data[i], item_group_id)
                 self.data[i] = updated_item_group
-                self.save()
+                self.save(background_task)
                 return updated_item_group
         return None
 
-    def save(self):
+    def save(self, background_task=True):
         if not self.is_debug:
-            data_provider_v2.fetch_background_tasks().add_task(
+
+            def call_v1_save_method():
                 data_provider.fetch_item_group_pool().save(
                     [item.model_dump() for item in self.data]
                 )
-            )
+
+            if background_task:
+                data_provider_v2.fetch_background_tasks().add_task(call_v1_save_method)
+            else:
+                call_v1_save_method()
 
     def load(self):
         self.data = self.get_all_item_groups()
