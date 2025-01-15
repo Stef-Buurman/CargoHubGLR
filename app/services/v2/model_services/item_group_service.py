@@ -60,6 +60,7 @@ class ItemGroupService(Base):
                 return updated_item_group
         return None
 
+
     def archive_item_group(
         self, item_group_id: int, background_task=True
     ) -> ItemGroup | None:
@@ -73,9 +74,8 @@ class ItemGroupService(Base):
                 return updated_item_group
         return None
 
-    def unarchive_item_group(
-        self, item_group_id: int, background_task=True
-    ) -> ItemGroup | None:
+
+    def unarchive_item_group(self, item_group_id: int, background_task=True) -> ItemGroup | None:
         for i in range(len(self.data)):
             if self.data[i].id == item_group_id:
                 self.data[i].is_archived = False
@@ -85,6 +85,7 @@ class ItemGroupService(Base):
                 self.save(background_task)
                 return updated_item_group
         return None
+
 
     def save(self, background_task=True):
         if not self.is_debug:

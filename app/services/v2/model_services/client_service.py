@@ -98,5 +98,6 @@ class ClientService(Base):
             else:
                 call_v1_save_method()
 
+
     def load(self):
         self.data = self.get_all_clients()
