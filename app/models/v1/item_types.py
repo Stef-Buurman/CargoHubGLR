@@ -31,7 +31,7 @@ class ItemTypes(Base):
             return item_type
         else:
             created_item_type = data_provider_v2.fetch_item_type_pool().add_item_type(
-                ItemType(**item_type)
+                ItemType(**item_type), False
             )
             return created_item_type.model_dump()
 
@@ -48,7 +48,7 @@ class ItemTypes(Base):
                 else:
                     updated_item_type = (
                         data_provider_v2.fetch_item_type_pool().update_item_type(
-                            item_type_id, ItemType(**item_type)
+                            item_type_id, ItemType(**item_type), False
                         )
                     )
                     return updated_item_type.model_dump()
@@ -59,7 +59,7 @@ class ItemTypes(Base):
                 self.data.remove(x)
                 if not self.is_debug:
                     data_provider_v2.fetch_item_type_pool().archive_item_type(
-                        item_type_id
+                        item_type_id, False
                     )
 
     def load(self, is_debug):
