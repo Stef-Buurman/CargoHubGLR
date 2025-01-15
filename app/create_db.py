@@ -123,7 +123,7 @@ USERS = [
 db_service = DatabaseService()
 
 
-def insert(model: T, closeConnection: bool = True) -> T:  
+def insert(model: T, closeConnection: bool = True) -> T:
     table_name = model.table_name()
 
     fields = model.__dict__
