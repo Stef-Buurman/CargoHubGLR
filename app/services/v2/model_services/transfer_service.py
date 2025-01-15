@@ -95,7 +95,7 @@ class TransferService(Base):
                 return transfer.items
         return None
 
-    def add_transfer(self, transfer: Transfer) -> Transfer:
+    def add_transfer(self, transfer: Transfer, background_task=True) -> Transfer:
         if self.has_transfer_archived_entities(transfer):
             return None
 
@@ -132,10 +132,10 @@ class TransferService(Base):
                     )
 
         self.data.append(transfer)
-        self.save()
+        self.save(background_task)
         return transfer
 
-    def update_transfer(self, transfer_id: int, transfer: Transfer) -> Transfer:
+    def update_transfer(self, transfer_id: int, transfer: Transfer, background_task=True) -> Transfer:
         old_transfer = self.get_transfer(transfer_id)
         if self.is_transfer_archived(
             transfer_id
@@ -182,11 +182,11 @@ class TransferService(Base):
                 if transfer.created_at is None:
                     transfer.created_at = self.data[i].created_at
                 self.data[i] = transfer
-                self.save()
+                self.save(background_task)
                 return transfer
         return None
 
-    def commit_transfer(self, transfer: Transfer):
+    def commit_transfer(self, transfer: Transfer, background_task=True):
         if transfer.is_archived:
             return None
 
@@ -208,10 +208,10 @@ class TransferService(Base):
                     fetch_inventory_pool().update_inventory(y.id, y)
 
         transfer.transfer_status = "Processed"
-        self.save()
+        self.save(background_task)
         return transfer
 
-    def archive_transfer(self, transfer_id: int) -> bool:
+    def archive_transfer(self, transfer_id: int, background_task=True) -> bool:
         for i in range(len(self.data)):
             if self.data[i].id == transfer_id:
                 self.data[i].updated_at = self.get_timestamp()
@@ -233,11 +233,11 @@ class TransferService(Base):
                 with self.db.get_connection() as conn:
                     conn.execute(update_sql, values)
 
-                self.save()
+                self.save(background_task)
                 return True
         return False
 
-    def unarchive_transfer(self, transfer_id: int) -> bool:
+    def unarchive_transfer(self, transfer_id: int, background_task=True) -> bool:
         for i in range(len(self.data)):
             if self.data[i].id == transfer_id:
                 self.data[i].updated_at = self.get_timestamp()
@@ -259,11 +259,11 @@ class TransferService(Base):
                 with self.db.get_connection() as conn:
                     conn.execute(update_sql, values)
 
-                self.save()
+                self.save(background_task)
                 return True
         return False
 
-    def save(self):
+    def save(self, background_task=True):
         if not self.is_debug:
 
             def call_v1_save_method():
@@ -271,7 +271,10 @@ class TransferService(Base):
                     [shipment.model_dump() for shipment in self.data]
                 )
 
-            data_provider_v2.fetch_background_tasks().add_task(call_v1_save_method)
+            if background_task:
+                data_provider_v2.fetch_background_tasks().add_task(call_v1_save_method)
+            else:
+                call_v1_save_method()
 
     def load(self):
         self.data = self.get_all_transfers()

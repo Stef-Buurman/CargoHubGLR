@@ -37,7 +37,7 @@ class Transfers(Base):
             return transfer
         else:
             created_transfer = data_provider_v2.fetch_transfer_pool().add_transfer(
-                Transfer(**transfer)
+                Transfer(**transfer), False
             )
             return created_transfer.model_dump()
 
@@ -54,7 +54,7 @@ class Transfers(Base):
                 else:
                     updated_transfer = (
                         data_provider_v2.fetch_transfer_pool().update_transfer(
-                            transfer_id, Transfer(**transfer)
+                            transfer_id, Transfer(**transfer), False
                         )
                     )
                     return updated_transfer.model_dump()
@@ -64,7 +64,7 @@ class Transfers(Base):
             if x["id"] == transfer_id:
                 self.data.remove(x)
                 if not self.is_debug:
-                    data_provider_v2.fetch_transfer_pool().archive_transfer(transfer_id)
+                    data_provider_v2.fetch_transfer_pool().archive_transfer(transfer_id, False)
 
     def load(self, is_debug):
         if is_debug:
