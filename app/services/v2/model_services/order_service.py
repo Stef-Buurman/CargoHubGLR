@@ -267,11 +267,13 @@ class OrderService(Base):
 
     def save(self):
         if not self.is_debug:
-            data_provider_v2.fetch_background_tasks().add_task(
+
+            def call_v1_save_method():
                 data_provider.fetch_order_pool().save(
                     [order.model_dump() for order in self.data]
                 )
-            )
+
+            data_provider_v2.fetch_background_tasks().add_task(call_v1_save_method)
 
     def load(self):
         self.data = self.get_all_orders()
