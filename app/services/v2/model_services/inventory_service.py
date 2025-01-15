@@ -306,4 +306,3 @@ class InventoryService(Base):
             if key != "id" and key != "locations":
                 fields[key] = value
         return fields
-
