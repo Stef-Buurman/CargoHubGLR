@@ -11,7 +11,7 @@ class LocationService(Base):
         self.is_debug = is_debug
         if db is not None:
             self.db = db
-        else:  
+        else:
             self.db = data_provider_v2.fetch_database()
         self.load()
 
@@ -68,7 +68,7 @@ class LocationService(Base):
                 self.data[i] = updated_location
                 self.save(background_task)
                 return updated_location
-        return None  
+        return None
 
     def archive_location(
         self, location_id: int, background_task=True

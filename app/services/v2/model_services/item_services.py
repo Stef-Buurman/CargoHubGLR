@@ -11,7 +11,7 @@ class ItemService(Base):
         self.is_debug = is_debug
         if db is not None:
             self.db = db
-        else:  
+        else:
             self.db = data_provider_v2.fetch_database()
         self.load()
 
