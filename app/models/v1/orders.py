@@ -60,7 +60,7 @@ class Orders(Base):
             self.data.append(order)
             return order
         else:
-            added_order = data_provider_v2.fetch_order_pool().add_order(Order(**order))
+            added_order = data_provider_v2.fetch_order_pool().add_order(Order(**order), False)
             return added_order.model_dump()
 
     def update_order(self, order_id, order):
@@ -75,7 +75,7 @@ class Orders(Base):
                     return order
                 else:
                     updated_order = data_provider_v2.fetch_order_pool().update_order(
-                        order_id, Order(**order)
+                        order_id, Order(**order), False
                     )
                     return updated_order.model_dump()
 
@@ -169,7 +169,7 @@ class Orders(Base):
             if x["id"] == order_id:
                 self.data.remove(x)
                 if not self.is_debug:
-                    data_provider_v2.fetch_order_pool().archive_order(order_id)
+                    data_provider_v2.fetch_order_pool().archive_order(order_id, False)
 
     def load(self, is_debug):
         if is_debug:
