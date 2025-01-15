@@ -307,7 +307,9 @@ class ShipmentService(Base):
     def load(self):
         self.data = self.get_all_shipments()
 
-    def has_shipment_archived_entities(self, new_shipment: Shipment, old_shipment: Shipment | None = None) -> bool:
+    def has_shipment_archived_entities(
+        self, new_shipment: Shipment, old_shipment: Shipment | None = None
+    ) -> bool:
         has_archived_entities = False
         if old_shipment is None:
             if new_shipment.is_archived:

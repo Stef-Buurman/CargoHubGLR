@@ -118,7 +118,9 @@ class LocationService(Base):
                 return location.is_archived
         return None
 
-    def has_location_archived_entities(self, new_location: Location, old_location: Location | None = None) -> bool:
+    def has_location_archived_entities(
+        self, new_location: Location, old_location: Location | None = None
+    ) -> bool:
         has_archived_entities = False
 
         if old_location is None:

@@ -3,8 +3,6 @@ from .base import BaseWithArchived
 from .endpoint_access import EndpointAccess
 
 
-
-
 class User(BaseWithArchived):
     id: int | None = None
     api_key: str
