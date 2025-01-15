@@ -55,7 +55,7 @@ class Items(Base):
             item["created_at"] = self.get_timestamp()
             item["updated_at"] = self.get_timestamp()
             self.data.append(item)
-        else:  # pragma: no cover
+        else:
             created_item = data_provider_v2.fetch_item_pool().add_item(
                 Item(**item), False
             )
@@ -71,7 +71,7 @@ class Items(Base):
                 if self.is_debug:
                     self.data[i] = item
                     return item
-                else:  # pragma: no cover
+                else:
                     updated_item = data_provider_v2.fetch_item_pool().update_item(
                         item_id, Item(**item), False
                     )
@@ -87,12 +87,12 @@ class Items(Base):
     def load(self, is_debug, items):
         if is_debug:
             self.data = items
-        else:  # pragma: no cover
+        else:
             f = open(self.data_path, "r")
             self.data = json.load(f)
             f.close()
 
-    def save(self, data=None):  # pragma: no cover
+    def save(self, data=None):
         if data:
             self.data = data
         f = open(self.data_path, "w")

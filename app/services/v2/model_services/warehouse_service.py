@@ -11,7 +11,7 @@ class WarehouseService(Base):
         self.is_debug = is_debug
         if db is not None:
             self.db = db
-        else:  # pragma: no cover
+        else:
             self.db = data_provider_v2.fetch_database()
         self.load()
 
@@ -55,7 +55,7 @@ class WarehouseService(Base):
                 self.data[i] = updated_warehouse
                 self.save(background_task)
                 return updated_warehouse
-        return None  # pragma: no cover
+        return None
 
     def archive_warehouse(
         self, warehouse_id: int, background_task=True

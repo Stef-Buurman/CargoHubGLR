@@ -64,12 +64,12 @@ class ItemGroups(Base):
     def load(self, is_debug):
         if is_debug:
             self.data = ITEM_GROUPS
-        else:  # pragma: no cover
+        else:
             f = open(self.data_path, "r")
             self.data = json.load(f)
             f.close()
 
-    def save(self, data=None):  # pragma: no cover
+    def save(self, data=None):
         if data:
             self.data = data
         f = open(self.data_path, "w")

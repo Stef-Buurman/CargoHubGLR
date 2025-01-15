@@ -421,7 +421,7 @@ class UserService(Base):
     def load(self, is_debug: bool):
         if is_debug:
             self.data = USERS
-        else:  # pragma: no cover
+        else:
             self.data = self.get_all_users()
 
     def has_access(self, api_key: str, path: str, method: str) -> bool:

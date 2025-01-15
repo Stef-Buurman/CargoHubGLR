@@ -11,7 +11,7 @@ class SupplierService(Base):
         self.is_debug = is_debug
         if db is not None:
             self.db = db
-        else:  # pragma: no cover
+        else:
             self.db = data_provider_v2.fetch_database()
         self.load()
 
@@ -53,7 +53,7 @@ class SupplierService(Base):
                 self.data[i] = updated_supplier
                 self.save(background_task)
                 return updated_supplier
-        return None  # pragma: no cover
+        return None
 
     def archive_supplier(
         self, supplier_id: int, background_task=True

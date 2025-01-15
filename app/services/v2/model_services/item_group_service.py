@@ -11,7 +11,7 @@ class ItemGroupService(Base):
         self.is_debug = is_debug
         if db is not None:
             self.db = db
-        else:  # pragma: no cover
+        else:
             self.db = data_provider_v2.fetch_database()
         self.load()
 
@@ -58,7 +58,7 @@ class ItemGroupService(Base):
                 self.data[i] = updated_item_group
                 self.save(background_task)
                 return updated_item_group
-        return None  # pragma: no cover
+        return None
 
     def archive_item_group(
         self, item_group_id: int, background_task=True
