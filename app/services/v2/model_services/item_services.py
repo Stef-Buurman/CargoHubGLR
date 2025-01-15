@@ -196,11 +196,11 @@ class ItemService(Base):
 
     def save(self):
         if not self.is_debug:
-            data_provider_v2.fetch_background_tasks().add_task(
+            def call_v1_save_method():
                 data_provider.fetch_item_pool().save(
                     [item.model_dump() for item in self.data]
                 )
-            )
+            data_provider_v2.fetch_background_tasks().add_task(call_v1_save_method)
 
     def load(self):
         self.data = self.get_all_items()
