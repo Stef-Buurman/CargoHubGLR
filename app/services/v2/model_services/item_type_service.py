@@ -46,9 +46,6 @@ class ItemTypeService(Base):
         if self.is_item_type_archived(item_type_id):
             return None
 
-
-
-
         item_type.updated_at = self.get_timestamp()
         for i in range(len(self.data)):
             if self.data[i].id == item_type_id:
@@ -59,15 +56,11 @@ class ItemTypeService(Base):
                 return updae_item_type
         return None
 
-
-
     def is_item_type_archived(self, item_type_id: int) -> bool:
         for item_type in self.data:
             if item_type.id == item_type_id:
                 return item_type.is_archived
         return None
-
-
 
     def archive_item_type(
         self, item_type_id: int, background_task=True

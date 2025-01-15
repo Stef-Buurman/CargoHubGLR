@@ -122,12 +122,8 @@ def has_access(user, path, method):
         return access[path][method]
 
 
-
-
 API_KEY_NAME = "Authorization"
 api_key_header = APIKeyHeader(name=API_KEY_NAME, auto_error=False)
-
-
 
 
 def get_api_key(request: Request, api_key_header: str = Security(api_key_header)):
