@@ -102,5 +102,3 @@ class ItemTypeService(Base):
 
     def load(self):
         self.data = self.get_all_item_types()
-
-
