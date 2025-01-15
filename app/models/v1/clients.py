@@ -23,15 +23,14 @@ class Clients(Base):
         return None
 
     def add_client(self, client):
-        client["created_at"] = self.get_timestamp()
-        client["updated_at"] = self.get_timestamp()
-        client["id"] = max([x["id"] for x in self.data]) + 1
-        self.data.append(client)
         if self.is_debug:
+            client["created_at"] = self.get_timestamp()
+            client["updated_at"] = self.get_timestamp()
+            self.data.append(client)
             return client
         else:
             created_client = data_provider_v2.fetch_client_pool().add_client(
-                Client(**client)
+                Client(**client), False
             )
             return created_client.model_dump()
 
@@ -46,9 +45,8 @@ class Clients(Base):
                     self.data[i] = client
                     return client
                 else:
-                    self.data[i] = client
                     updated_client = data_provider_v2.fetch_client_pool().update_client(
-                        client_id, Client(**client)
+                        client_id, Client(**client), False
                     )
                     return updated_client.model_dump()
 
@@ -57,7 +55,9 @@ class Clients(Base):
             if x["id"] == client_id:
                 self.data.remove(x)
                 if not self.is_debug:
-                    data_provider_v2.fetch_client_pool().archive_client(client_id)
+                    data_provider_v2.fetch_client_pool().archive_client(
+                        client_id, False
+                    )
 
     def load(self, is_debug):
         if is_debug:
