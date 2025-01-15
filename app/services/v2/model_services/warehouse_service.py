@@ -87,7 +87,7 @@ class WarehouseService(Base):
         if not self.is_debug:
 
             def call_v1_save_method():
-                data_provider.fetch_shipment_pool().save(
+                data_provider.fetch_warehouse_pool().save(
                     [shipment.model_dump() for shipment in self.data]
                 )
 

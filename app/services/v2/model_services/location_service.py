@@ -100,7 +100,7 @@ class LocationService(Base):
         if not self.is_debug:
 
             def call_v1_save_method():
-                data_provider.fetch_item_type_pool().save(
+                data_provider.fetch_location_pool().save(
                     [item.model_dump() for item in self.data]
                 )
 
