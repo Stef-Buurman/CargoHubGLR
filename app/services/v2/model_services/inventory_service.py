@@ -77,7 +77,7 @@ class InventoryService(Base):
 
         return None
 
-    def add_inventory(self, inventory: Inventory) -> Inventory | None:
+    def add_inventory(self, inventory: Inventory, background_task=True) -> Inventory | None:
         if self.has_inventory_archived_entities(inventory):
             return None
 
@@ -106,10 +106,10 @@ class InventoryService(Base):
                     """
                     conn.execute(location_insert_sql, (inventory.id, location_id))
         self.data.append(inventory)
-        self.save()
+        self.save(background_task)
         return inventory
 
-    def update_inventory(self, inventory_id: int, inventory: Inventory) -> Inventory:
+    def update_inventory(self, inventory_id: int, inventory: Inventory, background_task=True) -> Inventory:
         if (
             self.get_inventory(inventory_id) is None
             or self.is_inventory_archived(inventory_id)
@@ -168,11 +168,11 @@ class InventoryService(Base):
         for i in range(len(self.data)):
             if self.data[i].id == inventory_id:
                 self.data[i] = inventory
-                self.save()
+                self.save(background_task)
                 break
         return inventory
 
-    def archive_inventory(self, inventory_id: int) -> Inventory | None:
+    def archive_inventory(self, inventory_id: int,background_task=True) -> Inventory | None:
         for i in range(len(self.data)):
             if self.data[i].id == inventory_id:
                 self.data[i].is_archived = True
@@ -188,11 +188,11 @@ class InventoryService(Base):
 
                 with self.db.get_connection() as conn:
                     conn.execute(update_sql, values + (inventory_id,))
-                self.save()
+                self.save(background_task)
                 return self.data[i]
         return None
 
-    def unarchive_inventory(self, inventory_id: int) -> Inventory | None:
+    def unarchive_inventory(self, inventory_id: int, background_task=True) -> Inventory | None:
         for i in range(len(self.data)):
             if self.data[i].id == inventory_id:
                 self.data[i].is_archived = False
@@ -208,19 +208,21 @@ class InventoryService(Base):
 
                 with self.db.get_connection() as conn:
                     conn.execute(update_sql, values + (inventory_id,))
-                self.save()
+                self.save(background_task)
                 return self.data[i]
         return False
 
-    def save(self):
+    def save(self, background_task=True):
         if not self.is_debug:
 
             def call_v1_save_method():
                 data_provider.fetch_inventory_pool().save(
                     [inventory.model_dump() for inventory in self.data]
                 )
-
-            data_provider_v2.fetch_background_tasks().add_task(call_v1_save_method)
+            if background_task:
+                data_provider_v2.fetch_background_tasks().add_task(call_v1_save_method)
+            else:
+                call_v1_save_method()
 
     def load(self):
         self.data = self.get_all_inventories()

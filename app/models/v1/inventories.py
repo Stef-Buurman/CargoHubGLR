@@ -53,7 +53,7 @@ class Inventories(Base):
             return inventory
         else:  # pragma: no cover
             created_inventory = data_provider_v2.fetch_inventory_pool().add_inventory(
-                Inventory(**inventory)
+                Inventory(**inventory), False
             )
             return created_inventory.model_dump()
 
@@ -70,7 +70,7 @@ class Inventories(Base):
                 else:  # pragma: no cover
                     updated_inventory = (
                         data_provider_v2.fetch_inventory_pool().update_inventory(
-                            inventory_id, Inventory(**inventory)
+                            inventory_id, Inventory(**inventory), False
                         )
                     )
                     return updated_inventory.model_dump()
@@ -81,7 +81,7 @@ class Inventories(Base):
                 self.data.remove(x)
                 if not self.is_debug:
                     data_provider_v2.fetch_inventory_pool().archive_inventory(
-                        inventory_id
+                        inventory_id, False
                     )
 
     def load(self, is_debug):
