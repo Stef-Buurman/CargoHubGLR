@@ -265,11 +265,11 @@ class TransferService(Base):
 
     def save(self):
         if not self.is_debug:
-            data_provider_v2.fetch_background_tasks().add_task(
-                data_provider.fetch_transfer_pool().save(
-                    [transfer.model_dump() for transfer in self.data]
+            def call_v1_save_method():
+                data_provider.fetch_shipment_pool().save(
+                    [shipment.model_dump() for shipment in self.data]
                 )
-            )
+            data_provider_v2.fetch_background_tasks().add_task(call_v1_save_method)
 
     def load(self):
         self.data = self.get_all_transfers()
