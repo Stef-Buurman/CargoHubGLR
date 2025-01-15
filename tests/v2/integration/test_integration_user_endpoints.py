@@ -246,7 +246,9 @@ def test_partial_update_user_archived(client):
 
 
 def test_unarchive_user(client):
-    response = client.patch(f"/users/{test_user.id}/unarchive", headers=test_headers)
+    response = client.patch(
+        f"/users/{test_user.id}/unarchive", json={}, headers=test_headers
+    )
     assert response.status_code == 200
     assert response.json()["is_archived"] is False
     response_get = client.get(f"/users/{test_user.id}", headers=test_headers)
@@ -255,25 +257,31 @@ def test_unarchive_user(client):
 
 
 def test_already_unarchive_user(client):
-    response = client.patch(f"/users/{test_user.id}/unarchive", headers=test_headers)
+    response = client.patch(
+        f"/users/{test_user.id}/unarchive", json={}, headers=test_headers
+    )
     assert response.status_code == 400
 
 
 def test_unarchive_user_no_api_key(client):
-    response = client.patch(f"/users/{test_user.id}/unarchive")
+    response = client.patch(f"/users/{test_user.id}/unarchive", json={})
     assert response.status_code == 403
 
 
 def test_unarchive_user_invalid_api_key(client):
-    response = client.patch(f"/users/{test_user.id}/unarchive", headers=invalid_headers)
+    response = client.patch(
+        f"/users/{test_user.id}/unarchive", json={}, headers=invalid_headers
+    )
     assert response.status_code == 403
 
 
 def test_unarchive_user_not_found(client):
-    response = client.patch(f"/users/{non_existent_id}/unarchive", headers=test_headers)
+    response = client.patch(
+        f"/users/{non_existent_id}/unarchive", json={}, headers=test_headers
+    )
     assert response.status_code == 404
 
 
 def test_unarchive_user_invalid_id(client):
-    response = client.patch(f"/users/invalid/unarchive", headers=test_headers)
+    response = client.patch(f"/users/invalid/unarchive", json={}, headers=test_headers)
     assert response.status_code == 422

@@ -298,7 +298,7 @@ def test_archive_item_already_archived(client):
 
 
 def test_unarchive_item_no_api_key(client):
-    response = client.patch("/items/" + test_item["uid"] + "/unarchive")
+    response = client.patch("/items/" + test_item["uid"] + "/unarchive", json={})
     assert response.status_code == 403
     response_get_item = client.get("/items/" + test_item["uid"], headers=test_headers)
     assert response_get_item.status_code == 200
@@ -307,7 +307,7 @@ def test_unarchive_item_no_api_key(client):
 
 def test_unarchive_item_invalid_api_key(client):
     response = client.patch(
-        "/items/" + test_item["uid"] + "/unarchive", headers=invalid_headers
+        "/items/" + test_item["uid"] + "/unarchive", json={}, headers=invalid_headers
     )
     assert response.status_code == 403
     response_get_item = client.get("/items/" + test_item["uid"], headers=test_headers)
@@ -317,14 +317,14 @@ def test_unarchive_item_invalid_api_key(client):
 
 def test_unarchive_item_no_item(client):
     response = client.patch(
-        "/items/" + str(non_existent_id) + "/unarchive", headers=test_headers
+        "/items/" + str(non_existent_id) + "/unarchive", json={}, headers=test_headers
     )
     assert response.status_code == 404
 
 
 def test_unarchive_item(client):
     response = client.patch(
-        "/items/" + test_item["uid"] + "/unarchive", headers=test_headers
+        "/items/" + test_item["uid"] + "/unarchive", json={}, headers=test_headers
     )
     assert response.status_code == 200
     response_get_item = client.get("/items/" + test_item["uid"], headers=test_headers)
@@ -334,7 +334,7 @@ def test_unarchive_item(client):
 
 def test_unarchive_item_already_unarchived(client):
     response = client.patch(
-        "/items/" + test_item["uid"] + "/unarchive", headers=test_headers
+        "/items/" + test_item["uid"] + "/unarchive", json={}, headers=test_headers
     )
     assert response.status_code == 400
     response_get_item = client.get("/items/" + test_item["uid"], headers=test_headers)

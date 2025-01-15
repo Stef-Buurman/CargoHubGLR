@@ -596,32 +596,34 @@ def test_update_orders_in_archived_shipment(client):
 
 
 def test_unarchive_shipment_no_api_key(client):
-    response = client.patch(f"/shipments/{test_shipment['id']}/unarchive")
+    response = client.patch(f"/shipments/{test_shipment['id']}/unarchive", json={})
     assert response.status_code == 403
 
 
 def test_unarchive_shipment_invalid_api_key(client):
     response = client.patch(
-        f"/shipments/{test_shipment['id']}/unarchive", headers=invalid_headers
+        f"/shipments/{test_shipment['id']}/unarchive", json={}, headers=invalid_headers
     )
     assert response.status_code == 403
 
 
 def test_unarchive_invalid_shipment_id(client):
-    response = client.patch("/shipments/invalid_id", headers=test_headers)
+    response = client.patch(
+        "/shipments/invalid_id/unarchive", json={}, headers=test_headers
+    )
     assert response.status_code == 422
 
 
 def test_unarchive_non_existent_shipment(client):
     response = client.patch(
-        f"/shipments/{non_existent_id}/unarchive", headers=test_headers
+        f"/shipments/{non_existent_id}/unarchive", json={}, headers=test_headers
     )
     assert response.status_code == 404
 
 
 def test_unarchive_shipment(client):
     response = client.patch(
-        f"/shipments/{test_shipment['id']}/unarchive", headers=test_headers
+        f"/shipments/{test_shipment['id']}/unarchive", json={}, headers=test_headers
     )
     assert response.status_code == 200
     response_get = client.get(f"/shipments/{test_shipment['id']}", headers=test_headers)

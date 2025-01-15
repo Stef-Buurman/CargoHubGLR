@@ -334,33 +334,40 @@ def test_partial_update_archived_CargoClient(client):
 
 
 def test_unarchive_CargoClient_no_api_key(client):
-    response = client.patch("/clients/" + str(test_CargoClient["id"]) + "/unarchive")
+    response = client.patch(
+        "/clients/" + str(test_CargoClient["id"]) + "/unarchive", json={}
+    )
     assert response.status_code == 403
 
 
 def test_unarchive_CargoClient_invalid_api_key(client):
     response = client.patch(
         "/clients/" + str(test_CargoClient["id"]) + "/unarchive",
+        json={},
         headers=invalid_headers,
     )
     assert response.status_code == 403
 
 
 def test_unarchive_invalid_CargoClient_id(client):
-    response = client.patch("/clients/invalid_id/unarchive", headers=test_headers)
+    response = client.patch(
+        "/clients/invalid_id/unarchive", json={}, headers=test_headers
+    )
     assert response.status_code == 422
 
 
 def test_unarchive_nonexistent_CargoClient(client):
     response = client.patch(
-        "/clients/" + str(non_existent_id) + "/unarchive", headers=test_headers
+        "/clients/" + str(non_existent_id) + "/unarchive", json={}, headers=test_headers
     )
     assert response.status_code == 404
 
 
 def test_unarchive_CargoClient(client):
     response = client.patch(
-        "/clients/" + str(test_CargoClient["id"]) + "/unarchive", headers=test_headers
+        "/clients/" + str(test_CargoClient["id"]) + "/unarchive",
+        json={},
+        headers=test_headers,
     )
     assert response.status_code == 200
     assert response.json()["is_archived"] is False

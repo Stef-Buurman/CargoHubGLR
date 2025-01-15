@@ -289,7 +289,9 @@ def test_archive_invalid_transfer_id(client):
 
 def test_unarchive_transfer(client):
     response = client.patch(
-        "/transfers/" + str(test_transfer["id"]) + "/unarchive", headers=test_headers
+        "/transfers/" + str(test_transfer["id"]) + "/unarchive",
+        json={},
+        headers=test_headers,
     )
     assert response.status_code == 200
     response_get = client.get(
@@ -302,20 +304,26 @@ def test_unarchive_transfer(client):
 
 
 def test_unarchive_transfer_no_api_key(client):
-    response = client.patch("/transfers/" + str(test_transfer["id"]) + "/unarchive")
+    response = client.patch(
+        "/transfers/" + str(test_transfer["id"]) + "/unarchive", json={}
+    )
     assert response.status_code == 403
 
 
 def test_unarchive_transfer_invalid_api_key(client):
     response = client.patch(
-        "/transfers/" + str(test_transfer["id"]) + "/unarchive", headers=invalid_headers
+        "/transfers/" + str(test_transfer["id"]) + "/unarchive",
+        json={},
+        headers=invalid_headers,
     )
     assert response.status_code == 403
 
 
 def test_unarchive_non_existent_transfer(client):
     response = client.patch(
-        "/transfers/" + str(non_existent_id) + "/unarchive", headers=test_headers
+        "/transfers/" + str(non_existent_id) + "/unarchive",
+        json={},
+        headers=test_headers,
     )
     assert response.status_code == 404
     response_json = response.json()
@@ -324,13 +332,17 @@ def test_unarchive_non_existent_transfer(client):
 
 
 def test_unarchive_invalid_transfer_id(client):
-    response = client.patch("/transfers/invalid_id/unarchive", headers=test_headers)
+    response = client.patch(
+        "/transfers/invalid_id/unarchive", json={}, headers=test_headers
+    )
     assert response.status_code == 422
 
 
 def test_already_unarchived_transfer(client):
     response = client.patch(
-        "/transfers/" + str(test_transfer["id"]) + "/unarchive", headers=test_headers
+        "/transfers/" + str(test_transfer["id"]) + "/unarchive",
+        json={},
+        headers=test_headers,
     )
     assert response.status_code == 400
     response_json = response.json()

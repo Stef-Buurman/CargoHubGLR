@@ -314,32 +314,36 @@ def test_archive_item_group_already_archived(client):
 
 
 def test_unarchive_item_group_no_api_key(client):
-    response = client.patch(f"/item_groups/{test_item_group['id']}/unarchive")
+    response = client.patch(f"/item_groups/{test_item_group['id']}/unarchive", json={})
     assert response.status_code == 403
 
 
 def test_unarchive_item_group_invalid_api_key(client):
     response = client.patch(
-        f"/item_groups/{test_item_group['id']}/unarchive", headers=invalid_headers
+        f"/item_groups/{test_item_group['id']}/unarchive",
+        json={},
+        headers=invalid_headers,
     )
     assert response.status_code == 403
 
 
 def test_unarchive_item_group_invalid_id(client):
-    response = client.patch("/item_groups/invalid_id/unarchive", headers=test_headers)
+    response = client.patch(
+        "/item_groups/invalid_id/unarchive", json={}, headers=test_headers
+    )
     assert response.status_code == 422
 
 
 def test_unarchive_nonexistent_item_group(client):
     response = client.patch(
-        f"/item_groups/{non_existent_id}/unarchive", headers=test_headers
+        f"/item_groups/{non_existent_id}/unarchive", json={}, headers=test_headers
     )
     assert response.status_code == 404
 
 
 def test_unarchive_item_group(client):
     response = client.patch(
-        f"/item_groups/{test_item_group['id']}/unarchive", headers=test_headers
+        f"/item_groups/{test_item_group['id']}/unarchive", json={}, headers=test_headers
     )
     assert response.status_code == 200
     response_get_item_group = client.get(
@@ -351,7 +355,7 @@ def test_unarchive_item_group(client):
 
 def test_unarchive_item_group_not_archived(client):
     response = client.patch(
-        f"/item_groups/{test_item_group['id']}/unarchive", headers=test_headers
+        f"/item_groups/{test_item_group['id']}/unarchive", json={}, headers=test_headers
     )
     assert response.status_code == 400
 
@@ -370,7 +374,7 @@ def test_update_archived_item_group(client):
     )
     assert response.status_code == 400
     response = client.patch(
-        f"/item_groups/{test_item_group['id']}/unarchive", headers=test_headers
+        f"/item_groups/{test_item_group['id']}/unarchive", json={}, headers=test_headers
     )
     assert response.status_code == 200
 
@@ -388,6 +392,6 @@ def test_partial_update_archived_item_group(client):
     )
     assert response.status_code == 400
     response = client.patch(
-        f"/item_groups/{test_item_group['id']}/unarchive", headers=test_headers
+        f"/item_groups/{test_item_group['id']}/unarchive", json={}, headers=test_headers
     )
     assert response.status_code == 200
