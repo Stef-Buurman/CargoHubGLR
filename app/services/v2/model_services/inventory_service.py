@@ -214,10 +214,12 @@ class InventoryService(Base):
 
     def save(self):
         if not self.is_debug:
+
             def call_v1_save_method():
                 data_provider.fetch_inventory_pool().save(
                     [inventory.model_dump() for inventory in self.data]
                 )
+
             data_provider_v2.fetch_background_tasks().add_task(call_v1_save_method)
 
     def load(self):
