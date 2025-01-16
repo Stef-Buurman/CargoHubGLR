@@ -1,4 +1,3 @@
-from services.v2.data_provider_v2 import fetch_inventory_pool
 from models.v2.transfer import Transfer
 from models.v2.ItemInObject import ItemInObject
 from typing import List, Type
@@ -10,44 +9,42 @@ from services.v1 import data_provider
 
 
 class TransferService(Base):
-    def __init__(self, db: Type[DatabaseService] = None, is_debug: bool = False):
+    def __init__(
+        self,
+        db: Type[DatabaseService] = None,
+        data_provider=None,
+        is_debug: bool = False,
+    ):
         self.is_debug = is_debug
         if db is not None:
             self.db = db
         else:
             self.db = data_provider_v2.fetch_database()
+
+        if data_provider is not None:
+            self.data_provider = data_provider
+        else:
+            self.data_provider = data_provider_v2
+
         self.load()
 
     def get_all_transfers(self) -> List[Transfer]:
-        query = f"""
-        SELECT t.*, ti.item_uid, ti.amount
-        FROM {Transfer.table_name()} t
-        LEFT JOIN {transfer_items_table} ti ON t.id = ti.transfer_id
-        """
-        transfers_dict = {}
+        all_transfers = self.db.get_all(Transfer)
+        transfer_ids = [transfer.id for transfer in all_transfers]
         with self.db.get_connection() as conn:
+            query = f"SELECT item_uid, amount, transfer_id FROM {transfer_items_table} WHERE transfer_id IN ({', '.join(map(str, transfer_ids))})"
             cursor = conn.execute(query)
-            columns = [column[0] for column in cursor.description]
-            rows = cursor.fetchall()
-            for row in rows:
-                row_dict = dict(zip(columns, row))
-                transfer_id = row_dict["id"]
-                if transfer_id not in transfers_dict:
-                    transfers_dict[transfer_id] = Transfer(
-                        **{
-                            k: v
-                            for k, v in row_dict.items()
-                            if k not in ["item_uid", "amount"]
-                        }
-                    )
-                    transfers_dict[transfer_id].items = []
-                if row_dict["item_uid"] is not None:
-                    transfers_dict[transfer_id].items.append(
-                        ItemInObject(
-                            item_id=row_dict["item_uid"], amount=row_dict["amount"]
-                        )
-                    )
-        return list(transfers_dict.values())
+            all_transfer_items = cursor.fetchall()
+        transfer_items_map = {}
+        for row in all_transfer_items:
+            if row[2] not in transfer_items_map:
+                transfer_items_map[row[2]] = []
+            transfer_items_map[row[2]].append(
+                ItemInObject(item_id=row[0], amount=row[1])
+            )
+        for transfer in all_transfers:
+            transfer.items = transfer_items_map.get(transfer.id, [])
+        return all_transfers
 
     def get_transfers(self) -> List[Transfer]:
         transfers = []
@@ -60,32 +57,20 @@ class TransferService(Base):
         for transfer in self.data:
             if transfer.id == transfer_id:
                 return transfer
-
-        query = f"SELECT * FROM {Transfer.table_name()} WHERE id = {transfer_id}"
         with self.db.get_connection() as conn:
-            cursor = conn.execute(query)
-            transfer = cursor.fetchone()
-            if transfer:
-                cursor_items = conn.execute(
-                    f"""
-                SELECT t.*, ti.item_uid, ti.amount
-                FROM {Transfer.table_name()} t
-                LEFT JOIN {transfer_items_table} ti ON t.id = ti.transfer_id
-                WHERE t.id = {transfer_id}
-                """
-                )
-
-                columns = [column[0] for column in cursor_items.description]
-                rows = cursor_items.fetchall()
-                transfer["items"] = []
-                for row in rows:
-                    row_dict = dict(zip(columns, row))
-                    if row_dict["item_uid"] is not None:
-                        transfer["items"].append(
-                            ItemInObject(
-                                item_id=row_dict["item_uid"], amount=row_dict["amount"]
-                            )
-                        )
+            query = f"SELECT * FROM {Transfer.table_name()} WHERE id = ?"
+            cursor = conn.execute(query, (transfer_id,))
+            transfer_row = cursor.fetchone()
+            if transfer_row:
+                column_names = [description[0] for description in cursor.description]
+                transfer = dict(zip(column_names, transfer_row))
+                query_items = f"SELECT item_uid, amount, transfer_id FROM {transfer_items_table} WHERE transfer_id = ?"
+                cursor = conn.execute(query_items, (transfer_id,))
+                all_transfer_items = cursor.fetchall()
+                transfer["items"] = [
+                    ItemInObject(item_id=row[0], amount=row[1])
+                    for row in all_transfer_items
+                ]
                 return Transfer(**transfer)
         return None
 
@@ -195,19 +180,23 @@ class TransferService(Base):
         transfer_items = self.get_items_in_transfer(transfer.id)
 
         for item in transfer_items:
-            inventories = fetch_inventory_pool().get_inventories_for_item(item.item_id)
+            inventories = (
+                self.data_provider.fetch_inventory_pool().get_inventories_for_item(
+                    item.item_id
+                )
+            )
 
             for y in inventories:
                 if transfer.transfer_from in y.locations:
                     y.total_on_hand -= item.amount
                     y.total_expected = y.total_on_hand + y.total_ordered
                     y.total_available = y.total_on_hand - y.total_allocated
-                    fetch_inventory_pool().update_inventory(y.id, y)
+                    self.data_provider.fetch_inventory_pool().update_inventory(y.id, y)
                 elif transfer.transfer_to in y.locations:
                     y.total_on_hand += item.amount
                     y.total_expected = y.total_on_hand + y.total_ordered
                     y.total_available = y.total_on_hand - y.total_allocated
-                    fetch_inventory_pool().update_inventory(y.id, y)
+                    self.data_provider.fetch_inventory_pool().update_inventory(y.id, y)
 
         transfer.transfer_status = "Processed"
         self.save(background_task)
@@ -236,8 +225,8 @@ class TransferService(Base):
                     conn.execute(update_sql, values)
 
                 self.save(background_task)
-                return True
-        return False
+                return self.data[i]
+        return None
 
     def unarchive_transfer(self, transfer_id: int, background_task=True) -> bool:
         for i in range(len(self.data)):
@@ -262,8 +251,8 @@ class TransferService(Base):
                     conn.execute(update_sql, values)
 
                 self.save(background_task)
-                return True
-        return False
+                return self.data[i]
+        return None
 
     def save(self, background_task=True):
         if not self.is_debug:
@@ -274,7 +263,9 @@ class TransferService(Base):
                 )
 
             if background_task:
-                data_provider_v2.fetch_background_tasks().add_task(call_v1_save_method)
+                self.data_provider.fetch_background_tasks().add_task(
+                    call_v1_save_method
+                )
             else:
                 call_v1_save_method()
 
@@ -294,34 +285,38 @@ class TransferService(Base):
 
         if old_transfer is None:
             has_archived_entities = (
-                data_provider_v2.fetch_warehouse_pool().is_warehouse_archived(
+                self.data_provider.fetch_warehouse_pool().is_warehouse_archived(
                     new_transfer.transfer_from
                 )
-                or data_provider_v2.fetch_warehouse_pool().is_warehouse_archived(
+                or self.data_provider.fetch_warehouse_pool().is_warehouse_archived(
                     new_transfer.transfer_to
                 )
             )
             for item in new_transfer.items:
                 has_archived_entities = (
                     has_archived_entities
-                    or data_provider_v2.fetch_item_pool().is_item_archived(item.item_id)
+                    or self.data_provider.fetch_item_pool().is_item_archived(
+                        item.item_id
+                    )
                 )
         else:
             if new_transfer.transfer_from != old_transfer.transfer_from:
                 has_archived_entities = (
-                    data_provider_v2.fetch_warehouse_pool().is_warehouse_archived(
+                    self.data_provider.fetch_warehouse_pool().is_warehouse_archived(
                         new_transfer.transfer_from
                     )
                 )
             if new_transfer.transfer_to != old_transfer.transfer_to:
                 has_archived_entities = (
-                    data_provider_v2.fetch_warehouse_pool().is_warehouse_archived(
+                    self.data_provider.fetch_warehouse_pool().is_warehouse_archived(
                         new_transfer.transfer_to
                     )
                 )
             for item in new_transfer.items:
                 has_archived_entities = (
                     has_archived_entities
-                    or data_provider_v2.fetch_item_pool().is_item_archived(item.item_id)
+                    or self.data_provider.fetch_item_pool().is_item_archived(
+                        item.item_id
+                    )
                 )
         return has_archived_entities
