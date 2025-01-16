@@ -40,7 +40,9 @@ class TransferService(Base):
         for row in all_transfer_items:
             if row[2] not in transfer_items_map:
                 transfer_items_map[row[2]] = []
-            transfer_items_map[row[2]].append(ItemInObject(item_id=row[0], amount=row[1]))
+            transfer_items_map[row[2]].append(
+                ItemInObject(item_id=row[0], amount=row[1])
+            )
         for transfer in all_transfers:
             transfer.items = transfer_items_map.get(transfer.id, [])
         return all_transfers
