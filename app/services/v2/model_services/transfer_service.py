@@ -180,7 +180,11 @@ class TransferService(Base):
         transfer_items = self.get_items_in_transfer(transfer.id)
 
         for item in transfer_items:
-            inventories = self.data_provider.fetch_inventory_pool().get_inventories_for_item(item.item_id)
+            inventories = (
+                self.data_provider.fetch_inventory_pool().get_inventories_for_item(
+                    item.item_id
+                )
+            )
 
             for y in inventories:
                 if transfer.transfer_from in y.locations:
