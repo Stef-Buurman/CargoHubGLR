@@ -145,9 +145,11 @@ def test_get_transfer_from_db(transfer_service, mock_db_service, mock_get_connec
 
     mock_cursor.description = pydantic_models_keys_to_tuple_array(transfer_to_return)
 
-    mock_cursor.fetchone.return_value = pydantic_models_value_to_tuple(transfer_to_return)
+    mock_cursor.fetchone.return_value = pydantic_models_value_to_tuple(
+        transfer_to_return
+    )
 
     transfer = transfer_service.get_transfer(4)
 
-    assert mock_db_service.get_connection().__enter__().execute.call_count == 2
+    assert mock_db_service.get_connection().__enter__().execute.call_count == 3
     assert transfer.id == transfer_to_return.id
