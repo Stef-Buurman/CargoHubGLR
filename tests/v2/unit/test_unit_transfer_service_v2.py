@@ -300,7 +300,7 @@ def test_update_transfer_archived_item(
     assert result is None
 
 
-def test_update_transfer_archived_warehouse(
+def test_update_transfer_archived_warehouse_transfer_from(
     transfer_service, mock_db_service, mock_get_connection, mock_pools
 ):
 
@@ -320,7 +320,7 @@ def test_update_transfer_archived_warehouse(
     assert result is None
 
 
-def test_update_transfer_archived_warehouse(
+def test_update_transfer_archived_warehouse_transfer_to(
     transfer_service, mock_db_service, mock_get_connection, mock_pools
 ):
 
