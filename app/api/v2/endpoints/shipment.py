@@ -34,7 +34,7 @@ def read_orders_for_shipment(shipment_id: int, request: Request):
         raise HTTPException(
             status_code=404, detail=f"Shipment with id {shipment_id} not found"
         )
-    orders = data_provider_v2.fetch_order_pool().get_orders_for_shipments(shipment_id)
+    orders = data_provider_v2.fetch_order_pool().get_orders_in_shipment(shipment_id)
     return request.state.pagination.apply(orders)
 
 
