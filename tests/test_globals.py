@@ -30,9 +30,11 @@ wrong_page_4 = "?page=%^%^%^%^%^"
 
 T = TypeVar("T", bound=BaseModel)
 
+
 def pydantic_models_keys_to_tuple_array(models: T) -> List:
     keys = models.model_dump().keys()
     return [(key,) for key in keys]
+
 
 def pydantic_models_value_to_tuple(models: T) -> Tuple:
     return tuple(models.model_dump().values())
