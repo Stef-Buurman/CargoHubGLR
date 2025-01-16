@@ -1,4 +1,3 @@
-from services.v2.data_provider_v2 import fetch_inventory_pool
 from models.v2.transfer import Transfer
 from models.v2.ItemInObject import ItemInObject
 from typing import List, Type
@@ -40,7 +39,9 @@ class TransferService(Base):
         for row in all_transfer_items:
             if row[2] not in transfer_items_map:
                 transfer_items_map[row[2]] = []
-            transfer_items_map[row[2]].append(ItemInObject(item_id=row[0], amount=row[1]))
+            transfer_items_map[row[2]].append(
+                ItemInObject(item_id=row[0], amount=row[1])
+            )
         for transfer in all_transfers:
             transfer.items = transfer_items_map.get(transfer.id, [])
         return all_transfers
@@ -179,19 +180,19 @@ class TransferService(Base):
         transfer_items = self.get_items_in_transfer(transfer.id)
 
         for item in transfer_items:
-            inventories = fetch_inventory_pool().get_inventories_for_item(item.item_id)
+            inventories = self.data_provider.fetch_inventory_pool().get_inventories_for_item(item.item_id)
 
             for y in inventories:
                 if transfer.transfer_from in y.locations:
                     y.total_on_hand -= item.amount
                     y.total_expected = y.total_on_hand + y.total_ordered
                     y.total_available = y.total_on_hand - y.total_allocated
-                    fetch_inventory_pool().update_inventory(y.id, y)
+                    self.data_provider.fetch_inventory_pool().update_inventory(y.id, y)
                 elif transfer.transfer_to in y.locations:
                     y.total_on_hand += item.amount
                     y.total_expected = y.total_on_hand + y.total_ordered
                     y.total_available = y.total_on_hand - y.total_allocated
-                    fetch_inventory_pool().update_inventory(y.id, y)
+                    self.data_provider.fetch_inventory_pool().update_inventory(y.id, y)
 
         transfer.transfer_status = "Processed"
         self.save(background_task)
@@ -220,8 +221,8 @@ class TransferService(Base):
                     conn.execute(update_sql, values)
 
                 self.save(background_task)
-                return True
-        return False
+                return self.data[i]
+        return None
 
     def unarchive_transfer(self, transfer_id: int, background_task=True) -> bool:
         for i in range(len(self.data)):
@@ -246,8 +247,8 @@ class TransferService(Base):
                     conn.execute(update_sql, values)
 
                 self.save(background_task)
-                return True
-        return False
+                return self.data[i]
+        return None
 
     def save(self, background_task=True):
         if not self.is_debug:

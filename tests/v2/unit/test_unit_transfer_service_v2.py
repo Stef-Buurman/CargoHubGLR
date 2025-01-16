@@ -1,8 +1,6 @@
 from unittest.mock import MagicMock
 import pytest
-from app.models.v2.ItemInObject import ItemInObject
 from app.models.v2.transfer import Transfer
-from app.models.v2.item import Item
 from app.models.v2.inventory import Inventory
 from app.services.v2.model_services.transfer_service import TransferService
 from tests.test_globals import *
@@ -11,7 +9,7 @@ TEST_TRANSFERS = [
     Transfer(
         id=1,
         reference="TR00001",
-        transfer_from=None,
+        transfer_from=4356,
         transfer_to=9229,
         transfer_status="Completed",
         created_at="2000-03-11T13:11:14Z",
@@ -92,7 +90,12 @@ def mock_pools(mock_db_service, mock_get_connection):
 
     inventory_pool_mock.is_inventory_archived.return_value = False
 
-    return item_pool_mock, inventory_pool_mock
+    warehouse_pool_mock = MagicMock()
+    data_provider_mock.fetch_warehouse_pool.return_value = warehouse_pool_mock
+
+    warehouse_pool_mock.is_warehouse_archived.return_value = False
+
+    return item_pool_mock, inventory_pool_mock, warehouse_pool_mock
 
 
 @pytest.fixture
@@ -153,3 +156,319 @@ def test_get_transfer_from_db(transfer_service, mock_db_service, mock_get_connec
 
     assert mock_db_service.get_connection().__enter__().execute.call_count == 3
     assert transfer.id == transfer_to_return.id
+
+
+def test_get_items_in_transfer(transfer_service):
+    items = transfer_service.get_items_in_transfer(1)
+
+    assert len(items) == 2
+    assert items[0].item_id == test_item_in_object[0][0]
+    assert items[0].amount == test_item_in_object[0][1]
+
+
+def test_get_items_in_transfer_not_found(transfer_service):
+    items = transfer_service.get_items_in_transfer(4)
+
+    assert items == None
+
+
+def test_add_transfer(
+    transfer_service, mock_db_service, mock_get_connection, mock_pools
+):
+
+    transfer = Transfer(
+        id=4,
+        reference="TR00004",
+        transfer_from=9229,
+        transfer_to=9284,
+        transfer_status="Pending",
+        created_at="2022-05-12T08:54:35Z",
+        updated_at="2022-05-12T08:54:35Z",
+        items=[
+            {"item_id": "p10011", "amount": 1},
+            {"item_id": "p10012", "amount": 2},
+        ],
+        is_archived=False,
+    )
+
+    result = transfer_service.add_transfer(transfer)
+
+    assert mock_db_service.get_connection().__enter__().execute.call_count == 4
+    assert transfer in transfer_service.data
+    assert result.id == transfer.id
+
+
+def test_add_transfer_has_archived_entities_item(
+    transfer_service, mock_db_service, mock_get_connection, mock_pools
+):
+
+    item_pool_mock, inventory_pool_mock, warehouse_pool_mock = mock_pools
+
+    item_pool_mock.is_item_archived.return_value = True
+    new_transfer = Transfer(
+        id=5,
+        reference="TR00005",
+        transfer_from=9229,
+        transfer_to=9284,
+        transfer_status="Pending",
+        created_at="2022-05-12T08:54:35Z",
+        updated_at="2022-05-12T08:54:35Z",
+        items=[
+            {"item_id": "p10011", "amount": 1},
+            {"item_id": "p10012", "amount": 2},
+        ],
+        is_archived=False,
+    )
+
+    result = transfer_service.add_transfer(new_transfer)
+
+    assert mock_db_service.get_connection().__enter__().execute.call_count == 1
+    assert result is None
+    assert new_transfer not in transfer_service.data
+
+
+def test_add_transfer_has_archived_entities_warehouse(
+    transfer_service, mock_db_service, mock_get_connection, mock_pools
+):
+
+    item_pool_mock, inventory_pool_mock, warehouse_pool_mock = mock_pools
+
+    item_pool_mock.is_item_archived.return_value = False
+    warehouse_pool_mock.is_warehouse_archived.return_value = True
+    new_transfer = Transfer(
+        id=5,
+        reference="TR00005",
+        transfer_from=9229,
+        transfer_to=9284,
+        transfer_status="Pending",
+        created_at="2022-05-12T08:54:35Z",
+        updated_at="2022-05-12T08:54:35Z",
+        items=[
+            {"item_id": "p10011", "amount": 1},
+            {"item_id": "p10012", "amount": 2},
+        ],
+        is_archived=False,
+    )
+
+    result = transfer_service.add_transfer(new_transfer)
+
+    assert mock_db_service.get_connection().__enter__().execute.call_count == 1
+    assert result is None
+    assert new_transfer not in transfer_service.data
+
+
+def test_update_order(
+    transfer_service, mock_db_service, mock_get_connection, mock_pools
+):
+    mock_db_service, mock_conn, mock_cursor, data_provider_mock = mock_get_connection
+
+    item_pool_mock, inventory_pool_mock, warehouse_pool_mock = mock_pools
+    warehouse_pool_mock.is_warehouse_archived.return_value = False
+
+    transfer_id = 1
+    transfer = transfer_service.get_transfer(transfer_id)
+    assert transfer is not None
+
+    updated_transfer = transfer.copy(update={"transfer_status": "Pending"})
+    mock_cursor.fetchone.return_value = pydantic_models_value_to_tuple(updated_transfer)
+
+    result = transfer_service.update_transfer(transfer_id, updated_transfer)
+
+    assert mock_db_service.get_connection().__enter__().execute.call_count == 5
+    assert result.transfer_status == "Pending"
+    updated_transfer = transfer_service.get_transfer(transfer_id)
+    assert updated_transfer.transfer_status == "Pending"
+
+
+def test_update_transfer_archived_item(
+    transfer_service, mock_db_service, mock_get_connection, mock_pools
+):
+
+    item_pool_mock, inventory_pool_mock, warehouse_pool_mock = mock_pools
+    item_pool_mock.is_item_archived.return_value = True
+    warehouse_pool_mock.is_warehouse_archived.return_value = False
+
+    transfer_id = 1
+    transfer = transfer_service.get_transfer(transfer_id)
+    assert transfer is not None
+
+    updated_transfer = transfer.copy(update={"transfer_status": "Completed"})
+
+    result = transfer_service.update_transfer(transfer_id, updated_transfer)
+
+    assert mock_db_service.get_connection().__enter__().execute.call_count == 1
+    assert result is None
+
+
+# def test_update_transfer_archived_warehouse(
+#     transfer_service, mock_db_service, mock_get_connection, mock_pools
+# ):
+
+#     item_pool_mock, inventory_pool_mock, warehouse_pool_mock = mock_pools
+#     warehouse_pool_mock.is_warehouse_archived.return_value = True
+#     item_pool_mock.is_item_archived.return_value = False
+
+#     transfer_id = 1
+#     transfer = transfer_service.get_transfer(transfer_id)
+#     assert transfer is not None
+
+#     updated_transfer = transfer.copy(update={"transfer_status": "Completed"})
+
+#     result = transfer_service.update_transfer(transfer_id, updated_transfer)
+
+#     assert mock_db_service.get_connection().__enter__().execute.call_count == 5
+#     assert result is None
+
+
+def test_update_transfer_archived(
+    transfer_service, mock_db_service, mock_get_connection
+):
+    transfer_id = 3
+    transfer = transfer_service.get_transfer(transfer_id)
+    assert transfer is not None
+
+    updated_transfer = transfer.copy(update={"transfer_status": "Shipped"})
+
+    result = transfer_service.archive_transfer(transfer_id)
+    assert result.is_archived == True
+    assert mock_db_service.get_connection().__enter__().execute.call_count == 2
+
+    result = transfer_service.update_transfer(transfer_id, updated_transfer)
+
+    assert mock_db_service.get_connection().__enter__().execute.call_count == 2
+    assert result is None
+    updated_transfer = transfer_service.get_transfer(transfer_id)
+    assert updated_transfer.is_archived
+
+
+def test_commit_transfer(
+    transfer_service, mock_db_service, mock_get_connection, mock_pools
+):
+    item_pool_mock, inventory_pool_mock, warehouse_pool_mock = mock_pools
+
+    inventory_pool_mock.get_inventories_for_item.return_value = [
+        Inventory(
+            id=1,
+            item_id="p10011",
+            description="Item 10011 Description",
+            item_reference="Ref10011",
+            locations=[1, 4356],
+            total_on_hand=50,
+            total_expected=20,
+            total_ordered=30,
+            total_allocated=10,
+            total_available=40,
+            created_at="2023-01-01T10:00:00Z",
+            updated_at="2023-01-01T10:00:00Z",
+            is_archived=False,
+        ),
+        Inventory(
+            id=2,
+            item_id="p10012",
+            description="Item 10012 Description",
+            item_reference="Ref10012",
+            locations=[9229, 4],
+            total_on_hand=60,
+            total_expected=25,
+            total_ordered=35,
+            total_allocated=15,
+            total_available=45,
+            created_at="2023-01-02T10:00:00Z",
+            updated_at="2023-01-02T10:00:00Z",
+            is_archived=False,
+        ),
+    ]
+
+    transfer_id = 1
+    transfer = transfer_service.get_transfer(transfer_id)
+    assert transfer is not None
+
+    result = transfer_service.commit_transfer(transfer)
+
+    assert mock_db_service.get_connection().__enter__().execute.call_count == 1
+    assert result.transfer_status == "Processed"
+    assert transfer_service.get_transfer(transfer_id).transfer_status == "Processed"
+
+
+def test_archive_transfer(transfer_service, mock_db_service, mock_get_connection):
+    transfer_id = 1
+    transfer = transfer_service.get_transfer(transfer_id)
+    assert transfer is not None
+
+    result = transfer_service.archive_transfer(transfer_id)
+
+    assert mock_db_service.get_connection().__enter__().execute.call_count == 2
+    assert result.is_archived == True
+    assert transfer_service.get_transfer(transfer_id).is_archived
+
+
+def test_commit_archived_transfer(
+    transfer_service, mock_db_service, mock_get_connection
+):
+    transfer_id = 3
+    transfer = transfer_service.get_transfer(transfer_id)
+    assert transfer is not None
+
+    result = transfer_service.commit_transfer(transfer)
+
+    assert mock_db_service.get_connection().__enter__().execute.call_count == 1
+    assert result is None
+    assert transfer_service.get_transfer(transfer_id).transfer_status == "Completed"
+
+
+def test_archive_transfer_not_found(
+    transfer_service, mock_db_service, mock_get_connection
+):
+    result = transfer_service.archive_transfer(non_existent_id)
+
+    assert mock_db_service.get_connection().__enter__().execute.call_count == 1
+    assert result == None
+
+
+def test_is_transfer_archived(transfer_service, mock_db_service, mock_get_connection):
+    mock_db_service, mock_conn, mock_cursor, data_provider_mock = mock_get_connection
+
+    transfer_id = 1
+    transfer = transfer_service.get_transfer(transfer_id)
+    assert transfer is not None
+
+    mock_cursor.fetchone.return_value = pydantic_models_value_to_tuple(transfer)
+
+    result = transfer_service.is_transfer_archived(transfer_id)
+
+    assert mock_db_service.get_connection().__enter__().execute.call_count == 1
+    assert result == True
+
+
+def test_is_transfer_archived_not_found(
+    transfer_service, mock_db_service, mock_get_connection
+):
+    result = transfer_service.is_transfer_archived(non_existent_id)
+
+    assert mock_db_service.get_connection().__enter__().execute.call_count == 1
+    assert result == None
+
+
+def test_unarchive_transfer(transfer_service, mock_db_service, mock_get_connection):
+    mock_db_service, mock_conn, mock_cursor, data_provider_mock = mock_get_connection
+
+    transfer_id = 3
+    transfer = transfer_service.get_transfer(transfer_id)
+    assert transfer is not None
+
+    mock_cursor.fetchone.return_value = pydantic_models_value_to_tuple(transfer)
+
+    result = transfer_service.unarchive_transfer(transfer_id)
+
+    assert mock_db_service.get_connection().__enter__().execute.call_count == 2
+    assert result.is_archived == False
+    assert not transfer_service.get_transfer(transfer_id).is_archived
+
+
+def test_unarchive_transfer_not_found(
+    transfer_service, mock_db_service, mock_get_connection
+):
+    result = transfer_service.unarchive_transfer(non_existent_id)
+
+    assert mock_db_service.get_connection().__enter__().execute.call_count == 1
+    assert result == None
