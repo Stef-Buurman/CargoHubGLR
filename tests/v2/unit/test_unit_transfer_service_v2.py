@@ -300,24 +300,44 @@ def test_update_transfer_archived_item(
     assert result is None
 
 
-# def test_update_transfer_archived_warehouse(
-#     transfer_service, mock_db_service, mock_get_connection, mock_pools
-# ):
+def test_update_transfer_archived_warehouse(
+    transfer_service, mock_db_service, mock_get_connection, mock_pools
+):
 
-#     item_pool_mock, inventory_pool_mock, warehouse_pool_mock = mock_pools
-#     warehouse_pool_mock.is_warehouse_archived.return_value = True
-#     item_pool_mock.is_item_archived.return_value = False
+    item_pool_mock, inventory_pool_mock, warehouse_pool_mock = mock_pools
+    warehouse_pool_mock.is_warehouse_archived.return_value = True
+    item_pool_mock.is_item_archived.return_value = False
 
-#     transfer_id = 1
-#     transfer = transfer_service.get_transfer(transfer_id)
-#     assert transfer is not None
+    transfer_id = 1
+    transfer = transfer_service.get_transfer(transfer_id)
+    assert transfer is not None
 
-#     updated_transfer = transfer.copy(update={"transfer_status": "Completed"})
+    updated_transfer = transfer.copy(update={"transfer_from": 3442})
 
-#     result = transfer_service.update_transfer(transfer_id, updated_transfer)
+    result = transfer_service.update_transfer(transfer_id, updated_transfer)
 
-#     assert mock_db_service.get_connection().__enter__().execute.call_count == 5
-#     assert result is None
+    assert mock_db_service.get_connection().__enter__().execute.call_count == 1
+    assert result is None
+
+
+def test_update_transfer_archived_warehouse(
+    transfer_service, mock_db_service, mock_get_connection, mock_pools
+):
+
+    item_pool_mock, inventory_pool_mock, warehouse_pool_mock = mock_pools
+    warehouse_pool_mock.is_warehouse_archived.return_value = True
+    item_pool_mock.is_item_archived.return_value = False
+
+    transfer_id = 1
+    transfer = transfer_service.get_transfer(transfer_id)
+    assert transfer is not None
+
+    updated_transfer = transfer.copy(update={"transfer_to": 3442})
+
+    result = transfer_service.update_transfer(transfer_id, updated_transfer)
+
+    assert mock_db_service.get_connection().__enter__().execute.call_count == 1
+    assert result is None
 
 
 def test_update_transfer_archived(
