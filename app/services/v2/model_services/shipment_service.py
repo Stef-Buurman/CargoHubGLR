@@ -9,53 +9,49 @@ from services.v1 import data_provider
 
 
 class ShipmentService(Base):
-    def __init__(self, db: Type[DatabaseService] = None, is_debug: bool = False):
+    def __init__(
+        self,
+        data_provider=None,
+        is_debug: bool = False,
+    ):
         self.is_debug = is_debug
-        if db is not None:
-            self.db = db
+        if data_provider is not None:
+            self.data_provider = data_provider
         else:
-            self.db = data_provider_v2.fetch_database()
+            self.data_provider = data_provider_v2
+
+        self.db = self.data_provider.fetch_database()
         self.load()
 
     def get_all_shipments(self) -> List[Shipment]:
-        shipments = []
-        query = """
-        SELECT s.*, i.item_uid, i.amount
-        FROM shipments s
-        LEFT JOIN shipment_items i ON s.id = i.shipment_id
-        """
+        all_shipments = self.db.get_all(Shipment)
+        shipment_ids = [shipment.id for shipment in all_shipments]
+
         with self.db.get_connection() as conn:
+            query = f"SELECT item_uid, amount, shipment_id FROM {shipment_items_table} WHERE shipment_id IN ({', '.join(map(str, shipment_ids))})"
             cursor = conn.execute(query)
-            rows = cursor.fetchall()
-            columns = [column[0] for column in cursor.description]
-            shipments_dict = {}
-            for row in rows:
-                row_dict = dict(zip(columns, row))
-                shipment_id = row_dict["id"]
-                if shipment_id not in shipments_dict:
-                    shipments_dict[shipment_id] = Shipment(
-                        **{
-                            k: v
-                            for k, v in row_dict.items()
-                            if k not in ["item_uid", "amount"]
-                        }
-                    )
-                    shipments_dict[shipment_id].items = []
-                item = ItemInObject(
-                    item_id=row_dict["item_uid"], amount=row_dict["amount"]
-                )
-                shipments_dict[shipment_id].items.append(item)
-            shipments = list(shipments_dict.values())
-        return shipments
+            all_shipment_items = cursor.fetchall()
+
+        shipment_items_map = {}
+        for row in all_shipment_items:
+            if row[2] not in shipment_items_map:
+                shipment_items_map[row[2]] = []
+            shipment_items_map[row[2]].append(
+                ItemInObject(item_id=row[0], amount=row[1])
+            )
+        for i, shipment in enumerate(all_shipments):
+            all_shipments[i].items = shipment_items_map.get(shipment.id)
+
+        return all_shipments
 
     def get_shipments(self) -> List[Shipment]:
         all_shipments = []
-        for shipment in self.db.get_all(Shipment):
+        for shipment in self.data:
             if not shipment.is_archived:
                 all_shipments.append(shipment)
         return all_shipments
 
-    def get_shipment(self, shipment_id: str) -> Shipment | None:
+    def get_shipment(self, shipment_id: int) -> Shipment | None:
         for shipment in self.data:
             if shipment.id == shipment_id:
                 return shipment
@@ -77,7 +73,7 @@ class ShipmentService(Base):
                 return Shipment(**shipment)
         return None
 
-    def get_items_in_shipment(self, shipment_id: str) -> List[ItemInObject] | None:
+    def get_items_in_shipment(self, shipment_id: int) -> List[ItemInObject] | None:
         shipment = self.get_shipment(shipment_id)
         return shipment.items if shipment else None
 
@@ -122,7 +118,7 @@ class ShipmentService(Base):
         return shipment
 
     def update_shipment(
-        self, shipment_id: str, shipment: Shipment, background_task=True
+        self, shipment_id: int, shipment: Shipment, background_task=True
     ) -> Shipment:
 
         current_shipment = self.get_shipment(shipment_id)
@@ -186,7 +182,7 @@ class ShipmentService(Base):
         return shipment
 
     def update_items_in_shipment(
-        self, shipment_id: str, items: List[ItemInObject]
+        self, shipment_id: int, items: List[ItemInObject]
     ) -> Shipment | None:
         shipment = self.get_shipment(shipment_id)
         updated_shipment = shipment.model_copy()
@@ -197,7 +193,7 @@ class ShipmentService(Base):
         if shipment:
             items_to_add = []
             for item in items:
-                if not data_provider_v2.fetch_item_pool().is_item_archived(
+                if not self.data_provider.fetch_item_pool().is_item_archived(
                     item.item_id
                 ):
                     items_to_add.append(item)
@@ -208,8 +204,8 @@ class ShipmentService(Base):
         return None
 
     def update_inventory_for_shipment(self, item_id, amount_change):
-        inventories = data_provider_v2.fetch_inventory_pool().get_inventories_for_item(
-            item_id
+        inventories = (
+            self.data_provider.fetch_inventory_pool().get_inventories_for_item(item_id)
         )
         max_inventory = max(inventories, key=lambda z: z.total_ordered, default=None)
         if max_inventory:
@@ -218,7 +214,7 @@ class ShipmentService(Base):
                 max_inventory.total_expected = (
                     max_inventory.total_on_hand + max_inventory.total_ordered
                 )
-                data_provider_v2.fetch_inventory_pool().update_inventory(
+                self.data_provider.fetch_inventory_pool().update_inventory(
                     max_inventory.id, max_inventory
                 )
 
@@ -242,7 +238,7 @@ class ShipmentService(Base):
                 self.update_inventory_for_shipment(item.item_id, item.amount)
 
     def archive_shipment(
-        self, shipment_id: str, background_task=True
+        self, shipment_id: int, background_task=True
     ) -> Shipment | None:
         for i in range(len(self.data)):
             if self.data[i].id == shipment_id:
@@ -267,7 +263,7 @@ class ShipmentService(Base):
         return None
 
     def unarchive_shipment(
-        self, shipment_id: str, background_task=True
+        self, shipment_id: int, background_task=True
     ) -> Shipment | None:
         for i in range(len(self.data)):
             if self.data[i].id == shipment_id:
@@ -300,13 +296,13 @@ class ShipmentService(Base):
                 )
 
             if background_task:
-                data_provider_v2.fetch_background_tasks().add_task(call_v1_save_method)
+                self.data_provider.fetch_background_tasks().add_task(
+                    call_v1_save_method
+                )
             else:
                 call_v1_save_method()
 
-    def load(
-        self,
-    ):
+    def load(self):
         self.data = self.get_all_shipments()
 
     def has_shipment_archived_entities(
@@ -316,13 +312,13 @@ class ShipmentService(Base):
         if old_shipment is None:
             if new_shipment.is_archived:
                 has_archived_entities = True
-            elif data_provider_v2.fetch_order_pool().is_order_archived(
+            elif self.data_provider.fetch_order_pool().is_order_archived(
                 new_shipment.order_id
             ):
                 has_archived_entities = True
             else:
                 for item in new_shipment.items:
-                    if data_provider_v2.fetch_item_pool().is_item_archived(
+                    if self.data_provider.fetch_item_pool().is_item_archived(
                         item.item_id
                     ):
                         has_archived_entities = True
@@ -332,7 +328,7 @@ class ShipmentService(Base):
                 has_archived_entities = True
             elif (
                 new_shipment.order_id != old_shipment.order_id
-                and data_provider_v2.fetch_order_pool().is_order_archived(
+                and self.data_provider.fetch_order_pool().is_order_archived(
                     new_shipment.order_id
                 )
             ):
@@ -342,7 +338,7 @@ class ShipmentService(Base):
                 for item in new_shipment.items:
                     if (
                         item.item_id not in old_item_ids
-                        and data_provider_v2.fetch_item_pool().is_item_archived(
+                        and self.data_provider.fetch_item_pool().is_item_archived(
                             item.item_id
                         )
                     ):
@@ -350,20 +346,20 @@ class ShipmentService(Base):
                         break
         return has_archived_entities
 
-    def is_shipment_archived(self, shipment_id: str) -> bool | None:
+    def is_shipment_archived(self, shipment_id: int) -> bool | None:
         for shipment in self.data:
             if shipment.id == shipment_id:
                 return shipment.is_archived
         return None
 
-    def get_shipments_for_order(self, order_id: str) -> List[Shipment]:
+    def get_shipments_for_order(self, order_id: int) -> List[Shipment]:
         shipments = []
         for shipment in self.data:
             if shipment.order_id == order_id:
                 shipments.append(shipment)
         return shipments
 
-    def commit_shipment(self, shipment_id: str) -> Shipment | None:
+    def commit_shipment(self, shipment_id: int) -> Shipment | None:
         if self.is_shipment_archived(shipment_id):
             return None
 
@@ -371,13 +367,13 @@ class ShipmentService(Base):
             if self.data[i].id == shipment_id:
                 if self.data[i].shipment_status == "Pending":
                     self.data[i].shipment_status = "Transit"
-                    data_provider_v2.fetch_order_pool().check_if_order_transit(
+                    self.data_provider.fetch_order_pool().check_if_order_transit(
                         self.data[i].order_id
                     )
                     return self.update_shipment(shipment_id, self.data[i])
                 elif self.data[i].shipment_status == "Transit":
                     self.data[i].shipment_status = "Delivered"
-                    data_provider_v2.fetch_order_pool().check_if_order_delivered(
+                    self.data_provider.fetch_order_pool().check_if_order_delivered(
                         self.data[i].order_id
                     )
                     return self.update_shipment(shipment_id, self.data[i])
