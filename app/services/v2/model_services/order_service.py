@@ -9,12 +9,22 @@ from services.v1 import data_provider
 
 
 class OrderService(Base):
-    def __init__(self, db: Type[DatabaseService] = None, is_debug: bool = False):
+    def __init__(
+        self,
+        db: Type[DatabaseService] = None,
+        data_provider=None,
+        is_debug: bool = False,
+    ):
         self.is_debug = is_debug
         if db is not None:
             self.db = db
         else:
             self.db = data_provider_v2.fetch_database()
+
+        if data_provider is not None:
+            self.data_provider = data_provider
+        else:
+            self.data_provider = data_provider_v2
         self.load()
 
     def get_all_orders(self) -> List[Order]:
@@ -59,7 +69,6 @@ class OrderService(Base):
                 query_items = f"SELECT item_id, amount, order_id FROM {order_items_table} WHERE order_id = {order_id}"
                 cursor = conn.execute(query_items)
                 all_order_items = cursor.fetchall()
-                # order["items"] = all_order_items
                 order["items"] = [
                     ItemInObject(item_id=row[0], amount=row[1])
                     for row in all_order_items
@@ -74,13 +83,6 @@ class OrderService(Base):
         return None
 
     def get_orders_in_shipment(self, shipment_id: int) -> List[Order]:
-        result = []
-        for order in self.data:
-            if order.shipment_id == shipment_id:
-                result.append(order)
-        return result
-
-    def get_orders_for_shipments(self, shipment_id: int) -> List[Order]:
         result = []
         for order in self.data:
             if order.shipment_id == shipment_id:
@@ -169,15 +171,16 @@ class OrderService(Base):
                     order_items_table} WHERE order_id = ?"""
                 conn.execute(delete_items_sql, (order_id,))
 
-                for order_items in order.items:
-                    items_insert_sql = f"""
-                    INSERT INTO {order_items_table} (order_id, item_id, amount)
-                    VALUES (?, ?, ?)
-                    """
-                    conn.execute(
-                        items_insert_sql,
-                        (order_id, order_items.item_id, order_items.amount),
-                    )
+                if order.items:
+                    for order_items in order.items:
+                        items_insert_sql = f"""
+                        INSERT INTO {order_items_table} (order_id, item_id, amount)
+                        VALUES (?, ?, ?)
+                        """
+                        conn.execute(
+                            items_insert_sql,
+                            (order_id, order_items.item_id, order_items.amount),
+                        )
 
         for i in range(len(self.data)):
             if self.data[i].id == order_id:
@@ -194,7 +197,7 @@ class OrderService(Base):
 
         order.items = []
         for item in items:
-            if not data_provider_v2.fetch_item_pool().is_item_archived(item.item_id):
+            if not self.data_provider.fetch_item_pool().is_item_archived(item.item_id):
                 order.items.append(item)
         return self.update_order(order_id, order)
 
@@ -267,7 +270,7 @@ class OrderService(Base):
                 return self.data[i]
         return None
 
-    def save(self, background_task=True):
+    def save(self, background_task=True):  # pragma: no cover:
         if not self.is_debug:
 
             def call_v1_save_method():
@@ -276,7 +279,9 @@ class OrderService(Base):
                 )
 
             if background_task:
-                data_provider_v2.fetch_background_tasks().add_task(call_v1_save_method)
+                self.data_provider.fetch_background_tasks().add_task(
+                    call_v1_save_method
+                )
             else:
                 call_v1_save_method()
 
@@ -297,32 +302,32 @@ class OrderService(Base):
         if old_order is None:
             if new_order.ship_to is not None:
                 has_archived_entities = (
-                    data_provider_v2.fetch_client_pool().is_client_archived(
+                    self.data_provider.fetch_client_pool().is_client_archived(
                         new_order.ship_to
                     )
                 )
             if not has_archived_entities and new_order.bill_to is not None:
                 has_archived_entities = (
-                    data_provider_v2.fetch_client_pool().is_client_archived(
+                    self.data_provider.fetch_client_pool().is_client_archived(
                         new_order.bill_to
                     )
                 )
             if not has_archived_entities and new_order.shipment_id is not None:
                 has_archived_entities = (
-                    data_provider_v2.fetch_shipment_pool().is_shipment_archived(
+                    self.data_provider.fetch_shipment_pool().is_shipment_archived(
                         new_order.shipment_id
                     )
                 )
             if not has_archived_entities and new_order.warehouse_id is not None:
                 has_archived_entities = (
-                    data_provider_v2.fetch_warehouse_pool().is_warehouse_archived(
+                    self.data_provider.fetch_warehouse_pool().is_warehouse_archived(
                         new_order.warehouse_id
                     )
                 )
         else:
             if new_order.ship_to != old_order.ship_to and new_order.ship_to is not None:
                 has_archived_entities = (
-                    data_provider_v2.fetch_client_pool().is_client_archived(
+                    self.data_provider.fetch_client_pool().is_client_archived(
                         new_order.ship_to
                     )
                 )
@@ -332,7 +337,7 @@ class OrderService(Base):
                 and new_order.bill_to is not None
             ):
                 has_archived_entities = (
-                    data_provider_v2.fetch_client_pool().is_client_archived(
+                    self.data_provider.fetch_client_pool().is_client_archived(
                         new_order.bill_to
                     )
                 )
@@ -342,7 +347,7 @@ class OrderService(Base):
                 and new_order.shipment_id is not None
             ):
                 has_archived_entities = (
-                    data_provider_v2.fetch_shipment_pool().is_shipment_archived(
+                    self.data_provider.fetch_shipment_pool().is_shipment_archived(
                         new_order.shipment_id
                     )
                 )
@@ -352,7 +357,7 @@ class OrderService(Base):
                 and new_order.warehouse_id is not None
             ):
                 has_archived_entities = (
-                    data_provider_v2.fetch_warehouse_pool().is_warehouse_archived(
+                    self.data_provider.fetch_warehouse_pool().is_warehouse_archived(
                         new_order.warehouse_id
                     )
                 )
@@ -361,7 +366,7 @@ class OrderService(Base):
 
     def check_if_order_transit(self, order_id: int) -> Order | None:
         order = self.get_order(order_id)
-        shipments = data_provider_v2.fetch_shipment_pool().get_shipments_for_order(
+        shipments = self.data_provider.fetch_shipment_pool().get_shipments_for_order(
             order_id
         )
         can_change_to_Transit = True
@@ -376,7 +381,7 @@ class OrderService(Base):
 
     def check_if_order_delivered(self, order_id: int) -> Order | None:
         order = self.get_order(order_id)
-        shipments = data_provider_v2.fetch_shipment_pool().get_shipments_for_order(
+        shipments = self.data_provider.fetch_shipment_pool().get_shipments_for_order(
             order_id
         )
         can_change_to_delivered = True

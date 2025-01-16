@@ -1,5 +1,7 @@
 import os
+from typing import List, Tuple, TypeVar
 import httpx
+from pydantic import BaseModel
 
 TEST_PORT = os.getenv("TEST_PORT", "8000")
 
@@ -25,3 +27,14 @@ wrong_page_1 = "?page=1.5"
 wrong_page_2 = "?page=-1.5"
 wrong_page_3 = "?page=page"
 wrong_page_4 = "?page=%^%^%^%^%^"
+
+T = TypeVar("T", bound=BaseModel)
+
+
+def pydantic_models_keys_to_tuple_array(models: T) -> List:
+    keys = models.model_dump().keys()
+    return [(key,) for key in keys]
+
+
+def pydantic_models_value_to_tuple(models: T) -> Tuple:
+    return tuple(models.model_dump().values())

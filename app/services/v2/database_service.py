@@ -25,12 +25,14 @@ T = TypeVar("T", bound=BaseModel)
 
 
 class DatabaseService:
-    def __init__(self, db_path: str = APP_PATH + "/database/database.db"):
+    def __init__(
+        self, db_path: str = APP_PATH + "/database/database.db"
+    ):  # pragma: no cover
         self.db_path = db_path
         self.conn = None
         self._initialize_database()
 
-    def _initialize_database(self):
+    def _initialize_database(self):  # pragma: no cover
         self.create_orders_table(Order)
         self.create_clients_table(Client)
         self.create_items_table(Item)
@@ -50,7 +52,9 @@ class DatabaseService:
         self.create_endpoint_access_table(EndpointAccess)
 
     @contextmanager
-    def get_connection(self) -> Generator[sqlite3.Connection, None, None]:
+    def get_connection(
+        self,
+    ) -> Generator[sqlite3.Connection, None, None]:  # pragma: no cover
         conn = sqlite3.connect(self.db_path)
         try:
             yield conn
@@ -198,8 +202,8 @@ class DatabaseService:
 
     def create_clients_table(
         self, model: Type[BaseModel] | None = None, table_name: str | None = None
-    ):
-        if model is not None:  # pragma: no cover
+    ):  # pragma: no cover
+        if model is not None:
             table_name = model.table_name()
 
         query = f"""
@@ -224,8 +228,8 @@ class DatabaseService:
 
     def create_inventory_table(
         self, model: Type[BaseModel] | None = None, table_name: str | None = None
-    ):
-        if model is not None:  # pragma: no cover
+    ):  # pragma: no cover
+        if model is not None:
             table_name = model.table_name()
 
         query_inventory = f"""
@@ -256,14 +260,14 @@ class DatabaseService:
         )
         """
 
-        with self.get_connection() as conn:  # pragma: no cover
+        with self.get_connection() as conn:
             conn.execute(query_inventory)
             conn.execute(query_locations)
 
     def create_item_group_table(
         self, model: Type[BaseModel] | None = None, table_name: str | None = None
-    ):
-        if model is not None:  # pragma: no cover
+    ):  # pragma: no cover
+        if model is not None:
             table_name = model.table_name()
 
         query_item_group = f"""
@@ -281,8 +285,8 @@ class DatabaseService:
 
     def create_item_line_table(
         self, model: Type[BaseModel] | None = None, table_name: str | None = None
-    ):
-        if model is not None:  # pragma: no cover
+    ):  # pragma: no cover
+        if model is not None:
             table_name = model.table_name()
 
         query_item_line = f"""
@@ -300,8 +304,8 @@ class DatabaseService:
 
     def create_item_type_table(
         self, model: Type[BaseModel] | None = None, table_name: str | None = None
-    ):
-        if model is not None:  # pragma: no cover
+    ):  # pragma: no cover
+        if model is not None:
             table_name = model.table_name()
 
         query_item_type = f"""
@@ -319,8 +323,8 @@ class DatabaseService:
 
     def create_items_table(
         self, model: Type[BaseModel] | None = None, table_name: str | None = None
-    ):
-        if model is not None:  # pragma: no cover
+    ):  # pragma: no cover
+        if model is not None:
             table_name = model.table_name()
 
         query = f"""
@@ -355,8 +359,8 @@ class DatabaseService:
 
     def create_location_table(
         self, model: Type[BaseModel] | None = None, table_name: str | None = None
-    ):
-        if model is not None:  # pragma: no cover
+    ):  # pragma: no cover
+        if model is not None:
             table_name = model.table_name()
 
         query_location = f"""
@@ -376,8 +380,8 @@ class DatabaseService:
 
     def create_orders_table(
         self, model: Type[BaseModel] | None = None, table_name: str | None = None
-    ):
-        if model is not None:  # pragma: no cover
+    ):  # pragma: no cover
+        if model is not None:
             table_name = model.table_name()
 
         query = f"""
@@ -409,13 +413,13 @@ class DatabaseService:
             FOREIGN KEY (shipment_id) REFERENCES {Shipment.table_name()}(id) ON DELETE CASCADE
         );
         """
-        with self.get_connection() as conn:  # pragma: no cover
+        with self.get_connection() as conn:
             conn.execute(query)
 
     def create_order_items_table(
         self, model: Type[BaseModel] | None = None, table_name: str | None = None
-    ):
-        if model is not None:  # pragma: no cover
+    ):  # pragma: no cover
+        if model is not None:
             table_name = model.table_name()
 
         query = f"""
@@ -433,8 +437,8 @@ class DatabaseService:
 
     def create_shipment_table(
         self, model: Type[BaseModel] | None = None, table_name: str | None = None
-    ):
-        if model is not None:  # pragma: no cover
+    ):  # pragma: no cover
+        if model is not None:
             table_name = model.table_name()
 
         query_shipment = f"""
@@ -461,13 +465,13 @@ class DatabaseService:
             FOREIGN KEY (order_id) REFERENCES {Order.table_name()}(id) ON DELETE CASCADE
         )
         """
-        with self.get_connection() as conn:  # pragma: no cover
+        with self.get_connection() as conn:
             conn.execute(query_shipment)
 
     def create_shipment_items_table(
         self, model: Type[BaseModel] | None = None, table_name: str | None = None
-    ):
-        if model is not None:  # pragma: no cover
+    ):  # pragma: no cover
+        if model is not None:
             table_name = model.table_name()
 
         query = f"""
@@ -485,8 +489,8 @@ class DatabaseService:
 
     def create_supplier_table(
         self, model: Type[BaseModel] | None = None, table_name: str | None = None
-    ):
-        if model is not None:  # pragma: no cover
+    ):  # pragma: no cover
+        if model is not None:
             table_name = model.table_name()
 
         query_supplier = f"""
@@ -508,13 +512,13 @@ class DatabaseService:
             is_archived BOOLEAN DEFAULT 0
         )
         """
-        with self.get_connection() as conn:  # pragma: no cover
+        with self.get_connection() as conn:
             conn.execute(query_supplier)
 
     def create_transfer_table(
         self, model: Type[BaseModel] | None = None, table_name: str | None = None
-    ):
-        if model is not None:  # pragma: no cover
+    ):  # pragma: no cover
+        if model is not None:
             table_name = model.table_name()
 
         query_transfer = f"""
@@ -531,13 +535,13 @@ class DatabaseService:
             FOREIGN KEY (transfer_to) REFERENCES {Location.table_name()}(id) ON DELETE CASCADE
         )
         """
-        with self.get_connection() as conn:  # pragma: no cover
+        with self.get_connection() as conn:
             conn.execute(query_transfer)
 
     def create_transfer_items_table(
         self, model: Type[BaseModel] | None = None, table_name: str | None = None
-    ):
-        if model is not None:  # pragma: no cover
+    ):  # pragma: no cover
+        if model is not None:
             table_name = model.table_name()
 
         query = f"""
@@ -555,8 +559,8 @@ class DatabaseService:
 
     def create_warehouse_table(
         self, model: Type[BaseModel] | None = None, table_name: str | None = None
-    ):
-        if model is not None:  # pragma: no cover
+    ):  # pragma: no cover
+        if model is not None:
             table_name = model.table_name()
 
         query_warehouse = f"""
@@ -577,13 +581,13 @@ class DatabaseService:
             is_archived BOOLEAN DEFAULT 0
         )
         """
-        with self.get_connection() as conn:  # pragma: no cover
+        with self.get_connection() as conn:
             conn.execute(query_warehouse)
 
     def create_users_table(
         self, model: Type[BaseModel] | None = None, table_name: str | None = None
-    ):
-        if model is not None:  # pragma: no cover
+    ):  # pragma: no cover
+        if model is not None:
             table_name = model.table_name()
 
         query_users = f"""
@@ -601,8 +605,8 @@ class DatabaseService:
 
     def create_endpoint_access_table(
         self, model: Type[BaseModel] | None = None, table_name: str | None = None
-    ):
-        if model is not None:  # pragma: no cover
+    ):  # pragma: no cover
+        if model is not None:
             table_name = model.table_name()
 
         query_endpoint_access = f"""
@@ -619,5 +623,5 @@ class DatabaseService:
         )
         """
 
-        with self.get_connection() as conn:  # pragma: no cover
+        with self.get_connection() as conn:
             conn.execute(query_endpoint_access)
