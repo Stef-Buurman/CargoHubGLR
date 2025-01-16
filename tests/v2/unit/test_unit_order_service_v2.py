@@ -107,9 +107,6 @@ def mock_get_connection(mock_db_service):
 
     data_provider_mock = MagicMock()
 
-    shipment_pool_mock = MagicMock()
-    data_provider_mock.fetch_shipment_pool.return_value = shipment_pool_mock
-
     return mock_db_service, mock_conn, mock_cursor, data_provider_mock
 
 
