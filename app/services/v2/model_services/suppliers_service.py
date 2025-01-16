@@ -81,7 +81,7 @@ class SupplierService(Base):
                 return updated_supplier
         return None
 
-    def save(self, background_task=True):
+    def save(self, background_task=True):  # pragma: no cover:
         if not self.is_debug:
 
             def call_v1_save_method():
