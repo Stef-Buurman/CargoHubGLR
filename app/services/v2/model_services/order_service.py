@@ -273,10 +273,12 @@ class OrderService(Base):
 
     def save(self, background_task=True):  # pragma: no cover:
         if not self.is_debug:
+
             def call_v1_save_method():
                 data_provider.fetch_order_pool().save(
                     [order.model_dump() for order in self.data]
                 )
+
             if background_task:
                 threading.Thread(target=call_v1_save_method).start()
             else:
