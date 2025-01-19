@@ -1,3 +1,4 @@
+import threading
 from typing import List, Type
 from models.v2.inventory import Inventory
 from services.v2.base_service import Base
@@ -229,7 +230,7 @@ class InventoryService(Base):
                 )
 
             if background_task:
-                data_provider_v2.fetch_background_tasks().add_task(call_v1_save_method)
+                threading.Thread(target=call_v1_save_method).start()
             else:
                 call_v1_save_method()
 
