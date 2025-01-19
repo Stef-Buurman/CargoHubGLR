@@ -1,3 +1,4 @@
+import threading
 from typing import List, Type
 from models.v2.shipment import Shipment
 from models.v2.ItemInObject import ItemInObject
@@ -296,9 +297,7 @@ class ShipmentService(Base):
                 )
 
             if background_task:
-                self.data_provider.fetch_background_tasks().add_task(
-                    call_v1_save_method
-                )
+                threading.Thread(target=call_v1_save_method).start()
             else:
                 call_v1_save_method()
 

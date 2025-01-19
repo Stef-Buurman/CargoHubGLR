@@ -1,3 +1,4 @@
+import threading
 from services.v2 import data_provider_v2
 from models.v2.supplier import Supplier
 from typing import List, Type
@@ -90,7 +91,7 @@ class SupplierService(Base):
                 )
 
             if background_task:
-                data_provider_v2.fetch_background_tasks().add_task(call_v1_save_method)
+                threading.Thread(target=call_v1_save_method).start()
             else:
                 call_v1_save_method()
 

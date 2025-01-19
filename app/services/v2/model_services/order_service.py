@@ -1,3 +1,4 @@
+import threading
 from typing import List, Type
 from services.v2 import data_provider_v2
 from models.v2.order import Order
@@ -272,16 +273,12 @@ class OrderService(Base):
 
     def save(self, background_task=True):  # pragma: no cover:
         if not self.is_debug:
-
             def call_v1_save_method():
                 data_provider.fetch_order_pool().save(
                     [order.model_dump() for order in self.data]
                 )
-
             if background_task:
-                self.data_provider.fetch_background_tasks().add_task(
-                    call_v1_save_method
-                )
+                threading.Thread(target=call_v1_save_method).start()
             else:
                 call_v1_save_method()
 
