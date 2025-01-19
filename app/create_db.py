@@ -24,11 +24,6 @@ T = TypeVar("T", bound=BaseModel)
 
 USERS = [
     {
-        "api_key": "test_api_key",
-        "app": "Integration_Tests",
-        "endpoint_access": {"full": True},
-    },
-    {
         "api_key": "a1b2c3d4e5",
         "app": "CargoHUB Dashboard 1",
         "endpoint_access": {"full": True},

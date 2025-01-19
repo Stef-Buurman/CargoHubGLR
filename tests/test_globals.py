@@ -11,7 +11,7 @@ MAIN_URL_V2 = f"http://localhost:{TEST_PORT}/api/v2"
 
 non_existent_id = 999999999999999999
 
-test_headers = {"Authorization": "test_api_key"}
+test_headers = {"Authorization": "a1b2c3d4e5"}
 
 invalid_headers = {"Authorization": "invalid_key"}
 
