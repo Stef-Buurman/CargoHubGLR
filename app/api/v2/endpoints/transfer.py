@@ -88,10 +88,10 @@ def commit_transfer(transfer_id: int):
     committed_transfer = data_provider_v2.fetch_transfer_pool().commit_transfer(
         transfer
     )
-    data_provider_v2.fetch_transfer_pool().update_transfer(
+    updated_transfer = data_provider_v2.fetch_transfer_pool().update_transfer(
         transfer_id, committed_transfer
     )
-    return {"message": "Transfer committed successfully"}
+    return updated_transfer
 
 
 @transfer_router_v2.delete("/{transfer_id}")
