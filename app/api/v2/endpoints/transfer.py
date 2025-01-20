@@ -88,10 +88,10 @@ def commit_transfer(transfer_id: int):
     committed_transfer = data_provider_v2.fetch_transfer_pool().commit_transfer(
         transfer
     )
-    data_provider_v2.fetch_transfer_pool().update_transfer(
+    updated_transfer = data_provider_v2.fetch_transfer_pool().update_transfer(
         transfer_id, committed_transfer
     )
-    return {"message": "Transfer committed successfully"}
+    return updated_transfer
 
 
 @transfer_router_v2.delete("/{transfer_id}")
@@ -101,8 +101,10 @@ def archive_transfer(transfer_id: int):
         raise HTTPException(status_code=404, detail="Transfer not found")
     elif transfer:
         raise HTTPException(status_code=400, detail="Transfer is already archived")
-    data_provider_v2.fetch_transfer_pool().archive_transfer(transfer_id)
-    return {"message": "Transfer archived successfully"}
+    updated_transfer = data_provider_v2.fetch_transfer_pool().archive_transfer(
+        transfer_id
+    )
+    return updated_transfer
 
 
 @transfer_router_v2.patch("/{transfer_id}/unarchive")
@@ -112,5 +114,7 @@ def unarchive_transfer(transfer_id: int):
         raise HTTPException(status_code=404, detail="Transfer not found")
     elif not transfer:
         raise HTTPException(status_code=400, detail="Transfer is not archived")
-    data_provider_v2.fetch_transfer_pool().unarchive_transfer(transfer_id)
-    return {"message": "Transfer unarchived successfully"}
+    updated_transfer = data_provider_v2.fetch_transfer_pool().unarchive_transfer(
+        transfer_id
+    )
+    return updated_transfer
