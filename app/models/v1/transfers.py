@@ -59,7 +59,7 @@ class Transfers(Base):
                     )
                     if updated_transfer is None:
                         return None
-                    
+
                     return updated_transfer.model_dump()
 
     def remove_transfer(self, transfer_id):
